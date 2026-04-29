@@ -3,7 +3,6 @@
 import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { Play } from "lucide-react";
-import { RevenueGravityHero } from "./RevenueGravityHero";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone }: { 
   char: string; 
@@ -18,21 +17,8 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
 
   useEffect(() => {
-    if (isVisible && isLatest && !isDone && char !== " ") {
-      let iterations = 0;
-      const interval = setInterval(() => {
-        setDisplayChar(chars[Math.floor(Math.random() * chars.length)]);
-        iterations++;
-        if (iterations > 3) {
-          setDisplayChar(char);
-          clearInterval(interval);
-        }
-      }, 30);
-      return () => clearInterval(interval);
-    } else {
-      setDisplayChar(char);
-    }
-  }, [isVisible, isLatest, char, isDone]);
+    setDisplayChar(char);
+  }, [char]);
 
   return (
     <span 
@@ -87,13 +73,13 @@ export function Hero() {
   useEffect(() => {
     if (isInView && phase === "idle") {
       setPhase("thinking");
-      setTimeout(() => setPhase("typing"), 1500);
+      setTimeout(() => setPhase("typing"), 600);
     }
   }, [isInView, phase]);
 
   useEffect(() => {
     if (phase === "typing" && visibleCount < allChars.length) {
-      const timeout = setTimeout(() => setVisibleCount(v => v + 1), 40);
+      const timeout = setTimeout(() => setVisibleCount(v => v + 1), 10);
       return () => clearTimeout(timeout);
     } else if (phase === "typing" && visibleCount >= allChars.length) {
       setPhase("done");
@@ -109,7 +95,6 @@ export function Hero() {
 
   const Cursor = () => (
     <motion.span 
-      layoutId="hero-cursor"
       animate={phase === "thinking" ? { opacity: [1, 0.4, 1], scale: [1, 1.05, 1] } : { opacity: 1, scale: 1 }}
       transition={phase === "thinking" ? { duration: 0.8, repeat: Infinity } : { duration: 0 }}
       className="inline-flex items-center ml-3 md:ml-4"
@@ -176,7 +161,7 @@ export function Hero() {
                               totalCharsInGroup={totalCharsInGroup}
                               isDone={isFinished}
                             />
-                            {isLatest && !isFinished && <Cursor />}
+                            {isLatest && <Cursor />}
                           </span>
                         );
                       })}
@@ -240,9 +225,18 @@ export function Hero() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
                   style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-                  className="px-2 py-0.5 bg-zinc-950/90 backdrop-blur-md rounded-full border border-[#B597FF]/50 shadow-[0_10px_30px_-10px_rgba(181,151,255,0.3)] whitespace-nowrap"
                 >
-                  <span className="text-[9px] font-bold text-white uppercase tracking-widest">Demo 100% Grátis</span>
+                  <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-[-150%]"
+                      style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
+                    />
+                    <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
+                      <span className="text-[10px] font-bold tracking-wide leading-none">Demo 100% grátis</span>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -278,14 +272,22 @@ export function Hero() {
                   className="w-[140px] md:w-[160px] aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-white/20 flex flex-col"
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-                  <img src="/platform-preview.png" className="w-full h-full object-cover opacity-90" alt="Platform Preview" />
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover opacity-90"
+                  >
+                    <source src="/robocamera.mp4" type="video/mp4" />
+                  </video>
                 </motion.div>
               )}
             </AnimatePresence>
           </a>
         </motion.div>
 
-        <RevenueGravityHero isVisible={isFinished} />
+        {/* Removed RevenueGravityHero per user request */}
     </section>
   );
 }

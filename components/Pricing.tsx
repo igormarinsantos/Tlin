@@ -214,11 +214,11 @@ export function Pricing() {
                 <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                     className="absolute inset-[-150%]"
-                    style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+                    style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                   />
-                  <div className="relative px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-xl text-[10px] font-bold tracking-[0.2em] text-[#B597FF] flex items-center gap-2">
+                  <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[11px] font-bold tracking-wide text-[#B597FF] flex items-center gap-2">
                     💰 Plano de Investimento
                   </div>
                 </div>
@@ -228,24 +228,34 @@ export function Pricing() {
              </div>
              
              <div className={`flex flex-col items-center justify-center gap-4 mt-8 transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
-                <div className="flex items-center gap-4">
-                   <span className={`text-sm font-bold transition-colors ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-400'}`}>Mensal</span>
+                <div className="relative bg-zinc-100/80 p-1.5 rounded-full flex items-center gap-2 border border-zinc-200/50 shadow-inner">
+                   {/* Sliding Background */}
+                   <motion.div 
+                      className="absolute top-1.5 bottom-1.5 left-1.5 rounded-full bg-white shadow-md z-0"
+                      initial={false}
+                      animate={{ 
+                        x: isAnnual ? "100%" : "0%",
+                        width: isAnnual ? "calc(50% - 1.5px)" : "calc(50% - 1.5px)"
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                   />
                    
                    <button 
-                     onClick={() => setIsAnnual(!isAnnual)}
-                     className="relative w-16 h-8 bg-zinc-100 rounded-full border border-zinc-200 p-1 transition-colors hover:border-[#B597FF]/50"
+                     onClick={() => setIsAnnual(false)}
+                     className={`relative z-10 px-8 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
-                      <motion.div 
-                        className="w-6 h-6 bg-[#0c0d0d] rounded-full shadow-sm"
-                        animate={{ x: isAnnual ? 32 : 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
+                     Mensal
                    </button>
-
-                   <div className="flex items-center gap-2">
-                      <span className={`text-sm font-bold transition-colors ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-400'}`}>Anual</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${isAnnual ? 'bg-[#B597FF] text-white border-[#B597FF]' : 'bg-zinc-50 text-[#B597FF] border-zinc-200'}`}>🏷️ -20%</span>
-                   </div>
+                   
+                   <button 
+                     onClick={() => setIsAnnual(true)}
+                     className={`relative z-10 px-8 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 flex items-center gap-2 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
+                   >
+                     Anual
+                     <span className={`text-[10px] font-black px-2 py-0.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-[#B597FF] text-white shadow-lg shadow-[#B597FF]/20' : 'bg-white text-[#B597FF] border border-[#B597FF]/20'}`}>
+                       -20%
+                     </span>
+                   </button>
                 </div>
              </div>
           </div>
@@ -276,9 +286,9 @@ export function Pricing() {
                     `}
                  >
                     {plan.badge && (
-                       <div className="w-full py-3 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-white">
-                          {plan.badge}
-                       </div>
+                        <div className="w-full py-3 text-center text-[11px] font-bold tracking-wide text-white">
+                           {plan.badge}
+                        </div>
                     )}
 
                     <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
@@ -289,18 +299,18 @@ export function Pricing() {
                        <div className="flex justify-between items-start mb-6">
                           <div>
                              <h3 className="text-2xl font-bold tracking-tight mb-1">{plan.name}</h3>
-                             <p className={`text-[10px] font-bold uppercase tracking-[0.15em] ${plan.highlight ? 'text-[#38E3FF]' : 'text-zinc-400'}`}>{plan.target}</p>
+                             <p className={`text-[11px] font-bold tracking-wide ${plan.highlight ? 'text-[#38E3FF]' : 'text-zinc-400'}`}>{plan.target}</p>
                           </div>
                        </div>
 
                        <div className="mb-8 min-h-[80px] flex flex-col justify-center">
                           <div className="flex items-center gap-2 mb-4">
                              <span className={`text-xs font-black line-through text-red-500/90`}>R$ {plan.priceStandard}</span>
-                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#38E3FF]/20 text-[#38E3FF] uppercase tracking-wider flex items-center gap-1.5">
-                                Condição Especial
-                                <span className="opacity-40 select-none">|</span>
-                                <span className="font-mono">{formattedTime}</span>
-                             </span>
+                              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#38E3FF]/15 text-[#38E3FF] tracking-wide flex items-center gap-1.5 border border-[#38E3FF]/20">
+                                 Condição especial
+                                 <span className="opacity-40 select-none">|</span>
+                                 <span className="font-mono">{formattedTime}</span>
+                              </span>
                           </div>
                           <div className="flex items-end gap-1">
                              <span className="text-4xl lg:text-6xl font-extrabold tracking-tighter leading-none flex items-center h-[50px]">
@@ -317,7 +327,7 @@ export function Pricing() {
                              {plan.cta}
                           </button>
 
-                          <p className={`text-[10px] font-bold uppercase tracking-[0.2em] mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>Nível de entrega</p>
+                           <p className={`text-[11px] font-bold tracking-wide mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>Nível de entrega</p>
                           <ul className="space-y-4">
                              {plan.features.map((feat) => (
                                 <li key={feat} className="flex items-start gap-3">

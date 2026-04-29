@@ -3,6 +3,8 @@
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from "framer-motion";
 import { Play, Pause, ChevronLeft, ChevronRight, Link, Globe, Zap, ShieldCheck, Headphones, Cpu, ArrowRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { SalesNotification } from "./SalesNotification";
+import { FunnelAnimation } from "./FunnelAnimation";
 
 const features = [
   {
@@ -100,7 +102,7 @@ function FeatureMedia({ src }: { src: string }) {
         muted
         loop
         playsInline
-        className={`w-full h-full object-cover transition-all duration-1000 ${isPlaying ? 'grayscale hover:grayscale-0' : 'grayscale-0 blur-[2px] opacity-60'}`}
+        className={`w-full h-full object-cover transition-all duration-1000 ${isPlaying ? '' : 'blur-[2px] opacity-60'}`}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
       <div className="absolute bottom-6 right-6 z-30">
@@ -108,7 +110,7 @@ function FeatureMedia({ src }: { src: string }) {
           onClick={togglePlay}
           className="relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 group/btn"
         >
-          <div className="absolute inset-0 bg-[#0c0d0d]/40 backdrop-blur-xl border border-white/20 rounded-full transition-all duration-300 group-hover/btn:bg-[#0c0d0d]/60 group-hover/btn:scale-110 group-hover/btn:border-white/30" />
+          <div className="absolute inset-0 bg-zinc-900 border border-white/20 rounded-full transition-all duration-300 group-hover/btn:bg-zinc-800 group-hover/btn:scale-110 group-hover/btn:border-white/30" />
           <div className="relative z-10 text-white">
             {isPlaying ? <Pause className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current ml-0.5" />}
           </div>
@@ -184,8 +186,18 @@ function FeatureCard({
             </div>
           </div>
           <div className="flex-1 h-[320px] md:h-full relative overflow-hidden bg-white p-3 md:p-5">
-            <div className="w-full h-full rounded-[2.2rem] md:rounded-[3.2rem] overflow-hidden border border-zinc-50 bg-zinc-100">
-              <FeatureMedia src={feature.video} />
+            <div className={`w-full h-full rounded-[2.2rem] md:rounded-[3.2rem] overflow-hidden border border-zinc-50 relative ${
+              feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil" 
+                ? "bg-[#B597FF]" 
+                : "bg-zinc-100"
+            }`}>
+              {feature.title === "Escala Sem Aumentar Custos" ? (
+                <SalesNotification />
+              ) : feature.title === "Controle Absoluto do Funil" ? (
+                <FunnelAnimation />
+              ) : (
+                <FeatureMedia src={feature.video} />
+              )}
             </div>
           </div>
         </div>
@@ -214,11 +226,11 @@ export function Features() {
           >
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-150%]"
-              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
-            <div className="relative px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl text-[#B597FF] text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-2">
+            <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
               ⚡ Capacidades
             </div>
           </motion.div>

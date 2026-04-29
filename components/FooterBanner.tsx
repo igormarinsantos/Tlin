@@ -200,7 +200,7 @@ export function FooterBanner() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-100 z-0"
         >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-form-of-blue-and-purple-dots-31730-large.mp4" type="video/mp4" />
+          <source src="/robocamera.mp4" type="video/mp4" />
         </video>
 
         <canvas 
@@ -240,7 +240,7 @@ export function FooterBanner() {
               <a href="#pricing" className="px-10 py-4 rounded-full bg-white text-[#0c0d0d] font-bold text-sm hover:bg-zinc-50 transition-all">
                  Quero meu Agente Tlin
               </a>
-              <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" className="px-10 py-4 rounded-full border border-white text-white font-bold text-sm hover:bg-white/10 transition-all">
+              <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="px-10 py-4 rounded-full border border-white text-white font-bold text-sm hover:bg-white/10 transition-all">
                  Falar com vendas
               </a>
            </div>

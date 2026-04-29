@@ -40,11 +40,11 @@ export function Faq() {
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-150%]"
-              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
-            <div className="relative px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl text-[#B597FF] text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-2">
+            <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
               🙋 Dúvidas Comuns
             </div>
           </div>
@@ -97,7 +97,7 @@ export function Faq() {
                                </p>
                                <div className="mt-6 pt-6 border-t border-zinc-100">
                                   <p className="text-sm font-medium text-zinc-400">
-                                     Sua dúvida não foi esclarecida? <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" className="text-[#B597FF] hover:underline font-bold transition-all">Fale com nossos especialistas</a>
+                                     Sua dúvida não foi esclarecida? <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="text-[#B597FF] hover:underline font-bold transition-all">Fale com nossos especialistas</a>
                                   </p>
                                </div>
                             </div>

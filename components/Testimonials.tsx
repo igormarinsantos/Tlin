@@ -49,7 +49,7 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
 
   return (
     <motion.div 
-      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] shrink-0 border border-zinc-100 transition-colors duration-500 ${isHovered ? 'bg-[#B597FF]' : 'bg-[#0c0d0d]'}`}
+      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 border border-white/10 transition-colors duration-500 ${isHovered ? 'bg-[#B597FF] border-[#B597FF]' : 'bg-[#0c0d0d]'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ shadow: "0_50px_80px_-20px_rgba(181,151,255,0.3)" }}
@@ -72,7 +72,7 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d0d] via-[#0c0d0d]/40 to-transparent" />
             <div className="absolute bottom-10 left-10 right-10">
               <h3 className="text-3xl font-bold text-white tracking-tighter mb-1">{item.name}</h3>
-              <p className="text-[#38E3FF] text-xs font-black uppercase tracking-[0.2em]">{item.role}</p>
+              <p className="text-[#38E3FF] text-[11px] font-bold tracking-wide">{item.role}</p>
             </div>
           </motion.div>
         ) : (
@@ -88,7 +88,7 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
              </div>
 
              <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-2">{item.name}</h3>
-             <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] mb-6 md:mb-8">{item.role}</p>
+             <p className="text-white/60 text-[10px] font-bold tracking-wide mb-6 md:mb-8">{item.role}</p>
              <p className="text-white/90 font-medium leading-relaxed text-base md:text-lg">
                 "{item.text}"
              </p>
@@ -111,12 +111,12 @@ export function Testimonials() {
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-150%]"
-              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
-            <div className="relative px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl text-[#B597FF] text-[10px] font-bold tracking-widest flex items-center gap-2">
-              🏆 Resultados de Impacto
+            <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
+              🏆 Resultados de impacto
             </div>
           </div>
              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] leading-tight">

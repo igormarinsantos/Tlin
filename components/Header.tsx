@@ -45,7 +45,7 @@ function LanguageSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full right-0 mt-2 w-36 bg-white border border-zinc-100/80 rounded-2xl shadow-xl overflow-hidden py-1 z-50 backdrop-blur-xl"
+            className="absolute top-full right-0 mt-2 w-36 bg-white border border-zinc-100 rounded-2xl shadow-xl overflow-hidden py-1 z-50"
           >
             {languages.map((l) => (
               <button
@@ -90,12 +90,12 @@ function MegaMenu() {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="absolute top-full left-1/2 -translate-x-1/2 mt-4 p-8 bg-white/95 backdrop-blur-2xl border border-zinc-200/50 rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] w-[600px] z-[100]"
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-4 p-8 bg-white border border-zinc-200/50 rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] w-[600px] z-[100]"
     >
       <div className="grid grid-cols-2 gap-10">
         {menuItems.map((category) => (
           <div key={category.title}>
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 px-4">{category.title}</h4>
+            <h4 className="text-[11px] font-bold tracking-wide text-zinc-400 mb-6 px-4">{category.title}</h4>
             <div className="flex flex-col gap-2">
               {category.links.map((link) => (
                 <a 
@@ -208,9 +208,9 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
             style={{ position: "absolute", left: springX, top: springY, x: "15px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-            className="px-2 py-0.5 bg-zinc-950/90 backdrop-blur-md rounded-full border border-[#B597FF]/50 shadow-[0_10px_30px_-10px_rgba(181,151,255,0.3)] whitespace-nowrap"
+            className="px-2 py-0.5 bg-zinc-950 rounded-full border border-white/10 shadow-xl whitespace-nowrap"
           >
-            <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Demo 100% Grátis</span>
+            <span className="text-[9px] font-bold text-white tracking-wide leading-none">Demo 100% grátis</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -271,7 +271,7 @@ export function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between overflow-hidden bg-white/85 backdrop-blur-xl border border-zinc-200/50 shadow-lg rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-white/95">
+            <div className="pointer-events-auto flex items-center justify-between overflow-hidden bg-white border border-zinc-200 shadow-lg rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
               
               <div className="flex items-center gap-2 cursor-pointer">
                  <img src="/Logo%20Horizontal.svg" alt="Tlin Logo" className="h-6 w-auto" />

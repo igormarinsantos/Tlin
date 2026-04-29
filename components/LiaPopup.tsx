@@ -55,7 +55,7 @@ export function LiaPopup() {
   };
 
   const openWhatsApp = () => {
-    window.open("https://wa.me/5511999999999?text=Olá! Vim pelo site da Tlin e gostaria de falar com a equipe.", "_blank");
+    window.open("https://wa.me/5511916248604?text=Olá! Vim pelo site da Tlin e gostaria de falar com a equipe.", "_blank");
   };
 
   return (

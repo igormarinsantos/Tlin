@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -34,15 +35,9 @@ export function Footer() {
 
         {/* Huge Brand Text */}
         <div className="relative w-full overflow-hidden mb-20 select-none">
-          <motion.h2 
-            initial={{ y: 100, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[15vw] md:text-[22vw] font-black tracking-tighter leading-[0.8] text-[#0c0d0d] -ml-[0.05em]"
-          >
+          <h2 className="text-[15vw] md:text-[22vw] font-black tracking-tighter leading-[0.8] text-[#0c0d0d] -ml-[0.05em]">
             tlin.ai
-          </motion.h2>
+          </h2>
         </div>
 
         {/* Bottom Bar */}
@@ -53,10 +48,10 @@ export function Footer() {
           </div>
 
           <div className="flex gap-8 items-center">
-            <a href="#" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Termos</a>
-            <a href="#" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Privacidade</a>
-            <a href="#" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Cookies</a>
-            <a href="#" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Brasil</a>
+            <Link href="/legal?tab=termos" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Termos</Link>
+            <Link href="/legal?tab=privacidade" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Privacidade</Link>
+            <Link href="/legal?tab=cookies" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">Cookies</Link>
+            <span className="text-xs font-bold text-zinc-400 lowercase tracking-widest">Brasil</span>
           </div>
         </div>
       </div>

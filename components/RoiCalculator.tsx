@@ -33,12 +33,12 @@ export function RoiCalculator() {
       style={{ fontFamily: '"DM Sans", sans-serif' }}
     >
       {/* Seamless white blend top & bottom */}
-      <div className="absolute top-[-150px] left-[-20%] w-[140%] h-[300px] bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] rounded-[100%] blur-[60px] pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_100%,#B597FF10,transparent)]"></div>
+      <div className="absolute top-[-250px] left-[-20%] w-[140%] h-[500px] bg-white rounded-[100%] blur-[120px] pointer-events-none z-0 opacity-100">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_100%,#B597FF20,transparent)]"></div>
       </div>
       
-      <div className="absolute bottom-[-180px] left-[-20%] w-[140%] h-[400px] bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] rounded-[100%] blur-[80px] pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_0%,#B597FF10,transparent)]"></div>
+      <div className="absolute bottom-[-280px] left-[-20%] w-[140%] h-[600px] bg-white rounded-[100%] blur-[140px] pointer-events-none z-0 opacity-100">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_0%,#B597FF20,transparent)]"></div>
       </div>
 
       {/* Range thumb styling */}
@@ -66,11 +66,11 @@ export function RoiCalculator() {
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-4 mx-auto">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-150%]"
-              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
-            <div className="relative px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-xl text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+            <div className="relative px-4 py-1.5 rounded-full bg-[#0c0d0d] border border-white/10 text-white text-[11px] font-bold tracking-wide flex items-center gap-2">
               ✨ Simulador de Lucratividade
             </div>
           </div>
@@ -92,8 +92,8 @@ export function RoiCalculator() {
           <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10">
 
             <div>
-              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-8">
-                Detalhes da Operação
+              <p className="text-[11px] font-bold text-zinc-400 tracking-wide mb-8">
+                Detalhes da operação
               </p>
 
               <div className="space-y-9">
@@ -209,8 +209,8 @@ export function RoiCalculator() {
                   <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-3">
-                      Sua Receita Atual (Mês)
+                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
+                      Sua receita atual (mês)
                     </p>
                     <motion.div
                       key={r.currentRevenue}
@@ -231,7 +231,7 @@ export function RoiCalculator() {
                     <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/30 rounded-full blur-[60px] pointer-events-none" />
                     <div className="inline-flex items-center gap-2 mb-4">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#B597FF]" />
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                      <p className="text-[11px] font-bold tracking-wide text-white/50">
                         Poder da IA Tlin
                       </p>
                     </div>
@@ -264,8 +264,8 @@ export function RoiCalculator() {
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <div className="flex justify-between items-start mb-6">
-                      <span className="px-3 py-1 rounded-full bg-white/15 text-white text-[10px] font-black uppercase tracking-[0.15em] border border-white/20">
-                        Resultado Revelado
+                      <span className="px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-bold tracking-wide border border-white/20">
+                        Resultado revelado
                       </span>
                       <button
                         onClick={() => setStep("input")}
@@ -274,8 +274,8 @@ export function RoiCalculator() {
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-3">
-                      Faturamento Adicional Oculto
+                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
+                      Faturamento adicional oculto
                     </p>
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -297,19 +297,19 @@ export function RoiCalculator() {
                     {/* Conversion comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-6">
                       <div className="p-4 rounded-2xl bg-white/8 border border-white/10">
-                        <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1.5">Conversão Atual</p>
+                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">Conversão atual</p>
                         <p className="text-2xl font-black text-white/70">{r.convRate.toFixed(1)}%</p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/15 border border-white/20">
-                        <p className="text-[9px] font-black text-[#B597FF]/80 uppercase tracking-widest mb-1.5">Com Tlin IA</p>
+                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5">Com Tlin IA</p>
                         <p className="text-2xl font-black text-white">{r.newConvRate.toFixed(1)}%</p>
                       </div>
                     </div>
 
                     {/* Annual projection */}
                     <div className="pt-5 border-t border-white/10">
-                      <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1.5">
-                        Projeção Anual Adicional
+                      <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">
+                        Projeção anual adicional
                       </p>
                       <motion.p
                         initial={{ opacity: 0, y: 6 }}

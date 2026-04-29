@@ -188,7 +188,7 @@ function AvatarElement({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[140px] bg-white p-3 rounded-2xl shadow-xl border border-zinc-100 flex flex-col items-center gap-1"
           >
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tight">Venda concluída</span>
+            <span className="text-[11px] font-bold text-zinc-400 tracking-tight">Venda concluída</span>
             <span className="text-sm font-black text-[#0c0d0d]">+ R$ {revenueValue}</span>
           </motion.div>
         )}
