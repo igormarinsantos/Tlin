@@ -5,6 +5,7 @@ import { Play, Pause, ChevronLeft, ChevronRight, Link, Globe, Zap, ShieldCheck, 
 import { useState, useRef, useEffect } from "react";
 import { SalesNotification } from "./SalesNotification";
 import { FunnelAnimation } from "./FunnelAnimation";
+import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
 
 const features = [
   {
@@ -120,19 +121,19 @@ function FeatureMedia({ src }: { src: string }) {
   );
 }
 
-function FeatureCard({ 
-  feature, 
-  idx, 
+function FeatureCard({
+  feature,
+  idx,
   total,
   scrollYProgress
-}: { 
-  feature: any, 
-  idx: number, 
+}: {
+  feature: any,
+  idx: number,
   total: number,
   scrollYProgress: MotionValue<number>
 }) {
   const topOffset = 100 + (idx * 24);
-  
+
   // Scale down older cards as new ones cover them
   const targetScale = 1 - ((total - 1 - idx) * 0.04);
   const startRange = idx / total;
@@ -140,11 +141,11 @@ function FeatureCard({
   const scale = useTransform(scrollYProgress, range, [1, targetScale]);
 
   return (
-    <div 
+    <div
       className="sticky w-full h-[450px] md:h-[500px]"
-      style={{ 
-        top: `${topOffset}px`, 
-        zIndex: 10 + idx 
+      style={{
+        top: `${topOffset}px`,
+        zIndex: 10 + idx
       }}
     >
       <motion.div
@@ -176,8 +177,8 @@ function FeatureCard({
               <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
                 {feature.desc}
               </p>
-              <button 
-                onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth'})}
+              <button
+                onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 className="mt-8 px-8 py-4 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-base transition-all w-max flex items-center gap-2 group shadow-2xl shadow-zinc-200"
               >
                 Potencializar com IA
@@ -186,15 +187,16 @@ function FeatureCard({
             </div>
           </div>
           <div className="flex-1 h-[320px] md:h-full relative overflow-hidden bg-white p-3 md:p-5">
-            <div className={`w-full h-full rounded-[2.2rem] md:rounded-[3.2rem] overflow-hidden border border-zinc-50 relative ${
-              feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil" 
-                ? "bg-[#B597FF]" 
+            <div className={`w-full h-full rounded-[2.2rem] md:rounded-[3.2rem] overflow-hidden border border-zinc-50 relative ${feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil"
+                ? "bg-[#B597FF]"
                 : "bg-zinc-100"
-            }`}>
+              }`}>
               {feature.title === "Escala Sem Aumentar Custos" ? (
                 <SalesNotification />
               ) : feature.title === "Controle Absoluto do Funil" ? (
                 <FunnelAnimation />
+              ) : feature.title === "Qualificação Cirúrgica" ? (
+                <WhatsAppQualifyAnimation />
               ) : (
                 <FeatureMedia src={feature.video} />
               )}
@@ -218,7 +220,7 @@ export function Features() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="max-w-3xl mb-24 text-center mx-auto">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -234,7 +236,7 @@ export function Features() {
               ⚡ Capacidades
             </div>
           </motion.div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -248,13 +250,13 @@ export function Features() {
         {/* Native CSS Sticky Stacking Deck */}
         <div ref={containerRef} className="relative w-full max-w-6xl mx-auto flex flex-col gap-y-[40vh] pb-[10vh]">
           {features.map((feature, idx) => (
-             <FeatureCard 
-               key={idx} 
-               feature={feature} 
-               idx={idx} 
-               total={features.length} 
-               scrollYProgress={scrollYProgress} 
-             />
+            <FeatureCard
+              key={idx}
+              feature={feature}
+              idx={idx}
+              total={features.length}
+              scrollYProgress={scrollYProgress}
+            />
           ))}
         </div>
 
