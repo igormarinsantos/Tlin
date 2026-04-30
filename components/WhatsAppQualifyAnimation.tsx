@@ -1,189 +1,295 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { Check, CheckCheck, User, MessageCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Kanban, MousePointer2 } from "lucide-react";
 
 export function WhatsAppQualifyAnimation() {
   const [step, setStep] = useState(0);
 
+  const leadPhoto = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces";
+
+  // Dynamic step sequencing
   useEffect(() => {
-    const timer = setInterval(() => {
-      setStep((prev) => (prev + 1) % 6);
-    }, 2500);
-    return () => clearInterval(timer);
-  }, []);
+    let timeout: NodeJS.Timeout;
+    const nextStep = (current: number) => {
+      let delay = 1000;
+      if (current === 0) delay = 1500; // Read first msg
+      else if (current === 1) delay = 1200; // Bot typing...
+      else if (current === 2) delay = 2000; // Read bot msg
+      else if (current === 3) delay = 1500; // User replies
+      else if (current === 4) delay = 1200; // Bot typing...
+      else if (current === 5) delay = 1500; // Final bot msg (Zooms in)
+      else if (current === 6) delay = 1800; // Dragging phase
+      else delay = 3000; // Wait at end before reset
+      
+      timeout = setTimeout(() => {
+        setStep(prev => (prev + 1) % 8);
+      }, delay);
+    };
+    nextStep(step);
+    return () => clearTimeout(timeout);
+  }, [step]);
 
   return (
-    <div className="w-full h-full bg-[#efeae2] relative overflow-hidden flex flex-col font-sans">
-      {/* WhatsApp Header Mockup */}
-      <div className="bg-[#00a884] p-4 flex items-center gap-4 shadow-sm z-10 shrink-0">
-        <div className="w-10 h-10 rounded-full bg-zinc-200 overflow-hidden ring-2 ring-white/20">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-1">
-          <div className="text-white font-bold text-sm leading-tight">Ricardo M.</div>
-          <div className="text-white/80 text-[10px] flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            Online
+    <div className="absolute inset-0 bg-[#B597FF] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+      {/* Background blobs for depth */}
+      <motion.div
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3]
+        }}
+        transition={{ duration: 8, repeat: Infinity }}
+        className="absolute top-0 left-0 w-80 h-80 bg-white/30 blur-[100px] rounded-full z-0"
+      />
+      
+      {/* Kanban CRM (Background, fades in) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ 
+          opacity: step >= 5 ? 1 : 0, 
+          scale: step >= 5 ? 1 : 0.95 
+        }}
+        transition={{ duration: 0.5 }}
+        className="absolute w-full max-w-[600px] h-[420px] z-10"
+      >
+        <KanbanMockup isDragging={step >= 6} leadPhoto={leadPhoto} />
+      </motion.div>
+
+      {/* WhatsApp Chat - Stays mounted, just fades/blurs out */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ 
+          opacity: step >= 6 ? 0 : 1, 
+          scale: step >= 6 ? 1.05 : 1,
+          filter: step >= 6 ? "blur(15px)" : "blur(0px)",
+          pointerEvents: step >= 6 ? "none" : "auto"
+        }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="absolute w-full max-w-[280px] h-[380px] bg-[#efeae2] rounded-2xl border border-white/20 overflow-hidden flex flex-col z-20 shadow-2xl"
+      >
+        {/* WhatsApp Header */}
+        <div className="bg-[#075e54] p-3 pt-4 pb-3 flex items-center gap-3 text-white shrink-0 z-10 relative">
+          <div className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-zinc-200 overflow-hidden shrink-0">
+            <img src={leadPhoto} alt="Marcos Oliveira" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold leading-tight truncate">Marcos Oliveira</div>
+            <div className="text-[10px] text-white/80 leading-tight mt-0.5">online</div>
           </div>
         </div>
-        <div className="flex gap-4 text-white/90">
-            <div className="w-4 h-4 rounded-sm border-2 border-current opacity-40" />
-            <div className="w-4 h-4 rounded-full border-2 border-current opacity-40" />
-        </div>
-      </div>
 
-      {/* Chat Conversation Area */}
-      <div className="flex-1 p-5 flex flex-col gap-4 overflow-hidden relative">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]" />
+        {/* Chat Body */}
+        <div className="p-4 flex flex-col gap-3 h-full overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <Message side="right" visible={step >= 0}>
+            Bom dia! Vi o anúncio da Tlin.
+          </Message>
+          
+          {step === 1 && <TypingIndicator />}
+          <Message side="left" visible={step >= 2} isBot={true}>
+            Bom dia! Qual seu volume de leads?
+          </Message>
+          
+          <Message side="right" visible={step >= 3}>
+            300 leads por mês.
+          </Message>
 
-        <AnimatePresence mode="popLayout">
-          {/* Incoming Message 1 */}
-          {step >= 0 && (
+          {step === 4 && <TypingIndicator />}
+          
+          {/* Final Message with Subtle Highlight Effect */}
+          {step >= 5 && (
             <motion.div
-              key="msg1"
-              initial={{ opacity: 0, x: -20, scale: 0.9, originX: 0 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              className="bg-white p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-[13px] self-start relative"
-            >
-              Olá! Gostaria de saber mais sobre a Tlin. Tenho interesse no produto.
-              <div className="text-[9px] text-zinc-400 text-right mt-1.5 font-medium">09:41</div>
-              <div className="absolute top-0 -left-1.5 w-0 h-0 border-t-[8px] border-t-white border-l-[8px] border-l-transparent" />
-            </motion.div>
-          )}
-
-          {/* AI Response 1 */}
-          {step >= 1 && (
-            <motion.div
-              key="msg2"
-              initial={{ opacity: 0, x: 20, scale: 0.9, originX: 1 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              className="bg-[#d9fdd3] p-3.5 rounded-2xl rounded-tr-none shadow-sm max-w-[85%] text-[13px] self-end relative"
-            >
-              Com certeza, Ricardo! Para te dar a melhor solução, qual o volume médio mensal de leads da sua empresa?
-              <div className="text-[9px] text-zinc-400 text-right mt-1.5 font-medium flex items-center justify-end gap-1">
-                09:41 <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
-              </div>
-              <div className="absolute top-0 -right-1.5 w-0 h-0 border-t-[8px] border-t-[#d9fdd3] border-r-[8px] border-r-transparent" />
-            </motion.div>
-          )}
-
-          {/* Incoming Message 2 */}
-          {step >= 2 && (
-            <motion.div
-              key="msg3"
-              initial={{ opacity: 0, x: -20, scale: 0.9, originX: 0 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              className="bg-white p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-[13px] self-start relative"
-            >
-              Hoje atendemos cerca de 1.500 leads por mês no comercial.
-              <div className="text-[9px] text-zinc-400 text-right mt-1.5 font-medium">09:42</div>
-              <div className="absolute top-0 -left-1.5 w-0 h-0 border-t-[8px] border-t-white border-l-[8px] border-l-transparent" />
-            </motion.div>
-          )}
-
-          {/* AI Qualification Logic */}
-          {step >= 3 && step < 5 && (
-            <motion.div
-              key="qualifying"
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="self-center bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-zinc-200 shadow-lg mt-4 flex items-center gap-3"
+              animate={{ 
+                opacity: step >= 6 ? 0 : 1, // Fades out when drag starts
+                y: 0,
+                scale: 1.02 // Subtle zoom, not breaking layout
+              }}
+              transition={{ duration: 0.3 }}
+              className="mt-auto relative z-10"
             >
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
-              <span className="text-[11px] font-bold text-zinc-600 uppercase tracking-wider">Analisando Perfil...</span>
+              <Message side="left" visible={true} isBot={true} isHighlighted={true}>
+                Vou te encaminhar agora!
+              </Message>
             </motion.div>
           )}
+        </div>
+      </motion.div>
 
-          {/* Qualification Success Splash */}
-          {step >= 4 && (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 z-20 flex items-center justify-center p-6 bg-white/40 backdrop-blur-[2px]"
+      {/* Dragging CRM Card (The Transformation) */}
+      <AnimatePresence>
+        {step >= 6 && step < 7 && (
+          <motion.div
+            initial={{ 
+              x: -80, // Starts precisely where the message was
+              y: 110, 
+              scale: 0.9, 
+              opacity: 0 
+            }}
+            animate={{ 
+              x: 20, // Direct path to the CRM column
+              y: -40,
+              scale: 1,
+              opacity: 1
+            }}
+            exit={{ 
+              y: -20, // Drops into the column
+              opacity: 0,
+              scale: 0.9,
+              transition: { duration: 0.2 }
+            }}
+            transition={{ 
+              type: "spring", 
+              damping: 22, 
+              stiffness: 120, // Smooth, realistic iOS-like physics
+              mass: 1 
+            }}
+            className="absolute z-50 bg-white rounded-2xl p-4 shadow-[0_30px_60px_-15px_rgba(181,151,255,0.6)] border-2 border-[#B597FF] flex items-center gap-4 min-w-[200px] max-w-[240px] overflow-hidden"
+          >
+            <div className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-zinc-100 overflow-hidden border-2 border-[#B597FF]/20 shrink-0">
+              <img src={leadPhoto} alt="Marcos Oliveira" className="w-full h-full object-cover" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-black text-zinc-800 truncate">Marcos Oliveira</div>
+              <div className="text-[10px] bg-gradient-to-r from-[#B597FF] to-[#8C64FF] bg-clip-text text-transparent font-black uppercase tracking-wider flex items-center gap-1 truncate mt-0.5">
+                ✨ Lead Automado
+              </div>
+            </div>
+            
+            {/* Mouse Pointer */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.5, x: 20, y: 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.2 }}
+              className="absolute -bottom-6 -right-6 text-[#B597FF] drop-shadow-xl flex flex-col items-center"
             >
-              <motion.div
-                initial={{ y: 20 }}
-                animate={{ y: 0 }}
-                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] border border-zinc-100 p-8 w-full max-w-[280px] flex flex-col items-center gap-6 overflow-hidden relative"
-              >
-                {/* Background Glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-emerald-100 blur-[60px] rounded-full opacity-60" />
-                
-                <div className="relative">
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200"
-                  >
-                    <Check className="text-white w-10 h-10" strokeWidth={3} />
-                  </motion.div>
-                  {/* Floating Particles */}
-                  <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -top-4 -right-4 w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center"><div className="w-2 h-2 bg-emerald-400 rounded-full" /></motion.div>
-                </div>
-
-                <div className="text-center relative">
-                  <h4 className="text-emerald-600 font-black text-xl uppercase tracking-tighter">Lead Qualificado!</h4>
-                  <p className="text-zinc-500 text-xs font-medium mt-1">Perfil ideal identificado</p>
-                </div>
-
-                <div className="w-full bg-zinc-50 rounded-2xl p-4 border border-zinc-100 flex flex-col gap-3">
-                    <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-zinc-400 font-bold uppercase tracking-widest">Estágio Atual</span>
-                        <span className="text-emerald-600 font-black">QUALIFICAÇÃO</span>
-                    </div>
-                    {/* Mini Funnel Representation */}
-                    <div className="flex flex-col gap-1 items-center">
-                        <div className="w-full h-1.5 bg-emerald-100 rounded-full overflow-hidden">
-                            <motion.div 
-                              initial={{ width: "30%" }}
-                              animate={{ width: "65%" }}
-                              className="h-full bg-emerald-500"
-                            />
-                        </div>
-                        <div className="flex justify-between w-full px-0.5">
-                            <div className="w-1.5 h-1.5 bg-zinc-200 rounded-full" />
-                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                            <div className="w-1.5 h-1.5 bg-zinc-200 rounded-full" />
-                        </div>
-                    </div>
-                </div>
-
-                <motion.div 
-                   animate={{ x: [0, 5, 0] }}
-                   transition={{ duration: 2, repeat: Infinity }}
-                   className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-2"
-                >
-                    Enviado para CRM <ArrowRightIcon />
-                </motion.div>
-              </motion.div>
+              <div className="bg-gradient-to-r from-[#B597FF] to-[#8C64FF] text-white text-[8px] font-black px-1.5 py-0.5 rounded-full mb-0.5 shadow-sm flex items-center gap-0.5">
+                  ✨ IA
+              </div>
+              <MousePointer2 className="w-8 h-8 fill-current" />
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="bg-white p-3 rounded-2xl rounded-tl-none self-start flex gap-1.5 items-center w-fit border border-black/5"
+    >
+      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-1.5 h-1.5 bg-zinc-400 rounded-full" />
+      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} className="w-1.5 h-1.5 bg-zinc-400 rounded-full" />
+      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} className="w-1.5 h-1.5 bg-zinc-400 rounded-full" />
+    </motion.div>
+  );
+}
+
+function KanbanMockup({ isDragging, leadPhoto }: { isDragging: boolean, leadPhoto: string }) {
+  return (
+    <div className={`w-full h-full flex flex-col bg-[#f8f9fa] rounded-2xl shadow-2xl border border-white/20 overflow-hidden transition-all duration-400 ${isDragging ? 'opacity-60 blur-[2px]' : 'opacity-100 blur-0'}`}>
+      {/* Kanban Header */}
+      <div className="bg-white border-b border-zinc-100 p-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#B597FF] to-[#8C64FF] flex items-center justify-center text-white shadow-sm">
+            <Kanban className="w-5 h-5" />
+          </div>
+          <h4 className="font-black text-xs text-zinc-800 tracking-widest uppercase">Pipeline de Vendas</h4>
+        </div>
       </div>
 
-      {/* WhatsApp Input Footer Mockup */}
-      <div className="bg-[#f0f2f5] p-3 flex items-center gap-3 shrink-0">
-        <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-zinc-400 shadow-sm border border-zinc-200">
-            <span className="text-xl">+</span>
-        </div>
-        <div className="flex-1 bg-white h-10 rounded-full border border-zinc-200 px-4 flex items-center text-zinc-300 text-sm italic">
-          Mensagem...
-        </div>
-        <div className="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center shadow-md">
-           <MessageCircle className="w-5 h-5 text-white" />
-        </div>
+      {/* Columns Area */}
+      <div className="flex-1 p-5 grid grid-cols-3 gap-5 overflow-hidden h-full">
+        <KanbanColumn title="Aguardando" color="#38E3FF" count="2">
+          <KanbanCard name="Ricardo" time="2d" tag="ativo" />
+          <KanbanCard name="Ana" time="5h" tag="ativo" />
+        </KanbanColumn>
+        
+        <KanbanColumn title="✨ Respondido IA" color="#B597FF" count={!isDragging ? "1" : "0"}>
+          {!isDragging && (
+            <motion.div
+              initial={{ y: -40, opacity: 0, scale: 0.8 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ type: "spring", damping: 15, stiffness: 150 }}
+            >
+              <KanbanCard name="Marcos" time="agora" tag="tlin" isHighlight photo={leadPhoto} />
+            </motion.div>
+          )}
+        </KanbanColumn>
+
+        <KanbanColumn title="Ganhos" color="#25D366" count="0">
+          <div className="h-full min-h-[100px] border-2 border-dashed border-zinc-200 rounded-xl flex items-center justify-center text-zinc-300 text-2xl font-black bg-zinc-50/50">+</div>
+        </KanbanColumn>
       </div>
     </div>
   );
 }
 
-function ArrowRightIcon() {
-    return (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-    )
+function Message({ children, side, visible, isBot, isHighlighted }: { children: React.ReactNode, side: 'left' | 'right', visible: boolean, isBot?: boolean, isHighlighted?: boolean }) {
+  if (!visible) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", damping: 25 }}
+      className={`max-w-[85%] p-3 rounded-2xl relative border ${
+        side === 'right' 
+          ? "bg-[#dcf8c6] self-end rounded-tr-none border-black/5" 
+          : isHighlighted 
+            ? "bg-[#f8f5ff] self-start rounded-tl-none border-[#B597FF]/30 ring-1 ring-[#B597FF]/10 shadow-sm" 
+            : "bg-white self-start rounded-tl-none border-black/5"
+      }`}
+    >
+      <div className={`text-xs leading-relaxed font-semibold ${isHighlighted ? 'text-[#4A1D96]' : 'text-zinc-800'}`}>
+        {children}
+      </div>
+      {isBot && (
+        <div className="mt-2 flex items-center gap-1 bg-gradient-to-r from-[#B597FF] to-[#8C64FF] px-2.5 py-1 rounded-full w-fit">
+          <span className="text-[7px] font-black text-white uppercase tracking-wider flex items-center gap-1">
+            ✨ TLIN AI
+          </span>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function KanbanColumn({ title, color, count, children }: { title: string, color: string, count: string, children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3 min-w-0 h-full">
+      <div className="flex items-center justify-between border-b-2 pb-1.5" style={{ borderColor: color }}>
+        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-tight truncate">{title}</span>
+        <span className="text-[9px] font-bold text-zinc-500 bg-zinc-100/80 px-1.5 py-0.5 rounded">{count}</span>
+      </div>
+      <div className="flex-1 flex flex-col gap-3 overflow-y-auto pr-1 scrollbar-hide">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function KanbanCard({ name, time, tag, isHighlight, photo }: { name: string, time: string, tag: string, isHighlight?: boolean, photo?: string }) {
+  return (
+    <div className={`bg-white rounded-xl p-3 border flex flex-col gap-2 ${isHighlight ? 'border-[#B597FF] ring-2 ring-[#B597FF]/20 shadow-md' : 'border-zinc-100 shadow-sm'}`}>
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 min-w-[32px] min-h-[32px] rounded-full bg-zinc-100 overflow-hidden shrink-0">
+          <img src={photo || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} alt={name} className="w-full h-full object-cover" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[10px] font-bold text-zinc-800 truncate">{name}</div>
+          <div className="text-[8px] text-zinc-400 font-medium">{time}</div>
+        </div>
+      </div>
+      <div className={`px-2 py-1 rounded text-[7px] font-black uppercase w-fit flex items-center gap-1 ${
+        tag === 'tlin' ? 'bg-gradient-to-r from-[#B597FF] to-[#8C64FF] text-white shadow-sm' : 'bg-zinc-100 text-zinc-600'
+      }`}>
+        {tag === 'tlin' && '✨'} {tag === 'tlin' ? 'Qualificado' : tag}
+      </div>
+    </div>
+  );
 }

@@ -123,84 +123,56 @@ function FeatureMedia({ src }: { src: string }) {
 
 function FeatureCard({
   feature,
-  idx,
-  total,
-  scrollYProgress
+  idx
 }: {
   feature: any,
-  idx: number,
-  total: number,
-  scrollYProgress: MotionValue<number>
+  idx: number
 }) {
-  const topOffset = 100 + (idx * 24);
-
-  // Scale down older cards as new ones cover them
-  const targetScale = 1 - ((total - 1 - idx) * 0.04);
-  const startRange = idx / total;
-  const range = [startRange, 1];
-  const scale = useTransform(scrollYProgress, range, [1, targetScale]);
-
   return (
-    <div
-      className="sticky w-full h-[450px] md:h-[500px]"
-      style={{
-        top: `${topOffset}px`,
-        zIndex: 10 + idx
-      }}
-    >
+    <div className="w-full min-h-[500px] md:min-h-[600px] relative py-12 md:py-0">
       <motion.div
-        style={{ scale }}
-        className="absolute inset-0 shadow-2xl p-[1.5px] rounded-[3rem] md:rounded-[4.5rem] bg-white origin-top"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        className="w-full h-full bg-white rounded-[2.9rem] md:rounded-[4rem] overflow-hidden flex flex-col md:flex-row relative z-10 border border-zinc-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
       >
-        {/* Animated Border per card */}
-        <motion.div
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 rounded-[3rem] md:rounded-[4.5rem]"
-          style={{
-            background: "linear-gradient(135deg, #B597FF, #38E3FF, #B597FF, #38E3FF)",
-            backgroundSize: "400% 400%",
-          }}
-        />
-
-        <div className="w-full h-full bg-white rounded-[2.9rem] md:rounded-[4.4rem] overflow-hidden flex flex-col md:flex-row relative z-10 shadow-inner">
-          <div className="flex-1 p-8 md:p-16 flex flex-col justify-center">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 md:w-16 h-16 relative shrink-0">
-                  <img src={feature.asset} alt="" className="w-full h-full object-contain" />
-                </div>
-                <h3 className="text-3xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
-                  {feature.title}
-                </h3>
-              </div>
-              <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
-                {feature.desc}
-              </p>
-              <button
-                onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                className="mt-8 px-8 py-4 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-base transition-all w-max flex items-center gap-2 group shadow-2xl shadow-zinc-200"
-              >
-                Potencializar com IA
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+        <div className="flex-1 p-8 md:p-20 flex flex-col justify-center">
+          <div className="flex flex-col gap-8">
+            <div className="w-16 h-16 md:w-20 md:h-20 relative shrink-0 mb-2">
+              <img src={feature.asset} alt="" className="w-full h-full object-contain drop-shadow-xl" />
             </div>
+            <h3 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 leading-[1.1]">
+              {feature.title}
+            </h3>
+            <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
+              {feature.desc}
+            </p>
+            <button
+              onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              className="mt-6 px-8 py-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-lg transition-all w-max flex items-center gap-2 group shadow-2xl shadow-zinc-200"
+            >
+              Potencializar com IA
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
-          <div className="flex-1 h-[320px] md:h-full relative overflow-hidden bg-white p-3 md:p-5">
-            <div className={`w-full h-full rounded-[2.2rem] md:rounded-[3.2rem] overflow-hidden border border-zinc-50 relative ${feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil"
-                ? "bg-[#B597FF]"
-                : "bg-zinc-100"
-              }`}>
-              {feature.title === "Escala Sem Aumentar Custos" ? (
-                <SalesNotification />
-              ) : feature.title === "Controle Absoluto do Funil" ? (
-                <FunnelAnimation />
-              ) : feature.title === "Qualificação Cirúrgica" ? (
-                <WhatsAppQualifyAnimation />
-              ) : (
-                <FeatureMedia src={feature.video} />
-              )}
-            </div>
+        </div>
+        
+        <div className="flex-1 min-h-[400px] md:min-h-full relative overflow-hidden bg-white p-4 md:p-6 flex items-center justify-center">
+          <div className={`w-full h-full min-h-[400px] rounded-[2rem] md:rounded-[3rem] overflow-hidden relative shadow-inner flex items-center justify-center ${
+              feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil" || feature.title === "Qualificação Cirúrgica"
+              ? "bg-[#B597FF]"
+              : "bg-zinc-100"
+            }`}>
+            {feature.title === "Escala Sem Aumentar Custos" ? (
+              <SalesNotification />
+            ) : feature.title === "Controle Absoluto do Funil" ? (
+              <FunnelAnimation />
+            ) : feature.title === "Qualificação Cirúrgica" ? (
+              <WhatsAppQualifyAnimation />
+            ) : (
+              <FeatureMedia src={feature.video} />
+            )}
           </div>
         </div>
       </motion.div>
@@ -209,17 +181,11 @@ function FeatureCard({
 }
 
 export function Features() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
   return (
-    <section className="w-full bg-white py-24 relative px-4 md:px-8 section-to-blur">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
+      <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <div className="max-w-3xl mb-24 text-center mx-auto">
+        <div className="max-w-3xl mb-32 text-center mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -240,22 +206,20 @@ export function Features() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900 leading-[1.1] text-center"
+            className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
           >
             A inteligência que seu <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">comercial merece.</span>
           </motion.h2>
         </div>
 
-        {/* Native CSS Sticky Stacking Deck */}
-        <div ref={containerRef} className="relative w-full max-w-6xl mx-auto flex flex-col gap-y-[40vh] pb-[10vh]">
+        {/* Standard Flow Layout */}
+        <div className="relative w-full flex flex-col gap-y-24 md:gap-y-32">
           {features.map((feature, idx) => (
             <FeatureCard
               key={idx}
               feature={feature}
               idx={idx}
-              total={features.length}
-              scrollYProgress={scrollYProgress}
             />
           ))}
         </div>
