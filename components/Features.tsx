@@ -34,51 +34,6 @@ const features = [
   }
 ];
 
-const gridFeatures = [
-  {
-    title: "Integrações",
-    desc: "Conecte sua IA com CRM, WhatsApp e ferramentas que você já usa.",
-    icon: <Link className="w-5 h-5" />,
-    image: "/abstract_3d_shape_2_1776947904190.png",
-    chip: "Conectividade Total"
-  },
-  {
-    title: "Multilíngue (+50)",
-    desc: "Sua IA atende em mais de 50 idiomas com fluência nativa.",
-    icon: <Globe className="w-5 h-5" />,
-    image: "/abstract_3d_shape_3_1776947924614.png",
-    chip: "Escala Global"
-  },
-  {
-    title: "Onboarding Express",
-    desc: "Processo de implementação guiado para rodar em menos de 48h.",
-    icon: <Zap className="w-5 h-5" />,
-    image: "/abstract_3d_shape_1_1776947879938.png",
-    chip: "Foco no ROI"
-  },
-  {
-    title: "Segurança Total",
-    desc: "Dados criptografados e conformidade rigorosa com a LGPD.",
-    icon: <ShieldCheck className="w-5 h-5" />,
-    image: "/abstract_3d_shape_2_1776947904190.png",
-    chip: "Privacy First"
-  },
-  {
-    title: "Time de Sucesso",
-    desc: "Especialistas focados em maximizar seu ROI 24h por dia.",
-    icon: <Headphones className="w-5 h-5" />,
-    image: "/abstract_3d_shape_3_1776947924614.png",
-    chip: "Suporte 24/7"
-  },
-  {
-    title: "Modelos Topo",
-    desc: "Usamos os LLMs mais potentes do mercado (GPT-4 / Claude).",
-    icon: <Cpu className="w-5 h-5" />,
-    image: "/abstract_3d_shape_1_1776947879938.png",
-    chip: "Ultra Inteligência"
-  }
-];
-
 function FeatureMedia({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -125,7 +80,7 @@ function FeatureCard({
   feature,
   idx
 }: {
-  feature: any,
+  feature: { title: string, desc: string, asset: string, video: string },
   idx: number
 }) {
   return (

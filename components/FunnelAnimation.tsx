@@ -22,15 +22,6 @@ const avatars = [
   "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces"
 ];
 
-const cardColors = [
-  "bg-blue-100 border-blue-200 text-blue-700",
-  "bg-emerald-100 border-emerald-200 text-emerald-700",
-  "bg-amber-100 border-amber-200 text-amber-700",
-  "bg-rose-100 border-rose-200 text-rose-700",
-  "bg-indigo-100 border-indigo-200 text-indigo-700",
-  "bg-cyan-100 border-cyan-200 text-cyan-700"
-];
-
 export function FunnelAnimation() {
   const [leads, setLeads] = useState<Lead[]>([]);
 
