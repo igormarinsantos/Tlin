@@ -122,7 +122,7 @@ export function Hero() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#0c0d0d] leading-[1.4] text-center w-full mb-8 min-h-[3em]">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-4">
             {[0, 1].map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
               const globalLineStart = lineIdx === 0 ? 0 : allChars.filter(x => x.line === 0).length;

@@ -12,6 +12,7 @@ import { GlobalBackground } from "@/components/GlobalBackground";
 
 import { Features } from "@/components/Features";
 import { TextReveal } from "@/components/TextReveal";
+import { DividerBackground } from "@/components/ui/background-snippets";
 
 export default function Home() {
   return (
@@ -27,6 +28,11 @@ export default function Home() {
         {/* CORE CAPABILITIES */}
         <div id="features">
           <Features />
+        </div>
+
+        {/* SECTION DIVIDER */}
+        <div className="relative h-24 md:h-32 w-full overflow-hidden">
+          <DividerBackground />
         </div>
 
         {/* IMPACT / URGENCY (The New ROI Simulator) */}

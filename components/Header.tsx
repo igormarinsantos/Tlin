@@ -155,7 +155,7 @@ function NavLinks() {
 
       <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Simulador</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Preços</a>
-      <a href="#faq" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">FAQ</a>
+      <a href="#faq" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Dúvidas</a>
     </nav>
   );
 }

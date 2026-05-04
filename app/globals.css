@@ -57,6 +57,15 @@ body {
   scrollbar-color: #E4E4E7 transparent;
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 
 @keyframes abstract-glow {
   0% { background-position: 0% 50%; }

@@ -209,7 +209,7 @@ export function Pricing() {
        </motion.div>
 
        <div className="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
              <div className={`transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
                 <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
                   <motion.div
@@ -227,32 +227,32 @@ export function Pricing() {
                 </h2>
              </div>
              
-             <div className={`flex flex-col items-center justify-center gap-4 mt-8 transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
-                <div className="relative bg-zinc-100/80 p-1.5 rounded-full flex items-center gap-2 border border-zinc-200/50 shadow-inner">
+             <div className={`flex flex-col items-center justify-center gap-4 mt-6 transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
+                <div className="relative bg-zinc-100/50 p-1 rounded-full flex items-center border border-zinc-200 w-[280px]">
                    {/* Sliding Background */}
                    <motion.div 
-                      className="absolute top-1.5 bottom-1.5 left-1.5 rounded-full bg-white shadow-md z-0"
+                      className="absolute top-1 bottom-1 left-1 rounded-full bg-white border border-zinc-200/50 z-0"
                       initial={false}
                       animate={{ 
                         x: isAnnual ? "100%" : "0%",
-                        width: isAnnual ? "calc(50% - 1.5px)" : "calc(50% - 1.5px)"
                       }}
+                      style={{ width: "calc(50% - 4px)" }}
                       transition={{ type: "spring", stiffness: 400, damping: 35 }}
                    />
                    
                    <button 
                      onClick={() => setIsAnnual(false)}
-                     className={`relative z-10 px-8 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
+                     className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
                      Mensal
                    </button>
                    
                    <button 
                      onClick={() => setIsAnnual(true)}
-                     className={`relative z-10 px-8 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 flex items-center gap-2 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
+                     className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 flex items-center justify-center gap-2 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
                      Anual
-                     <span className={`text-[10px] font-black px-2 py-0.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-[#B597FF] text-white shadow-lg shadow-[#B597FF]/20' : 'bg-white text-[#B597FF] border border-[#B597FF]/20'}`}>
+                     <span className={`text-[10px] font-black px-2 py-0.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-[#B597FF] text-white' : 'bg-white text-[#B597FF] border border-[#B597FF]/20'}`}>
                        -20%
                      </span>
                    </button>
@@ -262,7 +262,7 @@ export function Pricing() {
 
           {/* Offer Bar moved to LiaPopup globally */}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
              {plans.map((plan, idx) => {
                const priceToShow = isAnnual ? plan.priceAnnual : plan.priceMonthly;
                const isHovered = hoveredIndex === idx;

@@ -75,10 +75,14 @@ export function Faq() {
                           {faq.q}
                        </span>
                        <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-[#B597FF] text-white' : 'text-zinc-400 group-hover/btn:text-zinc-600 bg-zinc-100'}`}>
-                          <div className="relative w-3 h-3">
+                          <motion.div 
+                            animate={{ rotate: isOpen ? 45 : 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="relative w-3 h-3"
+                          >
                             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-current -translate-y-1/2 rounded-full" />
-                            <div className={`absolute top-0 left-1/2 w-[2px] h-full bg-current -translate-x-1/2 rounded-full transition-transform duration-300 ${isOpen ? 'scale-y-0' : 'scale-y-100'}`} />
-                          </div>
+                            <div className="absolute top-0 left-1/2 w-[2px] h-full bg-current -translate-x-1/2 rounded-full" />
+                          </motion.div>
                        </div>
                     </button>
 

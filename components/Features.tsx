@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, MotionValue, useMotionValue, useSpring } from "framer-motion";
 import { Play, Pause, ChevronLeft, ChevronRight, Link, Globe, Zap, ShieldCheck, Headphones, Cpu, ArrowRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { SalesNotification } from "./SalesNotification";
 import { FunnelAnimation } from "./FunnelAnimation";
 import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
+import { ObjectionAnimation } from "./ObjectionAnimation";
 
 const features = [
   {
@@ -83,6 +84,12 @@ function FeatureCard({
   feature: { title: string, desc: string, asset: string, video: string },
   idx: number
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
+  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
+
   return (
     <div className="w-full min-h-[500px] md:min-h-[600px] relative py-12 md:py-0">
       <motion.div
@@ -90,44 +97,99 @@ function FeatureCard({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="w-full h-full bg-white rounded-[2.9rem] md:rounded-[4rem] overflow-hidden flex flex-col md:flex-row relative z-10 border border-zinc-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.05)]"
+        className={`w-full h-full overflow-hidden flex flex-col relative z-10 ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
       >
-        <div className="flex-1 p-8 md:p-20 flex flex-col justify-center">
+        <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
           <div className="flex flex-col gap-8">
-            <div className="w-16 h-16 md:w-20 md:h-20 relative shrink-0 mb-2">
-              <img src={feature.asset} alt="" className="w-full h-full object-contain drop-shadow-xl" />
-            </div>
-            <h3 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 leading-[1.1]">
-              {feature.title}
+            <h3 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.1]">
+              <img src={feature.asset} alt="" className="inline-block w-12 h-12 md:w-16 md:h-16 object-contain mr-4 md:mr-6 align-middle" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
+                {feature.title}
+              </span>
             </h3>
             <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
               {feature.desc}
             </p>
-            <button
-              onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="mt-6 px-8 py-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-lg transition-all w-max flex items-center gap-2 group shadow-2xl shadow-zinc-200"
-            >
-              Potencializar com IA
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-            </button>
+
+            <div className="relative w-max mt-6">
+              <button
+                onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  mouseX.set(e.clientX - rect.left);
+                  mouseY.set(e.clientY - rect.top);
+                  setIsHovered(true);
+                }}
+                onMouseLeave={() => setIsHovered(false)}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  mouseX.set(e.clientX - rect.left);
+                  mouseY.set(e.clientY - rect.top);
+                }}
+                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-max"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-[-150%] opacity-100"
+                  style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+                />
+                <div className="relative px-8 py-5 rounded-full font-bold text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+                  <span className="relative z-10">Potencializar com IA</span>
+                  <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
+                </div>
+              </button>
+
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                    style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
+                  >
+                    <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-[-150%]"
+                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
+                      />
+                      <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
+                        <span className="text-[10px] font-bold tracking-wide leading-none">Demo 100% grátis</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-        
-        <div className="flex-1 min-h-[400px] md:min-h-full relative overflow-hidden bg-white p-4 md:p-6 flex items-center justify-center">
-          <div className={`w-full h-full min-h-[400px] rounded-[2rem] md:rounded-[3rem] overflow-hidden relative shadow-inner flex items-center justify-center ${
-              feature.title === "Escala Sem Aumentar Custos" || feature.title === "Controle Absoluto do Funil" || feature.title === "Qualificação Cirúrgica"
-              ? "bg-[#B597FF]"
-              : "bg-zinc-100"
-            }`}>
-            {feature.title === "Escala Sem Aumentar Custos" ? (
-              <SalesNotification />
-            ) : feature.title === "Controle Absoluto do Funil" ? (
-              <FunnelAnimation />
-            ) : feature.title === "Qualificação Cirúrgica" ? (
-              <WhatsAppQualifyAnimation />
-            ) : (
-              <FeatureMedia src={feature.video} />
-            )}
+
+        <div className="flex-1 min-h-[400px] md:min-h-full relative overflow-hidden p-4 md:p-6 flex items-center justify-center">
+          <div className="w-full h-full min-h-[400px] rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-[-100%] opacity-100"
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+            />
+            <div className="absolute inset-[2px] bg-[#F8F6FF] rounded-[1.9rem] md:rounded-[2.9rem] z-0" />
+
+            <div className="relative z-10 w-full h-full flex items-center justify-center">
+              {feature.title === "Agente Focado em Conversão" ? (
+                <ObjectionAnimation />
+              ) : feature.title === "Escala Sem Aumentar Custos" ? (
+                <SalesNotification />
+              ) : feature.title === "Controle Absoluto do Funil" ? (
+                <FunnelAnimation />
+              ) : feature.title === "Qualificação Cirúrgica" ? (
+                <WhatsAppQualifyAnimation />
+              ) : (
+                <FeatureMedia src={feature.video} />
+              )}
+            </div>
           </div>
         </div>
       </motion.div>

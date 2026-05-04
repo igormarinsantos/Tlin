@@ -18,7 +18,7 @@ export function TopBanner() {
         "rgba(181,151,255,0.2)",
         "rgba(56,227,255,0.2)",
       ]}
-      className="border-b border-zinc-100"
+      className=""
     >
       <div 
         onClick={handleOpenChat}

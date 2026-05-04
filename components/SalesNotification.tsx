@@ -44,37 +44,16 @@ export function SalesNotification() {
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-end p-6 gap-2 overflow-hidden pointer-events-none">
-      {/* Abstract Animated Lilac Blobs */}
-      <div className="absolute inset-0 z-0 bg-[#B597FF]">
-        <motion.div 
-          animate={{ 
-            x: [0, 50, -50, 0],
-            y: [0, -30, 30, 0],
-            scale: [1, 1.2, 0.9, 1]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] rounded-full bg-[#D4C4FF] opacity-40 blur-[80px]" 
-        />
-        <motion.div 
-          animate={{ 
-            x: [0, -40, 40, 0],
-            y: [0, 40, -40, 0],
-            scale: [1, 0.8, 1.1, 1]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] rounded-full bg-[#9061FF] opacity-30 blur-[100px]" 
-        />
-        <motion.div 
-          animate={{ 
-            opacity: [0.2, 0.5, 0.2]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full bg-white opacity-20 blur-[60px]" 
-        />
-      </div>
-      
-      {/* Clean Overlay (No Blur) */}
-      <div className="absolute inset-0 bg-white/5 z-[1]" />
+      {/* Background Animated Blob (Subtle) */}
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          x: [0, 50, 0],
+          y: [0, -30, 0],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[500px] h-[500px] bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 blur-[100px] rounded-full pointer-events-none"
+      />
       
       <AnimatePresence mode="popLayout" initial={false}>
         {notifications.map((notif, index) => {
@@ -96,7 +75,7 @@ export function SalesNotification() {
                 stiffness: 120, 
                 damping: 20,
               }}
-              className="w-full max-w-[320px] bg-white/30 backdrop-blur-2xl rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.05)] border border-white/40 flex items-start gap-3 origin-bottom relative z-10 hover:bg-white/40 transition-colors duration-300"
+              className="w-full max-w-[320px] bg-white rounded-2xl p-4 border border-zinc-100 flex items-start gap-3 origin-bottom relative z-10 hover:bg-zinc-50 transition-colors duration-300"
             >
               {/* iOS Style Avatar with App Icon */}
               <div className="relative shrink-0">
@@ -130,8 +109,6 @@ export function SalesNotification() {
         })}
       </AnimatePresence>
       
-      {/* Decorative background glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-t from-[#B597FF]/30 via-[#B597FF]/10 to-transparent z-0 pointer-events-none" />
     </div>
   );
 }
