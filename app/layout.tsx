@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Header } from "@/components/Header";
 import { TopBanner } from "@/components/TopBanner";
+import { LanguageProvider } from "@/lib/LanguageContext";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -37,9 +38,11 @@ export default function RootLayout({
       className={`${dmSans.variable} h-full antialiased scroll-smooth`}
     >
       <body className={`${dmSans.className} min-h-full flex flex-col`}>
-        <TopBanner />
-        <Header />
-        {children}
+        <LanguageProvider>
+          <TopBanner />
+          <Header />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

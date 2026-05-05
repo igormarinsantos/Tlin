@@ -4,10 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Bot, MessageSquare, Zap, Target, BookOpen, Newspaper, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
+import { Lang } from "@/lib/translations";
 
 function LanguageSelector() {
+  const { lang, setLang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [lang, setLang] = useState('PT');
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ function LanguageSelector() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const languages = [
+  const languages: { code: Lang; flag: string; name: string }[] = [
     { code: 'PT', flag: '🇧🇷', name: 'Português' },
     { code: 'EN', flag: '🇺🇸', name: 'English' },
     { code: 'ES', flag: '🇪🇸', name: 'Español' },
@@ -66,23 +68,12 @@ function LanguageSelector() {
 }
 
 function MegaMenu() {
-  const menuItems = [
-    {
-      title: "Agentes de IA",
-      links: [
-        { name: "Vendas e Conversão", desc: "IA treinada para fechar negócios.", icon: <Target className="w-5 h-5" /> },
-        { name: "Qualificação de Leads", desc: "Filtre os melhores leads no WhatsApp.", icon: <Bot className="w-5 h-5" /> },
-        { name: "Suporte 24/7", desc: "Atendimento imediato e humano.", icon: <MessageSquare className="w-5 h-5" /> },
-      ]
-    },
-    {
-      title: "Recursos",
-      links: [
-        { name: "Blog da Tlin", desc: "Novidades e estratégias de IA.", icon: <Newspaper className="w-5 h-5" /> },
-        { name: "Documentação", desc: "Guia completo de integração.", icon: <BookOpen className="w-5 h-5" /> },
-        { name: "API Reference", desc: "Para desenvolvedores e automações.", icon: <Zap className="w-5 h-5" /> },
-      ]
-    }
+  const { t } = useLanguage();
+  const m = t.nav.megaMenu;
+  const icons = [<Target className="w-5 h-5" />, <Bot className="w-5 h-5" />, <MessageSquare className="w-5 h-5" />, <Newspaper className="w-5 h-5" />, <BookOpen className="w-5 h-5" />, <Zap className="w-5 h-5" />];
+  const cats = [
+    { title: m.cat1, links: m.links.slice(0, 3), iconStart: 0 },
+    { title: m.cat2, links: m.links.slice(3, 6), iconStart: 3 },
   ];
 
   return (
@@ -94,18 +85,18 @@ function MegaMenu() {
       className="absolute top-full left-1/2 -translate-x-1/2 mt-4 p-8 bg-white border border-zinc-200/50 rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] w-[600px] z-[100]"
     >
       <div className="grid grid-cols-2 gap-10">
-        {menuItems.map((category) => (
+        {cats.map((category, ci) => (
           <div key={category.title}>
             <h4 className="text-[11px] font-bold tracking-wide text-zinc-400 mb-6 px-4">{category.title}</h4>
             <div className="flex flex-col gap-2">
-              {category.links.map((link) => (
+              {category.links.map((link, li) => (
                 <a 
                   key={link.name} 
                   href="#" 
                   className="flex items-start gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all group/item"
                 >
                   <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-[#B597FF] group-hover/item:bg-[#B597FF] group-hover/item:text-white transition-all shadow-sm">
-                    {link.icon}
+                    {icons[category.iconStart + li]}
                   </div>
                   <div>
                     <div className="text-sm font-bold text-zinc-900 mb-0.5 flex items-center gap-1">
@@ -121,14 +112,15 @@ function MegaMenu() {
         ))}
       </div>
       <div className="mt-8 pt-8 border-t border-zinc-100 flex items-center justify-between px-4">
-        <p className="text-xs font-medium text-zinc-400">Pronto para transformar sua operação?</p>
-        <a href="#pricing" className="text-xs font-bold text-[#B597FF] hover:underline transition-all">Ver todos os planos →</a>
+        <p className="text-xs font-medium text-zinc-400">{m.footer}</p>
+        <a href="#pricing" className="text-xs font-bold text-[#B597FF] hover:underline transition-all">{m.footerCta}</a>
       </div>
     </motion.div>
   );
 }
 
 function NavLinks() {
+  const { t } = useLanguage();
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
   return (
@@ -139,14 +131,13 @@ function NavLinks() {
         onMouseLeave={() => setHoveredLink(null)}
       >
         <div className="flex items-center gap-1">
-          Produto
+          {t.nav.produto}
           <svg className={`w-3 h-3 transition-transform duration-300 ${hoveredLink === 'produto' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
         </div>
         
         <AnimatePresence>
           {hoveredLink === 'produto' && (
             <>
-              {/* Invisible bridge to prevent menu from closing when moving mouse from link to menu */}
               <div className="absolute top-full left-0 w-full h-4" />
               <MegaMenu />
             </>
@@ -154,8 +145,8 @@ function NavLinks() {
         </AnimatePresence>
       </div>
 
-      <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Recursos</a>
-      <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Preços</a>
+      <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
+      <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.precos}</a>
     </nav>
   );
 }
@@ -164,6 +155,7 @@ function NavLinks() {
  * Animated Button for Header (matches Hero design)
  */
 function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -195,7 +187,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
           style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
         />
         <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[12px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>
-          <span className="relative z-10">Começar agora</span>
+          <span className="relative z-10">{t.nav.comecar}</span>
           <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
         </div>
@@ -210,7 +202,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
             style={{ position: "absolute", left: springX, top: springY, x: "15px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
             className="px-2 py-0.5 bg-zinc-950 rounded-full border border-white/10 shadow-xl whitespace-nowrap"
           >
-            <span className="text-[9px] font-bold text-white tracking-wide leading-none">Demo 100% grátis</span>
+            <span className="text-[9px] font-bold text-white tracking-wide leading-none">{t.hero.ctaBadge}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -219,6 +211,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 }
 
 export function Header() {
+  const { t } = useLanguage();
   const { scrollY } = useScroll();
   const [showFloating, setShowFloating] = useState(false);
 
@@ -251,7 +244,7 @@ export function Header() {
           <div className="flex items-center gap-2">
              <LanguageSelector />
              <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
-                Entrar
+                {t.nav.entrar}
              </a>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
