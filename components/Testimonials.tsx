@@ -5,39 +5,32 @@ import { useState } from "react";
 
 const baseTestimonials = [
   {
-    name: "Jimmy Knowles",
-    role: "Global Head of Experiential",
-    image: "/testimonials/ceo.png",
-    text: "A Tlin revolucionou como lidamos com leads qualificados. O agente de IA não apenas responde, ele vende com o tom de voz exato da nossa marca. Triplicamos o agendamento em 30 dias.",
-    company: "Canva"
+    name: "Eduardo Silva",
+    role: "CEO & Founder",
+    image: "/EDUARDO.png",
+    text: "A Tlin revolucionou como lidamos com [leads qualificados]. O agente de IA não apenas responde, ele [vende com o tom de voz exato] da nossa marca. Triplicamos o agendamento em [30 dias].",
+    company: "Scale Digital"
   },
   {
-    name: "Refik Anadol",
-    role: "Media Artist, AI Art Pioneer",
-    image: "/testimonials/director.png",
-    text: "A integração cognitiva da Tlin é o que existe de mais próximo de um atendimento humano impecável. A capacidade de contornar objeções complexas em tempo real é simplesmente brilhante.",
-    company: "Studio Anadol"
+    name: "Luana Santos",
+    role: "Head of Growth",
+    image: "/LUANA.png",
+    text: "A integração cognitiva da Tlin é o que existe de mais próximo de um [atendimento humano impecável]. A capacidade de [contornar objeções complexas] em tempo real é simplesmente brilhante.",
+    company: "Glow Media"
   },
   {
-    name: "Sofia Marques",
-    role: "Co-Founder & CEO",
-    image: "/testimonials/founder.png",
-    text: "Finalmente uma solução que resolve o funil no WhatsApp sem parecer um robô travado. Escalamos nossa operação de vendas internacional sem precisar contratar mais 10 SDRs.",
+    name: "Miriam Souza",
+    role: "Diretora de Operações",
+    image: "/MIRIAM.png",
+    text: "Finalmente uma solução que resolve o [funil no WhatsApp] sem parecer um robô travado. Escalamos nossa operação de vendas internacional [sem precisar contratar mais 10 SDRs].",
     company: "Horizon Tech"
   },
   {
-    name: "Lucas Rivera",
+    name: "Luiz Ferreira",
     role: "VP of Operations",
-    image: "/testimonials/ceo.png",
-    text: "Implementamos em 48 horas e o ROI foi instantâneo. A precisão técnica e a naturalidade da conversa superaram todas as nossas expectativas de automação.",
+    image: "/LUIZ.png",
+    text: "Implementamos em [48 horas] e o [ROI foi instantâneo]. A precisão técnica e a naturalidade da conversa superaram todas as nossas expectativas de automação.",
     company: "Zapier"
-  },
-  {
-    name: "Amanda Chen",
-    role: "Director of Customer Success",
-    image: "/testimonials/founder.png",
-    text: "O suporte 24/7 da Tlin permitiu que nossa equipe focasse em casos complexos enquanto a IA resolve 90% das dúvidas rotineiras de novos leads.",
-    company: "Shopify"
   }
 ];
 
@@ -49,7 +42,7 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
 
   return (
     <motion.div 
-      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 border border-white/10 transition-colors duration-500 ${isHovered ? 'bg-[#B597FF] border-[#B597FF]' : 'bg-[#0c0d0d]'}`}
+      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 transition-colors duration-500 ${isHovered ? 'bg-[#B597FF]' : 'bg-[#0c0d0d]'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ shadow: "0_50px_80px_-20px_rgba(181,151,255,0.3)" }}
@@ -83,14 +76,15 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
             exit={{ opacity: 0, y: -10 }}
             className="absolute inset-0 p-8 md:p-12 flex flex-col items-center text-center justify-center"
           >
-             <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden mb-6 md:mb-8 shadow-lg border-2 border-white/30">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-             </div>
-
-             <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-2">{item.name}</h3>
-             <p className="text-white/60 text-[10px] font-bold tracking-wide mb-6 md:mb-8">{item.role}</p>
-             <p className="text-white/90 font-medium leading-relaxed text-base md:text-lg">
-                "{item.text}"
+             <h3 className="text-2xl md:text-4xl font-black text-white tracking-tighter mb-2">{item.name}</h3>
+             <p className="text-white/40 text-[10px] font-bold tracking-wide mb-8 md:mb-12 uppercase">{item.role}</p>
+             <p className="text-white font-medium leading-relaxed text-lg md:text-2xl tracking-tight">
+                "{item.text.split(/(\[.*?\])/).map((part, i) => {
+                  if (part.startsWith('[') && part.endsWith(']')) {
+                    return <span key={i} className="text-[#4C1D95] font-black">{part.slice(1, -1)}</span>;
+                  }
+                  return part;
+                })}"
              </p>
           </motion.div>
         )}

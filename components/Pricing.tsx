@@ -3,8 +3,8 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useState, useEffect } from "react";
 import { animate } from "framer-motion";
-import confetti from "canvas-confetti";
 import { useOfferTimer } from "@/lib/useOfferTimer";
+// canvas-confetti is dynamically imported only when the user toggles to annual billing
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -140,32 +140,33 @@ export function Pricing() {
       const animationEnd = Date.now() + duration;
       const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-      const interval: any = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) return clearInterval(interval);
+      // Dynamically import confetti only when needed — keeps it out of the initial bundle
+      import('canvas-confetti').then(({ default: confetti }) => {
+        const interval: any = setInterval(function() {
+          const timeLeft = animationEnd - Date.now();
+          if (timeLeft <= 0) return clearInterval(interval);
 
-        const particleCount = 50 * (timeLeft / duration);
-        const defaults = { 
-          startVelocity: 30, 
-          spread: 360, 
-          ticks: 60, 
-          zIndex: 100, 
-          colors: ["#B597FF", "#38E3FF"] 
-        };
+          const particleCount = 50 * (timeLeft / duration);
+          const defaults = { 
+            startVelocity: 30, 
+            spread: 360, 
+            ticks: 60, 
+            zIndex: 100, 
+            colors: ["#B597FF", "#38E3FF"] 
+          };
 
-        confetti({ 
-          ...defaults, 
-          particleCount, 
-          origin: { x: randomInRange(0.1, 0.3), y: 0.5 } 
-        });
-        confetti({ 
-          ...defaults, 
-          particleCount, 
-          origin: { x: randomInRange(0.7, 0.9), y: 0.5 } 
-        });
-      }, 250);
-
-      return () => clearInterval(interval);
+          confetti({ 
+            ...defaults, 
+            particleCount, 
+            origin: { x: randomInRange(0.1, 0.3), y: 0.5 } 
+          });
+          confetti({ 
+            ...defaults, 
+            particleCount, 
+            origin: { x: randomInRange(0.7, 0.9), y: 0.5 } 
+          });
+        }, 250);
+      });
     }
   }, [isAnnual]);
 
@@ -187,26 +188,7 @@ export function Pricing() {
       onMouseMove={handleMouseMove}
       className="w-full py-24 relative overflow-hidden bg-white"
     >
-       {/* Cursor Badge with Timer */}
-       <motion.div
-         className="absolute z-[100] pointer-events-none hidden md:block"
-         style={{
-           x: springX,
-           y: springY,
-           translateX: "-50%",
-           translateY: "-50%",
-         }}
-         animate={{
-           opacity: hoveredIndex !== null ? 1 : 0,
-           scale: hoveredIndex !== null ? 1 : 0.5,
-         }}
-       >
-          <div className="cursor-badge flex items-center gap-3">
-             <span className="opacity-80">✨ Escolha este plano!</span>
-             <div className="w-px h-3 bg-white/20" />
-             <span className="font-mono text-[11px] text-white/90">{formattedTime}</span>
-          </div>
-       </motion.div>
+
 
        <div className="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center mb-12">

@@ -198,6 +198,7 @@ export function FooterBanner() {
           muted
           loop
           playsInline
+          preload="none"
           className="absolute inset-0 w-full h-full object-cover opacity-100 z-0"
         >
           <source src="/robocamera.mp4" type="video/mp4" />
@@ -229,21 +230,53 @@ export function FooterBanner() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-5xl md:text-8xl font-bold tracking-tight text-white mb-12 leading-tight"
+              className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-tight"
            >
-              Receba uma demo gratuita
+              Pronto para escalar<br/>sua operação?
            </motion.h2>
 
+           <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-white mb-12 max-w-2xl"
+           >
+              Agende uma demonstração gratuita e descubra como nossos agentes de IA podem automatizar suas vendas no WhatsApp 24/7.
+           </motion.p>
 
-
-           <div className="flex flex-col md:flex-row items-center gap-6 pointer-events-auto">
-              <a href="#pricing" className="px-10 py-4 rounded-full bg-white text-[#0c0d0d] font-bold text-sm hover:bg-zinc-50 transition-all">
-                 Quero meu Agente Tlin
+           <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col md:flex-row items-center gap-6 pointer-events-auto"
+           >
+              <a 
+                href="#pricing"
+                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-[-150%] opacity-100 transition-opacity"
+                  style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+                />
+                <div className="relative px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">
+                  <span className="relative z-10">Quero meu Agente Tlin</span>
+                  <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
+                </div>
               </a>
-              <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="px-10 py-4 rounded-full border border-white text-white font-bold text-sm hover:bg-white/10 transition-all">
+              <a 
+                href="https://wa.me/5511916248604" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="px-10 py-4 rounded-full border border-white/20 bg-white/5 text-white font-bold text-[14px] hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm"
+              >
                  Falar com vendas
               </a>
-           </div>
+           </motion.div>
         </div>
       </div>
     </section>

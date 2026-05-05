@@ -91,10 +91,8 @@ export function LiaPopup() {
               {messages.length === 0 ? (
                 <>
                   <div className="flex flex-col items-center mt-6 mb-6">
-                    <div className="w-12 h-12 mb-3 text-[#B597FF]">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                      </svg>
+                    <div className="w-12 h-12 mb-3 text-[#B597FF] flex items-center justify-center text-4xl">
+                      ✨
                     </div>
                     <h2 className="text-xl font-bold text-[#0c0d0d] mb-1 tracking-tight text-center">Olá 👋 Eu sou a Lia</h2>
                     <p className="text-sm text-zinc-600 font-medium text-center">Sua copiloto comercial. Como posso ajudar?</p>
@@ -203,19 +201,15 @@ export function LiaPopup() {
                 onClick={() => setIsOpen(!isOpen)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="flex items-center bg-[#B597FF] hover:bg-[#a27ef7] text-white rounded-full p-1.5 shadow-xl transition-all border border-white/20 active:scale-95 will-change-transform pr-5"
+                className={`flex items-center h-12 bg-[#B597FF] hover:bg-[#a27ef7] text-white rounded-full shadow-xl transition-all border border-white/20 active:scale-95 animate-in fade-in zoom-in duration-300 ${isOpen ? 'px-8 justify-center min-w-[120px]' : 'px-2 pr-6'}`}
               >
-                <div className="relative shrink-0">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center relative bg-white/20 shadow-inner text-white">
-                    {isOpen ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                    )}
+                {!isOpen && (
+                  <div className="relative shrink-0 pl-2">
+                    <span className="text-lg">✨</span>
                   </div>
-                </div>
-                <motion.div initial={false} animate={{ width: "auto", opacity: 1 }} className="overflow-hidden flex-shrink-0 flex items-center">
-                  <span className="font-bold text-[13px] whitespace-nowrap pl-1 pr-2">
+                )}
+                <motion.div initial={false} animate={{ width: "auto", opacity: 1 }} className="overflow-hidden flex-shrink-0 flex items-center justify-center">
+                  <span className={`font-bold text-[13px] whitespace-nowrap ${isOpen ? 'pl-0' : 'pl-2'}`}>
                     {isOpen ? "Fechar" : "Fale com a Lia"}
                   </span>
                 </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Bot, MessageSquare, Zap, Target, BookOpen, Newspaper, ChevronRight } from "lucide-react";
 
@@ -134,16 +135,16 @@ function NavLinks() {
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
       <div 
         className="relative py-2 px-4 cursor-pointer hover:text-[#0c0d0d] transition-colors"
-        onMouseEnter={() => setHoveredLink('solucoes')}
+        onMouseEnter={() => setHoveredLink('produto')}
         onMouseLeave={() => setHoveredLink(null)}
       >
         <div className="flex items-center gap-1">
-          Soluções
-          <svg className={`w-3 h-3 transition-transform duration-300 ${hoveredLink === 'solucoes' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          Produto
+          <svg className={`w-3 h-3 transition-transform duration-300 ${hoveredLink === 'produto' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
         </div>
         
         <AnimatePresence>
-          {hoveredLink === 'solucoes' && (
+          {hoveredLink === 'produto' && (
             <>
               {/* Invisible bridge to prevent menu from closing when moving mouse from link to menu */}
               <div className="absolute top-full left-0 w-full h-4" />
@@ -153,9 +154,8 @@ function NavLinks() {
         </AnimatePresence>
       </div>
 
-      <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Simulador</a>
+      <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Recursos</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Preços</a>
-      <a href="#faq" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Dúvidas</a>
     </nav>
   );
 }
@@ -236,15 +236,12 @@ export function Header() {
   return (
     <>
       {/* 1. Top Header */}
-      <motion.header 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+      <header 
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2 cursor-pointer">
-             <img src="/Logo%20Horizontal.svg" alt="Tlin Logo" className="h-7 w-auto" />
+             <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
           </div>
 
           <div className="hidden md:block">
@@ -259,7 +256,7 @@ export function Header() {
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* 2. Floating Header */}
       <AnimatePresence>
@@ -274,7 +271,7 @@ export function Header() {
             <div className="pointer-events-auto flex items-center justify-between overflow-hidden bg-white border border-zinc-200 shadow-lg rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
               
               <div className="flex items-center gap-2 cursor-pointer">
-                 <img src="/Logo%20Horizontal.svg" alt="Tlin Logo" className="h-6 w-auto" />
+                 <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
               </div>
 
               <div className="hidden lg:block">

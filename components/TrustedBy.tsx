@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 const logos = [
@@ -41,14 +42,20 @@ export function TrustedBy() {
                 repeat: Infinity, 
                 ease: "linear" 
               }}
+              style={{ willChange: "transform" }}
             >
               {/* Double the logos for seamless loop */}
               {[...logos, ...logos].map((logo, idx) => (
                 <div key={idx} className="shrink-0 flex items-center">
-                  <img 
+                  <Image 
                     src={logo.src} 
-                    alt={logo.name} 
-                    className="h-5 md:h-6 w-auto grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all duration-500 cursor-pointer" 
+                    alt={logo.name}
+                    width={96}
+                    height={24}
+                    className="h-5 md:h-6 w-auto grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all duration-500 cursor-pointer"
+                    style={{ width: 'auto', height: '24px' }}
+                    loading="lazy"
+                    unoptimized
                   />
                 </div>
               ))}

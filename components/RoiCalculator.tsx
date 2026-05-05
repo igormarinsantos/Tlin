@@ -29,17 +29,9 @@ export function RoiCalculator() {
   return (
     <section
       id="roi"
-      className="w-full min-h-[150vh] flex flex-col justify-center pt-[30vh] pb-[45vh] relative bg-[#0c0d0d] overflow-hidden"
+      className="w-full relative bg-black py-16 md:py-24 overflow-hidden"
       style={{ fontFamily: '"DM Sans", sans-serif' }}
     >
-      {/* Seamless white blend top & bottom */}
-      <div className="absolute top-[-250px] left-[-20%] w-[140%] h-[500px] bg-white rounded-[100%] blur-[120px] pointer-events-none z-0 opacity-100">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_100%,#B597FF20,transparent)]"></div>
-      </div>
-      
-      <div className="absolute bottom-[-280px] left-[-20%] w-[140%] h-[600px] bg-white rounded-[100%] blur-[140px] pointer-events-none z-0 opacity-100">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_0%,#B597FF20,transparent)]"></div>
-      </div>
 
       {/* Range thumb styling */}
       <style jsx global>{`
