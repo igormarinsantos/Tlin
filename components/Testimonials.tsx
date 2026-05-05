@@ -42,10 +42,9 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
 
   return (
     <motion.div 
-      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 transition-colors duration-500 ${isHovered ? 'bg-[#B597FF]' : 'bg-[#0c0d0d]'}`}
+      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 transition-all duration-500 ${isHovered ? 'bg-[#B597FF] shadow-[0_50px_80px_-20px_rgba(181,151,255,0.3)]' : 'bg-[#0c0d0d] shadow-none'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ shadow: "0_50px_80px_-20px_rgba(181,151,255,0.3)" }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
       <AnimatePresence>
