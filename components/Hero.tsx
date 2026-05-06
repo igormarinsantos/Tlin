@@ -88,14 +88,30 @@ export function Hero() {
   }, [isInView, phase]);
 
   useEffect(() => {
-    if (phase === "typing" && visibleCount < allChars.length) {
-      const timeout = setTimeout(() => setVisibleCount(v => v + 1), 10);
-      return () => clearTimeout(timeout);
-    } else if (phase === "typing" && visibleCount >= allChars.length) {
-      setPhase("done");
-      setIsFinished(true);
-    }
-  }, [phase, visibleCount, allChars.length]);
+    if (phase !== "typing") return;
+
+    let frameId: number;
+    const CHARS_PER_FRAME = 3; // Reveal 3 chars per rAF tick to reduce task count
+
+    const tick = () => {
+      setVisibleCount((v) => {
+        const next = v + CHARS_PER_FRAME;
+        if (next >= allChars.length) {
+          // All chars revealed — mark done outside render cycle
+          requestAnimationFrame(() => {
+            setPhase("done");
+            setIsFinished(true);
+          });
+          return allChars.length;
+        }
+        frameId = requestAnimationFrame(tick);
+        return next;
+      });
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [phase, allChars.length]);
 
   useEffect(() => {
     if (isFinished) {

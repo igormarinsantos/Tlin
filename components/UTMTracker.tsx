@@ -1,48 +1,76 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { captureUtms, sendUtmToGA, injectUtmsIntoForms } from "@/lib/utm";
 
-/**
- * Inner component that uses useSearchParams (must be wrapped in Suspense).
- */
+/** requestIdleCallback polyfill for Safari */
+const scheduleIdle = (cb: () => void, timeout = 2000) => {
+  if (typeof window === "undefined") return;
+  if ("requestIdleCallback" in window) {
+    (window as Window & typeof globalThis & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void })
+      .requestIdleCallback(cb, { timeout });
+  } else {
+    setTimeout(cb, 200);
+  }
+};
+
 function UTMTrackerInner() {
   const pathname     = usePathname();
   const searchParams = useSearchParams();
+  const observerRef  = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
-    // Capture & persist UTMs on every route change
+    // ── 1. Capture UTMs synchronously (fast, just reads URL + localStorage)
     captureUtms(window.location.search);
 
-    // Give gtag time to initialize before sending events
-    const gaTimer = setTimeout(() => {
+    // ── 2. Send to GA and inject into forms during browser idle time
+    //    This keeps the Main Thread free on initial load.
+    const idleHandle = scheduleIdle(() => {
       sendUtmToGA("utm_capture");
-      injectUtmsIntoForms();
-    }, 800);
-
-    // Also inject on DOM mutations (for dynamically rendered forms)
-    const observer = new MutationObserver(() => {
       injectUtmsIntoForms();
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    // ── 3. MutationObserver: throttled + scoped to avoid long tasks
+    //    Only watches for added <form> nodes, not all subtree mutations.
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    observerRef.current = new MutationObserver((mutations) => {
+      const hasNewForm = mutations.some((m) =>
+        Array.from(m.addedNodes).some(
+          (n) =>
+            n instanceof Element &&
+            (n.tagName === "FORM" || n.querySelector?.("form"))
+        )
+      );
+      if (!hasNewForm) return;
+
+      // Debounce to avoid spamming on rapid DOM changes
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => injectUtmsIntoForms(), 300);
+    });
+
+    observerRef.current.observe(document.body, {
+      childList: true,
+      subtree: false, // ← was 'true', which caused massive observer overhead
+    });
 
     return () => {
-      clearTimeout(gaTimer);
-      observer.disconnect();
+      if (typeof idleHandle === "number") {
+        if ("cancelIdleCallback" in window) {
+          (window as Window & { cancelIdleCallback: (id: number) => void })
+            .cancelIdleCallback(idleHandle);
+        }
+      }
+      if (debounceTimer) clearTimeout(debounceTimer);
+      observerRef.current?.disconnect();
     };
-  // Re-run when pathname or query params change (SPA navigation)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, searchParams.toString()]);
 
   return null;
 }
 
-/**
- * UTMTracker — drop this once in layout.tsx inside <Suspense>.
- * Handles all UTM capture, persistence, and GA4 dispatch automatically.
- */
 export function UTMTracker() {
   return (
     <Suspense fallback={null}>

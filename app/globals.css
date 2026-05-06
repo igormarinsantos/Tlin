@@ -82,10 +82,11 @@ body {
 }
 
 
+/* ── Composited gradient animation: uses transform instead of background-position ── */
 @keyframes abstract-glow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0%   { transform: translateX(0%); }
+  50%  { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
 }
 
 .abstract-highlight {
@@ -101,28 +102,30 @@ body {
   color: transparent !important;
 }
 
-/* Global Pricing Focus Effect */
+/* Global Pricing Focus Effect — use opacity + scale (composited, no filter reflow) */
 .pricing-focus-active .section-to-blur {
-  filter: blur(3px);
-  opacity: 0.8;
-  will-change: filter, opacity;
-  transition: all 0.4s ease-in-out;
+  opacity: 0.4;
+  transform: scale(0.99);
+  will-change: opacity, transform;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  pointer-events: none;
 }
 
 .pricing-focus-active .no-blur {
-  filter: blur(0) !important;
   opacity: 1 !important;
+  transform: none !important;
   z-index: 50;
 }
 
+/* border-flow: animate transform instead of background-position for GPU compositing */
 @keyframes border-flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .animate-border-flow {
-  background-size: 200% 200%;
   animation: border-flow 4s linear infinite;
+  will-change: transform;
 }
 
 .cursor-badge {
