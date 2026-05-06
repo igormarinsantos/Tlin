@@ -17,24 +17,8 @@ export function Footer() {
             <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
           </div>
 
-          <div className="flex gap-20 md:gap-32">
-            <div className="flex flex-col gap-4">
-              <h4 className="text-xs font-bold lowercase tracking-widest text-zinc-400 mb-2">{t.footer.col1}</h4>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_1}</a>
-              <a href="#roi" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_2}</a>
-              <a href="#pricing" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_3}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_4}</a>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <h4 className="text-xs font-bold lowercase tracking-widest text-zinc-400 mb-2">{t.footer.col2}</h4>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_1}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_2}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_3}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_4}</a>
-            </div>
-          </div>
         </div>
+
 
         {/* Huge Brand Text */}
         <div className="relative w-full overflow-hidden mb-20 select-none">
