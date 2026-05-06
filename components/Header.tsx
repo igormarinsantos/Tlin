@@ -140,13 +140,10 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 export function Header() {
   const { scrollY } = useScroll();
   const { t } = useLanguage();
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [showFloating, setShowFloating] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
-    
-    // Floating header logic
     if (latest < 150) {
       setShowFloating(false);
     } else if (latest < previous) {
@@ -154,46 +151,32 @@ export function Header() {
     } else {
       setShowFloating(false);
     }
-
-    // Static header visibility logic (appears only after Hero)
-    if (latest > 600) {
-      setIsHeaderVisible(true);
-    } else {
-      setIsHeaderVisible(false);
-    }
   });
 
   return (
     <>
-      {/* 1. Top Header (Now becomes a fixed persistent header after scroll) */}
-      <AnimatePresence>
-        {isHeaderVisible && (
-          <motion.header 
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-md border-b border-zinc-100 py-3 px-4 md:px-6 shadow-sm"
-          >
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2 cursor-pointer">
-                 <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
-              </div>
+      {/* 1. Top Header */}
+      <header 
+        className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
+      >
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2 cursor-pointer">
+             <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
+          </div>
 
-              <div className="hidden md:block">
-                <NavLinks />
-              </div>
+          <div className="hidden md:block">
+            <NavLinks />
+          </div>
 
-              <div className="flex items-center gap-2">
-                 <LanguageSelector />
-                 <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
-                    {t.nav.login}
-                 </a>
-                 <HeaderCTA padding="px-5 py-2.5" />
-              </div>
-            </div>
-          </motion.header>
-        )}
-      </AnimatePresence>
+          <div className="flex items-center gap-2">
+             <LanguageSelector />
+             <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
+                {t.nav.login}
+             </a>
+             <HeaderCTA padding="px-5 py-2.5" />
+          </div>
+        </div>
+      </header>
 
       {/* 2. Floating Header */}
       <AnimatePresence>

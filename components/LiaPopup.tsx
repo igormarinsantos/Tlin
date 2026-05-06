@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -13,25 +13,28 @@ export function LiaPopup() {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 400) {
-      setCanShow(true);
-    } else {
-      setCanShow(false);
-    }
-  });
+  const { scrollY } = useScroll();
 
   useEffect(() => {
     // Listen for custom open event
     const handleOpen = () => setIsOpen(true);
     window.addEventListener("open-lia-chat", handleOpen);
     
+    // Use scrollY to determine when to show the popup (after passing Hero section)
+    const unsubscribe = scrollY.on("change", (latest) => {
+      if (latest > 400) {
+        setCanShow(true);
+      } else {
+        setCanShow(false);
+      }
+    });
+
     return () => {
       window.removeEventListener("open-lia-chat", handleOpen);
+      unsubscribe();
     };
-  }, []);
+  }, [scrollY]);
 
   useEffect(() => {
     if (scrollRef.current) {
