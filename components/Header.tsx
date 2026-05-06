@@ -145,7 +145,7 @@ function NavLinks() {
         </AnimatePresence>
       </div>
 
-      <a href="#roi" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
+      <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.precos}</a>
     </nav>
   );
