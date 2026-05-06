@@ -142,7 +142,7 @@ export function Hero() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-4 min-h-[2.5em] md:min-h-[2.2em]">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-4 min-h-[2.5em] md:min-h-[2.2em]">
             {[0, 1].map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
               const globalLineStart = lineIdx === 0 ? 0 : allChars.filter(x => x.line === 0).length;
@@ -231,7 +231,7 @@ export function Hero() {
                 className="absolute inset-[-150%] opacity-100 transition-opacity"
                 style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
               />
-              <div className="relative px-8 py-4 rounded-full font-bold text-[13px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+              <div className="relative px-10 py-5 rounded-full font-bold text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
                 <span className="relative z-10">{t.hero.cta}</span>
                 <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
@@ -277,7 +277,7 @@ export function Hero() {
                mouseY.set(e.clientY - rect.top);
             }}
           >
-            <div className="px-8 py-4 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[13px] hover:bg-zinc-50 transition-all flex items-center gap-2">
+            <div className="px-10 py-5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2">
               <Play className="w-3 h-3 fill-current" />
               {t.hero.watchDemo}
             </div>
