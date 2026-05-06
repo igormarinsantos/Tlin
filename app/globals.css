@@ -5,6 +5,29 @@ html {
   scroll-padding-top: 80px;
 }
 
+/* ── Suppress Google Translate UI chrome ─────────────────────────────────── */
+/* Hide the ugly top banner Google injects when translating */
+.goog-te-banner-frame,
+.goog-te-gadget-icon,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-text-highlight {
+  display: none !important;
+}
+
+/* Prevent body from being pushed down by GT's 40px bar */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Hide the skiptranslate wrapper that wraps our hidden div */
+.skiptranslate {
+  display: none !important;
+  font-size: 0 !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
