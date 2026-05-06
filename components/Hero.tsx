@@ -2,6 +2,7 @@
 
 import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useMemo } from "react";
+import Image from "next/image";
 import { Play } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -125,7 +126,7 @@ export function Hero() {
         color: "#0c0d0d",
       }}
     >
-      <img src="/TlinIA.svg" className="w-full h-full object-contain" alt="" width={32} height={32} fetchPriority="high" />
+      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin IA Cursor" width={32} height={32} priority />
     </motion.span>
   );
 
