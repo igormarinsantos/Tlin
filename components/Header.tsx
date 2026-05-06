@@ -47,7 +47,7 @@ function LanguageSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full right-0 mt-2 w-36 bg-white border border-zinc-100 rounded-2xl shadow-xl overflow-hidden py-1 z-50"
+            className="absolute top-full right-0 mt-4 w-36 bg-white border border-zinc-100 rounded-2xl shadow-xl overflow-hidden py-1 z-50"
           >
             {languages.map((l) => (
               <button
@@ -189,7 +189,7 @@ export function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 shadow-lg rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
+            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 shadow-lg rounded-full px-8 py-3.5 w-max gap-12 transition-all hover:bg-zinc-50">
               
               <div className="flex items-center gap-2 cursor-pointer">
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
