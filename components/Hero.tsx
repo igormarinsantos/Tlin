@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Play } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone }: { 
+const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
   char: string; 
   isVisible: boolean; 
   isLatest: boolean; 
@@ -14,7 +14,19 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
   positionPercent: number; 
   totalCharsInGroup: number;
   isDone: boolean;
+  isStars?: boolean;
 }) => {
+  if (isStars) {
+    return (
+      <span 
+        style={{ opacity: isVisible ? 1 : 0 }} 
+        className="inline-flex items-center mx-1 align-middle h-[1.2em]"
+      >
+        <Image src="/3STARS.png" alt="Stars" width={120} height={40} className="h-[1em] w-auto object-contain" />
+      </span>
+    );
+  }
+
   return (
     <span 
       style={{ 
@@ -49,19 +61,27 @@ export function Hero() {
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
   
   const allChars = useMemo(() => {
-    const chars: { char: string; isHighlighted: boolean; line: number }[] = [];
+    const chars: { char: string; isHighlighted: boolean; line: number; isStars?: boolean }[] = [];
     const lines = title.split("\n");
+    
     lines.forEach((line, lIdx) => {
-      const words = line.split(" ");
-      const wordHighlightedStatus = words.map(w => 
-        highlightWords.some(h => w.replace(/[^a-zA-ZÀ-ú]/g, "").toLowerCase() === h.toLowerCase())
-      );
-      words.forEach((word, wIdx) => {
-        const isH = wordHighlightedStatus[wIdx];
-        word.split("").forEach(c => chars.push({ char: c, isHighlighted: isH, line: lIdx }));
-        if (wIdx < words.length - 1) {
-          const spaceIsH = isH && wordHighlightedStatus[wIdx + 1];
-          chars.push({ char: " ", isHighlighted: spaceIsH, line: lIdx });
+      const parts = line.split(/({stars})/g);
+      parts.forEach(part => {
+        if (part === "{stars}") {
+          chars.push({ char: "", isHighlighted: false, line: lIdx, isStars: true });
+        } else {
+          const words = part.split(" ");
+          const wordHighlightedStatus = words.map(w => 
+            highlightWords.some(h => w.replace(/[^a-zA-ZÀ-ú]/g, "").toLowerCase() === h.toLowerCase())
+          );
+          words.forEach((word, wIdx) => {
+            const isH = wordHighlightedStatus[wIdx];
+            word.split("").forEach(c => chars.push({ char: c, isHighlighted: isH, line: lIdx }));
+            if (wIdx < words.length - 1) {
+              const spaceIsH = isH && wordHighlightedStatus[wIdx + 1];
+              chars.push({ char: " ", isHighlighted: spaceIsH, line: lIdx });
+            }
+          });
         }
       });
     });
@@ -193,6 +213,7 @@ export function Hero() {
                               positionPercent={positionPercent}
                               totalCharsInGroup={totalCharsInGroup}
                               isDone={isFinished}
+                              isStars={c.isStars}
                             />
                             {isLatest && <Cursor />}
                           </span>
