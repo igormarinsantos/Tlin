@@ -138,11 +138,11 @@ export function Hero() {
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-screen pt-32 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-[800px] aspect-[2/1] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[80px] md:blur-[120px] rounded-full -z-10" />
+    <section ref={containerRef} className="relative w-full min-h-screen pt-40 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-[2.6rem] xs:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-[#0c0d0d] leading-[1.05] text-center w-full mb-6 min-h-[3.2em] xs:min-h-[2.8em] md:min-h-[2.2em]">
+          <h1 className="text-[28px] xs:text-[32px] sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.2] md:leading-[1.1] text-center w-full mb-4 min-h-[2.5em] md:min-h-[2.2em]">
             {[0, 1].map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
               const globalLineStart = lineIdx === 0 ? 0 : allChars.filter(x => x.line === 0).length;
@@ -196,7 +196,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 15 }}
             animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
             transition={{ duration: 0.8 }}
-            className="text-zinc-500 font-medium text-base md:text-xl max-w-2xl mx-auto text-center mb-12 px-2"
+            className="text-zinc-500 font-medium text-base md:text-lg max-w-2xl mx-auto text-center mb-10"
           >
             {t.hero.subtitle}
           </motion.p>
@@ -206,12 +206,12 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 w-full px-4"
+          className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
-          <div className="relative w-full sm:w-auto">
+          <div className="relative">
             <a 
               href="#pricing"
-              className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block w-full sm:w-auto`}
+              className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block`}
               onMouseEnter={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
                  mouseX.set(e.clientX - rect.left);
@@ -231,7 +231,7 @@ export function Hero() {
                 className="absolute inset-[-150%] opacity-100 transition-opacity"
                 style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
               />
-              <div className="relative px-8 md:px-10 py-4 md:py-4.5 rounded-full font-bold text-[15px] md:text-[16px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+              <div className="relative px-6 md:px-10 py-3.5 rounded-full font-bold text-[14px] md:text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
                 <span className="relative z-10">{t.hero.cta}</span>
                 <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
@@ -263,7 +263,7 @@ export function Hero() {
 
           <a
             href="#demo"
-            className="relative cursor-pointer w-full sm:w-auto"
+            className="relative cursor-pointer"
             onMouseEnter={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();
                mouseX.set(e.clientX - rect.left);
@@ -277,8 +277,8 @@ export function Hero() {
                mouseY.set(e.clientY - rect.top);
             }}
           >
-            <div className="px-8 md:px-10 py-4 md:py-4.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[15px] md:text-[16px] hover:bg-zinc-50 transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
-              <Play className="w-3.5 h-3.5 fill-current" />
+            <div className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2 whitespace-nowrap">
+              <Play className="w-3 h-3 fill-current" />
               {t.hero.watchDemo}
             </div>
             <AnimatePresence>

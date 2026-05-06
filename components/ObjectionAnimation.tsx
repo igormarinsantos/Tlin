@@ -50,7 +50,7 @@ export function ObjectionAnimation() {
   return (
     <div 
       ref={scrollRef}
-      className="absolute inset-0 flex flex-col gap-1 p-6 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth"
+      className="relative w-full h-full flex flex-col gap-1 p-4 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth"
     >
       <AnimatePresence>
         {/* Step 0-1: Lead Objection */}

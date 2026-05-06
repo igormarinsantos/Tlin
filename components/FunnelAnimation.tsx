@@ -129,7 +129,7 @@ export function FunnelAnimation() {
 
   return (
     <div 
-      className="absolute inset-0 flex items-center justify-center p-4 md:p-8 overflow-hidden cursor-none"
+      className="relative w-full h-full flex items-center justify-center p-2 md:p-8 overflow-hidden cursor-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}

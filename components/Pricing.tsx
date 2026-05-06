@@ -207,7 +207,7 @@ export function Pricing() {
                     💰 {t.pricing.badge}
                   </div>
                 </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#0c0d0d] mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#0c0d0d] mb-4">
                    {t.pricing.title}
                 </h2>
              </div>
@@ -275,7 +275,7 @@ export function Pricing() {
                         </div>
                     )}
 
-                    <div className={`flex flex-col flex-1 p-6 sm:p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative z-10 ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
+                    <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative z-10 ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
                        {!plan.badge && !showHoverBorder && (
                           <div className="absolute inset-0 border border-zinc-100 rounded-[2.4rem] pointer-events-none" />
                        )}

@@ -8,7 +8,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="w-full bg-white text-[#0c0d0d] py-20 px-6 sm:px-10 md:px-20">
+    <footer className="w-full bg-white text-[#0c0d0d] py-20 px-10 md:px-20">
       <div className="max-w-[1440px] mx-auto">
         {/* Top Section */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
@@ -17,44 +17,22 @@ export function Footer() {
             <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
           </div>
 
-          <div className="flex gap-10 sm:gap-20 md:gap-32 flex-wrap">
-            <div className="flex flex-col gap-4">
-              <h4 className="text-xs font-bold lowercase tracking-widest text-zinc-400 mb-2">{t.footer.col1}</h4>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_1}</a>
-              <a href="#roi" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_2}</a>
-              <a href="#pricing" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_3}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_4}</a>
-            </div>
 
-            <div className="flex flex-col gap-4">
-              <h4 className="text-xs font-bold lowercase tracking-widest text-zinc-400 mb-2">{t.footer.col2}</h4>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_1}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_2}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_3}</a>
-              <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link2_4}</a>
-            </div>
-          </div>
         </div>
 
         {/* Huge Brand Text */}
-        <div className="relative w-full overflow-hidden mb-20 select-none">
-          <h2 className="text-[15vw] md:text-[22vw] font-black tracking-tighter leading-[0.8] text-[#0c0d0d] -ml-[0.05em]">
+        <div className="relative w-full overflow-hidden mb-10 md:mb-20 select-none">
+          <h2 className="text-[25vw] md:text-[22vw] font-black tracking-tighter leading-[0.8] text-[#0c0d0d] -ml-[0.05em]">
             tlin.ai
           </h2>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-10 gap-8">
-          <div className="flex items-center gap-8">
-            <img src="/Logo%20Horizontal.svg" alt="Tlin Logo" className="h-6 w-auto" />
-
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 items-center">
-            <Link href="/legal?tab=termos" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.terms}</Link>
-            <Link href="/legal?tab=privacidade" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.privacy}</Link>
-            <Link href="/legal?tab=cookies" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.cookies}</Link>
-            <span className="text-xs font-bold text-zinc-400 lowercase tracking-widest">{t.footer.country}</span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-10 gap-6">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-start md:items-center">
+            <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
+            <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
+            <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>
+            <span className="text-sm font-medium text-zinc-400">{t.footer.country}</span>
           </div>
         </div>
       </div>

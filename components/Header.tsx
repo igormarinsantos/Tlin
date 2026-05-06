@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { Menu, X, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 
@@ -140,17 +139,8 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 
 export function Header() {
   const { scrollY } = useScroll();
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const [showFloating, setShowFloating] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-  }, [isMenuOpen]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -170,8 +160,8 @@ export function Header() {
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 cursor-pointer shrink-0">
-             <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority className="w-20 md:w-24 h-auto" />
+          <div className="flex items-center gap-2 cursor-pointer">
+             <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
           </div>
 
           <div className="hidden md:block">
@@ -179,98 +169,18 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-             <div className="hidden sm:block">
-               <LanguageSelector />
-             </div>
+             <LanguageSelector />
              <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
                 {t.nav.login}
              </a>
-             <div className="hidden xs:block">
-               <HeaderCTA padding="px-5 py-2.5" />
-             </div>
-             
-             {/* Mobile Menu Button */}
-             <button 
-               onClick={() => setIsMenuOpen(true)}
-               className="md:hidden p-2 text-zinc-600 hover:text-[#0c0d0d] transition-colors"
-             >
-               <Menu className="w-6 h-6" />
-             </button>
+             <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
       </header>
 
-      {/* 2. Mobile Menu Overlay */}
+      {/* 2. Floating Header */}
       <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-white md:hidden overflow-hidden flex flex-col"
-          >
-            {/* Mobile Header */}
-            <div className="flex items-center justify-between px-6 py-6 border-b border-zinc-100">
-              <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority className="w-20" />
-              <button 
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2 text-zinc-600 hover:text-[#0c0d0d] transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Mobile Links */}
-            <nav className="flex-1 px-6 py-8 flex flex-col gap-6 overflow-y-auto">
-              <a 
-                href="#" 
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-between text-2xl font-bold text-[#0c0d0d]"
-              >
-                {t.nav.product}
-                <ChevronRight className="w-6 h-6 text-zinc-300" />
-              </a>
-              <a 
-                href="#features" 
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-between text-2xl font-bold text-[#0c0d0d]"
-              >
-                {t.nav.resources}
-                <ChevronRight className="w-6 h-6 text-zinc-300" />
-              </a>
-              <a 
-                href="#pricing" 
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-between text-2xl font-bold text-[#0c0d0d]"
-              >
-                {t.nav.pricing}
-                <ChevronRight className="w-6 h-6 text-zinc-300" />
-              </a>
-              <a 
-                href="#" 
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center justify-between text-2xl font-bold text-[#0c0d0d]"
-              >
-                {t.nav.login}
-                <ChevronRight className="w-6 h-6 text-zinc-300" />
-              </a>
-            </nav>
-
-            {/* Mobile Footer Area */}
-            <div className="p-6 bg-zinc-50 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-zinc-500">{t.nav.language || 'Idioma'}</span>
-                <LanguageSelector />
-              </div>
-              <HeaderCTA padding="w-full py-4 text-lg" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 3. Floating Header */}
-      <AnimatePresence>
-        {showFloating && !isMenuOpen && (
+        {showFloating && (
           <motion.header
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

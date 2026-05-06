@@ -24,8 +24,8 @@ export function TrustedBy() {
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
           {/* Label */}
           <div className="shrink-0 flex items-center gap-6">
-            <p className="text-zinc-400 font-bold text-xs md:text-sm leading-tight text-center md:text-left">
-              {t.trusted.title} <br className="hidden md:block" /> {t.trusted.subtitle}
+            <p className="text-zinc-400 font-medium text-xs md:text-sm leading-tight text-center md:text-left">
+              Confiança para <br className="hidden md:block" /> escalar sua operação
             </p>
             <div className="h-10 w-[1px] bg-zinc-200 hidden md:block" />
           </div>

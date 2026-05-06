@@ -45,7 +45,7 @@ export function SalesNotification() {
   }, [t.salesNotification.now]);
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-end p-6 gap-2 overflow-hidden pointer-events-none">
+    <div className="relative w-full h-full flex flex-col items-center justify-end p-4 md:p-6 gap-2 overflow-hidden pointer-events-none">
       {/* Background Animated Blob (Subtle) */}
       <motion.div
         animate={{

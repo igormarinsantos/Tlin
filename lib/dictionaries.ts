@@ -36,6 +36,10 @@ const ptBR = {
     f3_desc: "Atenda 1.000 leads simultâneos com a mesma agressividade e persuasão do seu melhor closer, sem inchar sua folha de pagamento.",
     f4_title: "Controle Absoluto do Funil",
     f4_desc: "Chega de achismos. Acompanhe em tempo real as métricas que importam: leads qualificados, taxa de conversão e faturamento recuperado.",
+    f1_cta: "Quero converter leads 24/7",
+    f2_cta: "Filtrar meus leads agora",
+    f3_cta: "Escalar meu atendimento",
+    f4_cta: "Ver métricas em tempo real",
     cta: "Potencializar com IA"
   },
   roi: {
@@ -259,6 +263,10 @@ const enUS: TranslationDictionary = {
     f3_desc: "Serve 1,000 simultaneous leads with the same aggressiveness and persuasion as your best closer, without bloating your payroll.",
     f4_title: "Absolute Funnel Control",
     f4_desc: "No more guesswork. Track the metrics that matter in real-time: qualified leads, conversion rates, and recovered revenue.",
+    f1_cta: "I want to convert leads 24/7",
+    f2_cta: "Filter my leads now",
+    f3_cta: "Scale my support",
+    f4_cta: "See real-time metrics",
     cta: "Empower with AI"
   },
   roi: {
@@ -482,6 +490,10 @@ const esES: TranslationDictionary = {
     f3_desc: "Atiende a 1,000 leads simultáneos con la misma persuasión que tu mejor vendedor, sin inflar tu nómina.",
     f4_title: "Control Absoluto del Embudo",
     f4_desc: "Basta de suposiciones. Sigue en tiempo real las métricas que importan: leads calificados, tasas de conversión e ingresos recuperados.",
+    f1_cta: "Quiero convertir leads 24/7",
+    f2_cta: "Filtrar mis leads ahora",
+    f3_cta: "Escalar mi atención",
+    f4_cta: "Ver métricas en tiempo real",
     cta: "Potenciar con IA"
   },
   roi: {

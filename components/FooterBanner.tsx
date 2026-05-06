@@ -57,16 +57,16 @@ export function FooterBanner() {
       const w = canvas.width / dpr;
       const h = canvas.height / dpr;
       
-      // Base color
+      // Base color (Vibrant Lilac)
       ctx.fillStyle = "#B597FF";
       ctx.fillRect(0, 0, w, h);
 
       // Multiple blobs for mesh effect (Brand Blue & Lilac mix)
       const blobs = [
-        { x: 0.2, y: 0.3, r: 1.2, color: "#38E3FF", speed: 0.5 },
-        { x: 0.8, y: 0.7, r: 1.1, color: "#B597FF", speed: 0.7 },
-        { x: 0.5, y: 0.5, r: 1.3, color: "#38E3FF", speed: 0.3 },
-        { x: 0.1, y: 0.9, r: 0.6, color: "#C4ADFF", speed: 0.6 }
+        { x: 0.2, y: 0.3, r: 1.2, color: "#38E3FF", speed: 0.4 },
+        { x: 0.8, y: 0.7, r: 1.1, color: "#B597FF", speed: 0.6 },
+        { x: 0.5, y: 0.5, r: 1.4, color: "#38E3FF", speed: 0.3 },
+        { x: 0.1, y: 0.9, r: 0.8, color: "#C4ADFF", speed: 0.5 }
       ];
 
       blobs.forEach((blob, i) => {
@@ -78,7 +78,7 @@ export function FooterBanner() {
         g.addColorStop(0, blob.color);
         g.addColorStop(1, "transparent");
         ctx.fillStyle = g;
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.8; // Increased from 0.5 to make it brighter
         ctx.fillRect(0, 0, w, h);
       });
       ctx.globalAlpha = 1.0;
@@ -179,7 +179,7 @@ export function FooterBanner() {
   }, []);
 
   return (
-    <section className="w-full py-20 px-10 relative">
+    <section className="w-full py-10 md:py-20 px-4 md:px-10 relative">
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[500px] bg-[#B597FF]/10 blur-[150px] pointer-events-none rounded-full" />
       
       <div 
@@ -193,7 +193,7 @@ export function FooterBanner() {
           isHoveredRef.current = false;
           mouseRef.current = { x: -1000, y: -1000 };
         }}
-        className="w-full h-[750px] relative overflow-hidden rounded-[3.5rem] group bg-[#0c0d0d]"
+        className="w-full h-[600px] md:h-[750px] relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] group bg-[#0c0d0d]"
       >
         <video
           autoPlay
@@ -227,12 +227,12 @@ export function FooterBanner() {
           }}
         />
 
-        <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-center text-center pointer-events-none">
+        <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-end md:justify-center text-center pointer-events-none pb-12 md:pb-0">
            <motion.h2 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-tight"
+              className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-tight"
            >
               {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
            </motion.h2>
@@ -242,7 +242,7 @@ export function FooterBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-white mb-12 max-w-2xl"
+              className="text-base md:text-lg text-white mb-8 max-w-2xl"
            >
               {t.footerBanner.subtitle}
            </motion.p>
@@ -252,11 +252,11 @@ export function FooterBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="flex flex-col md:flex-row items-center gap-6 pointer-events-auto"
+              className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0"
            >
               <a 
                 href="#pricing"
-                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block"
+                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block w-full md:w-auto"
               >
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -264,7 +264,7 @@ export function FooterBanner() {
                   className="absolute inset-[-150%] opacity-100 transition-opacity"
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
-                <div className="relative px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">
+                <div className="relative px-2 md:px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">
                   <span className="relative z-10">{t.footerBanner.cta1}</span>
                   <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
@@ -274,7 +274,7 @@ export function FooterBanner() {
                 href="https://wa.me/5511916248604" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-10 py-4 rounded-full border border-white/20 bg-white/5 text-white font-bold text-[14px] hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm"
+                className="hidden md:flex px-6 md:px-10 py-4 rounded-full bg-white text-[#0c0d0d] font-bold text-[14px] hover:bg-zinc-100 transition-all whitespace-nowrap"
               >
                  {t.footerBanner.cta2}
               </a>
