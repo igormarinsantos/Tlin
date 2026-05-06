@@ -69,7 +69,7 @@ export function RoiCalculator() {
               {t.roi.badge}
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white px-2">
             {t.roi.title}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]">
               {t.roi.titleHighlight}
@@ -84,7 +84,7 @@ export function RoiCalculator() {
         <div className="w-full bg-white rounded-[2rem] overflow-hidden flex flex-col lg:flex-row">
 
           {/* ── LEFT: Inputs ────────────────────────────────────────── */}
-          <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10">
+          <div className="w-full lg:w-1/2 p-6 sm:p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10">
 
             <div>
               <p className="text-[11px] font-bold text-zinc-400 tracking-wide mb-8">
@@ -201,7 +201,7 @@ export function RoiCalculator() {
                   className="flex-1 flex flex-col"
                 >
                   {/* TOP — Sua Receita Atual */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
+                  <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-10 md:py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
@@ -212,7 +212,7 @@ export function RoiCalculator() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.25 }}
-                      className="text-5xl md:text-[3.5rem] font-black text-white tracking-tighter leading-none"
+                      className="text-4xl sm:text-5xl md:text-[3.5rem] font-black text-white tracking-tighter leading-none"
                     >
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.currentRevenue.toLocaleString("pt-BR")}
@@ -255,7 +255,7 @@ export function RoiCalculator() {
                   className="flex-1 flex flex-col"
                 >
                   {/* TOP — Faturamento Adicional */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
+                  <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-10 md:py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <div className="flex justify-between items-start mb-6">
@@ -276,7 +276,7 @@ export function RoiCalculator() {
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                      className="text-5xl md:text-[3.5rem] font-black text-white tracking-tighter leading-none"
+                      className="text-4xl sm:text-5xl md:text-[3.5rem] font-black text-white tracking-tighter leading-none"
                     >
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.extraRevenue.toLocaleString("pt-BR")}
@@ -285,7 +285,7 @@ export function RoiCalculator() {
                   </div>
 
                   {/* BOTTOM — Breakdown */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
+                  <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-10 md:py-12 relative overflow-hidden"
                        style={{ background: PURPLE_BOTTOM }}>
                     <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/30 rounded-full blur-[60px] pointer-events-none" />
 

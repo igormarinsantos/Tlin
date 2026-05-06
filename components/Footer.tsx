@@ -8,7 +8,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="w-full bg-white text-[#0c0d0d] py-20 px-10 md:px-20">
+    <footer className="w-full bg-white text-[#0c0d0d] py-20 px-6 sm:px-10 md:px-20">
       <div className="max-w-[1440px] mx-auto">
         {/* Top Section */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
@@ -17,7 +17,7 @@ export function Footer() {
             <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
           </div>
 
-          <div className="flex gap-20 md:gap-32">
+          <div className="flex gap-10 sm:gap-20 md:gap-32 flex-wrap">
             <div className="flex flex-col gap-4">
               <h4 className="text-xs font-bold lowercase tracking-widest text-zinc-400 mb-2">{t.footer.col1}</h4>
               <a href="#" className="text-sm font-medium hover:text-[#B597FF] transition-colors">{t.footer.link1_1}</a>
@@ -50,7 +50,7 @@ export function Footer() {
 
           </div>
 
-          <div className="flex gap-8 items-center">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 items-center">
             <Link href="/legal?tab=termos" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.terms}</Link>
             <Link href="/legal?tab=privacidade" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.privacy}</Link>
             <Link href="/legal?tab=cookies" className="text-xs font-bold text-zinc-400 hover:text-[#0c0d0d] lowercase tracking-widest transition-colors">{t.footer.cookies}</Link>

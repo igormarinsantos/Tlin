@@ -75,19 +75,19 @@ function FeatureCard({
         transition={{ duration: 0.7, ease: "easeOut" }}
         className={`w-full h-full overflow-hidden flex flex-col relative z-10 ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
       >
-        <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
-          <div className="flex flex-col gap-8">
-            <h3 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.1]">
-              <img src={feature.asset} alt="" className="inline-block w-12 h-12 md:w-16 md:h-16 object-contain mr-4 md:mr-6 align-middle" />
+        <div className="flex-1 p-6 sm:p-8 md:p-12 flex flex-col justify-center">
+          <div className="flex flex-col gap-6 md:gap-8">
+            <h3 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight leading-[1.1]">
+              <img src={feature.asset} alt="" className="inline-block w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain mr-3 md:mr-6 align-middle" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
                 {feature.title}
               </span>
             </h3>
-            <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
+            <p className="text-base sm:text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
               {feature.desc}
             </p>
 
-            <div className="relative w-max mt-6">
+            <div className="relative w-full sm:w-max mt-4 md:mt-6">
               <button
                 onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 onMouseEnter={(e) => {
@@ -102,7 +102,7 @@ function FeatureCard({
                   mouseX.set(e.clientX - rect.left);
                   mouseY.set(e.clientY - rect.top);
                 }}
-                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-max"
+                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full sm:w-max"
               >
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -110,7 +110,7 @@ function FeatureCard({
                   className="absolute inset-[-150%] opacity-100"
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
-                <div className="relative px-8 py-5 rounded-full font-bold text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+                <div className="relative px-8 py-4 md:py-5 rounded-full font-bold text-base md:text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
                   <span className="relative z-10">{t.features.cta}</span>
                   <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
@@ -143,8 +143,8 @@ function FeatureCard({
           </div>
         </div>
 
-        <div className="flex-1 min-h-[400px] md:min-h-full relative overflow-hidden p-4 md:p-6 flex items-center justify-center">
-          <div className="w-full h-full min-h-[400px] rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
+        <div className="flex-1 min-h-[350px] sm:min-h-[400px] md:min-h-full relative overflow-hidden p-4 md:p-6 flex items-center justify-center">
+          <div className="w-full h-full min-h-[350px] sm:min-h-[400px] rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
@@ -211,12 +211,12 @@ export function Features() {
     <section className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <div className="max-w-3xl mb-32 text-center mx-auto">
+        <div className="max-w-3xl mb-16 md:mb-32 text-center mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8"
+            className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6 md:mb-8"
           >
             <motion.div
               animate={{ rotate: 360 }}
@@ -232,7 +232,7 @@ export function Features() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
+            className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
           >
             <span dangerouslySetInnerHTML={{ __html: t.features.title }} />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.features.titleHighlight}</span>

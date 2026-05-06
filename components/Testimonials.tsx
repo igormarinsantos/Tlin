@@ -10,7 +10,7 @@ const TestimonialCard = ({ item }: { item: { name: string, role: string, image: 
 
   return (
     <motion.div 
-      className={`relative w-[350px] md:w-[400px] h-[500px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 transition-all duration-500 ${isHovered ? 'bg-[#B597FF] shadow-[0_50px_80px_-20px_rgba(181,151,255,0.3)]' : 'bg-[#0c0d0d] shadow-none'}`}
+      className={`relative w-[280px] xs:w-[320px] sm:w-[350px] md:w-[400px] h-[450px] md:h-[550px] rounded-[2.5rem] overflow-hidden cursor-grab active:cursor-grabbing shrink-0 transition-all duration-500 ${isHovered ? 'bg-[#B597FF] shadow-[0_50px_80px_-20px_rgba(181,151,255,0.3)]' : 'bg-[#0c0d0d] shadow-none'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -30,9 +30,9 @@ const TestimonialCard = ({ item }: { item: { name: string, role: string, image: 
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d0d] via-[#0c0d0d]/40 to-transparent" />
-            <div className="absolute bottom-10 left-10 right-10">
-              <h3 className="text-3xl font-bold text-white tracking-tighter mb-1">{item.name}</h3>
-              <p className="text-[#38E3FF] text-[11px] font-bold tracking-wide">{item.role}</p>
+            <div className="absolute bottom-8 left-8 right-8 md:bottom-10 md:left-10 md:right-10">
+              <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tighter mb-1">{item.name}</h3>
+              <p className="text-[#38E3FF] text-[10px] md:text-[11px] font-bold tracking-wide">{item.role}</p>
             </div>
           </motion.div>
         ) : (
@@ -41,11 +41,11 @@ const TestimonialCard = ({ item }: { item: { name: string, role: string, image: 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute inset-0 p-8 md:p-12 flex flex-col items-center text-center justify-center"
+            className="absolute inset-0 p-6 sm:p-8 md:p-12 flex flex-col items-center text-center justify-center"
           >
-             <h3 className="text-2xl md:text-4xl font-black text-white tracking-tighter mb-2">{item.name}</h3>
-             <p className="text-white/40 text-[10px] font-bold tracking-wide mb-8 md:mb-12 uppercase">{item.role}</p>
-             <p className="text-white font-medium leading-relaxed text-lg md:text-2xl tracking-tight">
+             <h3 className="text-xl sm:text-2xl md:text-4xl font-black text-white tracking-tighter mb-2">{item.name}</h3>
+             <p className="text-white/40 text-[9px] md:text-[10px] font-bold tracking-wide mb-6 md:mb-12 uppercase">{item.role}</p>
+             <p className="text-white font-medium leading-relaxed text-base sm:text-lg md:text-2xl tracking-tight">
                 "{item.text.split(/(\[.*?\])/).map((part, i) => {
                   if (part.startsWith('[') && part.endsWith(']')) {
                     return <span key={i} className="text-[#4C1D95] font-black">{part.slice(1, -1)}</span>;
@@ -116,7 +116,7 @@ export function Testimonials() {
               {t.testimonials.badge}
             </div>
           </div>
-             <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] leading-tight">
+             <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] leading-tight">
                 {t.testimonials.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.testimonials.titleHighlight}</span>
              </h2>
           </div>
