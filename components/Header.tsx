@@ -71,7 +71,7 @@ function NavLinks() {
   const { t } = useLanguage();
 
   return (
-    <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
+    <nav className="flex items-center gap-8 font-semibold text-sm text-zinc-600 relative">
       <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.produto}</a>
       <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.precos}</a>
@@ -187,9 +187,9 @@ export function Header() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
+            className="fixed top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 shadow-lg rounded-full px-8 py-3.5 w-max gap-12 transition-all hover:bg-zinc-50">
+            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 shadow-lg rounded-full px-12 py-5 w-max gap-20 transition-all hover:bg-zinc-50">
               
               <div className="flex items-center gap-2 cursor-pointer">
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
@@ -201,7 +201,7 @@ export function Header() {
 
               <div className="flex items-center gap-2">
                  <LanguageSelector />
-                 <HeaderCTA padding="px-4 py-2" />
+                 <HeaderCTA padding="px-8 py-3" />
               </div>
             </div>
           </motion.header>
