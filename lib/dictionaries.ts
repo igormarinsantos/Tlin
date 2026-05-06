@@ -129,8 +129,8 @@ const ptBR = {
     a1: "Não. Diferente do ChatGPT aberto, a Tlin trabalha fechada dentro do seu playbook de regras. Ela é programada por 'guardrails' duros: só propõe o que estiver no seu inventário/tabela de preços. Caso faça uma pergunta impossível de interpretar, ela roteia imediatamente para o transbordo humano.",
     q2: "Meus clientes vão sentir que estão falando com robôs engessados?",
     a2: "Esqueça fluxogramas de botões. Nossos agentes operam em linguagem natural avançada. Eles identificam sotaques, informalidade ou mensagens em áudio e respondem num tom de voz idêntico ao do seu melhor vendedor.",
-    q3: "É complexo integrar no meu ecossistema atual (Hubspot, RD)?",
-    a3: "Zero complexidade. Oferecemos conectores One-Click para a maioria dos CRMs do mercado. Se você usar planilhas, puxamos dados via Zapier ou Webhooks direto pro Google Sheets.",
+    q3: "É complexo integrar no meu ecossistema atual (Hubspot, RD Station)?",
+    a3: "Zero complexidade. A Tlin se integra instantaneamente ao seu CRM ou pode atuar como sua central de vendas definitiva, substituindo fluxos antigos por uma solução nativa muito mais completa e direta.",
     q4: "Em quanto tempo a operação começa a ver lucro?",
     a4: "ROI no primeiro dia de implantação. Ao zerar seu tempo de espera para responder, a taxa de conversão levanta imediatamente devido ao pico agudo de receptividade do lead.",
     q5: "A IA entende áudios e responde à altura?",
@@ -185,7 +185,7 @@ const ptBR = {
     viaWhatsapp: "via WhatsApp."
   },
   textReveal: {
-    text: "Imagine você ter um assistente 🧠 com os mínimos detalhes do que você vende 📦, autônomo digitalmente ⚡ e um parceiro 24 horas ⏳, com a expertise especificamente ensinada por você 🎯."
+    text: "Imagine você ter um [assistente 🧠] com os mínimos detalhes do que você [vende 📦], [autônomo digitalmente ⚡] e um parceiro [24 horas ⏳], com a [expertise] especificamente ensinada por você 🎯"
   },
   funnelAnimation: {
     days: ["Hoje", "Amanhã", "Segunda", "Terça", "Quarta"],
@@ -356,8 +356,8 @@ const enUS: TranslationDictionary = {
     a1: "No. Unlike open ChatGPT, Tlin works securely within your rule playbook. It is programmed by strict 'guardrails': it only proposes what is in your inventory/pricing table. If asked an impossible question, it immediately routes to human handover.",
     q2: "Will my customers feel like they are talking to rigid bots?",
     a2: "Forget button flowcharts. Our agents operate in advanced natural language. They identify accents, informality, or audio messages and respond in a tone of voice identical to your best salesperson.",
-    q3: "Is it complex to integrate into my current ecosystem (Hubspot, Salesforce)?",
-    a3: "Zero complexity. We offer One-Click connectors for most market CRMs. If you use spreadsheets, we pull data via Zapier or Webhooks straight into Google Sheets.",
+    q3: "Is it complex to integrate with my current ecosystem (Hubspot, Salesforce)?",
+    a3: "Zero complexity. Tlin connects instantly to your CRM or can act as your definitive sales hub, replacing old workflows with a much more complete and direct native solution.",
     q4: "How soon does the operation start seeing profit?",
     a4: "ROI on day one. By eliminating your response wait time, the conversion rate immediately spikes due to the lead's acute peak in receptivity.",
     q5: "Does the AI understand audios and respond accordingly?",
@@ -412,7 +412,7 @@ const enUS: TranslationDictionary = {
     viaWhatsapp: "via WhatsApp."
   },
   textReveal: {
-    text: "Imagine having an assistant 🧠 with every detail of what you sell 📦, digitally autonomous ⚡ and a 24/7 partner ⏳, with the expertise specifically taught by you 🎯."
+    text: "Imagine having an [assistant 🧠] with every detail of what you [sell 📦], [digitally autonomous ⚡] and a [24/7 partner ⏳], with the [expertise] specifically taught by you 🎯"
   },
   funnelAnimation: {
     days: ["Today", "Tomorrow", "Monday", "Tuesday", "Wednesday"],
@@ -583,8 +583,8 @@ const esES: TranslationDictionary = {
     a1: "No. A diferencia del ChatGPT abierto, Tlin trabaja de forma cerrada dentro de tu manual de reglas. Está programada con 'guardrails' estrictos: solo propone lo que está en tu inventario. Si recibe una pregunta imposible, transfiere inmediatamente al soporte humano.",
     q2: "¿Mis clientes sentirán que hablan con robots rígidos?",
     a2: "Olvida los diagramas de botones. Nuestros agentes operan en lenguaje natural avanzado. Identifican acentos, informalidad o audios y responden con un tono idéntico al de tu mejor vendedor.",
-    q3: "¿Es complejo integrar a mi ecosistema actual (Hubspot, RD)?",
-    a3: "Cero complejidad. Ofrecemos conectores One-Click para la mayoría de los CRMs. Si usas hojas de cálculo, extraemos datos vía Zapier o Webhooks directo a Google Sheets.",
+    q3: "¿Es complejo integrarlo en mi ecosistema actual (Hubspot, RD)?",
+    a3: "Cero complejidad. Tlin se integra instantáneamente a tu CRM o puede actuar como tu central de ventas definitiva, reemplazando flujos antiguos con una solución nativa mucho más completa y directa.",
     q4: "¿En cuánto tiempo la operación empieza a ver ganancias?",
     a4: "ROI en el primer día. Al reducir a cero tu tiempo de espera de respuesta, la tasa de conversión sube inmediatamente debido al pico agudo de receptividad del lead.",
     q5: "¿La IA entiende audios y responde a la altura?",
@@ -639,7 +639,7 @@ const esES: TranslationDictionary = {
     viaWhatsapp: "por WhatsApp."
   },
   textReveal: {
-    text: "Imagina tener un asistente 🧠 con cada detalle de lo que vendes 📦, digitalmente autónomo ⚡ y un socio 24/7 ⏳, con la experiencia específicamente enseñada por ti 🎯."
+    text: "Imagina tener un [asistente 🧠] con cada detalle de lo que [vendes 📦], [digitalmente autónomo ⚡] y un socio [24/7 ⏳], con la [experiencia] específicamente enseñada por ti 🎯"
   },
   funnelAnimation: {
     days: ["Hoy", "Mañana", "Lunes", "Martes", "Miércoles"],

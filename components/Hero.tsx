@@ -15,13 +15,6 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
   totalCharsInGroup: number;
   isDone: boolean;
 }) => {
-  const [displayChar, setDisplayChar] = useState(char);
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-
-  useEffect(() => {
-    setDisplayChar(char);
-  }, [char]);
-
   return (
     <span 
       style={{ 
@@ -36,7 +29,7 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
       }} 
       className="transition-opacity duration-75"
     >
-      {displayChar === " " ? "\u00A0" : displayChar}
+      {char === " " ? "\u00A0" : char}
     </span>
   );
 };
@@ -48,6 +41,8 @@ export function Hero() {
   const [visibleCount, setVisibleCount] = useState(0);
   const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("idle");
   const [isFinished, setIsFinished] = useState(false);
+  const [lastInlinePos, setLastInlinePos] = useState({ x: 0, y: 0 });
+  const lastCharRef = useRef<HTMLSpanElement>(null);
 
   const { t } = useLanguage();
   const title = t.hero.title;
@@ -73,6 +68,17 @@ export function Hero() {
     return chars;
   }, [title]);
 
+  const globalMouseX = useMotionValue(0);
+  const globalMouseY = useMotionValue(0);
+
+  useEffect(() => {
+    const trackMouse = (e: MouseEvent) => {
+      globalMouseX.set(e.clientX);
+      globalMouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", trackMouse);
+    return () => window.removeEventListener("mousemove", trackMouse);
+  }, [globalMouseX, globalMouseY]);
 
   useEffect(() => {
     if (isInView && phase === "idle") {
@@ -81,71 +87,78 @@ export function Hero() {
     }
   }, [isInView, phase]);
 
+  // Reset typing animation when title changes (language switch)
+  useEffect(() => {
+    setVisibleCount(0);
+    setPhase("idle");
+    setIsFinished(false);
+  }, [title]);
+
   useEffect(() => {
     if (phase !== "typing") return;
 
     let frameId: number;
-    const CHARS_PER_FRAME = 3; // Reveal 3 chars per rAF tick to reduce task count
+    let frameCount = 0;
+    const REVEAL_EVERY_FRAMES = 3;
 
     const tick = () => {
-      setVisibleCount((v) => {
-        const next = v + CHARS_PER_FRAME;
-        if (next >= allChars.length) {
-          // All chars revealed — mark done outside render cycle
-          requestAnimationFrame(() => {
-            setPhase("done");
-            setIsFinished(true);
-          });
-          return allChars.length;
-        }
-        frameId = requestAnimationFrame(tick);
-        return next;
-      });
+      frameCount++;
+      if (frameCount % REVEAL_EVERY_FRAMES === 0) {
+        setVisibleCount((v) => {
+          const next = v + 1;
+          if (next >= allChars.length) {
+            requestAnimationFrame(() => {
+              if (lastCharRef.current) {
+                const rect = lastCharRef.current.getBoundingClientRect();
+                const x = rect.left + rect.width;
+                const y = rect.top + rect.height / 2;
+                setLastInlinePos({ x, y });
+              }
+              setPhase("done");
+              setIsFinished(true);
+            });
+            return allChars.length;
+          }
+          return next;
+        });
+      }
+      frameId = requestAnimationFrame(tick);
     };
 
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [phase, allChars.length]);
 
-  useEffect(() => {
-    if (isFinished) {
-      window.dispatchEvent(new CustomEvent("hero-animation-done"));
-    }
-  }, [isFinished]);
-
   const Cursor = () => (
-    <motion.span 
-      animate={phase === "thinking" ? { opacity: [1, 0.4, 1], scale: [1, 1.05, 1] } : { opacity: 1, scale: 1 }}
-      transition={phase === "thinking" ? { duration: 0.8, repeat: Infinity } : { duration: 0 }}
-      className="inline-flex items-center ml-3 md:ml-4"
-      style={{ 
-        width: "0.8em", 
-        height: "0.8em", 
-        verticalAlign: "middle",
-        WebkitTextFillColor: "#0c0d0d",
-        color: "#0c0d0d",
-      }}
-    >
-      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin IA Cursor" width={32} height={32} priority />
-    </motion.span>
+    <span className="relative inline-flex w-0 h-[1em] items-center shrink-0" style={{ visibility: phase === "done" ? "hidden" : "visible" }}>
+      <motion.span 
+        animate={phase === "thinking" ? { opacity: [1, 0.4, 1], scale: [1, 1.05, 1] } : { opacity: 1, scale: 1 }}
+        transition={phase === "thinking" ? { duration: 0.8, repeat: Infinity } : { duration: 0 }}
+        className="absolute left-1 md:left-2 flex items-center"
+        style={{ width: "0.8em", height: "0.8em" }}
+      >
+        <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin IA Cursor" width={32} height={32} priority />
+      </motion.span>
+    </span>
   );
 
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [isDemoHovered, setIsDemoHovered] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
-  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
+  
+  const uiMouseX = useMotionValue(0);
+  const uiMouseY = useMotionValue(0);
+  const uiSpringX = useSpring(uiMouseX, { damping: 25, stiffness: 150 });
+  const uiSpringY = useSpring(uiMouseY, { damping: 25, stiffness: 150 });
 
   return (
     <section ref={containerRef} className="relative w-full min-h-screen pt-40 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-[28px] xs:text-[32px] sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.2] md:leading-[1.1] text-center w-full mb-4 min-h-[2.5em] md:min-h-[2.2em]">
-            {[0, 1].map(lineIdx => {
+          <h1 className="text-[36px] xs:text-[42px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-6 min-h-[4em] md:min-h-[2.5em] [text-wrap:balance]">
+            {Array.from(new Set(allChars.map(c => c.line))).sort((a,b) => a-b).map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
-              const globalLineStart = lineIdx === 0 ? 0 : allChars.filter(x => x.line === 0).length;
+              const globalLineStart = allChars.findIndex(c => c.line === lineIdx);
 
               const groups: { chars: any[], isHighlighted: boolean }[] = [];
               lineChars.forEach((c, i) => {
@@ -171,7 +184,7 @@ export function Hero() {
                         const positionPercent = (charInGroupIdx / (totalCharsInGroup > 1 ? totalCharsInGroup - 1 : 1)) * 100;
                         
                         return (
-                          <span key={c.globalIdx} className="relative inline">
+                          <span key={c.globalIdx} className="relative inline" ref={isLatest ? lastCharRef : null}>
                             <Character 
                               char={c.char}
                               isVisible={isVisible}
@@ -214,15 +227,15 @@ export function Hero() {
               className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block`}
               onMouseEnter={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
-                 mouseX.set(e.clientX - rect.left);
-                 mouseY.set(e.clientY - rect.top);
+                 uiMouseX.set(e.clientX - rect.left);
+                 uiMouseY.set(e.clientY - rect.top);
                  setIsCtaHovered(true);
               }}
               onMouseLeave={() => setIsCtaHovered(false)}
               onMouseMove={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
-                 mouseX.set(e.clientX - rect.left);
-                 mouseY.set(e.clientY - rect.top);
+                 uiMouseX.set(e.clientX - rect.left);
+                 uiMouseY.set(e.clientY - rect.top);
               }}
             >
               <motion.div
@@ -243,7 +256,7 @@ export function Hero() {
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
+                  style={{ position: "absolute", left: uiSpringX, top: uiSpringY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
                 >
                   <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
                     <motion.div
@@ -266,15 +279,15 @@ export function Hero() {
             className="relative cursor-pointer"
             onMouseEnter={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();
-               mouseX.set(e.clientX - rect.left);
-               mouseY.set(e.clientY - rect.top);
+               uiMouseX.set(e.clientX - rect.left);
+               uiMouseY.set(e.clientY - rect.top);
                setIsDemoHovered(true);
             }}
             onMouseLeave={() => setIsDemoHovered(false)}
             onMouseMove={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();
-               mouseX.set(e.clientX - rect.left);
-               mouseY.set(e.clientY - rect.top);
+               uiMouseX.set(e.clientX - rect.left);
+               uiMouseY.set(e.clientY - rect.top);
             }}
           >
             <div className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2 whitespace-nowrap">
@@ -287,7 +300,7 @@ export function Hero() {
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  style={{ position: "absolute", left: springX, top: springY, x: "-50%", y: "-120%", pointerEvents: "none", zIndex: 110 }}
+                  style={{ position: "absolute", left: uiSpringX, top: uiSpringY, x: "-50%", y: "-120%", pointerEvents: "none", zIndex: 110 }}
                   className="w-[140px] md:w-[160px] aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-white/20 flex flex-col"
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
@@ -307,7 +320,119 @@ export function Hero() {
           </a>
         </motion.div>
 
-        {/* Removed RevenueGravityHero per user request */}
+        {/* Mascot Follower (PC Only) */}
+        <AnimatePresence>
+          {phase === "done" && lastInlinePos.x !== 0 && (
+            <MascotFollower 
+              initialX={lastInlinePos.x} 
+              initialY={lastInlinePos.y} 
+              isNearCta={isCtaHovered || isDemoHovered}
+              globalMouseX={globalMouseX}
+              globalMouseY={globalMouseY}
+            />
+          )}
+        </AnimatePresence>
     </section>
+  );
+}
+
+function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMouseY }: { initialX: number, initialY: number, isNearCta: boolean, globalMouseX: any, globalMouseY: any }) {
+  const mascotX = useMotionValue(initialX);
+  const mascotY = useMotionValue(initialY);
+  const mascotRotate = useMotionValue(0);
+  const mascotOpacity = useMotionValue(1);
+  const mascotScale = useMotionValue(1);
+
+  const springX = useSpring(mascotX, { damping: 50, stiffness: 80 });
+  const springY = useSpring(mascotY, { damping: 50, stiffness: 80 });
+  const springRotate = useSpring(mascotRotate, { damping: 30, stiffness: 150 });
+  const springOpacity = useSpring(mascotOpacity, { damping: 30, stiffness: 120 });
+  const springScale = useSpring(mascotScale, { damping: 20, stiffness: 150 });
+
+  const lastAngle = useRef(0);
+  const cumulativeRotation = useRef(0);
+  const [isAbductedGlobal, setIsAbductedGlobal] = useState(false);
+
+  useEffect(() => {
+    const handleGlobalHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isOverInteractive = !!target.closest('button') || !!target.closest('a') || !!target.closest('[role="button"]');
+      setIsAbductedGlobal(isOverInteractive);
+    };
+
+    window.addEventListener("mouseover", handleGlobalHover);
+    return () => window.removeEventListener("mouseover", handleGlobalHover);
+  }, []);
+
+  useEffect(() => {
+    const updatePosition = (x: number, y: number) => {
+      if (window.scrollY > 800) return; 
+
+      if (isNearCta || isAbductedGlobal) {
+        mascotOpacity.set(0);
+        mascotScale.set(0);
+      } else {
+        mascotOpacity.set(1);
+        mascotScale.set(1);
+      }
+
+      const dx = x - mascotX.get();
+      const dy = y - mascotY.get();
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > 1) {
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        let delta = angle - lastAngle.current;
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+        
+        cumulativeRotation.current += delta;
+        lastAngle.current = angle;
+        
+        mascotX.set(x);
+        mascotY.set(y);
+        mascotRotate.set(cumulativeRotation.current);
+      } else {
+        mascotX.set(x);
+        mascotY.set(y);
+      }
+    };
+
+    const curX = globalMouseX.get();
+    const curY = globalMouseY.get();
+    if (curX !== 0 || curY !== 0) {
+      updatePosition(curX, curY);
+    }
+
+    const unsubX = globalMouseX.on("change", (v: number) => updatePosition(v, globalMouseY.get()));
+    const unsubY = globalMouseY.on("change", (v: number) => updatePosition(globalMouseX.get(), v));
+    
+    return () => { unsubX(); unsubY(); };
+  }, [isNearCta, isAbductedGlobal, globalMouseX, globalMouseY, initialX, initialY]);
+
+  return (
+    <motion.div
+      initial={false}
+      animate={{ opacity: 1, scale: 1 }}
+      style={{
+        position: "fixed",
+        left: 0,
+        top: 0,
+        opacity: springOpacity,
+        scale: springScale,
+        x: springX,
+        y: springY,
+        rotate: springRotate,
+        translateX: "-50%",
+        translateY: "-50%",
+        zIndex: 9999,
+        pointerEvents: "none",
+        width: "clamp(2rem, 4vw, 3.2rem)",
+        height: "clamp(2rem, 4vw, 3.2rem)",
+      }}
+      className="hidden lg:block"
+    >
+      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={32} height={32} priority />
+    </motion.div>
   );
 }

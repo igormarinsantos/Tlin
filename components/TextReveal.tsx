@@ -7,7 +7,9 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 export function TextReveal() {
   const { t } = useLanguage();
-  const words = t.textReveal.text.split(" ");
+  
+  // Parse text into blocks: either [highlighted content] or normal words
+  const parts = t.textReveal.text.match(/\[.*?\]|\S+/g) || [];
   
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeWord, setActiveWord] = useState<number>(-1);
@@ -15,7 +17,7 @@ export function TextReveal() {
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
-    setRevealed(Array(words.length).fill(false));
+    setRevealed(Array(parts.length).fill(false));
     setIsFinished(false);
     setActiveWord(-1);
   }, [t.textReveal.text]);
@@ -27,10 +29,8 @@ export function TextReveal() {
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (isFinished) return;
-
-    // The reveal happens across the first 90% of the scroll
     const animationProgress = Math.min(latest / 0.9, 1);
-    const idx = Math.min(Math.floor(animationProgress * words.length), words.length - 1);
+    const idx = Math.min(Math.floor(animationProgress * parts.length), parts.length - 1);
     
     if (idx >= 0) {
       setActiveWord(idx);
@@ -54,20 +54,30 @@ export function TextReveal() {
       style={{ height: "200vh" }}
     >
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        <div className="w-full max-w-4xl mx-auto px-6 md:px-12">
+        <div className="w-full max-w-6xl mx-auto px-6 md:px-12">
           <div 
-            className="flex flex-wrap justify-center font-bold tracking-tight text-center"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 3rem)", lineHeight: 1.5 }}
+            className="flex flex-wrap justify-center font-bold tracking-tight text-center gap-x-[0.3em] gap-y-[0.1em]"
+            style={{ 
+              fontSize: "clamp(2rem, 8vw, 3.5rem)", 
+              lineHeight: 1.05,
+              textWrap: "balance" as any 
+            }}
           >
-            {words.map((word, i) => (
-              <Word
-                key={i}
-                isRevealed={isFinished || revealed[i]}
-                isActive={!isFinished && activeWord === i}
-              >
-                {word}
-              </Word>
-            ))}
+            {parts.map((part, i) => {
+              const isHighlighted = part.startsWith("[") && part.endsWith("]");
+              const content = isHighlighted ? part.slice(1, -1) : part;
+
+              return (
+                <Word
+                  key={i}
+                  isRevealed={isFinished || revealed[i]}
+                  isActive={!isFinished && activeWord === i}
+                  isHighlighted={isHighlighted}
+                >
+                  {content}
+                </Word>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -79,14 +89,20 @@ function Word({
   children,
   isRevealed,
   isActive,
+  isHighlighted,
 }: {
   children: string;
   isRevealed: boolean;
   isActive: boolean;
+  isHighlighted: boolean;
 }) {
+  // Regex to detect emojis
+  const emojiRegex = /(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+  const parts = children.split(emojiRegex).filter(Boolean);
+
   return (
-    <span className="relative inline-flex items-baseline mx-[0.2em] my-[0.1em]">
-      <span className="opacity-0 select-none whitespace-nowrap" aria-hidden>
+    <span className="relative inline-flex items-baseline whitespace-nowrap">
+      <span className="opacity-0 select-none" aria-hidden>
         {children}
       </span>
 
@@ -94,34 +110,35 @@ function Word({
         initial={{ opacity: 0.15, color: "#d4d4d8" }}
         animate={{ 
           opacity: isRevealed ? 1 : 0.15, 
-          color: isRevealed ? "#0c0d0d" : "#d4d4d8",
+          color: isRevealed ? (isHighlighted ? "transparent" : "#0c0d0d") : "#d4d4d8",
           scale: isActive ? 1.05 : 1
         }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="absolute inset-0 flex items-center whitespace-nowrap"
+        className="absolute inset-0 flex items-center justify-center"
       >
-        {children}
-        
-        <AnimatePresence>
-          {isActive && (
-            <motion.span
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 5 }}
-              className="inline-flex items-center ml-[0.2em] align-middle"
-            >
-              <img
-                src="/TlinIA.svg"
-                alt=""
-                style={{
-                  height: "0.7em",
-                  width:  "0.7em",
-                  objectFit: "contain",
-                }}
-              />
-            </motion.span>
-          )}
-        </AnimatePresence>
+        <span className="flex items-center">
+          {parts.map((part, idx) => {
+            const isEmoji = emojiRegex.test(part);
+            emojiRegex.lastIndex = 0; // Reset regex state
+            
+            if (isEmoji) {
+              return (
+                <span key={idx} className="text-[#0c0d0d] mx-[0.05em]" style={{ WebkitTextFillColor: "initial" }}>
+                  {part}
+                </span>
+              );
+            }
+            
+            return (
+              <span 
+                key={idx} 
+                className={isRevealed && isHighlighted ? 'bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : ''}
+              >
+                {part}
+              </span>
+            );
+          })}
+        </span>
       </motion.span>
     </span>
   );

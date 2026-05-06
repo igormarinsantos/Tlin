@@ -32,7 +32,7 @@ export function RoiCalculator() {
   return (
     <section
       id="roi"
-      className="w-full relative bg-black py-16 md:py-24 overflow-hidden"
+      className="w-full relative bg-black py-16 md:py-24"
       style={{ fontFamily: '"DM Sans", sans-serif' }}
     >
 

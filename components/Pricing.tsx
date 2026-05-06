@@ -265,7 +265,7 @@ export function Pricing() {
                     className={`group relative flex flex-col rounded-[2.5rem] transition-all duration-300 ease-out p-[2px]
                        ${isOtherHovered ? 'blur-[2px] opacity-60' : 'opacity-100'} 
                        ${isHovered ? '-translate-y-4' : 'translate-y-0'}
-                      ${plan.badge ? plan.badgeColor : (showHoverBorder ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : 'bg-transparent')} 
+                      ${plan.badge ? plan.badgeColor : (showHoverBorder ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : 'bg-zinc-100')} 
                       ${plan.highlight && !isOtherHovered ? 'z-20 shadow-[0_40px_100px_-20px_rgba(181,151,255,0.2)]' : 'z-10 shadow-sm'}
                     `}
                   >
@@ -276,9 +276,6 @@ export function Pricing() {
                     )}
 
                     <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative z-10 ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
-                       {!plan.badge && !showHoverBorder && (
-                          <div className="absolute inset-0 border border-zinc-100 rounded-[2.4rem] pointer-events-none" />
-                       )}
                        
                        <div className="flex justify-between items-start mb-6">
                           <div>

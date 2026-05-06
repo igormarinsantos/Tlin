@@ -57,33 +57,38 @@ export function FooterBanner() {
       const w = canvas.width / dpr;
       const h = canvas.height / dpr;
       
-      // Base color (Vibrant Lilac)
+      // 1. Draw Mesh Gradient Background
+      ctx.globalCompositeOperation = "source-over";
+      
+      // Base color (Lilac)
       ctx.fillStyle = "#B597FF";
+      ctx.globalAlpha = 1.0;
       ctx.fillRect(0, 0, w, h);
 
-      // Multiple blobs for mesh effect (Brand Blue & Lilac mix)
+      // Large animated cyan/light blobs for abstract movement
       const blobs = [
-        { x: 0.2, y: 0.3, r: 1.2, color: "#38E3FF", speed: 0.4 },
-        { x: 0.8, y: 0.7, r: 1.1, color: "#B597FF", speed: 0.6 },
-        { x: 0.5, y: 0.5, r: 1.4, color: "#38E3FF", speed: 0.3 },
-        { x: 0.1, y: 0.9, r: 0.8, color: "#C4ADFF", speed: 0.5 }
+        { x: 0.2, y: 0.2, r: 1.8, color: "#38E3FF", speed: 0.3 },
+        { x: 0.8, y: 0.8, r: 1.5, color: "#C4ADFF", speed: 0.4 },
+        { x: 0.5, y: 0.5, r: 2.0, color: "#38E3FF", speed: 0.2 },
       ];
 
       blobs.forEach((blob, i) => {
-        const x = w * (blob.x + Math.cos(timeRef.current * blob.speed + i) * 0.3);
-        const y = h * (blob.y + Math.sin(timeRef.current * blob.speed + i) * 0.3);
+        const x = w * (blob.x + Math.cos(timeRef.current * blob.speed + i) * 0.4);
+        const y = h * (blob.y + Math.sin(timeRef.current * blob.speed + i) * 0.4);
         const rad = Math.max(w, h) * blob.r;
 
         const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
         g.addColorStop(0, blob.color);
         g.addColorStop(1, "transparent");
         ctx.fillStyle = g;
-        ctx.globalAlpha = 0.8; // Increased from 0.5 to make it brighter
+        ctx.globalAlpha = 0.5; 
         ctx.fillRect(0, 0, w, h);
       });
+
+      // Reset Alpha
       ctx.globalAlpha = 1.0;
 
-      // 2. Draw Flashlight Trail with FULL HOLES (Slither.io style)
+      // 2. Draw Flashlight Trail
       trailCtx.save();
       trailCtx.scale(dpr, dpr);
       trailCtx.clearRect(0, 0, trailCanvas.width / dpr, trailCanvas.height / dpr);

@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { SmoothScroll } from "@/components/SmoothScroll";
+
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export default function RootLayout({
@@ -39,9 +41,9 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${dmSans.variable} h-full antialiased scroll-smooth`}
+      className={`${dmSans.variable} antialiased`}
     >
-      <body className={`${dmSans.className} min-h-full flex flex-col`}>
+      <body className={`${dmSans.className} flex flex-col`}>
 
         {/* ── Google Analytics 4 ────────────────────────────────────────── */}
         {GA_ID && (
@@ -69,9 +71,11 @@ export default function RootLayout({
 
         {/* ── App Shell ───────────────────────────────────────────────── */}
         <LanguageProvider>
-          <TopBanner />
-          <Header />
-          {children}
+          <SmoothScroll>
+            <TopBanner />
+            <Header />
+            {children}
+          </SmoothScroll>
         </LanguageProvider>
 
       </body>
