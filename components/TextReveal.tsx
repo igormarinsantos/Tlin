@@ -1,18 +1,24 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
-const text =
-  "Imagine você ter um assistente 🧠 com os mínimos detalhes do que você vende 📦, autônomo digitalmente ⚡ e um parceiro 24 horas ⏳, com a expertise especificamente ensinada por você 🎯.";
-
-const words = text.split(" ");
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function TextReveal() {
+  const { t } = useLanguage();
+  const words = t.textReveal.text.split(" ");
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeWord, setActiveWord] = useState<number>(-1);
-  const [revealed, setRevealed] = useState<boolean[]>(() => words.map(() => false));
+  const [revealed, setRevealed] = useState<boolean[]>([]);
   const [isFinished, setIsFinished] = useState(false);
+
+  useEffect(() => {
+    setRevealed(Array(words.length).fill(false));
+    setIsFinished(false);
+    setActiveWord(-1);
+  }, [t.textReveal.text]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

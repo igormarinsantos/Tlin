@@ -3,6 +3,7 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useVelocity, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MousePointer2, LayoutDashboard, Users, MessageSquare, BarChart3, Settings, ChevronDown } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface Lead {
   id: number;
@@ -16,9 +17,7 @@ interface Lead {
 }
 
 const names = ["Ricardo M.", "Ana Paula", "Bruno S.", "Lucas G.", "Carla F.", "Roberto T.", "Juliana K.", "Marcos O.", "Fernanda S.", "Paulo R."];
-const origins = ["Meta Ads", "Google Ads", "TikTok Ads", "Orgânico", "Indicação"];
 const hours = ["09:00", "10:30", "14:00", "15:30", "17:00"];
-const days = ["Hoje", "Amanhã", "Segunda", "Terça", "Quarta"];
 const avatars = [
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
@@ -29,6 +28,8 @@ const avatars = [
 ];
 
 export function FunnelAnimation() {
+  const { t } = useLanguage();
+  const f = t.funnelAnimation;
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -52,16 +53,16 @@ export function FunnelAnimation() {
 
   useEffect(() => {
     setLeads([
-      { id: 12, name: "Paulo R.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: "Meta Ads" },
+      { id: 12, name: "Paulo R.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[0] },
       { id: 11, name: "Fernanda S.", avatar: avatars[4], stage: "meio", justMoved: false, hasCursor: false },
       { id: 10, name: "Lucas G.", avatar: avatars[3], stage: "meio", justMoved: false, hasCursor: false },
       { id: 9, name: "Carla F.", avatar: avatars[4], stage: "meio", justMoved: false, hasCursor: false },
       { id: 8, name: "Ana Paula", avatar: avatars[1], stage: "meio", justMoved: false, hasCursor: false },
       { id: 7, name: "Roberto T.", avatar: avatars[5], stage: "meio", justMoved: false, hasCursor: false },
       { id: 6, name: "Bruno S.", avatar: avatars[2], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 5, name: "Ricardo M.", avatar: avatars[0], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: "Amanhã, 14:00" },
-      { id: 4, name: "Juliana K.", avatar: avatars[5], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: "Hoje, 16:30" },
-      { id: 3, name: "Marcos O.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: "Google Ads" }
+      { id: 5, name: "Ricardo M.", avatar: avatars[0], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[1]}, 14:00` },
+      { id: 4, name: "Juliana K.", avatar: avatars[5], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[0]}, 16:30` },
+      { id: 3, name: "Marcos O.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[1] }
     ]);
 
     const interval = setInterval(() => {
@@ -86,7 +87,7 @@ export function FunnelAnimation() {
           else if (oldestMeio && l.id === oldestMeio.id) {
             stage = "fundo";
             justMoved = true;
-            l.meetingDate = `${days[Math.floor(Math.random() * days.length)]}, ${hours[Math.floor(Math.random() * hours.length)]}`;
+            l.meetingDate = `${f.days[Math.floor(Math.random() * f.days.length)]}, ${hours[Math.floor(Math.random() * hours.length)]}`;
           }
           
           let hasCursor = false;
@@ -113,7 +114,7 @@ export function FunnelAnimation() {
               stage: "topo",
               justMoved: false,
               hasCursor: false,
-              origin: origins[Math.floor(Math.random() * origins.length)]
+              origin: f.origins[Math.floor(Math.random() * f.origins.length)]
             });
           }
           nextLeads = [...newBatch, ...nextLeads];
@@ -171,7 +172,7 @@ export function FunnelAnimation() {
               style={{ x: xSwing, rotate: rotateSwing }}
               className="mt-5 ml-4 px-3 py-1 bg-[#38E3FF] text-[#0c0d0d] rounded-full shadow-xl shadow-[#38E3FF]/20 border border-white/20 origin-top flex items-center justify-center relative z-0"
             >
-              <span className="text-[10px] font-black tracking-tight leading-none">Você</span>
+              <span className="text-[10px] font-black tracking-tight leading-none">{f.you}</span>
             </motion.div>
           </motion.div>
         )}
@@ -214,7 +215,7 @@ export function FunnelAnimation() {
           {/* Header */}
           <div className="px-6 py-4 border-b border-zinc-100 bg-white z-10 shrink-0">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-black text-sm text-zinc-800 tracking-tight">Funil de Vendas</h4>
+              <h4 className="font-black text-sm text-zinc-800 tracking-tight">{f.title}</h4>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 rounded-md border border-indigo-100/50">
                    <motion.div 
@@ -222,7 +223,7 @@ export function FunnelAnimation() {
                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                      className="w-2.5 h-2.5 border-2 border-indigo-200 border-t-indigo-600 rounded-full" 
                    />
-                   <span className="text-[9px] text-indigo-600 font-bold tracking-tight">Atualizando em tempo real...</span>
+                   <span className="text-[9px] text-indigo-600 font-bold tracking-tight">{f.updating}</span>
                 </div>
               </div>
             </div>
@@ -230,12 +231,12 @@ export function FunnelAnimation() {
             {/* Filters Row */}
             <div className="flex items-center gap-2">
               <div className="px-3 py-1.5 rounded-lg border border-zinc-100 bg-zinc-50 flex items-center gap-2 cursor-pointer">
-                <span className="text-[10px] font-bold text-zinc-600">Geral</span>
+                <span className="text-[10px] font-bold text-zinc-600">{f.general}</span>
                 <ChevronDown className="w-3 h-3 text-zinc-400" />
               </div>
               <div className="px-3 py-1.5 rounded-lg border border-zinc-100 bg-zinc-50 flex items-center gap-2 cursor-pointer">
                 <Users className="w-3 h-3 text-zinc-400" />
-                <span className="text-[10px] font-bold text-zinc-600">Todas as Caixas</span>
+                <span className="text-[10px] font-bold text-zinc-600">{f.allInboxes}</span>
                 <ChevronDown className="w-3 h-3 text-zinc-400" />
               </div>
             </div>
@@ -243,9 +244,9 @@ export function FunnelAnimation() {
 
           {/* Kanban Board */}
           <div className="flex-1 bg-zinc-50/30 p-4 md:p-6 grid grid-cols-3 gap-3 md:gap-5">
-            <Column title="Novos Leads" color="#38E3FF" leads={leads.filter(l => l.stage === 'topo')} bgColor="bg-[#38E3FF]/10" />
-            <Column title="IA em Ação" color="#B597FF" leads={leads.filter(l => l.stage === 'meio')} isHighlighted bgColor="bg-[#B597FF]/10" />
-            <Column title="Pronto para Reunião" color="#25D366" leads={leads.filter(l => l.stage === 'fundo')} bgColor="bg-[#25D366]/10" />
+            <Column title={f.col1} color="#38E3FF" leads={leads.filter(l => l.stage === 'topo')} bgColor="bg-[#38E3FF]/10" />
+            <Column title={f.col2} color="#B597FF" leads={leads.filter(l => l.stage === 'meio')} isHighlighted bgColor="bg-[#B597FF]/10" />
+            <Column title={f.col3} color="#25D366" leads={leads.filter(l => l.stage === 'fundo')} bgColor="bg-[#25D366]/10" />
           </div>
         </div>
       </motion.div>
@@ -279,6 +280,8 @@ function Column({ title, color, leads, isHighlighted, bgColor }: { title: string
 }
 
 function AnimatedLeadCard({ lead, isHighlighted }: { lead: Lead, isHighlighted?: boolean }) {
+  const { t } = useLanguage();
+  const f = t.funnelAnimation;
   const [showMouse, setShowMouse] = useState(lead.hasCursor);
 
   useEffect(() => {
@@ -363,9 +366,9 @@ function AnimatedLeadCard({ lead, isHighlighted }: { lead: Lead, isHighlighted?:
         <div className="min-w-0 flex-1">
           <div className="text-[9px] md:text-[10px] font-black text-zinc-800 truncate leading-tight">{lead.name}</div>
           <div className={`text-[7px] md:text-[8px] font-bold truncate mt-0.5 ${isHighlighted && lead.stage === 'meio' ? 'text-[#B597FF]' : 'text-zinc-400'}`}>
-            {lead.stage === 'topo' && (lead.origin || 'Capturado via Tlin')}
-            {lead.stage === 'meio' && 'Qualificando...'}
-            {lead.stage === 'fundo' && (lead.meetingDate ? `Reunião: ${lead.meetingDate}` : 'Agendado')}
+            {lead.stage === 'topo' && (lead.origin || f.capturedVia)}
+            {lead.stage === 'meio' && f.qualifying}
+            {lead.stage === 'fundo' && (lead.meetingDate ? `${f.meeting} ${lead.meetingDate}` : f.scheduled)}
           </div>
         </div>
       </div>

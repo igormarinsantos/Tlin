@@ -2,8 +2,11 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function ObjectionAnimation() {
+  const { t } = useLanguage();
+  const f = t.objectionAnimation;
   const [step, setStep] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -57,7 +60,7 @@ export function ObjectionAnimation() {
             side="left" 
             isTyping={step === 0}
           >
-            Achei o valor um pouco alto para o meu momento agora...
+            {f.msg1}
           </ConversationMessage>
         )}
 
@@ -70,7 +73,7 @@ export function ObjectionAnimation() {
             showAvatar={true}
             isTyping={step === 2}
           >
-            Entendo perfeitamente, Ricardo. Muitos dos nossos clientes pensaram o mesmo antes de verem o ROI.
+            {f.msg2}
           </ConversationMessage>
         )}
 
@@ -83,7 +86,7 @@ export function ObjectionAnimation() {
             showAvatar={false}
             isTyping={step === 4}
           >
-            A Tlin se paga recuperando leads que seriam perdidos. Vamos fazer uma conta rápida da sua operação?
+            {f.msg3}
           </ConversationMessage>
         )}
 
@@ -94,7 +97,7 @@ export function ObjectionAnimation() {
             side="left"
             isTyping={step === 6}
           >
-            Se recuperar 2 vendas já paga o software. Como funciona a implementação?
+            {f.msg4}
           </ConversationMessage>
         )}
 
@@ -107,7 +110,7 @@ export function ObjectionAnimation() {
             showAvatar={true}
             isTyping={step === 8}
           >
-            É instantâneo! Em 5 minutos configuramos seus scripts e a IA já começa a atender. Posso liberar seu acesso?
+            {f.msg5}
           </ConversationMessage>
         )}
 
@@ -118,7 +121,7 @@ export function ObjectionAnimation() {
             side="left"
             isTyping={step === 10}
           >
-            Perfeito, vou querer testar sim! Como fazemos?
+            {f.msg6}
           </ConversationMessage>
         )}
 
@@ -131,7 +134,7 @@ export function ObjectionAnimation() {
             showAvatar={true}
             isTyping={step === 12}
           >
-            Show! Vou liberar seu acesso agora mesmo. Checa seu WhatsApp em 1 minuto, te enviei o link por lá. 🚀
+            {f.msg7}
           </ConversationMessage>
         )}
       </AnimatePresence>

@@ -3,8 +3,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { CheckCircle2, Star, Zap } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function WhatsAppQualifyAnimation() {
+  const { t } = useLanguage();
+  const f = t.whatsappAnimation;
   const [step, setStep] = useState(4);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +62,7 @@ export function WhatsAppQualifyAnimation() {
               side="left" 
               isTyping={step === 0}
             >
-              Olá! Vi o anúncio da Tlin e queria saber como funciona.
+              {f.msg1}
             </ConversationMessage>
           )}
 
@@ -72,7 +75,7 @@ export function WhatsAppQualifyAnimation() {
               showAvatar={true}
               isTyping={step === 2}
             >
-              Com certeza! Para te direcionar ao especialista certo, qual o seu volume mensal de leads hoje?
+              {f.msg2}
             </ConversationMessage>
           )}
 
@@ -83,7 +86,7 @@ export function WhatsAppQualifyAnimation() {
               side="left"
               isTyping={step === 4}
             >
-              Recebemos cerca de 500 leads por mês aqui na operação.
+              {f.msg3}
             </ConversationMessage>
           )}
 
@@ -96,7 +99,7 @@ export function WhatsAppQualifyAnimation() {
               showAvatar={true}
               isTyping={step === 6}
             >
-              Excelente! Você tem o perfil ideal. Vou te encaminhar agora mesmo para o nosso time de vendas. 🚀
+              {f.msg4}
             </ConversationMessage>
           )}
         </AnimatePresence>
@@ -117,8 +120,8 @@ export function WhatsAppQualifyAnimation() {
                 <img src="/Check.png" alt="Check" className="w-full h-full object-contain" />
               </div>
               <div className="text-center">
-                <h4 className="text-xl font-black text-zinc-800">Lead Qualificado!</h4>
-                <p className="text-sm text-zinc-500 font-medium mt-1">Encaminhado para o CRM</p>
+                <h4 className="text-xl font-black text-zinc-800">{f.qualified}</h4>
+                <p className="text-sm text-zinc-500 font-medium mt-1">{f.forwarded}</p>
               </div>
               <div className="flex gap-2 mt-2 w-full">
                 <div className="flex-1 bg-zinc-50 rounded-xl p-3 border border-zinc-100 flex items-center gap-3">
@@ -127,14 +130,14 @@ export function WhatsAppQualifyAnimation() {
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-800">Marcos Oliveira</div>
-                    <div className="text-[8px] text-zinc-400 font-medium">Faturamento: R$ 50k+</div>
+                    <div className="text-[8px] text-zinc-400 font-medium">{f.revenue}</div>
                   </div>
                 </div>
               </div>
               <div className="w-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] p-[1px] rounded-full mt-2 shadow-sm">
                 <div className="bg-white rounded-full px-4 py-2 flex items-center justify-center gap-2">
                   <span className="text-sm">✨</span>
-                  <span className="text-[11px] font-bold text-zinc-800 tracking-tight">Transferido por IA</span>
+                  <span className="text-[11px] font-bold text-zinc-800 tracking-tight">{f.transferred}</span>
                 </div>
               </div>
             </div>

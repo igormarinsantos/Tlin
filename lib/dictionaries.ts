@@ -179,6 +179,47 @@ const ptBR = {
     now: "agora",
     purchaseOf: "Acabou de realizar uma compra de",
     viaWhatsapp: "via WhatsApp."
+  },
+  textReveal: {
+    text: "Imagine você ter um assistente 🧠 com os mínimos detalhes do que você vende 📦, autônomo digitalmente ⚡ e um parceiro 24 horas ⏳, com a expertise especificamente ensinada por você 🎯."
+  },
+  funnelAnimation: {
+    days: ["Hoje", "Amanhã", "Segunda", "Terça", "Quarta"],
+    origins: ["Meta Ads", "Google Ads", "TikTok Ads", "Orgânico", "Indicação"],
+    you: "Você",
+    title: "Funil de Vendas",
+    updating: "Atualizando em tempo real...",
+    general: "Geral",
+    allInboxes: "Todas as Caixas",
+    col1: "Novos Leads",
+    col2: "IA em Ação",
+    col3: "Pronto para Reunião",
+    capturedVia: "Capturado via Tlin",
+    qualifying: "Qualificando...",
+    meeting: "Reunião:",
+    scheduled: "Agendado"
+  },
+  whatsappAnimation: {
+    msg1: "Olá! Vi o anúncio da Tlin e queria saber como funciona.",
+    msg2: "Com certeza! Para te direcionar ao especialista certo, qual o seu volume mensal de leads hoje?",
+    msg3: "Recebemos cerca de 500 leads por mês aqui na operação.",
+    msg4: "Excelente! Você tem o perfil ideal. Vou te encaminhar agora mesmo para o nosso time de vendas. 🚀",
+    qualified: "Lead Qualificado!",
+    forwarded: "Encaminhado para o CRM",
+    revenue: "Faturamento: R$ 50k+",
+    transferred: "Transferido por IA"
+  },
+  objectionAnimation: {
+    msg1: "Achei o valor um pouco alto para o meu momento agora...",
+    msg2: "Entendo perfeitamente, Ricardo. Muitos dos nossos clientes pensaram o mesmo antes de verem o ROI.",
+    msg3: "A Tlin se paga recuperando leads que seriam perdidos. Vamos fazer uma conta rápida da sua operação?",
+    msg4: "Se recuperar 2 vendas já paga o software. Como funciona a implementação?",
+    msg5: "É instantâneo! Em 5 minutos configuramos seus scripts e a IA já começa a atender. Posso liberar seu acesso?",
+    msg6: "Perfeito, vou querer testar sim! Como fazemos?",
+    msg7: "Show! Vou liberar seu acesso agora mesmo. Checa seu WhatsApp em 1 minuto, te enviei o link por lá. 🚀"
+  },
+  revenueGravityHero: {
+    saleCompleted: "Venda concluída"
   }
 };
 
@@ -361,6 +402,47 @@ const enUS: TranslationDictionary = {
     now: "now",
     purchaseOf: "Just made a purchase of",
     viaWhatsapp: "via WhatsApp."
+  },
+  textReveal: {
+    text: "Imagine having an assistant 🧠 with every detail of what you sell 📦, digitally autonomous ⚡ and a 24/7 partner ⏳, with the expertise specifically taught by you 🎯."
+  },
+  funnelAnimation: {
+    days: ["Today", "Tomorrow", "Monday", "Tuesday", "Wednesday"],
+    origins: ["Meta Ads", "Google Ads", "TikTok Ads", "Organic", "Referral"],
+    you: "You",
+    title: "Sales Funnel",
+    updating: "Updating in real time...",
+    general: "General",
+    allInboxes: "All Inboxes",
+    col1: "New Leads",
+    col2: "AI in Action",
+    col3: "Ready for Meeting",
+    capturedVia: "Captured via Tlin",
+    qualifying: "Qualifying...",
+    meeting: "Meeting:",
+    scheduled: "Scheduled"
+  },
+  whatsappAnimation: {
+    msg1: "Hi! I saw Tlin's ad and wanted to know how it works.",
+    msg2: "Absolutely! To direct you to the right specialist, what is your monthly lead volume today?",
+    msg3: "We receive about 500 leads per month in our operation.",
+    msg4: "Excellent! You have the perfect profile. I will forward you right now to our sales team. 🚀",
+    qualified: "Qualified Lead!",
+    forwarded: "Forwarded to CRM",
+    revenue: "Revenue: $50k+",
+    transferred: "Transferred by AI"
+  },
+  objectionAnimation: {
+    msg1: "I found the price a bit high for my current stage...",
+    msg2: "I completely understand, Ricardo. Many of our clients thought the same before seeing the ROI.",
+    msg3: "Tlin pays for itself by recovering leads that would be lost. Let's do a quick calculation for your operation?",
+    msg4: "If it recovers 2 sales, it pays for the software. How does the implementation work?",
+    msg5: "It's instant! In 5 minutes we configure your scripts and the AI starts answering. Can I grant your access?",
+    msg6: "Perfect, I definitely want to test it! How do we do it?",
+    msg7: "Awesome! I will grant your access right now. Check your WhatsApp in 1 minute, I sent the link there. 🚀"
+  },
+  revenueGravityHero: {
+    saleCompleted: "Sale completed"
   }
 };
 
@@ -543,6 +625,47 @@ const esES: TranslationDictionary = {
     now: "ahora",
     purchaseOf: "Acaba de realizar una compra de",
     viaWhatsapp: "por WhatsApp."
+  },
+  textReveal: {
+    text: "Imagina tener un asistente 🧠 con cada detalle de lo que vendes 📦, digitalmente autónomo ⚡ y un socio 24/7 ⏳, con la experiencia específicamente enseñada por ti 🎯."
+  },
+  funnelAnimation: {
+    days: ["Hoy", "Mañana", "Lunes", "Martes", "Miércoles"],
+    origins: ["Meta Ads", "Google Ads", "TikTok Ads", "Orgánico", "Referencia"],
+    you: "Tú",
+    title: "Embudo de Ventas",
+    updating: "Actualizando en tiempo real...",
+    general: "General",
+    allInboxes: "Todas las Bandejas",
+    col1: "Nuevos Leads",
+    col2: "IA en Acción",
+    col3: "Listo para Reunión",
+    capturedVia: "Capturado vía Tlin",
+    qualifying: "Calificando...",
+    meeting: "Reunión:",
+    scheduled: "Agendado"
+  },
+  whatsappAnimation: {
+    msg1: "¡Hola! Vi el anuncio de Tlin y quería saber cómo funciona.",
+    msg2: "¡Por supuesto! Para dirigirte al especialista adecuado, ¿cuál es tu volumen mensual de leads hoy?",
+    msg3: "Recibimos unos 500 leads al mes en nuestra operación.",
+    msg4: "¡Excelente! Tienes el perfil ideal. Te transferiré ahora mismo a nuestro equipo de ventas. 🚀",
+    qualified: "¡Lead Calificado!",
+    forwarded: "Enviado al CRM",
+    revenue: "Ingresos: $50k+",
+    transferred: "Transferido por IA"
+  },
+  objectionAnimation: {
+    msg1: "Me pareció un poco alto el precio para mi etapa actual...",
+    msg2: "Lo entiendo perfectamente, Ricardo. Muchos de nuestros clientes pensaron lo mismo antes de ver el ROI.",
+    msg3: "Tlin se paga solo recuperando leads que se perderían. ¿Hacemos un cálculo rápido para tu operación?",
+    msg4: "Si recupera 2 ventas ya paga el software. ¿Cómo funciona la implementación?",
+    msg5: "¡Es instantáneo! En 5 minutos configuramos tus guiones y la IA empieza a responder. ¿Puedo liberar tu acceso?",
+    msg6: "¡Perfecto, definitivamente quiero probarlo! ¿Cómo lo hacemos?",
+    msg7: "¡Genial! Liberaré tu acceso ahora mismo. Revisa tu WhatsApp en 1 minuto, te envié el enlace por ahí. 🚀"
+  },
+  revenueGravityHero: {
+    saleCompleted: "Venta completada"
   }
 };
 

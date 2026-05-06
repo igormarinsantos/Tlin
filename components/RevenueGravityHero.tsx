@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface Avatar {
   id: number;
@@ -94,6 +95,8 @@ function AvatarElement({
   isConverted: boolean; 
   onConvert: () => void;
 }) {
+  const { t } = useLanguage();
+  const f = t.revenueGravityHero;
   const [hovering, setHovering] = useState(false);
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const [revenueValue] = useState(() => Math.floor(Math.random() * 4501) + 500);
@@ -188,7 +191,7 @@ function AvatarElement({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[140px] bg-white p-3 rounded-2xl shadow-xl border border-zinc-100 flex flex-col items-center gap-1"
           >
-            <span className="text-[11px] font-bold text-zinc-400 tracking-tight">Venda concluída</span>
+            <span className="text-[11px] font-bold text-zinc-400 tracking-tight">{f.saleCompleted}</span>
             <span className="text-sm font-black text-[#0c0d0d]">+ R$ {revenueValue}</span>
           </motion.div>
         )}
