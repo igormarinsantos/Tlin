@@ -252,8 +252,6 @@ export function Pricing() {
                const priceToShow = isAnnual ? plan.priceAnnual : plan.priceMonthly;
                const isHovered = hoveredIndex === idx;
                const isOtherHovered = hoveredIndex !== null && !isHovered;
-               const showAnimatedBorder = (plan.name === t.pricing.starterName || plan.name === t.pricing.enterpriseName) && isHovered;
-
                return (
                  <motion.div 
                     key={plan.name}
@@ -265,11 +263,10 @@ export function Pricing() {
                     className={`group relative flex flex-col rounded-[2.5rem] transition-all duration-300 ease-out p-[2px]
                        ${isOtherHovered ? 'blur-[2px] opacity-60' : 'opacity-100'} 
                        ${isHovered ? '-translate-y-4' : 'translate-y-0'}
-                      ${showAnimatedBorder ? 'bg-gradient-to-r from-[#B597FF] via-[#38E3FF] to-[#B597FF] animate-border-flow' : 'bg-transparent'}
                       ${plan.badge ? plan.badgeColor : 'bg-transparent'} 
                       ${plan.highlight && !isOtherHovered ? 'z-20 shadow-[0_40px_100px_-20px_rgba(181,151,255,0.2)]' : 'z-10 shadow-sm'}
                     `}
-                 >
+                  >
                     {plan.badge && (
                         <div className="w-full py-3 text-center text-[11px] font-bold tracking-wide text-white">
                            {plan.badge}
@@ -277,7 +274,7 @@ export function Pricing() {
                     )}
 
                     <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
-                       {!plan.badge && !showAnimatedBorder && (
+                       {!plan.badge && (
                           <div className="absolute inset-0 border border-zinc-100 rounded-[2.4rem] pointer-events-none" />
                        )}
                        
