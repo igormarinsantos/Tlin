@@ -47,7 +47,7 @@ function LanguageSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full right-0 mt-4 w-36 bg-white border border-zinc-100 rounded-2xl shadow-xl overflow-hidden py-1 z-50"
+            className="absolute top-full right-0 mt-2 w-36 bg-white border border-zinc-100 rounded-2xl shadow-xl overflow-hidden py-1 z-50"
           >
             {languages.map((l) => (
               <button
@@ -71,7 +71,7 @@ function NavLinks() {
   const { t } = useLanguage();
 
   return (
-    <nav className="flex items-center gap-8 font-semibold text-sm text-zinc-600 relative">
+    <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
       <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.produto}</a>
       <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.precos}</a>
@@ -187,9 +187,9 @@ export function Header() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
+            className="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 shadow-lg rounded-full px-12 py-5 w-max gap-20 transition-all hover:bg-zinc-50">
+            <div className="pointer-events-auto flex items-center justify-between overflow-hidden bg-white border border-zinc-200 shadow-lg rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
               
               <div className="flex items-center gap-2 cursor-pointer">
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
@@ -201,7 +201,7 @@ export function Header() {
 
               <div className="flex items-center gap-2">
                  <LanguageSelector />
-                 <HeaderCTA padding="px-8 py-3" />
+                 <HeaderCTA padding="px-4 py-2" />
               </div>
             </div>
           </motion.header>

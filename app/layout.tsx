@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
+import Script from "next/script";
 import { Header } from "@/components/Header";
 import { TopBanner } from "@/components/TopBanner";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import { UTMTracker } from "@/components/UTMTracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -27,6 +29,8 @@ export const metadata: Metadata = {
   },
 };
 
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,11 +42,38 @@ export default function RootLayout({
       className={`${dmSans.variable} h-full antialiased scroll-smooth`}
     >
       <body className={`${dmSans.className} min-h-full flex flex-col`}>
+
+        {/* ── Google Analytics 4 ────────────────────────────────────────── */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', {
+                  send_page_view: true,
+                  cookie_flags: 'SameSite=Lax;Secure',
+                });
+              `}
+            </Script>
+          </>
+        )}
+
+        {/* ── UTM Tracker ─────────────────────────────────────────────── */}
+        <UTMTracker />
+
+        {/* ── App Shell ───────────────────────────────────────────────── */}
         <LanguageProvider>
           <TopBanner />
           <Header />
           {children}
         </LanguageProvider>
+
       </body>
     </html>
   );
