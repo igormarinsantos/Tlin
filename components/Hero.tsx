@@ -231,7 +231,7 @@ export function Hero() {
                 className="absolute inset-[-150%] opacity-100 transition-opacity"
                 style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
               />
-              <div className="relative px-10 py-5 rounded-full font-bold text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+              <div className="relative px-10 py-3.5 rounded-full font-bold text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
                 <span className="relative z-10">{t.hero.cta}</span>
                 <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
@@ -277,7 +277,7 @@ export function Hero() {
                mouseY.set(e.clientY - rect.top);
             }}
           >
-            <div className="px-10 py-5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2">
+            <div className="px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2">
               <Play className="w-3 h-3 fill-current" />
               {t.hero.watchDemo}
             </div>
