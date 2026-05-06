@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -13,23 +13,23 @@ export function LiaPopup() {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 400) {
+      setCanShow(true);
+    } else {
+      setCanShow(false);
+    }
+  });
 
   useEffect(() => {
     // Listen for custom open event
     const handleOpen = () => setIsOpen(true);
     window.addEventListener("open-lia-chat", handleOpen);
     
-    // Listen for Hero animation completion to show floating buttons
-    const handleHeroDone = () => setCanShow(true);
-    window.addEventListener("hero-animation-done", handleHeroDone);
-
-    // Fallback: if Hero event doesn't fire for some reason within 5s, show anyway
-    const fallback = setTimeout(() => setCanShow(true), 5000);
-
     return () => {
       window.removeEventListener("open-lia-chat", handleOpen);
-      window.removeEventListener("hero-animation-done", handleHeroDone);
-      clearTimeout(fallback);
     };
   }, []);
 

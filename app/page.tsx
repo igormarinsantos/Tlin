@@ -72,10 +72,9 @@ export default function Home() {
           {/* FOOTER */}
           <div className="section-to-blur"><Footer /></div>
           
+          {/* IA Assistant Popup */}
+          <LiaPopup />
         </LazyShow>
-
-        {/* IA Assistant Popup - Outside LazyShow to ensure immediate loading logic */}
-        <LiaPopup />
       </ScrollBgWrapper>
     </main>
   );
