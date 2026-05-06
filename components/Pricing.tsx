@@ -6,6 +6,8 @@ import { animate } from "framer-motion";
 import { useOfferTimer } from "@/lib/useOfferTimer";
 // canvas-confetti is dynamically imported only when the user toggles to annual billing
 
+import { useLanguage } from "@/lib/LanguageContext";
+
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
   
@@ -62,68 +64,8 @@ function PriceDisplayInner({ value, highlight }: { value: string; highlight: boo
     return <RollingNumber value={value} highlight={highlight} />;
 }
 
-const plans = [
-  {
-    name: "Starter",
-    target: "Pequenas Operações",
-    priceStandard: 797,
-    priceMonthly: 497,
-    priceAnnual: 397,
-    period: "/mês",
-    desc: "Perfeito para quem está começando e quer validar o atendimento automático.",
-    cta: "Começar Agora",
-    highlight: false,
-    features: [
-      "1 Agente de IA Ativo",
-      "Atendimento 24/7 no WhatsApp",
-      "Lead Scoring Automático",
-      "Integração com E-mail",
-      "Dashboard de Conversão Básico"
-    ]
-  },
-  {
-    name: "Scale",
-    target: "O mais vendido",
-    priceStandard: 1497,
-    priceMonthly: 997,
-    priceAnnual: 797,
-    period: "/mês",
-    desc: "Acelere sua tração com múltiplos agentes e integração completa com CRM.",
-    cta: "Escalar Minha Operação",
-    highlight: true,
-    badge: "Popular",
-    badgeColor: "bg-gradient-to-r from-[#B597FF] to-[#38E3FF]",
-    features: [
-      "Tudo do Starter +",
-      "5 Agentes de IA Customizados",
-      "Integração Nativa com CRM",
-      "Transbordo para Humano",
-      "Treinamento com Playbook",
-      "Suporte Prioritário"
-    ]
-  },
-  {
-    name: "Enterprise",
-    target: "Grandes Escalas",
-    priceStandard: 2997,
-    priceMonthly: 1997,
-    priceAnnual: 1597,
-    period: "/mês",
-    desc: "Segurança e performance para operações que processam milhares de dados.",
-    cta: "Falar com Consultor",
-    highlight: false,
-    features: [
-      "Tudo do Scale +",
-      "Agentes Ilimitados",
-      "Onboarding White-Glove",
-      "API de Integração Privada",
-      "SLA de Performance Garantido",
-      "Account Manager Dedicado"
-    ]
-  }
-];
-
 export function Pricing() {
+  const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
@@ -133,6 +75,67 @@ export function Pricing() {
   const springConfig = { damping: 20, stiffness: 150 };
   const springX = useSpring(mouseX, springConfig);
   const springY = useSpring(mouseY, springConfig);
+
+  const plans = [
+    {
+      name: t.pricing.starterName,
+      target: t.pricing.starterTarget,
+      priceStandard: 797,
+      priceMonthly: 497,
+      priceAnnual: 397,
+      period: "/mês",
+      desc: t.pricing.starterDesc,
+      cta: t.pricing.starterCta,
+      highlight: false,
+      features: [
+        t.pricing.starterF1,
+        t.pricing.starterF2,
+        t.pricing.starterF3,
+        t.pricing.starterF4,
+        t.pricing.starterF5
+      ].filter(Boolean)
+    },
+    {
+      name: t.pricing.scaleName,
+      target: t.pricing.scaleTarget,
+      priceStandard: 1497,
+      priceMonthly: 997,
+      priceAnnual: 797,
+      period: "/mês",
+      desc: t.pricing.scaleDesc,
+      cta: t.pricing.scaleCta,
+      highlight: true,
+      badge: t.pricing.scaleBadge,
+      badgeColor: "bg-gradient-to-r from-[#B597FF] to-[#38E3FF]",
+      features: [
+        t.pricing.scaleF1,
+        t.pricing.scaleF2,
+        t.pricing.scaleF3,
+        t.pricing.scaleF4,
+        t.pricing.scaleF5,
+        t.pricing.scaleF6
+      ].filter(Boolean)
+    },
+    {
+      name: t.pricing.enterpriseName,
+      target: t.pricing.enterpriseTarget,
+      priceStandard: 2997,
+      priceMonthly: 1997,
+      priceAnnual: 1597,
+      period: "/mês",
+      desc: t.pricing.enterpriseDesc,
+      cta: t.pricing.enterpriseCta,
+      highlight: false,
+      features: [
+        t.pricing.enterpriseF1,
+        t.pricing.enterpriseF2,
+        t.pricing.enterpriseF3,
+        t.pricing.enterpriseF4,
+        t.pricing.enterpriseF5,
+        t.pricing.enterpriseF6
+      ].filter(Boolean)
+    }
+  ];
 
   useEffect(() => {
     if (isAnnual) {
@@ -201,11 +204,11 @@ export function Pricing() {
                     style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                   />
                   <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[11px] font-bold tracking-wide text-[#B597FF] flex items-center gap-2">
-                    💰 Plano de Investimento
+                    💰 {t.pricing.badge}
                   </div>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#0c0d0d] mb-4">
-                   Expanda sua operação com IA
+                   {t.pricing.title}
                 </h2>
              </div>
              
@@ -226,16 +229,16 @@ export function Pricing() {
                      onClick={() => setIsAnnual(false)}
                      className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
-                     Mensal
+                     {t.pricing.monthly}
                    </button>
                    
                    <button 
                      onClick={() => setIsAnnual(true)}
                      className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 flex items-center justify-center gap-2 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
-                     Anual
+                     {t.pricing.annual}
                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-[#B597FF] text-white' : 'bg-white text-[#B597FF] border border-[#B597FF]/20'}`}>
-                       -20%
+                       {t.pricing.annualDiscount}
                      </span>
                    </button>
                 </div>
@@ -249,7 +252,7 @@ export function Pricing() {
                const priceToShow = isAnnual ? plan.priceAnnual : plan.priceMonthly;
                const isHovered = hoveredIndex === idx;
                const isOtherHovered = hoveredIndex !== null && !isHovered;
-               const showAnimatedBorder = (plan.name === "Starter" || plan.name === "Enterprise") && isHovered;
+               const showAnimatedBorder = (plan.name === t.pricing.starterName || plan.name === t.pricing.enterpriseName) && isHovered;
 
                return (
                  <motion.div 
@@ -289,7 +292,7 @@ export function Pricing() {
                           <div className="flex items-center gap-2 mb-4">
                              <span className={`text-xs font-black line-through text-red-500/90`}>R$ {plan.priceStandard}</span>
                               <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#38E3FF]/15 text-[#38E3FF] tracking-wide flex items-center gap-1.5 border border-[#38E3FF]/20">
-                                 Condição especial
+                                 {t.pricing.specialCondition}
                                  <span className="opacity-40 select-none">|</span>
                                  <span className="font-mono">{formattedTime}</span>
                               </span>
@@ -309,7 +312,7 @@ export function Pricing() {
                              {plan.cta}
                           </button>
 
-                           <p className={`text-[11px] font-bold tracking-wide mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>Nível de entrega</p>
+                           <p className={`text-[11px] font-bold tracking-wide mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>{t.pricing.deliveryLevel}</p>
                           <ul className="space-y-4">
                              {plan.features.map((feat) => (
                                 <li key={feat} className="flex items-start gap-3">

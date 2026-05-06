@@ -1,8 +1,10 @@
 "use client";
 
 import { Banner } from "./ui/banner";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function TopBanner() {
+  const { t } = useLanguage();
   const handleOpenChat = () => {
     window.dispatchEvent(new Event("open-lia-chat"));
   };
@@ -25,7 +27,7 @@ export function TopBanner() {
         className="flex items-center gap-2 cursor-pointer group px-4 h-full"
       >
         <span className="text-[11px] md:text-xs font-bold tracking-tight text-[#0c0d0d] underline underline-offset-4 decoration-[#B597FF]/30">
-          Tem alguma dúvida sobre a Tlin? <span className="text-[#B597FF]">Pergunte para a Lia</span>
+          {t.topBanner.question} <span className="text-[#B597FF]">{t.topBanner.ask}</span>
         </span>
       </div>
     </Banner>

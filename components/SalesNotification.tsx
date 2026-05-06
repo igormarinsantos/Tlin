@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CheckCircle2, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface Notification {
   id: number;
@@ -26,6 +27,7 @@ const avatars = [
 
 export function SalesNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,13 +36,13 @@ export function SalesNotification() {
         name: names[Math.floor(Math.random() * names.length)],
         value: values[Math.floor(Math.random() * values.length)],
         avatar: avatars[Math.floor(Math.random() * avatars.length)],
-        time: "agora",
+        time: t.salesNotification.now,
       };
       setNotifications(prev => [...prev.slice(-4), newNotif]);
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [t.salesNotification.now]);
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-end p-6 gap-2 overflow-hidden pointer-events-none">
@@ -97,11 +99,11 @@ export function SalesNotification() {
                     {notif.name}
                   </p>
                   <span className="text-[12px] text-black/40 font-medium tracking-tight">
-                    agora
+                    {notif.time}
                   </span>
                 </div>
                 <p className="text-[14px] text-black/80 leading-snug font-semibold line-clamp-2">
-                  Acabou de realizar uma compra de <span className="text-black font-black">{notif.value}</span> via WhatsApp.
+                  {t.salesNotification.purchaseOf} <span className="text-black font-black">{notif.value}</span> {t.salesNotification.viaWhatsapp}
                 </p>
               </div>
             </motion.div>

@@ -64,24 +64,6 @@ export default function RootLayout({
           </>
         )}
 
-        {/* ── Google Translate (translates the full page automatically) ── */}
-        <Script id="gt-init" strategy="afterInteractive">
-          {`
-            function googleTranslateElementInit() {
-              new google.translate.TranslateElement(
-                { pageLanguage: 'pt', autoDisplay: false },
-                'google_translate_element'
-              );
-            }
-          `}
-        </Script>
-        <Script
-          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-          strategy="afterInteractive"
-        />
-        {/* Hidden GT mount point */}
-        <div id="google_translate_element" style={{ display: 'none' }} />
-
         {/* ── UTM Tracker ─────────────────────────────────────────────── */}
         <UTMTracker />
 

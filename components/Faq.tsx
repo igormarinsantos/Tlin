@@ -2,36 +2,20 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const faqs = [
-  {
-    q: "A Inteligência Artificial comete erros operacionais ou inventa preços?",
-    a: "Não. Diferente do ChatGPT aberto, a Tlin trabalha fechada dentro do seu playbook de regras. Ela é programada por 'guardrails' duros: só propõe o que estiver no seu inventário/tabela de preços. Caso faça uma pergunta impossível de interpretar, ela roteia imediatamente para o transbordo humano."
-  },
-  {
-    q: "Meus clientes vão sentir que estão falando com robôs engessados?",
-    a: "Esqueça fluxogramas de botões. Nossos agentes operam em linguagem natural avançada. Eles identificam sotaques, informalidade ou mensagens em áudio e respondem num tom de voz idêntico ao do seu melhor vendedor."
-  },
-  {
-    q: "É complexo integrar no meu ecossistema atual (Hubspot, RD)?",
-    a: "Zero complexidade. Oferecemos conectores One-Click para a maioria dos CRMs do mercado. Se você usar planilhas, puxamos dados via Zapier ou Webhooks direto pro Google Sheets."
-  },
-  {
-    q: "Em quanto tempo a operação começa a ver lucro?",
-    a: "ROI no primeiro dia de implantação. Ao zerar seu tempo de espera para responder, a taxa de conversão levanta imediatamente devido ao pico agudo de receptividade do lead."
-  },
-  {
-    q: "A IA entende áudios e responde à altura?",
-    a: "Sim. A Tlin processa áudios, transcreve e entende o contexto emocional. Ela pode responder via texto ou áudio (opcional), mantendo a fluidez da conversa no WhatsApp como se fosse um humano."
-  },
-  {
-    q: "Como faço para solicitar uma demonstração personalizada?",
-    a: "Basta clicar em qualquer botão 'Ver Demo' ou falar diretamente com a Lia aqui no chat. Nosso time agendará uma call estratégica para mapear seu funil e mostrar o potencial de escala."
-  }
-];
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function Faq() {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
+    { q: t.faq.q1, a: t.faq.a1 },
+    { q: t.faq.q2, a: t.faq.a2 },
+    { q: t.faq.q3, a: t.faq.a3 },
+    { q: t.faq.q4, a: t.faq.a4 },
+    { q: t.faq.q5, a: t.faq.a5 },
+    { q: t.faq.q6, a: t.faq.a6 }
+  ];
 
   return (
     <section className="w-full py-24 md:py-32 bg-white">
@@ -45,13 +29,13 @@ export function Faq() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
-              🙋 Dúvidas Comuns
+              {t.faq.badge}
             </div>
           </div>
              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] mb-6">
-                Perguntas <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">Frequentes</span>
+                {t.faq.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.faq.titleHighlight}</span>
              </h2>
-             <p className="text-zinc-500 font-medium text-lg max-w-xl mx-auto">Tudo o que você precisa saber para escalar sua operação com a Tlin.</p>
+             <p className="text-zinc-500 font-medium text-lg max-w-xl mx-auto">{t.faq.subtitle}</p>
           </div>
 
           <div className="flex flex-col gap-4 mb-24">
@@ -101,7 +85,7 @@ export function Faq() {
                                </p>
                                <div className="mt-6 pt-6 border-t border-zinc-100">
                                   <p className="text-sm font-medium text-zinc-400">
-                                     Sua dúvida não foi esclarecida? <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="text-[#B597FF] hover:underline font-bold transition-all">Fale com nossos especialistas</a>
+                                     {t.faq.notAnswered} <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="text-[#B597FF] hover:underline font-bold transition-all">{t.faq.talkToExperts}</a>
                                   </p>
                                </div>
                             </div>

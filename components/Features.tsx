@@ -8,32 +8,7 @@ import { FunnelAnimation } from "./FunnelAnimation";
 import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
 import { ObjectionAnimation } from "./ObjectionAnimation";
 
-const features = [
-  {
-    title: "Agente Focado em Conversão",
-    desc: "Esqueça chatbots de menu. Nossa IA é treinada com seus melhores scripts para contornar objeções, negociar e converter leads 24/7.",
-    asset: "/Fone.png",
-    video: "https://v1.bg.bing.com/az/hprichbg/rb/WaterCycle_EN-US11175626217_1920x1080.mp4"
-  },
-  {
-    title: "Qualificação Cirúrgica",
-    desc: "A Tlin faz as perguntas certas no WhatsApp, identifica a temperatura do lead e envia pro seu CRM apenas quem já está pronto para comprar.",
-    asset: "/Funil.png",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-18155-large.mp4"
-  },
-  {
-    title: "Escala Sem Aumentar Custos",
-    desc: "Atenda 1.000 leads simultâneos com a mesma agressividade e persuasão do seu melhor closer, sem inchar sua folha de pagamento.",
-    asset: "/Foguete.png",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-tech-worker-examining-the-server-room-23654-large.mp4"
-  },
-  {
-    title: "Controle Absoluto do Funil",
-    desc: "Chega de achismos. Acompanhe em tempo real as métricas que importam: leads qualificados, taxa de conversão e faturamento recuperado.",
-    asset: "/Star.png",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-business-charts-on-a-digital-screen-2268-large.mp4"
-  }
-];
+import { useLanguage } from "@/lib/LanguageContext";
 
 function FeatureMedia({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -81,9 +56,10 @@ function FeatureCard({
   feature,
   idx
 }: {
-  feature: { title: string, desc: string, asset: string, video: string },
+  feature: { title: string, desc: string, asset: string, video: string, id: string },
   idx: number
 }) {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -135,7 +111,7 @@ function FeatureCard({
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
                 <div className="relative px-8 py-5 rounded-full font-bold text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
-                  <span className="relative z-10">Potencializar com IA</span>
+                  <span className="relative z-10">{t.features.cta}</span>
                   <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
                 </div>
@@ -157,7 +133,7 @@ function FeatureCard({
                         style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                       />
                       <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
-                        <span className="text-[10px] font-bold tracking-wide leading-none">Demo 100% grátis</span>
+                        <span className="text-[10px] font-bold tracking-wide leading-none">{t.nav.demo}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -178,13 +154,13 @@ function FeatureCard({
             <div className="absolute inset-[2px] bg-[#F8F6FF] rounded-[1.9rem] md:rounded-[2.9rem] z-0" />
 
             <div className="relative z-10 w-full h-full flex items-center justify-center">
-              {feature.title === "Agente Focado em Conversão" ? (
+              {feature.id === "f1" ? (
                 <ObjectionAnimation />
-              ) : feature.title === "Escala Sem Aumentar Custos" ? (
+              ) : feature.id === "f3" ? (
                 <SalesNotification />
-              ) : feature.title === "Controle Absoluto do Funil" ? (
+              ) : feature.id === "f4" ? (
                 <FunnelAnimation />
-              ) : feature.title === "Qualificação Cirúrgica" ? (
+              ) : feature.id === "f2" ? (
                 <WhatsAppQualifyAnimation />
               ) : (
                 <FeatureMedia src={feature.video} />
@@ -198,6 +174,39 @@ function FeatureCard({
 }
 
 export function Features() {
+  const { t } = useLanguage();
+
+  const featuresList = [
+    {
+      id: "f1",
+      title: t.features.f1_title,
+      desc: t.features.f1_desc,
+      asset: "/Fone.png",
+      video: "https://v1.bg.bing.com/az/hprichbg/rb/WaterCycle_EN-US11175626217_1920x1080.mp4"
+    },
+    {
+      id: "f2",
+      title: t.features.f2_title,
+      desc: t.features.f2_desc,
+      asset: "/Funil.png",
+      video: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-18155-large.mp4"
+    },
+    {
+      id: "f3",
+      title: t.features.f3_title,
+      desc: t.features.f3_desc,
+      asset: "/Foguete.png",
+      video: "https://assets.mixkit.co/videos/preview/mixkit-tech-worker-examining-the-server-room-23654-large.mp4"
+    },
+    {
+      id: "f4",
+      title: t.features.f4_title,
+      desc: t.features.f4_desc,
+      asset: "/Star.png",
+      video: "https://assets.mixkit.co/videos/preview/mixkit-business-charts-on-a-digital-screen-2268-large.mp4"
+    }
+  ];
+
   return (
     <section className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
       <div className="max-w-[1400px] mx-auto">
@@ -216,7 +225,7 @@ export function Features() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
-              ⚡ Capacidades
+              {t.features.badge}
             </div>
           </motion.div>
           <motion.h2
@@ -225,14 +234,14 @@ export function Features() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
           >
-            A inteligência que seu <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">comercial merece.</span>
+            <span dangerouslySetInnerHTML={{ __html: t.features.title }} />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.features.titleHighlight}</span>
           </motion.h2>
         </div>
 
         {/* Standard Flow Layout */}
         <div className="relative w-full flex flex-col gap-y-24 md:gap-y-32">
-          {features.map((feature, idx) => (
+          {featuresList.map((feature, idx) => (
             <FeatureCard
               key={idx}
               feature={feature}

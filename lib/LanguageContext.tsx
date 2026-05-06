@@ -1,61 +1,43 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { getDictionary, TranslationDictionary } from "./dictionaries";
 
 export type Lang = 'PT' | 'EN' | 'ES';
 
 type LanguageContextType = {
   lang: Lang;
   setLang: (l: Lang) => void;
+  t: TranslationDictionary;
 };
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: 'PT',
   setLang: () => {},
+  t: getDictionary('PT'),
 });
-
-const GT_CODES: Record<Lang, string> = { PT: 'pt', EN: 'en', ES: 'es' };
-
-function triggerGoogleTranslate(lang: Lang) {
-  if (typeof document === 'undefined') return;
-
-  const code = GT_CODES[lang];
-
-  // Reset to original Portuguese
-  if (code === 'pt') {
-    const clearCookie = (extra = '') => {
-      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:01 UTC; path=/${extra}`;
-    };
-    clearCookie();
-    clearCookie(`; domain=${window.location.hostname}`);
-    clearCookie(`; domain=.${window.location.hostname}`);
-    window.location.reload();
-    return;
-  }
-
-  // Switch to EN or ES — retry until the GT combo is ready
-  const trySelect = (attempts = 0) => {
-    const select = document.querySelector<HTMLSelectElement>('.goog-te-combo');
-    if (select) {
-      select.value = code;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-    } else if (attempts < 20) {
-      setTimeout(() => trySelect(attempts + 1), 300);
-    }
-  };
-  trySelect();
-}
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('PT');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const savedLang = localStorage.getItem('site_lang') as Lang;
+    if (savedLang && ['PT', 'EN', 'ES'].includes(savedLang)) {
+      setLangState(savedLang);
+    }
+  }, []);
 
   const setLang = (newLang: Lang) => {
     setLangState(newLang);
-    triggerGoogleTranslate(newLang);
+    localStorage.setItem('site_lang', newLang);
   };
 
+  const t = getDictionary(lang);
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang }}>
+    <LanguageContext.Provider value={{ lang: isClient ? lang : 'PT', setLang, t: isClient ? t : getDictionary('PT') }}>
       {children}
     </LanguageContext.Provider>
   );

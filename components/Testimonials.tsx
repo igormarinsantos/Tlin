@@ -3,41 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-const baseTestimonials = [
-  {
-    name: "Eduardo Silva",
-    role: "CEO & Founder",
-    image: "/EDUARDO.png",
-    text: "A Tlin revolucionou como lidamos com [leads qualificados]. O agente de IA não apenas responde, ele [vende com o tom de voz exato] da nossa marca. Triplicamos o agendamento em [30 dias].",
-    company: "Scale Digital"
-  },
-  {
-    name: "Luana Santos",
-    role: "Head of Growth",
-    image: "/LUANA.png",
-    text: "A integração cognitiva da Tlin é o que existe de mais próximo de um [atendimento humano impecável]. A capacidade de [contornar objeções complexas] em tempo real é simplesmente brilhante.",
-    company: "Glow Media"
-  },
-  {
-    name: "Miriam Souza",
-    role: "Diretora de Operações",
-    image: "/MIRIAM.png",
-    text: "Finalmente uma solução que resolve o [funil no WhatsApp] sem parecer um robô travado. Escalamos nossa operação de vendas internacional [sem precisar contratar mais 10 SDRs].",
-    company: "Horizon Tech"
-  },
-  {
-    name: "Luiz Ferreira",
-    role: "VP of Operations",
-    image: "/LUIZ.png",
-    text: "Implementamos em [48 horas] e o [ROI foi instantâneo]. A precisão técnica e a naturalidade da conversa superaram todas as nossas expectativas de automação.",
-    company: "Zapier"
-  }
-];
+import { useLanguage } from "@/lib/LanguageContext";
 
-// Quadruple to ensure enough content for smooth scrolling on large monitors
-const testimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials];
-
-const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
+const TestimonialCard = ({ item }: { item: { name: string, role: string, image: string, text: string, company: string } }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -93,6 +61,42 @@ const TestimonialCard = ({ item }: { item: typeof baseTestimonials[0] }) => {
 };
 
 export function Testimonials() {
+  const { t } = useLanguage();
+
+  const baseTestimonials = [
+    {
+      name: "Eduardo Silva",
+      role: t.testimonials.t1_role,
+      image: "/EDUARDO.png",
+      text: t.testimonials.t1_text,
+      company: "Scale Digital"
+    },
+    {
+      name: "Luana Santos",
+      role: t.testimonials.t2_role,
+      image: "/LUANA.png",
+      text: t.testimonials.t2_text,
+      company: "Glow Media"
+    },
+    {
+      name: "Miriam Souza",
+      role: t.testimonials.t3_role,
+      image: "/MIRIAM.png",
+      text: t.testimonials.t3_text,
+      company: "Horizon Tech"
+    },
+    {
+      name: "Luiz Ferreira",
+      role: t.testimonials.t4_role,
+      image: "/LUIZ.png",
+      text: t.testimonials.t4_text,
+      company: "Zapier"
+    }
+  ];
+
+  // Quadruple to ensure enough content for smooth scrolling on large monitors
+  const testimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials];
+
   return (
     <section className="w-full py-32 overflow-hidden relative bg-white">
       {/* Dynamic Background Glow */}
@@ -109,11 +113,11 @@ export function Testimonials() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">
-              🏆 Resultados de impacto
+              {t.testimonials.badge}
             </div>
           </div>
              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] leading-tight">
-                Metrificado por <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">operações reais</span>
+                {t.testimonials.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.testimonials.titleHighlight}</span>
              </h2>
           </div>
         </div>

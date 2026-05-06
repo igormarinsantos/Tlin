@@ -17,6 +17,7 @@ const logos = [
 ];
 
 export function TrustedBy() {
+  const { t } = useLanguage();
   return (
     <section className="w-full py-16 bg-white overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
@@ -24,7 +25,7 @@ export function TrustedBy() {
           {/* Label */}
           <div className="shrink-0 flex items-center gap-6">
             <p className="text-zinc-400 font-bold text-xs md:text-sm leading-tight text-center md:text-left">
-              Confiança para <br className="hidden md:block" /> escalar sua operação
+              {t.trusted.title} <br className="hidden md:block" /> {t.trusted.subtitle}
             </p>
             <div className="h-10 w-[1px] bg-zinc-200 hidden md:block" />
           </div>

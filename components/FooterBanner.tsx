@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 const HOLE_RADIUS = 60; // Base radius in CSS pixels
 
 export function FooterBanner() {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -233,7 +234,7 @@ export function FooterBanner() {
               viewport={{ once: true }}
               className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-tight"
            >
-              Pronto para escalar<br/>sua operação?
+              {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
            </motion.h2>
 
            <motion.p
@@ -243,7 +244,7 @@ export function FooterBanner() {
               transition={{ delay: 0.1 }}
               className="text-lg text-white mb-12 max-w-2xl"
            >
-              Agende uma demonstração gratuita e descubra como nossos agentes de IA podem automatizar suas vendas no WhatsApp 24/7.
+              {t.footerBanner.subtitle}
            </motion.p>
 
            <motion.div 
@@ -264,7 +265,7 @@ export function FooterBanner() {
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
                 <div className="relative px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">
-                  <span className="relative z-10">Quero meu Agente Tlin</span>
+                  <span className="relative z-10">{t.footerBanner.cta1}</span>
                   <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
                 </div>
@@ -275,7 +276,7 @@ export function FooterBanner() {
                 rel="noopener noreferrer" 
                 className="px-10 py-4 rounded-full border border-white/20 bg-white/5 text-white font-bold text-[14px] hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm"
               >
-                 Falar com vendas
+                 {t.footerBanner.cta2}
               </a>
            </motion.div>
         </div>

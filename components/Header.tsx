@@ -68,11 +68,12 @@ function LanguageSelector() {
 
 
 function NavLinks() {
+  const { t } = useLanguage();
   return (
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Produto</a>
-      <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Recursos</a>
-      <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">Preços</a>
+      <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.product}</a>
+      <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.resources}</a>
+      <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.pricing}</a>
     </nav>
   );
 }
@@ -81,6 +82,7 @@ function NavLinks() {
  * Animated Button for Header (matches Hero design)
  */
 function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -112,7 +114,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
           style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
         />
         <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[12px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>
-          <span className="relative z-10">Começar agora</span>
+          <span className="relative z-10">{t.nav.cta}</span>
           <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
         </div>
@@ -127,7 +129,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
             style={{ position: "absolute", left: springX, top: springY, x: "15px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
             className="px-2 py-0.5 bg-zinc-950 rounded-full border border-white/10 shadow-xl whitespace-nowrap"
           >
-            <span className="text-[9px] font-bold text-white tracking-wide leading-none">Demo 100% grátis</span>
+            <span className="text-[9px] font-bold text-white tracking-wide leading-none">{t.nav.demo}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -137,6 +139,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 
 export function Header() {
   const { scrollY } = useScroll();
+  const { t } = useLanguage();
   const [showFloating, setShowFloating] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -168,7 +171,7 @@ export function Header() {
           <div className="flex items-center gap-2">
              <LanguageSelector />
              <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
-                Entrar
+                {t.nav.login}
              </a>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>

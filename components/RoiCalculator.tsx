@@ -4,6 +4,8 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Minus, Plus, RotateCcw, TrendingUp } from "lucide-react";
 
+import { useLanguage } from "@/lib/LanguageContext";
+
 const TLIN_BOOST = 0.20;
 
 // ── Brand purple palette ────────────────────────────────────────────────────
@@ -11,6 +13,7 @@ const PURPLE_TOP    = "#9D7BFF"; // topo — lilas vibrante
 const PURPLE_BOTTOM = "#7B5AD2"; // baixo — lilas mais profundo
 
 export function RoiCalculator() {
+  const { t } = useLanguage();
   const [leads, setLeads]               = useState(1000);
   const [ticket, setTicket]             = useState(500);
   const [currentSales, setCurrentSales] = useState(10);
@@ -63,17 +66,17 @@ export function RoiCalculator() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-4 py-1.5 rounded-full bg-[#0c0d0d] border border-white/10 text-white text-[11px] font-bold tracking-wide flex items-center gap-2">
-              ✨ Simulador de Lucratividade
+              {t.roi.badge}
             </div>
           </div>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-            Quanto seu comercial{" "}
+            {t.roi.title}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]">
-              deixa na mesa?
+              {t.roi.titleHighlight}
             </span>
           </h2>
           <p className="text-zinc-400 text-base max-w-xl mx-auto">
-            Preencha os dados abaixo e veja em segundos o dinheiro que está escapando todo mês.
+            {t.roi.subtitle}
           </p>
         </div>
 
@@ -85,7 +88,7 @@ export function RoiCalculator() {
 
             <div>
               <p className="text-[11px] font-bold text-zinc-400 tracking-wide mb-8">
-                Detalhes da operação
+                {t.roi.details}
               </p>
 
               <div className="space-y-9">
@@ -93,7 +96,7 @@ export function RoiCalculator() {
                 {/* Leads slider */}
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="text-sm font-bold text-zinc-700">Volume de Leads (Mês)</label>
+                    <label className="text-sm font-bold text-zinc-700">{t.roi.leads}</label>
                     <div className="px-3 py-1 rounded-full bg-[#B597FF]/10 text-[#8A63D2] text-sm font-black">
                       {leads.toLocaleString("pt-BR")}
                     </div>
@@ -115,7 +118,7 @@ export function RoiCalculator() {
                 {/* Ticket slider */}
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="text-sm font-bold text-zinc-700">Ticket Médio</label>
+                    <label className="text-sm font-bold text-zinc-700">{t.roi.ticket}</label>
                     <div className="px-3 py-1 rounded-full bg-[#B597FF]/10 text-[#8A63D2] text-sm font-black">
                       R$ {ticket.toLocaleString("pt-BR")}
                     </div>
@@ -136,7 +139,7 @@ export function RoiCalculator() {
 
                 {/* Vendas counter */}
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-zinc-700">Vendas Atuais (Mês)</label>
+                  <label className="text-sm font-bold text-zinc-700">{t.roi.sales}</label>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => { setCurrentSales(Math.max(1, currentSales - 1)); setStep("input"); }}
@@ -165,20 +168,20 @@ export function RoiCalculator() {
                   onClick={() => setStep("result")}
                   className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF] text-white font-black text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
-                  Descobrir Faturamento Oculto <ArrowRight className="w-4 h-4" />
+                  {t.roi.cta1} <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
                   className="w-full py-4 rounded-full bg-[#0c0d0d] text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
                 >
-                  <TrendingUp className="w-4 h-4" /> Quero Escalar Minha Agência
+                  <TrendingUp className="w-4 h-4" /> {t.roi.cta2}
                 </button>
               )}
 
               {/* Live preview teaser below button */}
               <p className="text-center text-[11px] text-zinc-400 mt-4 font-medium">
-                Simulação instantânea · sem cadastro
+                {t.roi.teaser}
               </p>
             </div>
           </div>
@@ -202,7 +205,7 @@ export function RoiCalculator() {
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
-                      Sua receita atual (mês)
+                      {t.roi.currentRev}
                     </p>
                     <motion.div
                       key={r.currentRevenue}
@@ -214,7 +217,7 @@ export function RoiCalculator() {
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.currentRevenue.toLocaleString("pt-BR")}
                     </motion.div>
-                    <p className="text-white/40 text-xs font-medium mt-3">baseado nas suas vendas atuais</p>
+                    <p className="text-white/40 text-xs font-medium mt-3">{t.roi.basedOn}</p>
                   </div>
 
                   {/* BOTTOM — Poder da IA Tlin */}
@@ -224,11 +227,11 @@ export function RoiCalculator() {
                     <div className="inline-flex items-center gap-2 mb-4">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#B597FF]" />
                       <p className="text-[11px] font-bold tracking-wide text-white/50">
-                        Poder da IA Tlin
+                        {t.roi.powerTlin}
                       </p>
                     </div>
                     <p className="text-sm text-white/70 font-medium leading-relaxed">
-                      Insira seus dados e clique no botão para descobrir o volume exato de dinheiro que seu comercial está deixando na mesa todo mês.
+                      {t.roi.powerDesc}
                     </p>
                     {/* Mini conversion preview */}
                     <div className="mt-6 flex items-center gap-3">
@@ -236,7 +239,7 @@ export function RoiCalculator() {
                         <div className="h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]"
                              style={{ width: `${Math.min(r.convRate * 8, 100)}%` }} />
                       </div>
-                      <span className="text-xs font-black text-white/40">{r.convRate.toFixed(1)}% conv. atual</span>
+                      <span className="text-xs font-black text-white/40">{r.convRate.toFixed(1)}% {t.roi.convCurrent}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -257,7 +260,7 @@ export function RoiCalculator() {
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <div className="flex justify-between items-start mb-6">
                       <span className="px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-bold tracking-wide border border-white/20">
-                        Resultado revelado
+                        {t.roi.revealed}
                       </span>
                       <button
                         onClick={() => setStep("input")}
@@ -267,7 +270,7 @@ export function RoiCalculator() {
                       </button>
                     </div>
                     <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
-                      Faturamento adicional oculto
+                      {t.roi.hiddenRev}
                     </p>
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -277,7 +280,7 @@ export function RoiCalculator() {
                     >
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.extraRevenue.toLocaleString("pt-BR")}
-                      <span className="text-base font-bold opacity-30 ml-2">/mês</span>
+                      <span className="text-base font-bold opacity-30 ml-2">{t.roi.perMonth}</span>
                     </motion.div>
                   </div>
 
@@ -289,11 +292,11 @@ export function RoiCalculator() {
                     {/* Conversion comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-6">
                       <div className="p-4 rounded-2xl bg-white/8 border border-white/10">
-                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">Conversão atual</p>
+                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">{t.roi.convLabel}</p>
                         <p className="text-2xl font-black text-white/70">{r.convRate.toFixed(1)}%</p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/15 border border-white/20">
-                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5">Com Tlin IA</p>
+                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5">{t.roi.withTlin}</p>
                         <p className="text-2xl font-black text-white">{r.newConvRate.toFixed(1)}%</p>
                       </div>
                     </div>
@@ -301,7 +304,7 @@ export function RoiCalculator() {
                     {/* Annual projection */}
                     <div className="pt-5 border-t border-white/10">
                       <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">
-                        Projeção anual adicional
+                        {t.roi.annualProj}
                       </p>
                       <motion.p
                         initial={{ opacity: 0, y: 6 }}
@@ -320,7 +323,7 @@ export function RoiCalculator() {
         </div>
 
         <p className="text-center text-zinc-600 text-xs font-medium mt-10 px-4">
-          * simulação conservadora baseada em cases reais da Tlin.ai
+          {t.roi.footerNote}
         </p>
       </div>
     </section>
