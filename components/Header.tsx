@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { Bot, MessageSquare, Zap, Target, BookOpen, Newspaper, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Lang } from "@/lib/translations";
 
@@ -67,84 +66,13 @@ function LanguageSelector() {
   );
 }
 
-function MegaMenu() {
-  const { t } = useLanguage();
-  const m = t.nav.megaMenu;
-  const icons = [<Target className="w-5 h-5" />, <Bot className="w-5 h-5" />, <MessageSquare className="w-5 h-5" />, <Newspaper className="w-5 h-5" />, <BookOpen className="w-5 h-5" />, <Zap className="w-5 h-5" />];
-  const cats = [
-    { title: m.cat1, links: m.links.slice(0, 3), iconStart: 0 },
-    { title: m.cat2, links: m.links.slice(3, 6), iconStart: 3 },
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.95 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className="absolute top-full left-1/2 -translate-x-1/2 mt-4 p-8 bg-white border border-zinc-200/50 rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] w-[600px] z-[100]"
-    >
-      <div className="grid grid-cols-2 gap-10">
-        {cats.map((category, ci) => (
-          <div key={category.title}>
-            <h4 className="text-[11px] font-bold tracking-wide text-zinc-400 mb-6 px-4">{category.title}</h4>
-            <div className="flex flex-col gap-2">
-              {category.links.map((link, li) => (
-                <a 
-                  key={link.name} 
-                  href="#" 
-                  className="flex items-start gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all group/item"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-[#B597FF] group-hover/item:bg-[#B597FF] group-hover/item:text-white transition-all shadow-sm">
-                    {icons[category.iconStart + li]}
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-zinc-900 mb-0.5 flex items-center gap-1">
-                      {link.name}
-                      <ChevronRight className="w-3 h-3 opacity-0 group-hover/item:opacity-100 transition-all translate-x-[-4px] group-hover/item:translate-x-0" />
-                    </div>
-                    <p className="text-xs font-medium text-zinc-500 leading-snug">{link.desc}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-8 pt-8 border-t border-zinc-100 flex items-center justify-between px-4">
-        <p className="text-xs font-medium text-zinc-400">{m.footer}</p>
-        <a href="#pricing" className="text-xs font-bold text-[#B597FF] hover:underline transition-all">{m.footerCta}</a>
-      </div>
-    </motion.div>
-  );
-}
 
 function NavLinks() {
   const { t } = useLanguage();
-  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
   return (
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <div 
-        className="relative py-2 px-4 cursor-pointer hover:text-[#0c0d0d] transition-colors"
-        onMouseEnter={() => setHoveredLink('produto')}
-        onMouseLeave={() => setHoveredLink(null)}
-      >
-        <div className="flex items-center gap-1">
-          {t.nav.produto}
-          <svg className={`w-3 h-3 transition-transform duration-300 ${hoveredLink === 'produto' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-        </div>
-        
-        <AnimatePresence>
-          {hoveredLink === 'produto' && (
-            <>
-              <div className="absolute top-full left-0 w-full h-4" />
-              <MegaMenu />
-            </>
-          )}
-        </AnimatePresence>
-      </div>
-
+      <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.produto}</a>
       <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.recursos}</a>
       <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.precos}</a>
     </nav>
