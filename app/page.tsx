@@ -52,12 +52,12 @@ export default function Home() {
           />
 
           {/* PRICING / ACTION */}
-          <div id="pricing" className="no-blur transition-all duration-700 relative z-50">
+          <div className="no-blur transition-all duration-700 relative z-50">
             <Pricing />
           </div>
 
           {/* TRUST / SOCIAL PROOF (The New Carousel) */}
-          <div className="section-to-blur">
+          <div id="testimonials" className="section-to-blur">
             <Testimonials />
           </div>
 
