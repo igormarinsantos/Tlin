@@ -32,6 +32,7 @@ function LanguageSelector() {
   return (
     <div className="relative" ref={ref}>
       <button 
+        aria-label="Toggle language"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors text-sm font-semibold text-zinc-600 focus:outline-none"
       >

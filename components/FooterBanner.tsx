@@ -220,6 +220,7 @@ export function FooterBanner() {
       >
         <video
           ref={videoRef}
+          aria-hidden="true"
           muted
           loop
           playsInline

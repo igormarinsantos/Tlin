@@ -105,6 +105,7 @@ export function RoiCalculator() {
                     </div>
                     <input
                       type="range" min={100} max={10000} step={100} value={leads}
+                      aria-label="Número de Leads"
                       onChange={e => { setLeads(+e.target.value); setStep("input"); }}
                       className="w-full h-6 appearance-none cursor-pointer bg-transparent relative z-10"
                       style={{ "--thumb-color": "#B597FF" } as any}
@@ -127,6 +128,7 @@ export function RoiCalculator() {
                     </div>
                     <input
                       type="range" min={100} max={10000} step={50} value={ticket}
+                      aria-label="Ticket Médio"
                       onChange={e => { setTicket(+e.target.value); setStep("input"); }}
                       className="w-full h-6 appearance-none cursor-pointer bg-transparent relative z-10"
                       style={{ "--thumb-color": "#B597FF" } as any}
@@ -139,6 +141,7 @@ export function RoiCalculator() {
                   <label className="text-sm font-bold text-zinc-700">{t.roi.sales}</label>
                   <div className="flex items-center gap-3">
                     <button
+                      aria-label="Diminuir Vendas"
                       onClick={() => { setCurrentSales(Math.max(1, currentSales - 1)); setStep("input"); }}
                       className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                     >
@@ -148,6 +151,7 @@ export function RoiCalculator() {
                       {currentSales}
                     </div>
                     <button
+                      aria-label="Aumentar Vendas"
                       onClick={() => { setCurrentSales(currentSales + 1); setStep("input"); }}
                       className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                     >

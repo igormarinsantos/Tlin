@@ -375,6 +375,7 @@ export function LiaPopup() {
             <div className="px-5 pb-5 bg-white border-t border-zinc-100">
                <div className="mt-4 border border-zinc-200 rounded-2xl bg-white p-3 py-4 flex flex-col focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                  <textarea 
+                   aria-label="Mensagem para Lia"
                    value={inputValue}
                    onChange={(e) => setInputValue(e.target.value)}
                    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
@@ -383,6 +384,7 @@ export function LiaPopup() {
                  />
                  <div className="flex justify-end mt-1">
                    <button 
+                     aria-label="Enviar mensagem"
                      onClick={handleSendMessage}
                      disabled={!inputValue.trim()}
                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
