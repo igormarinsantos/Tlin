@@ -2,26 +2,26 @@ import dynamic from "next/dynamic";
 import { Hero } from "@/components/Hero";
 import { LazyShow } from "@/components/LazyShow";
 
-// Lazy-load everything below the fold (not needed on initial render)
-const TrustedBy = dynamic(() => import("@/components/TrustedBy").then(m => ({ default: m.TrustedBy })));
-const TextReveal = dynamic(() => import("@/components/TextReveal").then(m => ({ default: m.TextReveal })));
-const Features = dynamic(() => import("@/components/Features").then(m => ({ default: m.Features })));
-const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(m => ({ default: m.RoiCalculator })));
-const Pricing = dynamic(() => import("@/components/Pricing").then(m => ({ default: m.Pricing })));
-const Testimonials = dynamic(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
-const Faq = dynamic(() => import("@/components/Faq").then(m => ({ default: m.Faq })));
-const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(m => ({ default: m.FooterBanner })));
-const Footer = dynamic(() => import("@/components/Footer").then(m => ({ default: m.Footer })));
-const ScrollBgWrapper = dynamic(() => import("@/components/ScrollBgWrapper").then(m => ({ default: m.ScrollBgWrapper })));
-const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(m => ({ default: m.LiaPopup })));
-const GlobalBackground = dynamic(() => import("@/components/GlobalBackground").then(m => ({ default: m.GlobalBackground })));
+// Lazy-load everything below the fold with no SSR and loading states
+const TrustedBy = dynamic(() => import("@/components/TrustedBy").then(m => ({ default: m.TrustedBy })), { ssr: false });
+const TextReveal = dynamic(() => import("@/components/TextReveal").then(m => ({ default: m.TextReveal })), { ssr: false });
+const Features = dynamic(() => import("@/components/Features").then(m => ({ default: m.Features })), { ssr: false });
+const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(m => ({ default: m.RoiCalculator })), { ssr: false });
+const Pricing = dynamic(() => import("@/components/Pricing").then(m => ({ default: m.Pricing })), { ssr: false });
+const Testimonials = dynamic(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })), { ssr: false });
+const Faq = dynamic(() => import("@/components/Faq").then(m => ({ default: m.Faq })), { ssr: false });
+const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(m => ({ default: m.FooterBanner })), { ssr: false });
+const Footer = dynamic(() => import("@/components/Footer").then(m => ({ default: m.Footer })), { ssr: false });
+const ScrollBgWrapper = dynamic(() => import("@/components/ScrollBgWrapper").then(m => ({ default: m.ScrollBgWrapper })), { ssr: false });
+const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(m => ({ default: m.LiaPopup })), { ssr: false });
+const GlobalBackground = dynamic(() => import("@/components/GlobalBackground").then(m => ({ default: m.GlobalBackground })), { ssr: false });
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col text-[#0c0d0d] bg-white">
       <GlobalBackground />
       <ScrollBgWrapper>
-        {/* ATTENTION */}
+        {/* ATTENTION - Hero is priority */}
         <div className="section-to-blur"><Hero /></div>
         
         <LazyShow>

@@ -1,14 +1,17 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform, MotionValue, useMotionValue, useSpring } from "framer-motion";
-import { Play, Pause, ChevronLeft, ChevronRight, Link, Globe, Zap, ShieldCheck, Headphones, Cpu, ArrowRight } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { SalesNotification } from "./SalesNotification";
-import { FunnelAnimation } from "./FunnelAnimation";
-import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
-import { ObjectionAnimation } from "./ObjectionAnimation";
-
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { Play, Pause } from "lucide-react";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
+
+// Lazy load heavy inner animations
+const SalesNotification = dynamic(() => import("./SalesNotification").then(m => m.SalesNotification), { ssr: false });
+const FunnelAnimation = dynamic(() => import("./FunnelAnimation").then(m => m.FunnelAnimation), { ssr: false });
+const WhatsAppQualifyAnimation = dynamic(() => import("./WhatsAppQualifyAnimation").then(m => m.WhatsAppQualifyAnimation), { ssr: false });
+const ObjectionAnimation = dynamic(() => import("./ObjectionAnimation").then(m => m.ObjectionAnimation), { ssr: false });
 
 function FeatureMedia({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -34,6 +37,7 @@ function FeatureMedia({ src }: { src: string }) {
         muted
         loop
         playsInline
+        preload="none"
         className={`w-full h-full object-cover transition-all duration-1000 ${isPlaying ? '' : 'blur-[2px] opacity-60'}`}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
@@ -78,7 +82,15 @@ function FeatureCard({
         <div className="h-[300px] md:h-auto md:flex-1 p-8 md:p-12 flex flex-col justify-center shrink-0">
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-6 md:gap-8">
             <h3 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
-              <img src={feature.asset} alt="" className="inline-block w-8 h-8 md:w-16 md:h-16 object-contain mr-2 md:mr-6 align-middle -mt-1" />
+              <div className="relative inline-block w-8 h-8 md:w-16 md:h-16 mr-2 md:mr-6 align-middle -mt-1">
+                <Image 
+                  src={feature.asset} 
+                  alt="" 
+                  fill
+                  sizes="(max-width: 768px) 32px, 64px"
+                  className="object-contain"
+                />
+              </div>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
                 {feature.title}
               </span>

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface Avatar {
@@ -172,7 +173,7 @@ function AvatarElement({
         {!isConverted ? (
           <motion.div
             key="avatar"
-            className="w-full h-full rounded-full border-2 border-white shadow-sm overflow-hidden"
+            className="w-full h-full rounded-full border-2 border-white shadow-sm overflow-hidden relative"
             animate={{
               y: [0, avatar.floatRange, 0],
             }}
@@ -182,7 +183,13 @@ function AvatarElement({
               ease: "easeInOut"
             }}
           >
-            <img src={avatar.image} alt="" className="w-full h-full object-cover" />
+            <Image 
+              src={avatar.image} 
+              alt="" 
+              fill
+              sizes={`${avatar.size}px`}
+              className="object-cover" 
+            />
           </motion.div>
         ) : (
           <motion.div

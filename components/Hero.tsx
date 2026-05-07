@@ -365,15 +365,15 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
 
   return (
     <motion.div
-      initial={{ left: "-10%", y: "0px", opacity: 0 }}
+      initial={{ x: "-10vw", y: "0px", opacity: 0 }}
       animate={{ 
-        left: ["-10%", "110%"],
+        x: ["-10vw", "110vw"],
         y: ["0px", "25px", "-15px", "30px", "0px"], 
         rotate: [15, -10, 20, -15, 15],
         opacity: 1
       }}
       transition={{ 
-        left: { duration: 10, repeat: Infinity, ease: "linear" },
+        x: { duration: 10, repeat: Infinity, ease: "linear" },
         y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
         rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         opacity: { duration: 1 }

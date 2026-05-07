@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-
+import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TestimonialCard = ({ item }: { item: { name: string, role: string, image: string, text: string, company: string } }) => {
@@ -24,9 +24,11 @@ const TestimonialCard = ({ item }: { item: { name: string, role: string, image: 
             exit={{ opacity: 0 }}
             className="absolute inset-0"
           >
-            <img 
+            <Image 
               src={item.image} 
               alt={item.name} 
+              fill
+              sizes="(max-width: 768px) 350px, 400px"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d0d] via-[#0c0d0d]/40 to-transparent" />
@@ -94,8 +96,8 @@ export function Testimonials() {
     }
   ];
 
-  // Quadruple to ensure enough content for smooth scrolling on large monitors
-  const testimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials];
+  // Double to ensure enough content for smooth scrolling
+  const testimonials = [...baseTestimonials, ...baseTestimonials];
 
   return (
     <section className="w-full py-32 overflow-hidden relative bg-white">
