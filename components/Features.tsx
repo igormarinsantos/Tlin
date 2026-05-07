@@ -56,7 +56,7 @@ function FeatureCard({
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "600px" }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         className={`w-full h-full overflow-hidden flex flex-col relative z-10 ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
       >
@@ -216,7 +216,7 @@ export function Features() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "200px" }}
             className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8"
           >
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
@@ -229,7 +229,7 @@ export function Features() {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "200px" }}
             className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
           >
             <span dangerouslySetInnerHTML={{ __html: t.features.title }} />
