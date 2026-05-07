@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import { CheckCircle2, Star, Zap } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export function WhatsAppQualifyAnimation() {
@@ -116,14 +116,8 @@ export function WhatsAppQualifyAnimation() {
             className="absolute z-50 bottom-12 md:bottom-24 left-1/2"
           >
             <div className="bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(181,151,255,0.3)] border border-[#B597FF]/20 flex flex-col items-center gap-4 min-w-[280px]">
-              <div className="w-20 h-20 -mb-2 relative">
-                <Image 
-                  src="/Check.png" 
-                  alt="Check" 
-                  fill
-                  sizes="80px"
-                  className="object-contain" 
-                />
+              <div className="w-20 h-20 -mb-2">
+                <img src="/Check.png" alt="Check" className="w-full h-full object-contain" />
               </div>
               <div className="text-center">
                 <h4 className="text-xl font-black text-zinc-800">{f.qualified}</h4>
@@ -131,14 +125,8 @@ export function WhatsAppQualifyAnimation() {
               </div>
               <div className="flex gap-2 mt-2 w-full">
                 <div className="flex-1 bg-zinc-50 rounded-xl p-3 border border-zinc-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 overflow-hidden relative">
-                    <Image 
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" 
-                      alt="Marcos" 
-                      fill
-                      sizes="32px"
-                      className="object-cover" 
-                    />
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Marcos" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-800">Marcos Oliveira</div>
@@ -181,25 +169,11 @@ function ConversationMessage({
       <div className="w-6 h-6 shrink-0 flex items-start justify-center mt-1">
         {showAvatar && (
           side === "left" ? (
-            <div className="w-6 h-6 rounded-full bg-zinc-800 shrink-0 overflow-hidden border border-white/10 relative">
-              <Image 
-                src={leadPhoto} 
-                alt="Lead" 
-                fill
-                sizes="24px"
-                className="object-cover" 
-              />
+            <div className="w-6 h-6 rounded-full bg-zinc-800 shrink-0 overflow-hidden border border-white/10">
+              <img src={leadPhoto} alt="Lead" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="relative w-6 h-6 shrink-0">
-              <Image 
-                src="/TlinIA.svg" 
-                alt="Tlin IA" 
-                fill
-                sizes="24px"
-                className="object-contain" 
-              />
-            </div>
+              <img src="/TlinIA.svg" alt="Tlin IA" className="w-6 h-6 shrink-0 object-contain" />
           )
         )}
       </div>

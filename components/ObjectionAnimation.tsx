@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export function ObjectionAnimation() {
@@ -164,25 +163,11 @@ function ConversationMessage({
       <div className="w-6 h-6 shrink-0 flex items-start justify-center mt-1">
         {showAvatar && (
           side === "left" ? (
-            <div className="w-6 h-6 rounded-full bg-zinc-800 shrink-0 overflow-hidden border border-white/10 relative">
-              <Image 
-                src={leadPhoto} 
-                alt="Lead" 
-                fill
-                sizes="24px"
-                className="object-cover" 
-              />
+            <div className="w-6 h-6 rounded-full bg-zinc-800 shrink-0 overflow-hidden border border-white/10">
+              <img src={leadPhoto} alt="Lead" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="relative w-6 h-6 shrink-0">
-              <Image 
-                src="/TlinIA.svg" 
-                alt="Tlin IA" 
-                fill
-                sizes="24px"
-                className="object-contain" 
-              />
-            </div>
+              <img src="/TlinIA.svg" alt="Tlin IA" className="w-6 h-6 shrink-0 object-contain" />
           )
         )}
       </div>
