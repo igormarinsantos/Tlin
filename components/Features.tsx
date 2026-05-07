@@ -81,13 +81,13 @@ function FeatureCard({
       >
         <div className="h-[300px] md:h-auto md:flex-1 p-8 md:p-12 flex flex-col justify-center shrink-0">
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-6 md:gap-8">
-            <h3 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
-              <div className="relative inline-block w-8 h-8 md:w-16 md:h-16 mr-2 md:mr-6 align-middle -mt-1">
+            <h3 className="text-5xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
+              <div className="relative inline-block w-12 h-12 md:w-16 md:h-16 mr-3 md:mr-6 align-middle -mt-1">
                 <Image 
                   src={feature.asset} 
                   alt="" 
                   fill
-                  sizes="(max-width: 768px) 32px, 64px"
+                  sizes="(max-width: 768px) 48px, 64px"
                   className="object-contain"
                 />
               </div>
@@ -95,7 +95,7 @@ function FeatureCard({
                 {feature.title}
               </span>
             </h3>
-            <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
+            <p className="text-xl md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
               {feature.desc}
             </p>
             
