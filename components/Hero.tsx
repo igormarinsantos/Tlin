@@ -422,36 +422,44 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
 
   useEffect(() => {
     const updatePosition = (x: number, y: number) => {
-      if (isNearCta || isAbductedGlobal || isScrolledPast) {
+      const isAbducted = isNearCta || isAbductedGlobal || isScrolledPast;
+      
+      if (isAbducted) {
         mascotOpacity.set(0);
         mascotScale.set(0);
+        // Rapid vortex spin during abduction
+        mascotRotate.set(mascotRotate.get() + 720); 
       } else {
         mascotOpacity.set(1);
         mascotScale.set(1);
       }
 
+      if (isScrolledPast) return;
+
       const dx = x - mascotX.get();
       const dy = y - mascotY.get();
       const dist = Math.hypot(dx, dy);
 
-      if (dist > 1 && !isScrolledPast) {
-        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        let delta = angle - lastAngle.current;
+      if (dist > 0.1) {
+        // Smooth rotation towards target
+        let targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+        let delta = targetAngle - lastAngle.current;
         if (delta > 180) delta -= 360;
         if (delta < -180) delta += 360;
         
         cumulativeRotation.current += delta;
-        lastAngle.current = angle;
+        lastAngle.current = targetAngle;
         
         mascotX.set(x);
         mascotY.set(y);
-        mascotRotate.set(cumulativeRotation.current);
-      } else if (!isScrolledPast) {
-        mascotX.set(x);
-        mascotY.set(y);
+        
+        if (!isAbducted) {
+          mascotRotate.set(cumulativeRotation.current);
+        }
       }
     };
 
+    // Initial sync to current mouse position to prevent sticking at start
     const curX = globalMouseX.get();
     const curY = globalMouseY.get();
     if (curX !== 0 || curY !== 0) {
