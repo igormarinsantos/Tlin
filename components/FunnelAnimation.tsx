@@ -218,10 +218,7 @@ export function FunnelAnimation() {
               <h4 className="font-black text-sm text-zinc-800 tracking-tight">{f.title}</h4>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 rounded-md border border-indigo-100/50">
-                   <motion.div 
-                     animate={{ rotate: 360 }}
-                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                     className="w-2.5 h-2.5 border-2 border-indigo-200 border-t-indigo-600 rounded-full" 
+                   <div className="w-2.5 h-2.5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-[spin_2s_linear_infinite]" 
                    />
                    <span className="text-[9px] text-indigo-600 font-bold tracking-tight">{f.updating}</span>
                 </div>

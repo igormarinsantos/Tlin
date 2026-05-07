@@ -275,10 +275,7 @@ export function FooterBanner() {
                 href="#pricing"
                 className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block w-full md:w-auto"
               >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-[-150%] opacity-100 transition-opacity"
+                <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
                 <div className="relative px-2 md:px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">

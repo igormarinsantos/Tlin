@@ -107,10 +107,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
            mouseY.set(e.clientY - rect.top);
         }}
       >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-[-150%] opacity-100 transition-opacity"
+        <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
           style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
         />
         <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[12px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>

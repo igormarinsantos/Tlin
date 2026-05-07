@@ -422,7 +422,7 @@ export function LiaPopup() {
                     <span className="text-lg">✨</span>
                   </div>
                 )}
-                <motion.div initial={false} animate={{ width: "auto", opacity: 1 }} className="overflow-hidden flex-shrink-0 flex items-center justify-center">
+                <motion.div initial={false} animate={{ opacity: 1 }} className="overflow-hidden flex-shrink-0 flex items-center justify-center">
                   <span className={`font-bold text-[13px] whitespace-nowrap ${isOpen ? 'pl-0' : 'pl-2'}`}>
                     {isOpen ? t.liaPopup.close : t.liaPopup.talkToLia}
                   </span>

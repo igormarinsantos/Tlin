@@ -127,10 +127,7 @@ function FeatureCard({
                 }}
                 className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full md:w-max"
               >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-[-150%] opacity-100"
+                <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
                   style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
                 />
                 <div className="relative px-8 py-4 md:py-5 rounded-full font-bold text-base md:text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
@@ -149,10 +146,7 @@ function FeatureCard({
                     style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
                   >
                     <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-[-150%]"
+                      <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
                         style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                       />
                       <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
@@ -172,10 +166,7 @@ function FeatureCard({
              onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
            >
-             <motion.div
-               animate={{ rotate: 360 }}
-               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-               className="absolute inset-[-150%] opacity-100"
+             <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
                style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
              />
              <div className="relative px-8 py-4 rounded-full font-bold text-base z-10 block w-full text-white transition-colors duration-300 text-center">
@@ -187,10 +178,7 @@ function FeatureCard({
 
         <div className="h-[480px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
           <div className="w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-[-100%] opacity-100"
+            <div className="absolute inset-[-100%] opacity-100 animate-[spin_4s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
             />
             <div className="absolute inset-[2px] bg-[#F8F6FF] rounded-[1.9rem] md:rounded-[2.9rem] z-0" />
@@ -260,10 +248,7 @@ export function Features() {
             viewport={{ once: true }}
             className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8"
           >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-[-150%]"
+            <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">

@@ -59,10 +59,7 @@ export function RoiCalculator() {
         {/* Section heading */}
         <div className="text-center mb-16 space-y-4">
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-4 mx-auto">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-[-150%]"
+            <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-4 py-1.5 rounded-full bg-[#0c0d0d] border border-white/10 text-white text-[11px] font-bold tracking-wide flex items-center gap-2">

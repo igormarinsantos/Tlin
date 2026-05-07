@@ -22,10 +22,7 @@ export function Faq() {
        <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="text-center mb-20">
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-[-150%]"
+            <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
             />
             <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[#B597FF] text-[11px] font-bold tracking-wide flex items-center gap-2">

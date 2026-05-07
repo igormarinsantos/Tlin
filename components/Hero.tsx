@@ -259,10 +259,7 @@ export function Hero() {
                  uiMouseY.set(e.clientY - rect.top);
               }}
             >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-[-150%] opacity-100 transition-opacity"
+              <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
                 style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
               />
               <div className="relative px-6 md:px-10 py-3.5 rounded-full font-bold text-[14px] md:text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
@@ -280,10 +277,7 @@ export function Hero() {
                   style={{ position: "absolute", left: uiSpringX, top: uiSpringY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
                 >
                   <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-[-150%]"
+                    <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
                       style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                     />
                     <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
