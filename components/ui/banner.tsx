@@ -171,29 +171,26 @@ export function Banner({
   );
 }
 
-const maskImage =
-  "linear-gradient(to bottom,white,transparent), radial-gradient(circle at top center, white, transparent)";
-
 function flow({ colors }: { colors: string[] }) {
+  // Use a simpler, universally supported animated gradient approach 
+  // without masks to prevent the black flicker on hydration/F5.
   return (
     <>
       <div
-        className="absolute inset-0 z-[-1]"
+        className="absolute inset-0 z-[-1] opacity-70"
         style={
           {
-            maskImage,
-            maskComposite: "intersect",
-            animation: "fd-moving-banner 20s linear infinite",
-            backgroundImage: `repeating-linear-gradient(70deg, ${[...colors, colors[0]].map((color, i) => `${color} ${(i * 50) / colors.length}%`).join(", ")})`,
-            backgroundSize: "200% 100%",
-            filter: "saturate(2)",
+            animation: "fd-moving-banner 10s ease infinite",
+            backgroundImage: `linear-gradient(90deg, ${colors[0]}, ${colors[1]}, ${colors[2] || colors[0]})`,
+            backgroundSize: "200% 200%",
           } as object
         }
       />
       <style>
         {`@keyframes fd-moving-banner {
-            from { background-position: 0% 0;  }
-            to { background-position: 100% 0;  }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
          }`}
       </style>
     </>
