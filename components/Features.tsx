@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useInView } from "framer-motion";
 import { Play, Pause } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -16,6 +16,17 @@ const ObjectionAnimation = dynamic(() => import("./ObjectionAnimation").then(m =
 function FeatureMedia({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "100px" });
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isInView && isPlaying) {
+      videoRef.current.play().catch(() => setIsPlaying(false));
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isInView, isPlaying]);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -29,11 +40,10 @@ function FeatureMedia({ src }: { src: string }) {
   };
 
   return (
-    <div className="w-full h-full relative group/media overflow-hidden bg-zinc-900">
+    <div ref={containerRef} className="w-full h-full relative group/media overflow-hidden bg-zinc-900">
       <video
         ref={videoRef}
         src={src}
-        autoPlay
         muted
         loop
         playsInline

@@ -11,11 +11,6 @@ export function LazyShow({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isInView) {
       setShouldRender(true);
-    } else {
-      const timer = setTimeout(() => {
-        setShouldRender(true);
-      }, 2500); 
-      return () => clearTimeout(timer);
     }
   }, [isInView]);
 

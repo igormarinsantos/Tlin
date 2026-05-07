@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -11,6 +11,7 @@ export function FooterBanner() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const trailCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const trailRef = useRef<{ x: number, y: number, life: number }[]>([]);
@@ -18,6 +19,17 @@ export function FooterBanner() {
   const isHoveredRef = useRef(false);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const timeRef = useRef(0);
+  
+  const isInView = useInView(containerRef, { margin: "200px" });
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isInView) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isInView]);
 
   // Handle Canvas Drawing and Mask Generation
   useEffect(() => {
@@ -201,7 +213,7 @@ export function FooterBanner() {
         className="w-full h-[600px] md:h-[750px] relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] group bg-[#0c0d0d]"
       >
         <video
-          autoPlay
+          ref={videoRef}
           muted
           loop
           playsInline
