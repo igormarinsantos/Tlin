@@ -395,6 +395,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
   const lastAngle = useRef(0);
   const cumulativeRotation = useRef(0);
   const [isAbductedGlobal, setIsAbductedGlobal] = useState(false);
+  const [isScrolledPast, setIsScrolledPast] = useState(false);
 
   useEffect(() => {
     const handleGlobalHover = (e: MouseEvent) => {
@@ -403,15 +404,25 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       setIsAbductedGlobal(isOverInteractive);
     };
 
+    const handleScroll = () => {
+      setIsScrolledPast(window.scrollY > 800);
+    };
+
     window.addEventListener("mouseover", handleGlobalHover);
-    return () => window.removeEventListener("mouseover", handleGlobalHover);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Check initial scroll
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("mouseover", handleGlobalHover);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
     const updatePosition = (x: number, y: number) => {
-      if (window.scrollY > 800) return; 
-
-      if (isNearCta || isAbductedGlobal) {
+      if (isNearCta || isAbductedGlobal || isScrolledPast) {
         mascotOpacity.set(0);
         mascotScale.set(0);
       } else {
@@ -423,7 +434,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       const dy = y - mascotY.get();
       const dist = Math.hypot(dx, dy);
 
-      if (dist > 1) {
+      if (dist > 1 && !isScrolledPast) {
         let angle = Math.atan2(dy, dx) * (180 / Math.PI);
         let delta = angle - lastAngle.current;
         if (delta > 180) delta -= 360;
@@ -435,7 +446,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         mascotX.set(x);
         mascotY.set(y);
         mascotRotate.set(cumulativeRotation.current);
-      } else {
+      } else if (!isScrolledPast) {
         mascotX.set(x);
         mascotY.set(y);
       }
@@ -451,7 +462,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
     const unsubY = globalMouseY.on("change", (v: number) => updatePosition(globalMouseX.get(), v));
     
     return () => { unsubX(); unsubY(); };
-  }, [isNearCta, isAbductedGlobal, globalMouseX, globalMouseY, initialX, initialY]);
+  }, [isNearCta, isAbductedGlobal, isScrolledPast, globalMouseX, globalMouseY, initialX, initialY]);
 
   return (
     <motion.div
