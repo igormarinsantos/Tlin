@@ -365,22 +365,22 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
 
   return (
     <motion.div
-      initial={{ x: "-20%", y: "8%", opacity: 0 }}
+      initial={{ x: "-20%", y: "0px", opacity: 0 }}
       animate={{ 
         x: ["-10%", "110%"],
-        y: ["8%", "18%", "4%", "22%", "8%"], // Sinuous path based on the user's drawing
-        rotate: [15, -10, 20, -15, 15],
+        y: ["0px", "35px", "-15px", "45px", "0px"], // Precision pixel-based path
+        rotate: [15, -10, 25, -15, 15],
         opacity: 1
       }}
       transition={{ 
-        x: { duration: 15, repeat: Infinity, ease: "linear" },
-        y: { duration: 15, repeat: Infinity, ease: "easeInOut" },
-        rotate: { duration: 7.5, repeat: Infinity, ease: "easeInOut" },
+        x: { duration: 16, repeat: Infinity, ease: "linear" },
+        y: { duration: 16, repeat: Infinity, ease: "easeInOut" },
+        rotate: { duration: 8, repeat: Infinity, ease: "easeInOut" },
         opacity: { duration: 1 }
       }}
-      className="absolute top-0 left-0 w-10 h-10 z-20 lg:hidden pointer-events-none"
+      className="absolute top-[28%] left-0 w-12 h-12 z-20 lg:hidden pointer-events-none"
     >
-      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={40} height={40} priority />
+      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={48} height={48} priority />
     </motion.div>
   );
 }
