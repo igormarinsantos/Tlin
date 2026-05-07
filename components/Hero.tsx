@@ -378,7 +378,7 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
         rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         opacity: { duration: 1 }
       }}
-      className="absolute top-[35%] w-8 h-8 z-0 lg:hidden pointer-events-none flex items-center justify-center"
+      className="absolute top-[18%] w-8 h-8 z-20 lg:hidden pointer-events-none flex items-center justify-center"
     >
       <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={32} height={32} priority />
     </motion.div>
