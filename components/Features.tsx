@@ -132,7 +132,7 @@ function FeatureCard({
         </div>
         
         {/* Mobile Button */}
-        <div className="md:hidden px-8 pb-4 w-full">
+        <div className="md:hidden px-8 pb-4 w-full mt-8">
            <button
              onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
