@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { CheckCircle2, TrendingUp } from "lucide-react";
+import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface Notification {
@@ -77,12 +77,18 @@ export function SalesNotification() {
                 stiffness: 120, 
                 damping: 20,
               }}
-              className="w-full max-w-[320px] bg-white rounded-2xl p-4 border border-zinc-100 flex items-start gap-3 origin-bottom relative z-10 hover:bg-zinc-50 transition-colors duration-300"
+              className="w-full max-w-[320px] bg-white rounded-2xl p-4 border border-zinc-100 flex items-start gap-3 origin-bottom relative z-10 hover:bg-zinc-50 transition-colors duration-300 shadow-sm"
             >
               {/* iOS Style Avatar with App Icon */}
               <div className="relative shrink-0">
-                <div className="w-11 h-11 rounded-full overflow-hidden border border-white/40 shadow-sm">
-                  <img src={notif.avatar} alt="" className="w-full h-full object-cover" />
+                <div className="w-11 h-11 rounded-full overflow-hidden border border-white/40 shadow-sm relative">
+                  <Image 
+                    src={notif.avatar} 
+                    alt="" 
+                    fill
+                    sizes="44px"
+                    className="object-cover" 
+                  />
                 </div>
                 {/* WhatsApp Badge - Reverted to Green */}
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#25D366] rounded-full flex items-center justify-center shadow-md">
