@@ -109,11 +109,11 @@ export function WhatsAppQualifyAnimation() {
       <AnimatePresence>
         {step >= 8 && (
           <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            initial={{ opacity: 0, y: 100, scale: 0.9, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
+            exit={{ opacity: 0, y: 20, scale: 0.9, x: "-50%" }}
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className="absolute z-50 bottom-12 md:bottom-24"
+            className="absolute z-50 bottom-12 md:bottom-24 left-1/2"
           >
             <div className="bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(181,151,255,0.3)] border border-[#B597FF]/20 flex flex-col items-center gap-4 min-w-[280px]">
               <div className="w-20 h-20 -mb-2">
