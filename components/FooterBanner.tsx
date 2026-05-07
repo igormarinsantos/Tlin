@@ -21,6 +21,11 @@ export function FooterBanner() {
   const timeRef = useRef(0);
   
   const isInView = useInView(containerRef, { margin: "200px" });
+  const isInViewRef = useRef(isInView);
+  
+  useEffect(() => {
+    isInViewRef.current = isInView;
+  }, [isInView]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -47,7 +52,10 @@ export function FooterBanner() {
     let rafId: number;
 
     const render = () => {
+      rafId = requestAnimationFrame(render);
       if (!ctx || !trailCtx || !canvas) return;
+      if (!isInViewRef.current) return; // Skip heavy drawing when offscreen
+      
       timeRef.current += 0.008;
       
       const dpr = window.devicePixelRatio || 1;
@@ -146,8 +154,6 @@ export function FooterBanner() {
       ctx.drawImage(trailCanvas, 0, 0, canvas.width / dpr, canvas.height / dpr);
       
       ctx.restore();
-
-      rafId = requestAnimationFrame(render);
     };
 
     const handleMouseMove = (e: MouseEvent) => {

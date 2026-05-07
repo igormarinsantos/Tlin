@@ -13,55 +13,26 @@ const FunnelAnimation = dynamic(() => import("./FunnelAnimation").then(m => m.Fu
 const WhatsAppQualifyAnimation = dynamic(() => import("./WhatsAppQualifyAnimation").then(m => m.WhatsAppQualifyAnimation), { ssr: false });
 const ObjectionAnimation = dynamic(() => import("./ObjectionAnimation").then(m => m.ObjectionAnimation), { ssr: false });
 
-function FeatureMedia({ src }: { src: string }) {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { margin: "100px" });
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-    if (isInView && isPlaying) {
-      videoRef.current.play().catch(() => setIsPlaying(false));
-    } else {
-      videoRef.current.pause();
-    }
-  }, [isInView, isPlaying]);
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+function FeatureMedia({ id }: { id: string }) {
+  const gradients: Record<string, string> = {
+    "f1": "radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0c0d0d 100%)",
+    "f2": "radial-gradient(circle at 50% 50%, #16102b 0%, #0c0d0d 100%)",
+    "f3": "radial-gradient(circle at 50% 50%, #0d1a26 0%, #0c0d0d 100%)",
+    "f4": "radial-gradient(circle at 50% 50%, #1a1528 0%, #0c0d0d 100%)",
   };
 
   return (
-    <div ref={containerRef} className="w-full h-full relative group/media overflow-hidden bg-zinc-900">
-      <video
-        ref={videoRef}
-        src={src}
-        muted
-        loop
-        playsInline
-        preload="none"
-        className={`w-full h-full object-cover transition-all duration-1000 ${isPlaying ? '' : 'blur-[2px] opacity-60'}`}
+    <div className="w-full h-full relative group/media overflow-hidden" style={{ background: gradients[id] || gradients["f1"] }}>
+      <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.05, 1],
+          opacity: [0.4, 0.6, 0.4] 
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[100px] rounded-full pointer-events-none"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute bottom-6 right-6 z-30">
-        <button
-          onClick={togglePlay}
-          className="relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 group/btn"
-        >
-          <div className="absolute inset-0 bg-zinc-900 border border-white/20 rounded-full transition-all duration-300 group-hover/btn:bg-zinc-800 group-hover/btn:scale-110 group-hover/btn:border-white/30" />
-          <div className="relative z-10 text-white">
-            {isPlaying ? <Pause className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current ml-0.5" />}
-          </div>
-        </button>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d0d] via-transparent to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -192,7 +163,7 @@ function FeatureCard({
               ) : feature.id === "f2" ? (
                 <WhatsAppQualifyAnimation />
               ) : (
-                <FeatureMedia src={feature.video} />
+                <FeatureMedia id={feature.id} />
               )}
             </div>
           </div>
