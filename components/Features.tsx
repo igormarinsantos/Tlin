@@ -71,7 +71,7 @@ function FeatureCard({
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
   return (
-    <div className="w-full h-[780px] md:h-[650px] relative py-8 md:py-0">
+    <div className="w-full h-[900px] md:h-[650px] relative py-8 md:py-0">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -81,13 +81,13 @@ function FeatureCard({
       >
         <div className="h-[300px] md:h-auto md:flex-1 p-8 md:p-12 flex flex-col justify-center shrink-0">
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-6 md:gap-8">
-            <h3 className="text-5xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
-              <div className="relative inline-block w-12 h-12 md:w-16 md:h-16 mr-3 md:mr-6 align-middle -mt-1">
+            <h3 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
+              <div className="relative inline-block w-8 h-8 md:w-16 md:h-16 mr-2 md:mr-6 align-middle -mt-1">
                 <Image 
                   src={feature.asset} 
                   alt="" 
                   fill
-                  sizes="(max-width: 768px) 48px, 64px"
+                  sizes="(max-width: 768px) 32px, 64px"
                   className="object-contain"
                 />
               </div>
@@ -95,7 +95,7 @@ function FeatureCard({
                 {feature.title}
               </span>
             </h3>
-            <p className="text-xl md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
+            <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
               {feature.desc}
             </p>
             
@@ -175,7 +175,7 @@ function FeatureCard({
            </button>
         </div>
 
-        <div className="h-[350px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
+        <div className="h-[480px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
           <div className="w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
             <motion.div
               animate={{ rotate: 360 }}
