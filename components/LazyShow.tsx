@@ -11,7 +11,30 @@ export function LazyShow({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isInView) {
       setShouldRender(true);
+      return;
     }
+
+    const handleUserInteraction = () => {
+      setShouldRender(true);
+      window.removeEventListener("scroll", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("mousemove", handleUserInteraction);
+    };
+
+    window.addEventListener("scroll", handleUserInteraction, { passive: true });
+    window.addEventListener("touchstart", handleUserInteraction, { passive: true });
+    window.addEventListener("mousemove", handleUserInteraction, { passive: true });
+
+    const timer = setTimeout(() => {
+      setShouldRender(true);
+    }, 4000);
+
+    return () => {
+      window.removeEventListener("scroll", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("mousemove", handleUserInteraction);
+      clearTimeout(timer);
+    };
   }, [isInView]);
 
   return (
