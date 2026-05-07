@@ -365,17 +365,17 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
 
   return (
     <motion.div
-      initial={{ x: "-20%", y: "15%", opacity: 0 }}
+      initial={{ x: "-20%", y: "8%", opacity: 0 }}
       animate={{ 
-        x: ["-10%", "110%", "-10%"],
-        y: ["15%", "22%", "15%"],
-        rotate: [10, 25, -5, 10],
+        x: ["-10%", "110%"],
+        y: ["8%", "18%", "4%", "22%", "8%"], // Sinuous path based on the user's drawing
+        rotate: [15, -10, 20, -15, 15],
         opacity: 1
       }}
       transition={{ 
         x: { duration: 15, repeat: Infinity, ease: "linear" },
-        y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-        rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+        y: { duration: 15, repeat: Infinity, ease: "easeInOut" },
+        rotate: { duration: 7.5, repeat: Infinity, ease: "easeInOut" },
         opacity: { duration: 1 }
       }}
       className="absolute top-0 left-0 w-10 h-10 z-20 lg:hidden pointer-events-none"
