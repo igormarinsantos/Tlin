@@ -2,8 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { Hero } from "@/components/Hero";
-import { LazyShow } from "@/components/LazyShow";
-
 // Lazy-load everything below the fold with no SSR and loading states
 const TrustedBy = dynamic(() => import("@/components/TrustedBy").then(m => ({ default: m.TrustedBy })), { ssr: false });
 const TextReveal = dynamic(() => import("@/components/TextReveal").then(m => ({ default: m.TextReveal })), { ssr: false });
@@ -26,57 +24,55 @@ export default function Home() {
         {/* ATTENTION - Hero is priority */}
         <div className="section-to-blur"><Hero /></div>
         
-        <LazyShow>
-          <div className="section-to-blur"><TrustedBy /></div>
+        <div className="section-to-blur"><TrustedBy /></div>
 
-          <TextReveal />
+        <TextReveal />
 
-          {/* CORE CAPABILITIES */}
-          <div id="features">
-            <Features />
-          </div>
+        {/* CORE CAPABILITIES */}
+        <div id="features">
+          <Features />
+        </div>
 
-          {/* WHITE CURVED GRADIENT SECTION (Above ROI) */}
-          <div 
-            className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
-            style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
-          />
+        {/* WHITE CURVED GRADIENT SECTION (Above ROI) */}
+        <div 
+          className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
+          style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
+        />
 
-          {/* IMPACT / URGENCY (The New ROI Simulator) */}
-          <div id="roi" className="section-to-blur">
-            <RoiCalculator />
-          </div>
+        {/* IMPACT / URGENCY (The New ROI Simulator) */}
+        <div id="roi" className="section-to-blur">
+          <RoiCalculator />
+        </div>
 
-          {/* WHITE CURVED GRADIENT SECTION (Below ROI) */}
-          <div 
-            className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
-            style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
-          />
+        {/* WHITE CURVED GRADIENT SECTION (Below ROI) */}
+        <div 
+          className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
+          style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
+        />
 
-          {/* PRICING / ACTION */}
-          <div className="no-blur transition-all duration-700 relative z-50">
-            <Pricing />
-          </div>
+        {/* PRICING / ACTION */}
+        <div className="no-blur transition-all duration-700 relative z-50">
+          <Pricing />
+        </div>
 
-          {/* TRUST / SOCIAL PROOF (The New Carousel) */}
-          <div id="testimonials" className="section-to-blur">
-            <Testimonials />
-          </div>
+        {/* TRUST / SOCIAL PROOF (The New Carousel) */}
+        <div id="testimonials" className="section-to-blur">
+          <Testimonials />
+        </div>
 
-          {/* OBJECTIONS */}
-          <div id="faq" className="section-to-blur">
-            <Faq />
-          </div>
+        {/* OBJECTIONS */}
+        <div id="faq" className="section-to-blur">
+          <Faq />
+        </div>
 
-          {/* FINAL CTA (The Flashlight Effect) */}
-          <div className="section-to-blur"><FooterBanner /></div>
+        {/* FINAL CTA (The Flashlight Effect) */}
+        <div className="section-to-blur"><FooterBanner /></div>
 
-          {/* FOOTER */}
-          <div className="section-to-blur"><Footer /></div>
-          
-          {/* IA Assistant Popup */}
-          <LiaPopup />
-        </LazyShow>
+        {/* FOOTER */}
+        <div className="section-to-blur"><Footer /></div>
+        
+        {/* IA Assistant Popup */}
+        <LiaPopup />
       </ScrollBgWrapper>
     </main>
   );
