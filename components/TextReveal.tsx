@@ -8,8 +8,16 @@ import { useLanguage } from "@/lib/LanguageContext";
 export function TextReveal() {
   const { t } = useLanguage();
   
-  // Parse text into blocks: either [highlighted content] or normal words
-  const parts = t.textReveal.text.match(/\[.*?\]|\S+/g) || [];
+  // Parse text into individual words while preserving highlight state
+  const parts: { text: string; isHighlighted: boolean }[] = [];
+  let inHighlight = false;
+  const rawWords = t.textReveal.text.split(/(\s+|\[|\])/);
+  for (const w of rawWords) {
+    if (w === '[') { inHighlight = true; continue; }
+    if (w === ']') { inHighlight = false; continue; }
+    if (w.trim().length === 0) continue; 
+    parts.push({ text: w, isHighlighted: inHighlight });
+  }
   
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeWord, setActiveWord] = useState<number>(-1);
@@ -64,17 +72,14 @@ export function TextReveal() {
             }}
           >
             {parts.map((part, i) => {
-              const isHighlighted = part.startsWith("[") && part.endsWith("]");
-              const content = isHighlighted ? part.slice(1, -1) : part;
-
               return (
                 <Word
                   key={i}
                   isRevealed={isFinished || revealed[i]}
                   isActive={!isFinished && activeWord === i}
-                  isHighlighted={isHighlighted}
+                  isHighlighted={part.isHighlighted}
                 >
-                  {content}
+                  {part.text}
                 </Word>
               );
             })}
