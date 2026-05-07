@@ -353,7 +353,35 @@ export function Hero() {
             />
           )}
         </AnimatePresence>
+
+        {/* Mascot Patrol (Mobile Only) */}
+        <MobileMascot isFinished={isFinished} />
     </section>
+  );
+}
+
+function MobileMascot({ isFinished }: { isFinished: boolean }) {
+  if (!isFinished) return null;
+
+  return (
+    <motion.div
+      initial={{ x: "-20%", y: "15%", opacity: 0 }}
+      animate={{ 
+        x: ["-10%", "110%", "-10%"],
+        y: ["15%", "22%", "15%"],
+        rotate: [10, 25, -5, 10],
+        opacity: 1
+      }}
+      transition={{ 
+        x: { duration: 15, repeat: Infinity, ease: "linear" },
+        y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+        rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+        opacity: { duration: 1 }
+      }}
+      className="absolute top-0 left-0 w-10 h-10 z-20 lg:hidden pointer-events-none"
+    >
+      <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={40} height={40} priority />
+    </motion.div>
   );
 }
 
