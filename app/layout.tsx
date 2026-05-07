@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Header } from "@/components/Header";
-import { TopBanner } from "@/components/TopBanner";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { UTMTracker } from "@/components/UTMTracker";
 import "./globals.css";
@@ -72,7 +71,6 @@ export default function RootLayout({
         {/* ── App Shell ───────────────────────────────────────────────── */}
         <LanguageProvider>
           <SmoothScroll>
-            <TopBanner />
             <Header />
             {children}
           </SmoothScroll>
