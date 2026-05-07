@@ -60,10 +60,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Performance: Skip rendering off-screen sections until needed */
+/* .section-to-blur is used by Pricing to dim other sections */
 .section-to-blur {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
 }
 
 /* Ensure smooth scrolling doesn't thrash layout */
