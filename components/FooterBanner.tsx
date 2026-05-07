@@ -232,7 +232,7 @@ export function FooterBanner() {
           }}
         />
 
-        <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-end md:justify-center text-center pointer-events-none pb-12 md:pb-0">
+        <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-center text-center pointer-events-none">
            <motion.h2 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
