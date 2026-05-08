@@ -7,6 +7,7 @@ import { useOfferTimer } from "@/lib/useOfferTimer";
 // canvas-confetti is dynamically imported only when the user toggles to annual billing
 
 import { useLanguage } from "@/lib/LanguageContext";
+import { LeadQualificationPopup } from "./LeadQualificationPopup";
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -68,6 +69,7 @@ export function Pricing() {
   const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -191,7 +193,11 @@ export function Pricing() {
       onMouseMove={handleMouseMove}
       className="w-full py-24 relative overflow-hidden bg-white"
     >
-
+      <LeadQualificationPopup 
+        isOpen={!!qualifyPlan} 
+        onClose={() => setQualifyPlan(null)} 
+        planName={qualifyPlan} 
+      />
 
        <div className="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center mb-12">
@@ -301,7 +307,10 @@ export function Pricing() {
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
                        <div className="mt-auto">
-                          <button className={`w-full py-4 rounded-2xl text-sm font-bold transition-all mb-10 ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90 active:scale-95' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}>
+                          <button 
+                             onClick={() => setQualifyPlan(plan.name)}
+                             className={`w-full py-4 rounded-2xl text-sm font-bold transition-all mb-10 ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90 active:scale-95' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                          >
                              {plan.cta}
                           </button>
 

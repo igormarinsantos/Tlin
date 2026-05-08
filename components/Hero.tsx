@@ -90,14 +90,65 @@ export function Hero() {
 
   const globalMouseX = useMotionValue(0);
   const globalMouseY = useMotionValue(0);
+  const isIdle = useRef(false);
+  const baseIdlePos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    let frameId: number;
+    let startTime = 0;
+
+    if (typeof window !== 'undefined') {
+      baseIdlePos.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    }
+
+    const wander = () => {
+      if (!isIdle.current) return;
+      const time = (performance.now() - startTime) / 1000;
+      
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2.2; // Slightly above center where text is
+      
+      // Orbit radius - keeps it away from center text/buttons
+      const rx = Math.min(window.innerWidth * 0.42, 600); 
+      const ry = Math.min(window.innerHeight * 0.35, 400);
+
+      // Calculate initial angle so it starts the orbit near where the mouse left
+      const dx = baseIdlePos.current.x - cx;
+      const dy = baseIdlePos.current.y - cy;
+      const initialPhase = Math.atan2(dy, dx);
+      
+      // Perfectly smooth elliptical orbit (perimeter patrol)
+      const newX = cx + Math.cos(time * 0.4 + initialPhase) * rx;
+      const newY = cy + Math.sin(time * 0.4 + initialPhase) * ry;
+      
+      globalMouseX.set(newX);
+      globalMouseY.set(newY);
+      
+      frameId = requestAnimationFrame(wander);
+    };
+
     const trackMouse = (e: MouseEvent) => {
       globalMouseX.set(e.clientX);
       globalMouseY.set(e.clientY);
+      isIdle.current = false;
+      baseIdlePos.current = { x: e.clientX, y: e.clientY };
+      cancelAnimationFrame(frameId);
     };
+
+    const handleMouseLeave = () => {
+      isIdle.current = true;
+      startTime = performance.now();
+      wander();
+    };
+
     window.addEventListener("mousemove", trackMouse);
-    return () => window.removeEventListener("mousemove", trackMouse);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    
+    return () => {
+      window.removeEventListener("mousemove", trackMouse);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      cancelAnimationFrame(frameId);
+    };
   }, [globalMouseX, globalMouseY]);
 
   useEffect(() => {
