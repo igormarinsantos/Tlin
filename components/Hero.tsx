@@ -383,6 +383,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
   const mascotX = useMotionValue(initialX);
   const mascotY = useMotionValue(initialY);
   const mascotRotate = useMotionValue(0);
+  const abductionRotate = useMotionValue(0);
   const mascotOpacity = useMotionValue(1);
   const mascotScale = useMotionValue(1);
 
@@ -391,6 +392,21 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
   const springRotate = useSpring(mascotRotate, { damping: 30, stiffness: 150 });
   const springOpacity = useSpring(mascotOpacity, { damping: 30, stiffness: 120 });
   const springScale = useSpring(mascotScale, { damping: 20, stiffness: 150 });
+  
+  // Combine base rotation (smooth spring) with abduction spin (direct)
+  const finalRotate = useMotionValue(0);
+
+  useEffect(() => {
+    const syncRotation = () => {
+      finalRotate.set(springRotate.get() + abductionRotate.get());
+    };
+    const unsubBase = springRotate.on("change", syncRotation);
+    const unsubExtra = abductionRotate.on("change", syncRotation);
+    return () => {
+      unsubBase();
+      unsubExtra();
+    };
+  }, [springRotate, abductionRotate, finalRotate]);
 
   const lastAngle = useRef(0);
   const cumulativeRotation = useRef(0);
@@ -427,11 +443,13 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       if (isAbducted) {
         mascotOpacity.set(0);
         mascotScale.set(0);
-        // Rapid vortex spin during abduction
-        mascotRotate.set(mascotRotate.get() + 720); 
+        // Rapid vortex spin during abduction - only affects abductionRotate
+        abductionRotate.set(abductionRotate.get() + 25); 
       } else {
         mascotOpacity.set(1);
         mascotScale.set(1);
+        // Reset abduction spin when not abducted
+        abductionRotate.set(0);
       }
 
       if (isScrolledPast) return;
@@ -484,10 +502,10 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         scale: springScale,
         x: springX,
         y: springY,
-        rotate: springRotate,
+        rotate: finalRotate,
         translateX: "-50%",
         translateY: "-50%",
-        zIndex: 9999,
+        zIndex: 40,
         pointerEvents: "none",
         width: "clamp(2rem, 4vw, 3.2rem)",
         height: "clamp(2rem, 4vw, 3.2rem)",

@@ -41,8 +41,9 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${dmSans.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className={`${dmSans.className} flex flex-col`}>
+      <body className={`${dmSans.className} flex flex-col`} suppressHydrationWarning>
 
         {/* ── Google Analytics 4 ────────────────────────────────────────── */}
         {GA_ID && (
