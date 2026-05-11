@@ -315,7 +315,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
               >
-                <div className="min-h-full flex flex-col justify-end py-10 gap-12">
+                <div className="min-h-full flex flex-col justify-start py-10 gap-12">
                   {chatHistory.map((msg, idx) => {
                     const latestBotIdx = chatHistory.map(m => m.role).lastIndexOf('bot');
                     const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
