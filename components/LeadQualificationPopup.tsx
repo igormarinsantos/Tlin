@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 
 type Message = {
   role: 'bot' | 'user';
@@ -17,277 +16,261 @@ type LeadQualificationPopupProps = {
   planName: string | null;
 };
 
+// Common Country Codes
+const COUNTRIES = [
+  { code: '+55', flag: '🇧🇷', name: 'Brasil' },
+  { code: '+1', flag: '🇺🇸', name: 'EUA' },
+  { code: '+351', flag: '🇵🇹', name: 'Portugal' },
+  { code: '+34', flag: '🇪🇸', name: 'Espanha' },
+  { code: '+44', flag: '🇬🇧', name: 'Reino Unido' },
+  { code: '+54', flag: '🇦🇷', name: 'Argentina' },
+  { code: '+56', flag: '🇨🇱', name: 'Chile' },
+  { code: '+57', flag: '🇨🇴', name: 'Colômbia' },
+  { code: '+52', flag: '🇲🇽', name: 'México' },
+];
+
+const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
+
+// Helper to render text with gradient highlights
+const HighlightText = ({ text }: { text: string }) => {
+  const parts = text.split(/(\[.*?\])/);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith('[') && part.endsWith(']')) {
+          return (
+            <span key={i} className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">
+              {part.slice(1, -1)}
+            </span>
+          );
+        }
+        return part;
+      })}
+    </>
+  );
+};
+
+// Typewriter component with Mascot Cursor
+const TypewriterQuestion = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const rawText = text.replace(/\[|\]/g, "");
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(rawText.slice(0, i + 1));
+      i++;
+      if (i >= rawText.length) clearInterval(interval);
+    }, 25);
+    return () => clearInterval(interval);
+  }, [rawText]);
+
+  const isDone = displayedText === rawText;
+
+  return (
+    <div className="relative inline-block text-xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:pretty]">
+      {isDone ? <HighlightText text={text} /> : displayedText}
+      <span className="inline-block ml-2 w-5 h-5 sm:w-7 sm:h-7 align-middle shrink-0">
+        <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
+      </span>
+    </div>
+  );
+};
+
 export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualificationPopupProps) {
-  const WHATSAPP_NUMBER = "5511999999999"; // Replace with actual number
+  const WHATSAPP_NUMBER = "5511916248604";
   
-  const [route, setRoute] = useState<'form' | 'call'>('form');
-  
-  // Form States (Step-by-step)
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
+    phone: '',
+    countryCode: '+55',
     volume: '',
     team: '',
-    tool: '',
     pain: ''
   });
   
-  const [chatHistory, setChatHistory] = useState<Message[]>([
-    { role: 'bot', text: `Olá! Qual o nome da sua empresa?` }
-  ]);
+  const initialMsg = `Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o nome da [sua empresa]?`;
 
-  // Call States
-  const [callMessages, setCallMessages] = useState<Message[]>([]);
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [callStatus, setCallStatus] = useState<string>("Conectando...");
-  const recognitionRef = useRef<any>(null);
-  const synthesisRef = useRef<SpeechSynthesis | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [chatHistory, setChatHistory] = useState<Message[]>([
+    { role: 'bot', text: initialMsg }
+  ]);
   
   const [isTyping, setIsTyping] = useState(false);
-  const [interimTranscript, setInterimTranscript] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const countryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
+        setIsCountryDropdownOpen(false);
+      }
+    };
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock body scroll when open
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+    const t = setInterval(scrollToBottom, 100);
+    const timeout = setTimeout(() => clearInterval(t), 2000);
+    return () => { clearInterval(t); clearTimeout(timeout); };
+  }, [chatHistory, isTyping, currentStep]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      resetForm();
     } else {
       document.body.style.overflow = '';
-      // Reset state on close
-      setRoute('form');
-      setCurrentStep(1);
-      setFormData({ name: '', volume: '', team: '', tool: '', pain: '' });
-      setChatHistory([{ role: 'bot', text: `Olá! Qual o nome da sua empresa?` }]);
-      setCallMessages([]);
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      if (synthesisRef.current) {
-        synthesisRef.current.cancel();
-      }
     }
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Handle WhatsApp Redirect
-  const handleWhatsAppRedirect = (data: { name: string, volume: string, team: string, tool: string, pain: string }) => {
+  const resetForm = () => {
+    setCurrentStep(1);
+    setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', pain: '' });
+    setChatHistory([{ role: 'bot', text: initialMsg }]);
+  };
+
+  const handleWhatsAppRedirect = (data: typeof formData) => {
     const text = `Olá, vim pelo site e tenho interesse no plano *${planName || 'TLIN'}*.\n\n` +
       `*Nome/Empresa:* ${data.name}\n` +
-      `*Volume de Atendimentos:* ${data.volume}\n` +
-      `*Tamanho da Equipe:* ${data.team}\n` +
-      `*Ferramenta Atual:* ${data.tool}\n` +
-      `*Principal Necessidade:* ${data.pain}`;
+      `*WhatsApp:* ${data.countryCode} ${data.phone}\n` +
+      `*Volume:* ${data.volume}\n` +
+      `*Equipe:* ${data.team}\n` +
+      `*Dor:* ${data.pain}`;
     
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
-    onClose();
   };
 
-  // Form Handlers
-  const getNextBotMessage = (step: number) => {
+  const getQuestion = (step: number, data: typeof formData) => {
+    const aff = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
+    
     switch(step) {
-      case 2: return "Volume mensal de atendimentos?";
-      case 3: return "Tamanho da equipe atual?";
-      case 4: return "Qual ferramenta vocês usam?";
-      case 5: return "Principal dor ou gargalo?";
-      default: return "Redirecionando...";
+      case 2: return `[${aff}]! Qual o [WhatsApp] para contato?`;
+      case 3: return `O número [${data.countryCode} ${data.phone}] está correto?`;
+      case 4: return `[${aff}]! Qual o [Volume mensal] de atendimentos?`;
+      case 5: return `[Entendido]. Qual o tamanho da [equipe atual]?`;
+      case 6: return `[Show]. Qual o principal [dor ou gargalo]?`;
+      case 7: return `Então, deixa eu ver se [eu entendi tudo] certinho:`;
+      case 8: return `[Confirmado]! Nossa equipe entrará em contato via [WhatsApp] em breve.`;
+      default: return "";
     }
   };
 
-  const advanceChat = (userValue: string) => {
-    setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
-    
-    if (currentStep < 5) {
+  const getOptions = (step: number) => {
+    switch(step) {
+      case 3: return ["Sim, está correto", "Não, quero corrigir"];
+      case 4: return ["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"];
+      case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
+      case 6: return ["Demora", "Sem Métricas", "Desorganização", "Custos"];
+      case 7: return ["Confirmar dados", "Corrigir algo"];
+      case 8: return ["Reiniciar formulário"];
+      default: return null;
+    }
+  };
+
+  const advanceChat = (userValue: string, field?: keyof typeof formData) => {
+    if (currentStep === 3 && userValue === "Não, quero corrigir") {
+      setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        setChatHistory(prev => [...prev, { role: 'bot', text: getNextBotMessage(currentStep + 1) }]);
-        setCurrentStep(prev => prev + 1);
-      }, 1500);
-    } else {
+        setCurrentStep(2);
+        setChatHistory(prev => [...prev, { role: 'bot', text: "Sem problemas! Qual o [WhatsApp] correto?" }]);
+      }, 800);
+      return;
+    }
+
+    if (currentStep === 7 && userValue === "Corrigir algo") {
+      setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
       setIsTyping(true);
       setTimeout(() => {
-        handleWhatsAppRedirect(formData);
-      }, 1000);
+        setIsTyping(false);
+        setCurrentStep(1);
+        setChatHistory(prev => [...prev, { role: 'bot', text: "Entendido! Vamos recomeçar para garantir que tudo esteja certo. " + initialMsg }]);
+      }, 800);
+      return;
+    }
+
+    if (currentStep === 8 && userValue === "Reiniciar formulário") {
+      resetForm();
+      return;
+    }
+
+    const updatedData = { ...formData };
+    if (field) updatedData[field] = userValue;
+    setFormData(updatedData);
+    
+    const displayText = field === 'phone' ? `${formData.countryCode} ${userValue}` : userValue;
+    setChatHistory(prev => [...prev, { role: 'user', text: displayText }]);
+    
+    if (currentStep < 8) {
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        const nextQ = getQuestion(currentStep + 1, updatedData);
+        setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
+        setCurrentStep(prev => prev + 1);
+        
+        if (currentStep === 7 && userValue === "Confirmar dados") {
+          handleWhatsAppRedirect(updatedData);
+        }
+      }, 1500);
     }
   };
 
-  const handleNameSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
-    advanceChat(formData.name);
-  };
-  
-  const handleOptionSelect = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    advanceChat(value);
+  const handleBack = () => {
+    if (currentStep > 1 && !isTyping && currentStep < 8) {
+      setCurrentStep(prev => prev - 1);
+      setChatHistory(prev => prev.slice(0, -2));
+    }
   };
 
-  // --- Voice Call Logic ---
+  const formatPhone = (value: string) => {
+    const nums = value.replace(/\D/g, "");
+    if (formData.countryCode !== '+55') return value;
+    const limited = nums.slice(0, 11);
+    if (limited.length > 10) return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
+    if (limited.length > 6) return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
+    if (limited.length > 2) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+    if (limited.length > 0) return `(${limited}`;
+    return limited;
+  };
+
+  const isPhoneValid = () => {
+    const nums = formData.phone.replace(/\D/g, "");
+    if (formData.countryCode === '+55') return nums.length >= 10 && nums.length <= 11;
+    return nums.length >= 8;
+  };
 
   useEffect(() => {
-    if (route === 'call' && typeof window !== 'undefined') {
-      synthesisRef.current = window.speechSynthesis;
-      
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.lang = 'pt-BR';
-        recognitionRef.current.continuous = true;
-        recognitionRef.current.interimResults = true;
-
-        recognitionRef.current.onstart = () => {
-          setIsListening(true);
-          setCallStatus("Ouvindo...");
-        };
-
-        recognitionRef.current.onresult = async (event: any) => {
-          let interimText = '';
-          let finalTranscript = '';
-          
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              finalTranscript += event.results[i][0].transcript;
-            } else {
-              interimText += event.results[i][0].transcript;
-            }
-          }
-          
-          setInterimTranscript(interimText);
-          
-          if (finalTranscript) {
-            setInterimTranscript('');
-            setCallMessages(prev => [...prev, { role: 'user', text: finalTranscript }]);
-            processUserAudio(finalTranscript);
-          }
-        };
-
-        recognitionRef.current.onerror = (event: any) => {
-          console.error("Speech recognition error", event.error);
-          setIsListening(false);
-          setCallStatus("Erro no microfone. Toque para tentar novamente.");
-        };
-
-        recognitionRef.current.onend = () => {
-          setIsListening(false);
-        };
-      }
-
-      // Initial Greeting
-      const initialMsg = `Olá! Vi que você tem interesse no plano ${planName || 'da TLIN'}. Para te indicar a melhor estrutura e agilizar nosso atendimento, preciso entender um pouquinho da sua operação. Qual o nome da sua empresa?`;
-      setCallMessages([{ role: 'bot', text: initialMsg }]);
-      speakText(initialMsg);
-    }
-
-    return () => {
-      if (recognitionRef.current) recognitionRef.current.stop();
-      if (synthesisRef.current) synthesisRef.current.cancel();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft") handleBack();
+      if (e.key === " " && (e.target as HTMLElement).tagName !== "INPUT") e.preventDefault();
     };
-  }, [route, planName]);
-
-  const speakText = (text: string) => {
-    if (!synthesisRef.current) return;
-    synthesisRef.current.cancel(); // Stop any current speech
-    
-    // Clean text for speech (remove markdown asterisks)
-    const cleanText = text.replace(/\*/g, '');
-    
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'pt-BR';
-    
-    // Try to find a good Portuguese voice
-    const voices = synthesisRef.current.getVoices();
-    const ptVoice = voices.find(v => v.lang === 'pt-BR' || v.lang === 'pt_BR');
-    if (ptVoice) utterance.voice = ptVoice;
-
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      setCallStatus("Reproduzindo resposta...");
-    };
-
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      // Start listening after speaking
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.start();
-        } catch (e) {
-          // ignore already started errors
-        }
-      } else {
-        setCallStatus("Microfone não suportado.");
-      }
-    };
-
-    synthesisRef.current.speak(utterance);
-  };
-
-  const processUserAudio = async (text: string) => {
-    setCallStatus("Processando...");
-    try {
-      const response = await fetch('/api/qualify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [...callMessages, { role: 'user', text }]
-        })
-      });
-
-      if (!response.ok) throw new Error('Falha na API');
-      const data = await response.json();
-      let botText: string = data.text;
-
-      const qualificationMatch = botText.match(/\[QUALIFIED:\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\]/i);
-      
-      if (qualificationMatch) {
-        const [, name, volume, team, tool, pain] = qualificationMatch;
-        botText = botText.replace(/\[QUALIFIED:.*?\]/i, '').trim();
-        
-        if (botText) {
-           setCallMessages(prev => [...prev, { role: 'bot', text: botText }]);
-           speakText(botText);
-        }
-        
-        // Wait for speech to finish roughly, then redirect
-        setTimeout(() => {
-          handleWhatsAppRedirect({ name, volume, team, tool, pain });
-        }, 3000);
-      } else {
-        setCallMessages(prev => [...prev, { role: 'bot', text: botText }]);
-        speakText(botText);
-      }
-    } catch (error) {
-      console.error(error);
-      const errorMsg = "Poxa, deu um erro de conexão. Podemos tentar de novo?";
-      setCallMessages(prev => [...prev, { role: 'bot', text: errorMsg }]);
-      speakText(errorMsg);
-    }
-  };
-
-  const toggleListen = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-    } else {
-      if (isSpeaking) synthesisRef.current?.cancel();
-      try {
-        recognitionRef.current?.start();
-      } catch (e) {}
-    }
-  };
-
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, currentStep, isTyping]);
 
   if (!mounted) return null;
 
-  const content = (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-auto">
-          {/* Overlay */}
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -296,181 +279,242 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             className="absolute inset-0 bg-zinc-950/60 backdrop-blur-md"
           />
 
-          {/* True Fullscreen Container */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 w-full h-full flex flex-col bg-[#0c0d0d] text-white overflow-hidden"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="fixed inset-[10px] flex flex-col bg-[#0c0d0d] text-white overflow-hidden rounded-[40px] shadow-2xl border border-white/10"
           >
-            {/* Animated Background Orbs */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B597FF]/10 rounded-full blur-[80px] pointer-events-none translate-x-1/3 -translate-y-1/3" />
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#38E3FF]/10 rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B597FF]/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#38E3FF]/5 rounded-full blur-[100px] pointer-events-none" />
 
-            {/* Simple Close Button Header */}
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
-              <button 
-                className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-colors shadow-sm"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-                </svg>
+            {/* Progress Bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-white/5 z-50">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]"
+                initial={{ width: "0%" }}
+                animate={{ width: `${(currentStep / 8) * 100}%` }}
+              />
+            </div>
+
+            {/* Header */}
+            <div className="shrink-0 flex justify-end p-6 z-50">
+              <button onClick={onClose} className="text-sm font-bold text-white/40 hover:text-white transition-all underline underline-offset-4 decoration-white/10 hover:decoration-white">
+                Fechar
               </button>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto z-10 flex flex-col relative">
-                {/* SCREEN 2: CHAT INTERFACE */}
-                {route === 'form' && (
-                  <motion.div 
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex-1 flex flex-col max-w-5xl mx-auto w-full h-full px-6 sm:px-12 py-12"
-                  >
-                    {/* Minimalist Top Nav */}
-                    <div className="flex items-center justify-between pb-8 shrink-0">
-                      <Image src="/TlinIA.svg" alt="Tlin" width={32} height={32} className="opacity-80" />
-                      <button onClick={() => setRoute('call')} className="text-zinc-400 hover:text-white transition-colors font-bold flex items-center gap-2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                        Responder por voz
-                      </button>
-                    </div>
+            {/* Chat Container */}
+            <div className="flex-1 overflow-hidden relative flex flex-col px-6 sm:px-12">
+               <div 
+                ref={scrollRef}
+                className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
+              >
+                {/* Anchor to bottom logic: use flex flex-col justify-end with a min-h-full wrapper */}
+                <div className="min-h-full flex flex-col justify-end py-10 gap-12">
+                  {chatHistory.map((msg, idx) => {
+                    const latestBotIdx = chatHistory.map(m => m.role).lastIndexOf('bot');
+                    const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
 
-                    {/* Chat History (Lottie Style) */}
-                    <div className="flex-1 overflow-y-auto space-y-8 sm:space-y-12 flex flex-col scroll-smooth scrollbar-hide pb-20">
-                      {chatHistory.map((msg, i) => (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          key={i} 
-                          className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div className={`max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'text-xl sm:text-3xl text-zinc-400 font-medium' : 'text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.1] [text-wrap:balance]'}`}>
-                            {msg.text}
-                          </div>
-                        </motion.div>
-                      ))}
+                    return (
+                      <motion.div
+                        key={`${idx}-${msg.role}-${msg.text.slice(0, 5)}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                      >
+                        <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
+                          {msg.role === 'bot' && idx === latestBotIdx ? (
+                            <TypewriterQuestion text={msg.text} />
+                          ) : (
+                            <div className="text-xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:pretty]">
+                              {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
+                              {msg.role === 'bot' && <span className="text-white/20">.</span>}
+                            </div>
+                          )}
+                        </div>
 
-                      {isTyping && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                          <div className="text-2xl sm:text-4xl font-black text-zinc-600 animate-pulse tracking-tight">
-                            Lia digitando...
-                          </div>
-                        </motion.div>
-                      )}
-                      
-                      <div className="h-10 shrink-0" />
-                    </div>
-
-                    {/* Input Area */}
-                    <div className="shrink-0 mt-auto pt-6">
-                      <AnimatePresence mode="wait">
-                        {!isTyping && currentStep === 1 && (
-                          <motion.form 
-                            key="s1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} 
-                            onSubmit={handleNameSubmit} 
-                            className="flex items-center gap-4 border-b-2 border-white/20 focus-within:border-[#B597FF] transition-colors pb-4"
+                        {msg.role === 'bot' && idx === latestBotIdx && !isTyping && isLastMessageBot && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="mt-8 flex flex-col gap-3 w-full max-w-md"
                           >
-                            <input autoFocus type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Escreva sua resposta..." className="flex-1 bg-transparent text-2xl sm:text-4xl font-bold text-white outline-none placeholder:text-zinc-600" />
-                            <button type="submit" disabled={!formData.name.trim()} className="text-[#B597FF] disabled:opacity-30 hover:text-white transition-colors">
-                              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </button>
-                          </motion.form>
-                        )}
+                            {currentStep === 7 && (
+                              <div className="mb-6 p-6 rounded-3xl bg-white/5 border border-white/10 space-y-3">
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-zinc-500">Empresa:</span>
+                                  <span className="font-bold text-white">{formData.name}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-zinc-500">WhatsApp:</span>
+                                  <span className="font-bold text-white">{formData.countryCode} {formData.phone}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-zinc-500">Volume:</span>
+                                  <span className="font-bold text-white">{formData.volume}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-zinc-500">Equipe:</span>
+                                  <span className="font-bold text-white">{formData.team}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-zinc-500">Principal dor:</span>
+                                  <span className="font-bold text-[#38E3FF]">{formData.pain}</span>
+                                </div>
+                              </div>
+                            )}
 
-                        {!isTyping && currentStep === 2 && (
-                          <motion.div key="s2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-wrap gap-3 sm:gap-4">
-                            {["Até 1.000", "De 1.000 a 5.000", "De 5.000 a 10.000", "Mais de 10.000"].map(opt => (
-                              <button key={opt} onClick={() => handleOptionSelect('volume', opt)} className="px-6 py-4 rounded-full border-2 border-white/10 text-lg sm:text-2xl font-bold text-zinc-400 hover:border-[#B597FF] hover:text-white transition-all active:scale-95">{opt}</button>
+                            {getOptions(currentStep)?.map((opt) => (
+                              <button
+                                key={opt}
+                                onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : currentStep === 6 ? 'pain' : undefined)}
+                                className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
+                                  opt === "Confirmar dados" || opt === "Sim, está correto"
+                                  ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
+                                  : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                }`}
+                              >
+                                {opt}
+                              </button>
                             ))}
                           </motion.div>
                         )}
+                      </motion.div>
+                    );
+                  })}
 
-                        {!isTyping && currentStep === 3 && (
-                          <motion.div key="s3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-wrap gap-3 sm:gap-4">
-                            {["1 a 3 pessoas", "4 a 10 pessoas", "11 a 50 pessoas", "Mais de 50 pessoas"].map(opt => (
-                              <button key={opt} onClick={() => handleOptionSelect('team', opt)} className="px-6 py-4 rounded-full border-2 border-white/10 text-lg sm:text-2xl font-bold text-zinc-400 hover:border-[#B597FF] hover:text-white transition-all active:scale-95">{opt}</button>
-                            ))}
-                          </motion.div>
-                        )}
+                  {isTyping && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                      <motion.div
+                        animate={{ opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="w-5 h-5 sm:w-7 sm:h-7"
+                      >
+                        <Image src="/TlinIA.svg" alt="Thinking" width={32} height={32} className="w-full h-full object-contain" />
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            </div>
 
-                        {!isTyping && currentStep === 4 && (
-                          <motion.div key="s4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-wrap gap-3 sm:gap-4">
-                            {["WhatsApp", "Zendesk/Intercom", "Chatwoot/RD", "Outra"].map(opt => (
-                              <button key={opt} onClick={() => handleOptionSelect('tool', opt)} className="px-6 py-4 rounded-full border-2 border-white/10 text-lg sm:text-2xl font-bold text-zinc-400 hover:border-[#B597FF] hover:text-white transition-all active:scale-95">{opt}</button>
-                            ))}
-                          </motion.div>
-                        )}
-
-                        {!isTyping && currentStep === 5 && (
-                          <motion.div key="s5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-wrap gap-3 sm:gap-4">
-                            {["Demora p/ responder", "Sem Métricas", "Desorganização", "Custos altos"].map(opt => (
-                              <button key={opt} onClick={() => handleOptionSelect('pain', opt)} className="px-6 py-4 rounded-full border-2 border-white/10 text-lg sm:text-2xl font-bold text-zinc-400 hover:border-[#B597FF] hover:text-white transition-all active:scale-95">{opt}</button>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* SCREEN 3: CALL INTERFACE */}
-                {route === 'call' && (
-                  <motion.div 
-                    key="call"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex-1 flex flex-col items-center justify-center p-6 text-center h-full relative"
-                  >
-                    
-                    {/* Call Avatar / Animation */}
-                    <div className="relative mb-12">
-                      <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden relative z-10 shadow-2xl border-4 border-[#0c0d0d] flex items-center justify-center bg-[#0c0d0d]">
-                        <VoicePoweredOrb 
-                          enableVoiceControl={isListening || isSpeaking}
-                          hue={0}
-                          className="w-full h-full scale-110"
-                        />
-                      </div>
-                    </div>
-
-                    <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">{callStatus}</h2>
-                    <div className="text-zinc-400 font-medium max-w-lg mx-auto mb-12 h-16 sm:h-20 flex items-start justify-center overflow-hidden">
-                      {isListening && interimTranscript ? (
-                        <span className="text-white italic text-lg">"{interimTranscript}"</span>
-                      ) : isSpeaking && callMessages.length > 0 ? (
-                        <span className="text-[#B597FF] text-lg">"{callMessages[callMessages.length - 1].text}"</span>
-                      ) : isListening ? (
-                        "Pode falar, estamos ouvindo..."
-                      ) : (
-                        "Aguardando..."
+            {/* Input & Footer Area - Fixed at the bottom */}
+            <div className="shrink-0 px-6 sm:px-12 pt-4 pb-10 z-20">
+                <AnimatePresence mode="wait">
+                  {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && (
+                    <>
+                      {currentStep === 1 && (
+                        <motion.div
+                          key="name-input"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <form onSubmit={(e) => { e.preventDefault(); if(formData.name.trim()) advanceChat(formData.name, 'name'); }} className="flex flex-col gap-4">
+                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                              <input autoFocus type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Nome da empresa..." className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" />
+                              <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit">
+                                <span className={`text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                                  pressione <span className="font-black">ENTER ↵</span>
+                                </span>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                                </div>
+                              </button>
+                            </div>
+                          </form>
+                        </motion.div>
                       )}
-                    </div>
 
-                    <button 
-                      onClick={() => {
-                        if (recognitionRef.current) recognitionRef.current.stop();
-                        if (synthesisRef.current) synthesisRef.current.cancel();
-                        setRoute('form');
-                      }}
-                      className="text-sm font-bold text-zinc-400 hover:text-white transition-colors underline underline-offset-4 mt-auto mb-4"
-                    >
-                      Preencher manualmente
-                    </button>
+                      {currentStep === 2 && (
+                        <motion.div
+                          key="phone-input"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <form onSubmit={(e) => { e.preventDefault(); if(isPhoneValid()) advanceChat(formData.phone, 'phone'); }} className="flex flex-col gap-4">
+                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                              <div className="relative shrink-0" ref={countryRef}>
+                                <button 
+                                  type="button"
+                                  onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                                >
+                                  <span className="text-xl leading-none">
+                                    {COUNTRIES.find(c => c.code === formData.countryCode)?.flag || '🇧🇷'}
+                                  </span>
+                                  <span className="text-lg font-bold text-zinc-400">{formData.countryCode}</span>
+                                  <svg className={`w-4 h-4 text-zinc-500 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="m6 9 6 6 6-6" strokeWidth="3" /></svg>
+                                </button>
+                                
+                                <AnimatePresence>
+                                  {isCountryDropdownOpen && (
+                                    <motion.div
+                                      initial={{ opacity: 0, y: -10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -10 }}
+                                      className="absolute bottom-full left-0 mb-4 w-48 bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden py-1.5 shadow-2xl z-50 max-h-[250px] overflow-y-auto custom-scrollbar"
+                                    >
+                                      {COUNTRIES.map((c) => (
+                                        <button
+                                          key={c.code}
+                                          type="button"
+                                          onClick={() => {
+                                            setFormData(prev => ({ ...prev, countryCode: c.code, phone: '' }));
+                                            setIsCountryDropdownOpen(false);
+                                          }}
+                                          className="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 transition-colors"
+                                        >
+                                          <span className="text-xl leading-none">{c.flag}</span>
+                                          <div className="flex flex-col">
+                                            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{c.name}</span>
+                                            <span className="text-sm font-bold text-white">{c.code}</span>
+                                          </div>
+                                        </button>
+                                      ))}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
 
-                  </motion.div>
-                )}
+                              <input 
+                                autoFocus 
+                                type="text" 
+                                value={formData.phone} 
+                                onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})} 
+                                placeholder="Seu número aqui..." 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                              />
+                              <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit">
+                                <span className={`text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                                  pressione <span className="font-black">ENTER ↵</span>
+                                </span>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                                </div>
+                              </button>
+                            </div>
+                          </form>
+                        </motion.div>
+                      )}
+                    </>
+                  )}
+                </AnimatePresence>
 
-              </AnimatePresence>
+                <div className="mt-4 flex items-center justify-between text-[10px] font-black text-zinc-600 uppercase pt-4">
+                  <button onClick={handleBack} className="hover:text-zinc-400 flex items-center gap-2 transition-colors disabled:opacity-20" disabled={currentStep === 1 || currentStep >= 8}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="m15 18-6-6 6-6"/></svg>
+                    Voltar
+                  </button>
+                </div>
             </div>
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
-
-  return createPortal(content, document.body);
 }

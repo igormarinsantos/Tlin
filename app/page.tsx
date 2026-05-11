@@ -72,7 +72,32 @@ export default function Home() {
         
         {/* IA Assistant Popup */}
         <LiaPopup />
+        
+        {/* Lead Qualification Global State */}
+        {(() => {
+          const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
+          
+          useEffect(() => {
+            const handleOpen = (e: any) => setQualifyPlan(e.detail?.plan || "TLIN");
+            window.addEventListener("open-qualification", handleOpen);
+            return () => window.removeEventListener("open-qualification", handleOpen);
+          }, []);
+
+          return (
+            <div className="no-blur">
+              <LeadQualificationPopup 
+                isOpen={!!qualifyPlan} 
+                onClose={() => setQualifyPlan(null)} 
+                planName={qualifyPlan} 
+              />
+            </div>
+          );
+        })()}
       </ScrollBgWrapper>
     </main>
   );
 }
+
+// Inline dynamic import for the popup to avoid circular refs or missing imports
+import { LeadQualificationPopup } from "@/components/LeadQualificationPopup";
+import { useState, useEffect } from "react";

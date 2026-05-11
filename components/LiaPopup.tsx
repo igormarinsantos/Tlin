@@ -474,7 +474,7 @@ export function LiaPopup() {
                   onClick={() => setIsOpen(!isOpen)}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
-                  className={`relative flex items-center h-12 bg-zinc-950 text-white rounded-full transition-all active:scale-95 z-10 ${isOpen ? 'px-8 justify-center min-w-[120px]' : 'px-2 pr-6'}`}
+                  className={`relative flex items-center h-12 bg-zinc-950 text-white rounded-full transition-all active:scale-95 z-10 cursor-pointer ${isOpen ? 'px-8 justify-center min-w-[120px]' : 'px-2 pr-6'}`}
                 >
                   {!isOpen && (
                     <div className="relative shrink-0 pl-2">

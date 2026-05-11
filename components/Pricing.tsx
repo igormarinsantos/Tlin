@@ -4,6 +4,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useState, useEffect } from "react";
 import { animate } from "framer-motion";
 import { useOfferTimer } from "@/lib/useOfferTimer";
+import Image from "next/image";
 // canvas-confetti is dynamically imported only when the user toggles to annual billing
 
 import { useLanguage } from "@/lib/LanguageContext";
@@ -69,7 +70,6 @@ export function Pricing() {
   const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -115,16 +115,15 @@ export function Pricing() {
         t.pricing.scaleF3,
         t.pricing.scaleF4,
         t.pricing.scaleF5,
-        t.pricing.scaleF6
+        t.pricing.scaleF6,
+        t.pricing.scaleF7,
+        t.pricing.scaleF8
       ].filter(Boolean)
     },
     {
       name: t.pricing.enterpriseName,
       target: t.pricing.enterpriseTarget,
-      priceStandard: 2997,
-      priceMonthly: 1997,
-      priceAnnual: 1597,
-      period: "/mês",
+      isCustom: true,
       desc: t.pricing.enterpriseDesc,
       cta: t.pricing.enterpriseCta,
       highlight: false,
@@ -134,7 +133,9 @@ export function Pricing() {
         t.pricing.enterpriseF3,
         t.pricing.enterpriseF4,
         t.pricing.enterpriseF5,
-        t.pricing.enterpriseF6
+        t.pricing.enterpriseF6,
+        "SLA de 99.9% Garantido",
+        "Infraestrutura Dedicada"
       ].filter(Boolean)
     }
   ];
@@ -193,22 +194,18 @@ export function Pricing() {
       onMouseMove={handleMouseMove}
       className="w-full py-24 relative overflow-hidden bg-white"
     >
-      <LeadQualificationPopup 
-        isOpen={!!qualifyPlan} 
-        onClose={() => setQualifyPlan(null)} 
-        planName={qualifyPlan} 
-      />
+
 
        <div className="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center mb-12">
              <div className={`transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
                 <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
-                  <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+                   <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
                     style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
-                  />
-                  <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[11px] font-bold tracking-wide text-[#B597FF] flex items-center gap-2">
+                   />
+                   <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[11px] font-bold tracking-wide text-[#B597FF] flex items-center gap-2">
                     💰 {t.pricing.badge}
-                  </div>
+                   </div>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#0c0d0d] mb-4">
                    {t.pricing.title}
@@ -257,15 +254,19 @@ export function Pricing() {
                const isOtherHovered = hoveredIndex !== null && !isHovered;
                const showHoverBorder = (plan.name === t.pricing.starterName || plan.name === t.pricing.enterpriseName) && isHovered;
 
+               // Calculate discount percent
+               const discountPercent = plan.priceStandard ? Math.round((1 - priceToShow! / plan.priceStandard) * 100) : 0;
+
                return (
                  <motion.div 
                     key={plan.name}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
+                    onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: plan.name } }))}
                     onMouseEnter={() => setHoveredIndex(idx)}
                     onMouseLeave={() => setHoveredIndex(null)}
-                    className={`group relative flex flex-col rounded-[2.5rem] transition-all duration-300 ease-out p-[2px]
+                    className={`group relative flex flex-col rounded-[2.5rem] transition-all duration-300 ease-out p-[2px] cursor-pointer
                        ${isOtherHovered ? 'blur-[2px] opacity-60' : 'opacity-100'} 
                        ${isHovered ? '-translate-y-4' : 'translate-y-0'}
                       ${plan.badge ? plan.badgeColor : (showHoverBorder ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : 'bg-zinc-100')} 
@@ -273,13 +274,20 @@ export function Pricing() {
                     `}
                   >
                     {plan.badge && (
-                        <div className="w-full py-3 text-center text-[11px] font-bold tracking-wide text-white relative z-20">
+                        <div className="w-full py-3 text-center text-[11px] font-bold tracking-wide text-white relative z-20 uppercase">
                            {plan.badge}
                         </div>
                     )}
 
                     <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative z-10 ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
                        
+                       {/* Discount Badge in Top Right */}
+                       {!plan.isCustom && discountPercent > 0 && (
+                          <div className={`absolute top-6 right-6 px-3 py-1 rounded-full text-[10px] font-black tracking-tighter ${plan.highlight ? 'bg-[#38E3FF] text-[#0c0d0d]' : 'bg-[#B597FF] text-white'}`}>
+                             -{discountPercent}%
+                          </div>
+                       )}
+
                        <div className="flex justify-between items-start mb-6">
                           <div>
                              <h3 className="text-2xl font-bold tracking-tight mb-1">{plan.name}</h3>
@@ -288,40 +296,48 @@ export function Pricing() {
                        </div>
 
                        <div className="mb-8 min-h-[80px] flex flex-col justify-center">
-                          <div className="flex items-center gap-2 mb-4">
-                             <span className={`text-xs font-black line-through text-red-500/90`}>R$ {plan.priceStandard}</span>
-                              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#38E3FF]/15 text-[#38E3FF] tracking-wide flex items-center gap-1.5 border border-[#38E3FF]/20">
-                                 {t.pricing.specialCondition}
-                                 <span className="opacity-40 select-none">|</span>
-                                 <span className="font-mono">{formattedTime}</span>
-                              </span>
-                          </div>
-                          <div className="flex items-end gap-1">
-                             <span className="text-4xl lg:text-6xl font-extrabold tracking-tighter leading-none flex items-center h-[50px]">
-                                R${" "}<PriceDisplay value={priceToShow} highlight={plan.highlight} />
-                             </span>
-                             <span className={`text-sm font-bold pb-1 ${plan.highlight ? 'text-zinc-500' : 'text-zinc-400'}`}>{plan.period}</span>
-                          </div>
+                          {plan.isCustom ? (
+                            <div className="flex items-end gap-1">
+                               <span className="text-4xl lg:text-5xl font-extrabold tracking-tighter leading-none flex items-center h-[50px]">
+                                  Sob consulta
+                               </span>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-2 mb-4">
+                                 <span className={`text-xs font-black line-through text-zinc-400/80`}>R$ {plan.priceStandard}</span>
+                                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#38E3FF]/15 text-[#38E3FF] tracking-wide flex items-center gap-1.5 border border-[#38E3FF]/20">
+                                     {t.pricing.specialCondition}
+                                     <span className="opacity-40 select-none">|</span>
+                                     <span className="font-mono">{formattedTime}</span>
+                                  </span>
+                              </div>
+                              <div className="flex items-end gap-1">
+                                 <span className="text-4xl lg:text-6xl font-extrabold tracking-tighter leading-none flex items-center h-[50px]">
+                                    R${" "}<PriceDisplay value={priceToShow!} highlight={plan.highlight} />
+                                 </span>
+                                 <span className={`text-sm font-bold pb-1 ${plan.highlight ? 'text-zinc-500' : 'text-zinc-400'}`}>{plan.period}</span>
+                              </div>
+                            </>
+                          )}
                        </div>
 
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
-                       <div className="mt-auto">
-                          <button 
-                             onClick={() => setQualifyPlan(plan.name)}
-                             className={`w-full py-4 rounded-2xl text-sm font-bold transition-all mb-10 ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90 active:scale-95' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
-                          >
-                             {plan.cta}
-                          </button>
+                       <button 
+                          onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: plan.name } }))}
+                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 shadow-sm hover:shadow-xl active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                       >
+                          {plan.cta}
+                       </button>
 
+                       <div className="mt-auto">
                            <p className={`text-[11px] font-bold tracking-wide mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>{t.pricing.deliveryLevel}</p>
                           <ul className="space-y-4">
                              {plan.features.map((feat) => (
                                 <li key={feat} className="flex items-start gap-3">
-                                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? 'bg-[#38E3FF]/20 text-[#38E3FF]' : 'bg-[#B597FF]/10 text-[#B597FF]'}`}>
-                                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                      </svg>
+                                   <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                      <Image src="/check.png" alt="check" width={20} height={20} className="w-full h-full object-contain" />
                                    </div>
                                    <span className="text-sm font-bold opacity-80">{feat}</span>
                                 </li>

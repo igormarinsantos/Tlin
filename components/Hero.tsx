@@ -294,9 +294,9 @@ export function Hero() {
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
           <div className="relative">
-            <a 
-              href="#pricing"
-              className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block`}
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
+              className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block w-full`}
               onMouseEnter={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
                  uiMouseX.set(e.clientX - rect.left);
@@ -318,7 +318,7 @@ export function Hero() {
                 <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
               </div>
-            </a>
+            </button>
             <AnimatePresence>
               {isCtaHovered && (
                 <motion.div

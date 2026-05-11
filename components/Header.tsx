@@ -92,9 +92,9 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 
   return (
     <div className="relative">
-      <a 
-        href="#pricing"
-        className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isHovered ? 'z-[100]' : 'z-10'} block`}
+      <button 
+        onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
+        className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isHovered ? 'z-[100]' : 'z-10'} block w-full`}
         onMouseEnter={(e) => {
            const rect = e.currentTarget.getBoundingClientRect();
            mouseX.set(e.clientX - rect.left);
@@ -116,7 +116,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
           <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
         </div>
-      </a>
+      </button>
       
       <AnimatePresence>
         {isHovered && (
