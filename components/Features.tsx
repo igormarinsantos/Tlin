@@ -76,9 +76,10 @@ function FeatureCard({
                 {feature.title}
               </span>
             </h3>
-            <p className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl">
-              {feature.desc}
-            </p>
+            <p 
+              className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl"
+              dangerouslySetInnerHTML={{ __html: feature.desc }}
+            />
             
             {/* Desktop Button */}
             <div className="hidden md:block relative w-max mt-6">
@@ -182,7 +183,7 @@ export function Features() {
       id: "f1",
       title: t.features.f1_title,
       desc: t.features.f1_desc,
-      asset: "/Fone.png",
+      asset: "/raio.png",
       video: "https://v1.bg.bing.com/az/hprichbg/rb/WaterCycle_EN-US11175626217_1920x1080.mp4"
     },
     {
@@ -203,7 +204,7 @@ export function Features() {
       id: "f4",
       title: t.features.f4_title,
       desc: t.features.f4_desc,
-      asset: "/Star.png",
+      asset: "/Funil.png",
       video: "https://assets.mixkit.co/videos/preview/mixkit-business-charts-on-a-digital-screen-2268-large.mp4"
     }
   ];

@@ -288,19 +288,19 @@ export function RoiCalculator() {
                   onClick={() => setStep("result")}
                   className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF] text-white font-black text-sm tracking-wide hover:opacity-90 transition-all shadow-lg shadow-[#B597FF]/20 active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                  Identificar Oportunidade Mensal <ArrowRight className="w-4 h-4" />
+                  Ver Diagnóstico Comercial <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
                   className="w-full py-4 rounded-full bg-[#0c0d0d] text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
                 >
-                  <TrendingUp className="w-4 h-4" /> Ver Planos e Escalar
+                  <TrendingUp className="w-4 h-4" /> Analisar Operação e Escalar
                 </button>
               )}
 
               {/* Live preview teaser below button */}
-              <p className="text-center text-[10px] text-zinc-400 mt-4 font-medium leading-relaxed">
+              <p className="text-center text-[10px] text-zinc-400 mt-4 font-medium leading-relaxed max-w-[90%] mx-auto">
                 Os resultados podem variar conforme processo comercial, velocidade de atendimento e qualidade dos leads.
               </p>
             </div>
@@ -337,7 +337,7 @@ export function RoiCalculator() {
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.currentRevenue.toLocaleString("pt-BR")}
                     </motion.div>
-                    <p className="text-white/40 text-xs font-medium mt-3">Taxa de conversão atual: {r.convRate.toFixed(1)}%</p>
+                    <p className="text-white/40 text-xs font-medium mt-3">Com base nos seus dados atuais de vendas.</p>
                   </div>
 
                   {/* BOTTOM — Poder da IA Tlin */}
@@ -345,16 +345,22 @@ export function RoiCalculator() {
                        style={{ background: PURPLE_BOTTOM }}>
                     <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/30 rounded-full blur-[60px] pointer-events-none" />
                     
-                    <p className="text-sm text-white/70 font-medium leading-relaxed">
-                      Sua operação tem potencial para converter mais leads através de atendimento instantâneo e qualificação automática.
-                    </p>
-                    {/* Mini conversion preview */}
-                    <div className="mt-6 flex items-center gap-3">
+                    <div className="space-y-4">
+                      <p className="text-sm text-white font-bold leading-relaxed">
+                        Sua operação pode estar perdendo oportunidades por demora no atendimento, ausência de follow-up e baixa qualificação comercial.
+                      </p>
+                      <p className="text-[12px] text-white/60 font-medium leading-relaxed">
+                        A IA comercial atua aumentando velocidade, consistência e recuperação de leads em tempo real.
+                      </p>
+                    </div>
+
+                    {/* Mini indicator */}
+                    <div className="mt-8 flex items-center gap-3">
                       <div className="flex-1 h-[3px] rounded-full bg-white/10">
-                        <div className="h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]"
+                        <div className="h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]"
                              style={{ width: `${Math.min(r.convRate * 4, 100)}%` }} />
                       </div>
-                      <span className="text-xs font-black text-white/40 uppercase">Eficiência operacional atual</span>
+                      <span className="text-[10px] font-black text-white/40 uppercase tracking-wider">Nível de aproveitamento comercial</span>
                     </div>
                   </div>
                 </motion.div>
@@ -369,7 +375,7 @@ export function RoiCalculator() {
                   transition={{ duration: 0.35, type: "spring", bounce: 0.3 }}
                   className="flex-1 flex flex-col"
                 >
-                  {/* TOP — Receita Recuperável */}
+                  {/* TOP — Potencial Recuperável */}
                   <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
@@ -384,19 +390,23 @@ export function RoiCalculator() {
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3 uppercase">
-                      Receita Recuperável Mensal
-                    </p>
-                    <motion.div
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                      className="text-5xl md:text-[3.5rem] font-black text-white tracking-tighter leading-none"
-                    >
-                      <span className="text-xl font-bold opacity-40 mr-2">R$</span>
-                      {r.extraRevenue.toLocaleString("pt-BR")}
-                    </motion.div>
-                    <p className="text-white/40 text-xs font-medium mt-3">+{r.gain}% de eficiência comercial com IA</p>
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-bold tracking-wide text-white/50 uppercase">
+                        Potencial Recuperável Mensal
+                      </p>
+                      <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                        className="text-5xl md:text-[3.8rem] font-black text-white tracking-tighter leading-tight"
+                      >
+                        <span className="text-xl font-bold opacity-40 mr-2">R$</span>
+                        {r.extraRevenue.toLocaleString("pt-BR")}
+                      </motion.div>
+                      <p className="text-white/40 text-[10px] font-medium italic">
+                        Estimativa baseada na eficiência operacional da sua operação comercial.
+                      </p>
+                    </div>
                   </div>
 
                   {/* BOTTOM — Breakdown */}
@@ -411,19 +421,23 @@ export function RoiCalculator() {
                         <p className="text-2xl font-black text-white/70">{r.convRate.toFixed(1)}%</p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/15 border border-white/20">
-                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5 uppercase">Com IA Comercial</p>
+                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5 uppercase">Conversão Projetada</p>
                         <p className="text-2xl font-black text-white">{r.newConvRate.toFixed(1)}%</p>
+                        <p className="text-[10px] font-bold text-white/60 mt-1">+{r.gain}% ganho operacional estimado</p>
                       </div>
                     </div>
 
                     {/* ROI & Annual */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="pt-5 border-t border-white/10">
                         <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5 uppercase">
                           ROI Estimado
                         </p>
                         <p className="text-2xl font-black text-white">
                           {r.roi.toFixed(0)}%
+                        </p>
+                        <p className="text-[9px] text-white/30 font-medium leading-tight mt-1">
+                          Retorno considerando recuperação de oportunidades.
                         </p>
                       </div>
                       <div className="pt-5 border-t border-white/10">
@@ -432,6 +446,9 @@ export function RoiCalculator() {
                         </p>
                         <p className="text-2xl font-black text-white">
                           R$ {(r.extraRevenue * 12).toLocaleString("pt-BR")}
+                        </p>
+                        <p className="text-[9px] text-white/30 font-medium leading-tight mt-1">
+                          Estimativa baseada no cenário operacional atual.
                         </p>
                       </div>
                     </div>
