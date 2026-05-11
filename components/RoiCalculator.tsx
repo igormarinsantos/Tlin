@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Minus, Plus, RotateCcw, TrendingUp } from "lucide-react";
+import { ArrowRight, Minus, Plus, RotateCcw } from "lucide-react";
 
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -21,41 +21,59 @@ export function RoiCalculator() {
   const [step, setStep]                 = useState<"input" | "result">("input");
 
   const r = useMemo(() => {
-    // 1. Conversão Atual (0.5% - 60%)
-    const rawConv = leads > 0 ? (currentSales / leads) * 100 : 0;
-    const convRate = Math.min(Math.max(rawConv, 0.5), 60);
+    // 1. Conversão Atual (vendasMensais / leadsMensais)
+    const convAtualRaw = leads > 0 ? (currentSales / leads) : 0;
+    const convAtual = Math.min(Math.max(convAtualRaw, 0.005), 0.6);
 
-    // 2. Ganho Relativo (Baseado no volume)
-    let gain = 0.10;
-    if (leads < 100) gain = 0.35;
-    else if (leads < 500) gain = 0.25;
-    else if (leads < 2000) gain = 0.18;
+    // 2. Ganho Base (Por maturidade operacional)
+    let ganhoBase = 0.08;
+    if (convAtual < 0.05) ganhoBase = 0.35;
+    else if (convAtual < 0.10) ganhoBase = 0.25;
+    else if (convAtual < 0.20) ganhoBase = 0.15;
 
-    // 3. Conversão Projetada (Max 75%)
-    const newConvRate = Math.min(convRate * (1 + gain), 75);
+    // 3. Fator Ticket (Complexidade da venda)
+    let ticketFactor = 0.5;
+    if (ticket < 500) ticketFactor = 1.0;
+    else if (ticket < 2000) ticketFactor = 0.85;
+    else if (ticket < 5000) ticketFactor = 0.7;
 
-    // 4. Receita Atual
+    // 4. Fator Volume (Maturidade operacional)
+    let volumeFactor = 1.0;
+    if (leads > 2000) volumeFactor = 0.7;
+    else if (leads > 1000) volumeFactor = 0.85;
+
+    // 5. Ganho Final e Conversão Projetada (Max 75%)
+    const ganhoFinal = ganhoBase * ticketFactor * volumeFactor;
+    const newConvRate = Math.min(convAtual * (1 + ganhoFinal), 0.75);
+
+    // 6. Receita e ROI
     const currentRevenue = currentSales * ticket;
-
-    // 5. Vendas Projetadas
-    const newSales = Math.floor(leads * (newConvRate / 100));
-
-    // 6. Receita Projetada & Ganho Mensal
+    const newSales = Math.floor(leads * newConvRate);
     const revenueProjetada = newSales * ticket;
-    const extraRevenue = Math.max(0, revenueProjetada - currentRevenue);
+    const ganhoMensal = Math.max(0, revenueProjetada - currentRevenue);
 
-    // 7. ROI (Custo fixo 3000)
-    const costIA = 3000;
-    const rawRoi = ((extraRevenue - costIA) / costIA) * 100;
-    const roi = Math.min(Math.max(rawRoi, 0), 1200);
+    // 7. Projeção Anual Progressiva (Onboarding -> Adaptação -> Refinamento)
+    const projecaoAnualBruta = (ganhoMensal * 0.7 * 3) + (ganhoMensal * 0.85 * 3) + (ganhoMensal * 1 * 6);
+
+    // 8. Custos (Plano Scale)
+    const setupFee = 2197;
+    const monthlyFee = 1497; // Mensalidade base do plano scale
+    const custoAnual = setupFee + (monthlyFee * 12);
+    
+    // 9. Ganho Líquido e ROI (Simplificado para visibilidade)
+    const annualGrossGain = projecaoAnualBruta;
+    const monthlyTotalCost = (setupFee / 12) + monthlyFee;
+    const monthlyRoi = ganhoMensal > 0 ? ((ganhoMensal - monthlyFee) / monthlyFee) * 100 : 0;
 
     return { 
       currentRevenue, 
-      extraRevenue, 
-      newConvRate, 
-      convRate, 
-      gain: Math.round(gain * 100),
-      roi 
+      ganhoMensal, 
+      newConvRate: newConvRate * 100, 
+      convRate: convAtual * 100, 
+      gain: Math.round(ganhoFinal * 100),
+      roi: monthlyRoi,
+      projecaoAnual: annualGrossGain,
+      payback: Math.ceil(setupFee / Math.max(ganhoMensal - monthlyFee, 1))
     };
   }, [leads, ticket, currentSales]);
 
@@ -108,10 +126,10 @@ export function RoiCalculator() {
         </div>
 
         {/* Card */}
-        <div className="w-full bg-white rounded-[2rem] overflow-hidden flex flex-col lg:flex-row">
+        <div className="w-full bg-white rounded-[2rem] overflow-hidden flex flex-col lg:flex-row lg:items-stretch min-h-[600px] lg:h-[680px]">
 
           {/* ── LEFT: Inputs ────────────────────────────────────────── */}
-          <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10">
+          <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10 border-r border-zinc-50">
 
             <div>
               <div className="flex justify-between items-center mb-8">
@@ -233,7 +251,7 @@ export function RoiCalculator() {
                     <button
                       aria-label="Diminuir Vendas"
                       onClick={() => { setCurrentSales(Math.max(1, currentSales - 1)); setStep("input"); }}
-                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors shadow-sm active:scale-95"
+                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors active:scale-95"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -252,7 +270,7 @@ export function RoiCalculator() {
                     <button
                       aria-label="Aumentar Vendas"
                       onClick={() => { setCurrentSales(currentSales + 1); setStep("input"); }}
-                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors shadow-sm active:scale-95"
+                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors active:scale-95"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -266,77 +284,67 @@ export function RoiCalculator() {
               {step === "input" ? (
                 <button
                   onClick={() => setStep("result")}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-black font-black text-sm tracking-wide hover:opacity-90 transition-all shadow-lg shadow-[#B597FF]/20 active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-black font-black text-sm tracking-wide hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                  Ver Diagnóstico Comercial <ArrowRight className="w-4 h-4" />
+                  Ver em quanto tempo a Tlin se paga? <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button
-                  onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
-                  className="w-full py-4 rounded-full bg-[#0c0d0d] text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
-                >
-                  <TrendingUp className="w-4 h-4" /> Analisar Operação e Escalar
-                </button>
+                null
               )}
 
               {/* Live preview teaser below button */}
               <p className="text-center text-[10px] text-zinc-400 mt-4 font-medium leading-relaxed max-w-[90%] mx-auto">
-                Os resultados podem variar conforme processo comercial, velocidade de atendimento e qualidade dos leads.
+                os resultados podem variar conforme processo comercial, velocidade de atendimento e qualidade dos leads.
               </p>
             </div>
           </div>
 
           {/* ── RIGHT: Results ───────────────────────────────────────── */}
-          <div className="w-full lg:w-1/2 relative overflow-hidden flex flex-col min-h-[500px]">
+          <div className="w-full lg:w-1/2 relative overflow-hidden flex flex-col bg-zinc-50/50 h-full">
             <AnimatePresence mode="wait">
 
               {/* ── STATE: Input preview ── */}
               {step === "input" ? (
                 <motion.div
                   key="input-state"
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30 }}
-                  transition={{ duration: 0.28 }}
-                  className="flex-1 flex flex-col"
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full flex flex-col"
                 >
                   {/* TOP — Sua Receita Atual */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
-                       style={{ background: PURPLE_TOP }}>
+                  <div className="flex-1 flex flex-col justify-center px-10 py-10 relative overflow-hidden bg-[#9D7BFF]">
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
-                    <p className="text-sm font-bold tracking-tight text-white mb-2 uppercase opacity-60">
-                      Sua Receita Atual
+                    <p className="text-[11px] font-bold tracking-widest text-white/50 mb-3 uppercase">
+                      situação atual
                     </p>
                     <motion.div
                       key={r.currentRevenue}
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="text-5xl md:text-[4rem] font-black text-white tracking-tighter leading-none"
+                      className="text-5xl md:text-6xl font-black text-white tracking-tighter"
                     >
-                      <span className="text-2xl font-bold opacity-30 mr-2">R$</span>
+                      <span className="text-xl font-bold opacity-30 mr-2">R$</span>
                       {r.currentRevenue.toLocaleString("pt-BR")}
                     </motion.div>
-                    <p className="text-white/70 text-sm font-bold mt-4 leading-relaxed max-w-[280px]">
-                      Faturamento médio mensal baseado nos seus dados atuais de vendas e ticket médio.
+                    <p className="text-white/70 text-sm font-medium mt-4 leading-relaxed max-w-[300px]">
+                      Faturamento médio mensal baseado nos dados atuais de vendas.
                     </p>
                   </div>
 
                   {/* BOTTOM — Poder da IA Tlin */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
-                       style={{ background: PURPLE_BOTTOM }}>
-                    <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/30 rounded-full blur-[60px] pointer-events-none" />
+                  <div className="flex-1 flex flex-col justify-center px-10 py-10 relative overflow-hidden bg-[#7B5AD2]">
+                    <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/20 rounded-full blur-[60px] pointer-events-none" />
                     
                     <div className="space-y-4">
-                      <p className="text-sm text-white font-bold leading-relaxed">
-                        Sua operação pode estar perdendo oportunidades por demora no atendimento, ausência de follow-up e baixa qualificação comercial.
+                      <p className="text-sm text-white font-medium leading-relaxed opacity-90">
+                        Sua operação pode estar perdendo oportunidades por demora no atendimento e ausência de follow-up.
                       </p>
-                      <p className="text-[12px] text-white/60 font-medium leading-relaxed">
-                        A IA comercial atua aumentando velocidade, consistência e recuperação de leads em tempo real.
+                      <p className="text-[12px] text-white/50 font-medium leading-relaxed">
+                        A IA comercial Tlin atua aumentando velocidade e consistência na recuperação de leads.
                       </p>
                     </div>
-
-
                   </div>
                 </motion.div>
 
@@ -344,86 +352,62 @@ export function RoiCalculator() {
                 /* ── STATE: Result ── */
                 <motion.div
                   key="result-state"
-                  initial={{ opacity: 0, scale: 0.97 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.03 }}
-                  transition={{ duration: 0.35, type: "spring", bounce: 0.3 }}
-                  className="flex-1 flex flex-col bg-gradient-to-br from-[#B597FF] to-[#38E3FF]"
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.4 }}
+                  className="h-full flex flex-col bg-gradient-to-br from-[#B597FF] to-[#38E3FF]"
                 >
-                  {/* TOP — Potencial Recuperável */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden">
-                    <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/20 rounded-full blur-[60px] pointer-events-none" />
-                    <div className="flex justify-between items-start mb-6">
-                      <span className="px-3 py-1 rounded-full bg-black/10 text-black text-[10px] font-bold tracking-wide border border-black/10 uppercase">
-                        Diagnóstico Comercial
-                      </span>
-                      <button
-                        onClick={() => setStep("input")}
-                        className="p-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors text-black/40 hover:text-black"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-bold tracking-wide text-black/50 uppercase">
-                        Potencial Recuperável Mensal
-                      </p>
-                      <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                        className="text-5xl md:text-[3.8rem] font-black text-black tracking-tighter leading-tight"
-                      >
-                        <span className="text-xl font-bold opacity-30 mr-2">R$</span>
-                        {r.extraRevenue.toLocaleString("pt-BR")}
-                      </motion.div>
-                      <p className="text-black/40 text-[10px] font-medium italic">
-                        Estimativa baseada na eficiência operacional da sua operação comercial.
-                      </p>
+                  {/* TOP — Retorno Hero */}
+                  <div className="flex-1 flex flex-col justify-center px-10 py-10 relative">
+                    <button
+                      onClick={() => setStep("input")}
+                      className="absolute top-8 right-8 p-3 rounded-full hover:bg-black/5 transition-colors group z-20"
+                    >
+                      <RotateCcw className="w-4 h-4 text-black/40 group-hover:text-black/80 transition-transform duration-500 group-hover:-rotate-180" />
+                    </button>
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-4xl md:text-5xl font-black text-black tracking-tighter leading-[1.05] max-w-[400px]">
+                        Retorno potencial já no início da operação
+                      </h3>
                     </div>
                   </div>
 
-                  {/* BOTTOM — Breakdown */}
-                  <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden">
-                    <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/10 rounded-full blur-[60px] pointer-events-none" />
-
-                    {/* Conversion comparison */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <div className="p-4 rounded-2xl bg-black/5 border border-black/5">
-                        <p className="text-[10px] font-bold text-black/40 tracking-wide mb-1.5 uppercase">Conversão Atual</p>
-                        <p className="text-2xl font-black text-black/60">{r.convRate.toFixed(1)}%</p>
+                  {/* BOTTOM — Métrica Comparativa */}
+                  <div className="flex-1 flex flex-col justify-center px-10 py-10 pt-0">
+                    <div className="flex items-center justify-between gap-4 mb-6">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold text-black/40 tracking-tight">Conversão atual</p>
+                        <p className="text-xl font-black text-black/30">{r.convRate.toFixed(1)}%</p>
                       </div>
-                      <div className="p-4 rounded-2xl bg-white/20 border border-white/30 shadow-sm">
-                        <p className="text-[10px] font-bold text-black/50 tracking-wide mb-1.5 uppercase">Conversão Projetada</p>
-                        <p className="text-2xl font-black text-black">{r.newConvRate.toFixed(1)}%</p>
-                        <p className="text-[10px] font-bold text-black/60 mt-1">+{r.gain}% ganho operacional estimado</p>
+
+                      <div className="flex items-center justify-center">
+                        <ArrowRight className="w-5 h-5 text-black" />
+                      </div>
+
+                      <div className="space-y-1 text-right">
+                        <p className="text-[10px] font-bold text-black/60 tracking-tight">Conversão possível</p>
+                        <p className="text-xl font-black text-black">±{r.newConvRate.toFixed(1)}%</p>
+                        <p className="text-[10px] font-bold text-black/60">~{r.gain}% ganho potencial</p>
                       </div>
                     </div>
 
-                    {/* ROI & Annual */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="pt-5 border-t border-black/10">
-                        <p className="text-[10px] font-bold text-black/40 tracking-wide mb-1.5 uppercase">
-                          ROI Estimado
-                        </p>
-                        <p className="text-2xl font-black text-black">
-                          {r.roi.toFixed(0)}%
-                        </p>
-                        <p className="text-[9px] text-black/40 font-medium leading-tight mt-1">
-                          Retorno considerando recuperação de oportunidades.
+                    <div className="pt-6 border-t border-black/10 text-center">
+                      <div className="space-y-1 mb-6">
+                        <p className="text-[10px] font-bold text-black/40 tracking-tight uppercase">Projeção anual possível</p>
+                        <p className="text-4xl font-black text-black tracking-tighter">±R$ {r.projecaoAnual.toLocaleString("pt-BR")}</p>
+                        <p className="text-[10px] font-bold text-black/40 leading-relaxed max-w-[280px] mx-auto">
+                          Faturamento incremental recuperado em 12 meses de operação.
                         </p>
                       </div>
-                      <div className="pt-5 border-t border-black/10">
-                        <p className="text-[10px] font-bold text-black/40 tracking-wide mb-1.5 uppercase">
-                          Projeção Anual
-                        </p>
-                        <p className="text-2xl font-black text-black">
-                          R$ {(r.extraRevenue * 12).toLocaleString("pt-BR")}
-                        </p>
-                        <p className="text-[9px] text-black/40 font-medium leading-tight mt-1">
-                          Estimativa baseada no cenário operacional atual.
-                        </p>
-                      </div>
+
+                      <button
+                        onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="w-full py-4 rounded-full bg-black text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                      >
+                        Alavancar meu comercial agora <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </motion.div>

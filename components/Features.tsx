@@ -190,7 +190,7 @@ export function Features() {
       id: "f2",
       title: t.features.f2_title,
       desc: t.features.f2_desc,
-      asset: "/Funil.png",
+      asset: "/Imã.png",
       video: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-18155-large.mp4"
     },
     {
