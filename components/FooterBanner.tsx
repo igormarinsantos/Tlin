@@ -278,8 +278,8 @@ export function FooterBanner() {
               transition={{ delay: 0.2 }}
               className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0"
            >
-              <a 
-                href="#pricing"
+              <button 
+                onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
                 className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block w-full md:w-auto"
               >
                 <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
@@ -290,7 +290,7 @@ export function FooterBanner() {
                   <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
                 </div>
-              </a>
+              </button>
               <a 
                 href="https://wa.me/5511916248604" 
                 target="_blank" 

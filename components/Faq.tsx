@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export function Faq() {
   const { t } = useLanguage();
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [hasPlayedEntrance, setHasPlayedEntrance] = useState(false);
 
   const faqs = [
     { q: t.faq.q1, a: t.faq.a1 },
@@ -17,8 +18,26 @@ export function Faq() {
     { q: t.faq.q6, a: t.faq.a6 }
   ];
 
+  const handleEntrance = () => {
+    if (!hasPlayedEntrance) {
+      setHasPlayedEntrance(true);
+      // Brief delay to ensure user sees the transition
+      setTimeout(() => {
+        setOpenIndex(0);
+        // Close after 1.2s
+        setTimeout(() => {
+          setOpenIndex((current) => current === 0 ? null : current);
+        }, 1200);
+      }, 400);
+    }
+  };
+
   return (
-    <section className="w-full py-24 md:py-32 bg-white">
+    <motion.section 
+      onViewportEnter={handleEntrance}
+      viewport={{ once: true, margin: "-100px" }}
+      className="w-full py-24 md:py-32 bg-white"
+    >
        <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="text-center mb-20">
           <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-8">
@@ -79,7 +98,7 @@ export function Faq() {
                                <div className="w-full h-px bg-zinc-100 mb-6" />
                                <p className="text-zinc-500 text-base md:text-lg font-medium leading-relaxed">
                                   {faq.a}
-                               </p>
+                                </p>
                                <div className="mt-6 pt-6 border-t border-zinc-100">
                                   <p className="text-sm font-medium text-zinc-400">
                                      {t.faq.notAnswered} <a href="https://wa.me/5511916248604" target="_blank" rel="noopener noreferrer" className="text-[#B597FF] hover:underline font-bold transition-all">{t.faq.talkToExperts}</a>
@@ -96,6 +115,6 @@ export function Faq() {
 
 
        </div>
-    </section>
+    </motion.section>
   );
 }

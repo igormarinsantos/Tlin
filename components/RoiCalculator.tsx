@@ -6,11 +6,12 @@ import { ArrowRight, Minus, Plus, RotateCcw, TrendingUp } from "lucide-react";
 
 import { useLanguage } from "@/lib/LanguageContext";
 
-const TLIN_BOOST = 0.20;
-
 // ── Brand purple palette ────────────────────────────────────────────────────
 const PURPLE_TOP    = "#9D7BFF"; // topo — lilas vibrante
 const PURPLE_BOTTOM = "#7B5AD2"; // baixo — lilas mais profundo
+
+const LEADS_SUGGESTIONS = [40, 150, 500, 1500, 5000];
+const TICKET_SUGGESTIONS = [100, 500, 1000, 2500];
 
 export function RoiCalculator() {
   const { t } = useLanguage();
@@ -20,13 +21,42 @@ export function RoiCalculator() {
   const [step, setStep]                 = useState<"input" | "result">("input");
 
   const r = useMemo(() => {
-    const convRate    = leads > 0 ? (currentSales / leads) * 100 : 0;
-    const newConvRate = convRate * (1 + TLIN_BOOST);
-    const newSales    = Math.floor(leads * (newConvRate / 100));
-    const extraSales  = Math.max(0, newSales - currentSales);
-    const extraRevenue    = extraSales * ticket;
-    const currentRevenue  = currentSales * ticket;
-    return { currentRevenue, extraSales, extraRevenue, newConvRate, convRate };
+    // 1. Conversão Atual (0.5% - 60%)
+    const rawConv = leads > 0 ? (currentSales / leads) * 100 : 0;
+    const convRate = Math.min(Math.max(rawConv, 0.5), 60);
+
+    // 2. Ganho Relativo (Baseado no volume)
+    let gain = 0.10;
+    if (leads < 100) gain = 0.35;
+    else if (leads < 500) gain = 0.25;
+    else if (leads < 2000) gain = 0.18;
+
+    // 3. Conversão Projetada (Max 75%)
+    const newConvRate = Math.min(convRate * (1 + gain), 75);
+
+    // 4. Receita Atual
+    const currentRevenue = currentSales * ticket;
+
+    // 5. Vendas Projetadas
+    const newSales = Math.floor(leads * (newConvRate / 100));
+
+    // 6. Receita Projetada & Ganho Mensal
+    const revenueProjetada = newSales * ticket;
+    const extraRevenue = Math.max(0, revenueProjetada - currentRevenue);
+
+    // 7. ROI (Custo fixo 3000)
+    const costIA = 3000;
+    const rawRoi = ((extraRevenue - costIA) / costIA) * 100;
+    const roi = Math.min(Math.max(rawRoi, 0), 1200);
+
+    return { 
+      currentRevenue, 
+      extraRevenue, 
+      newConvRate, 
+      convRate, 
+      gain: Math.round(gain * 100),
+      roi 
+    };
   }, [leads, ticket, currentSales]);
 
   return (
@@ -67,13 +97,13 @@ export function RoiCalculator() {
             </div>
           </div>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-            {t.roi.title}{" "}
+            Quanto sua operação{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]">
-              {t.roi.titleHighlight}
+              deixa na mesa?
             </span>
           </h2>
           <p className="text-zinc-400 text-base max-w-xl mx-auto">
-            {t.roi.subtitle}
+            Simulação baseada em médias operacionais de conversão via WhatsApp.
           </p>
         </div>
 
@@ -84,27 +114,68 @@ export function RoiCalculator() {
           <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-between bg-white relative z-10">
 
             <div>
-              <p className="text-[11px] font-bold text-zinc-400 tracking-wide mb-8">
-                {t.roi.details}
-              </p>
+              <div className="flex justify-between items-center mb-8">
+                <p className="text-[11px] font-bold text-zinc-400 tracking-wide uppercase">
+                  detalhes da operação
+                </p>
+                <div className="text-[10px] font-bold text-[#B597FF]">
+                  simulação (dados não exatos)
+                </div>
+              </div>
 
-              <div className="space-y-9">
+              <div className="space-y-12">
 
-                {/* Leads slider */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
+                {/* Leads Input & Slider */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
                     <label className="text-sm font-bold text-zinc-700">{t.roi.leads}</label>
-                    <div className="px-3 py-1 rounded-full bg-[#B597FF]/10 text-[#8A63D2] text-sm font-black">
-                      {leads.toLocaleString("pt-BR")}
+                    <div className="flex flex-col items-end gap-3">
+                      <div className="flex items-center gap-2">
+                        {LEADS_SUGGESTIONS.map(s => (
+                          <button 
+                            key={s} 
+                            onClick={() => { setLeads(s); setStep("input"); }}
+                            className={`text-[10px] font-bold px-2 py-1 rounded-md border transition-all ${leads === s ? 'bg-[#B597FF] border-[#B597FF] text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300'}`}
+                          >
+                            {s >= 1000 ? `${s/1000}k` : s}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => { setLeads(Math.max(20, leads - 10)); setStep("input"); }}
+                          className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={leads.toLocaleString("pt-BR")}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
+                              setLeads(Math.min(val, 100000));
+                              setStep("input");
+                            }}
+                            className="w-24 text-right px-3 py-1.5 rounded-xl bg-[#B597FF]/5 text-[#8A63D2] text-sm font-black border-2 border-transparent focus:border-[#B597FF]/30 outline-none transition-all"
+                          />
+                        </div>
+                        <button 
+                          onClick={() => { setLeads(leads + 10); setStep("input"); }}
+                          className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="relative h-6 flex items-center">
                     <div className="absolute left-0 right-0 h-[3px] bg-zinc-100 rounded-full overflow-hidden">
                       <div className="absolute left-0 h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]"
-                           style={{ width: `${(leads / 10000) * 100}%` }} />
+                           style={{ width: `${Math.min((leads / 10000) * 100, 100)}%` }} />
                     </div>
                     <input
-                      type="range" min={100} max={10000} step={100} value={leads}
+                      type="range" min={20} max={10000} step={10} value={Math.min(leads, 10000)}
                       aria-label="Número de Leads"
                       onChange={e => { setLeads(+e.target.value); setStep("input"); }}
                       className="w-full h-6 appearance-none cursor-pointer bg-transparent relative z-10"
@@ -113,21 +184,60 @@ export function RoiCalculator() {
                   </div>
                 </div>
 
-                {/* Ticket slider */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <label className="text-sm font-bold text-zinc-700">{t.roi.ticket}</label>
-                    <div className="px-3 py-1 rounded-full bg-[#B597FF]/10 text-[#8A63D2] text-sm font-black">
-                      R$ {ticket.toLocaleString("pt-BR")}
+                {/* Ticket Input & Slider */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <label className="text-sm font-bold text-zinc-700">
+                      Ticket Médio <span className="text-[10px] text-zinc-400 font-medium ml-1">(Preço médio por venda)</span>
+                    </label>
+                    <div className="flex flex-col items-end gap-3">
+                      <div className="flex items-center gap-2">
+                        {TICKET_SUGGESTIONS.map(s => (
+                          <button 
+                            key={s} 
+                            onClick={() => { setTicket(s); setStep("input"); }}
+                            className={`text-[10px] font-bold px-2 py-1 rounded-md border transition-all ${ticket === s ? 'bg-[#B597FF] border-[#B597FF] text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300'}`}
+                          >
+                            R$ {s}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => { setTicket(Math.max(1, ticket - 50)); setStep("input"); }}
+                          className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#8A63D2]/40">R$</span>
+                          <input 
+                            type="text" 
+                            value={ticket.toLocaleString("pt-BR")}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
+                              setTicket(Math.max(1, Math.min(val, 1000000)));
+                              setStep("input");
+                            }}
+                            className="w-28 text-right pl-8 pr-3 py-1.5 rounded-xl bg-[#B597FF]/5 text-[#8A63D2] text-sm font-black border-2 border-transparent focus:border-[#B597FF]/30 outline-none transition-all"
+                          />
+                        </div>
+                        <button 
+                          onClick={() => { setTicket(ticket + 50); setStep("input"); }}
+                          className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="relative h-6 flex items-center">
                     <div className="absolute left-0 right-0 h-[3px] bg-zinc-100 rounded-full overflow-hidden">
                       <div className="absolute left-0 h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]"
-                           style={{ width: `${(ticket / 10000) * 100}%` }} />
+                           style={{ width: `${Math.min((ticket / 10000) * 100, 100)}%` }} />
                     </div>
                     <input
-                      type="range" min={100} max={10000} step={50} value={ticket}
+                      type="range" min={1} max={10000} step={50} value={Math.min(ticket, 10000)}
                       aria-label="Ticket Médio"
                       onChange={e => { setTicket(+e.target.value); setStep("input"); }}
                       className="w-full h-6 appearance-none cursor-pointer bg-transparent relative z-10"
@@ -137,23 +247,32 @@ export function RoiCalculator() {
                 </div>
 
                 {/* Vendas counter */}
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-zinc-700">{t.roi.sales}</label>
+                <div className="space-y-4">
+                  <label className="text-sm font-bold text-zinc-700">Vendas Atuais (Mês)</label>
                   <div className="flex items-center gap-3">
                     <button
                       aria-label="Diminuir Vendas"
                       onClick={() => { setCurrentSales(Math.max(1, currentSales - 1)); setStep("input"); }}
-                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors shadow-sm active:scale-95"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <div className="flex-1 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-lg font-black text-zinc-800">
-                      {currentSales}
+                    <div className="flex-1 h-11 rounded-full border border-zinc-200 flex items-center justify-center">
+                       <input 
+                          type="text" 
+                          value={currentSales}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
+                            setCurrentSales(Math.min(val, leads));
+                            setStep("input");
+                          }}
+                          className="w-full bg-transparent text-center text-lg font-black text-zinc-800 outline-none"
+                        />
                     </div>
                     <button
                       aria-label="Aumentar Vendas"
                       onClick={() => { setCurrentSales(currentSales + 1); setStep("input"); }}
-                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
+                      className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors shadow-sm active:scale-95"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -167,28 +286,28 @@ export function RoiCalculator() {
               {step === "input" ? (
                 <button
                   onClick={() => setStep("result")}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF] text-white font-black text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF] text-white font-black text-sm tracking-wide hover:opacity-90 transition-all shadow-lg shadow-[#B597FF]/20 active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                  {t.roi.cta1} <ArrowRight className="w-4 h-4" />
+                  Identificar Oportunidade Mensal <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
                   className="w-full py-4 rounded-full bg-[#0c0d0d] text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
                 >
-                  <TrendingUp className="w-4 h-4" /> {t.roi.cta2}
+                  <TrendingUp className="w-4 h-4" /> Ver Planos e Escalar
                 </button>
               )}
 
               {/* Live preview teaser below button */}
-              <p className="text-center text-[11px] text-zinc-400 mt-4 font-medium">
-                {t.roi.teaser}
+              <p className="text-center text-[10px] text-zinc-400 mt-4 font-medium leading-relaxed">
+                Os resultados podem variar conforme processo comercial, velocidade de atendimento e qualidade dos leads.
               </p>
             </div>
           </div>
 
           {/* ── RIGHT: Results ───────────────────────────────────────── */}
-          <div className="w-full lg:w-1/2 relative overflow-hidden flex flex-col">
+          <div className="w-full lg:w-1/2 relative overflow-hidden flex flex-col min-h-[500px]">
             <AnimatePresence mode="wait">
 
               {/* ── STATE: Input preview ── */}
@@ -205,8 +324,8 @@ export function RoiCalculator() {
                   <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
-                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
-                      {t.roi.currentRev}
+                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3 uppercase">
+                      Receita Atual (Mês)
                     </p>
                     <motion.div
                       key={r.currentRevenue}
@@ -218,29 +337,24 @@ export function RoiCalculator() {
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.currentRevenue.toLocaleString("pt-BR")}
                     </motion.div>
-                    <p className="text-white/40 text-xs font-medium mt-3">{t.roi.basedOn}</p>
+                    <p className="text-white/40 text-xs font-medium mt-3">Taxa de conversão atual: {r.convRate.toFixed(1)}%</p>
                   </div>
 
                   {/* BOTTOM — Poder da IA Tlin */}
                   <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
                        style={{ background: PURPLE_BOTTOM }}>
                     <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-black/30 rounded-full blur-[60px] pointer-events-none" />
-                    <div className="inline-flex items-center gap-2 mb-4">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#B597FF]" />
-                      <p className="text-[11px] font-bold tracking-wide text-white/50">
-                        {t.roi.powerTlin}
-                      </p>
-                    </div>
+                    
                     <p className="text-sm text-white/70 font-medium leading-relaxed">
-                      {t.roi.powerDesc}
+                      Sua operação tem potencial para converter mais leads através de atendimento instantâneo e qualificação automática.
                     </p>
                     {/* Mini conversion preview */}
                     <div className="mt-6 flex items-center gap-3">
                       <div className="flex-1 h-[3px] rounded-full bg-white/10">
                         <div className="h-full rounded-full bg-gradient-to-r from-[#B597FF] to-[#D1C2FF]"
-                             style={{ width: `${Math.min(r.convRate * 8, 100)}%` }} />
+                             style={{ width: `${Math.min(r.convRate * 4, 100)}%` }} />
                       </div>
-                      <span className="text-xs font-black text-white/40">{r.convRate.toFixed(1)}% {t.roi.convCurrent}</span>
+                      <span className="text-xs font-black text-white/40 uppercase">Eficiência operacional atual</span>
                     </div>
                   </div>
                 </motion.div>
@@ -255,13 +369,13 @@ export function RoiCalculator() {
                   transition={{ duration: 0.35, type: "spring", bounce: 0.3 }}
                   className="flex-1 flex flex-col"
                 >
-                  {/* TOP — Faturamento Adicional */}
+                  {/* TOP — Receita Recuperável */}
                   <div className="flex-1 flex flex-col justify-center px-10 py-12 relative overflow-hidden"
                        style={{ background: PURPLE_TOP }}>
                     <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-[60px] pointer-events-none" />
                     <div className="flex justify-between items-start mb-6">
-                      <span className="px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-bold tracking-wide border border-white/20">
-                        {t.roi.revealed}
+                      <span className="px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-bold tracking-wide border border-white/20 uppercase">
+                        Diagnóstico Comercial
                       </span>
                       <button
                         onClick={() => setStep("input")}
@@ -270,8 +384,8 @@ export function RoiCalculator() {
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3">
-                      {t.roi.hiddenRev}
+                    <p className="text-[11px] font-bold tracking-wide text-white/50 mb-3 uppercase">
+                      Receita Recuperável Mensal
                     </p>
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -281,8 +395,8 @@ export function RoiCalculator() {
                     >
                       <span className="text-xl font-bold opacity-40 mr-2">R$</span>
                       {r.extraRevenue.toLocaleString("pt-BR")}
-                      <span className="text-base font-bold opacity-30 ml-2">{t.roi.perMonth}</span>
                     </motion.div>
+                    <p className="text-white/40 text-xs font-medium mt-3">+{r.gain}% de eficiência comercial com IA</p>
                   </div>
 
                   {/* BOTTOM — Breakdown */}
@@ -293,28 +407,33 @@ export function RoiCalculator() {
                     {/* Conversion comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-6">
                       <div className="p-4 rounded-2xl bg-white/8 border border-white/10">
-                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">{t.roi.convLabel}</p>
+                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5 uppercase">Conversão Atual</p>
                         <p className="text-2xl font-black text-white/70">{r.convRate.toFixed(1)}%</p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/15 border border-white/20">
-                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5">{t.roi.withTlin}</p>
+                        <p className="text-[10px] font-bold text-[#B597FF]/80 tracking-wide mb-1.5 uppercase">Com IA Comercial</p>
                         <p className="text-2xl font-black text-white">{r.newConvRate.toFixed(1)}%</p>
                       </div>
                     </div>
 
-                    {/* Annual projection */}
-                    <div className="pt-5 border-t border-white/10">
-                      <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5">
-                        {t.roi.annualProj}
-                      </p>
-                      <motion.p
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-2xl font-black text-white"
-                      >
-                        R$ {(r.extraRevenue * 12).toLocaleString("pt-BR")}
-                      </motion.p>
+                    {/* ROI & Annual */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="pt-5 border-t border-white/10">
+                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5 uppercase">
+                          ROI Estimado
+                        </p>
+                        <p className="text-2xl font-black text-white">
+                          {r.roi.toFixed(0)}%
+                        </p>
+                      </div>
+                      <div className="pt-5 border-t border-white/10">
+                        <p className="text-[10px] font-bold text-white/40 tracking-wide mb-1.5 uppercase">
+                          Projeção Anual
+                        </p>
+                        <p className="text-2xl font-black text-white">
+                          R$ {(r.extraRevenue * 12).toLocaleString("pt-BR")}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -323,8 +442,8 @@ export function RoiCalculator() {
           </div>
         </div>
 
-        <p className="text-center text-zinc-600 text-xs font-medium mt-10 px-4">
-          {t.roi.footerNote}
+        <p className="text-center text-zinc-600 text-[10px] font-medium mt-10 px-4">
+          * simulação baseada em médias operacionais. Os resultados reais dependem da qualidade do lead e script de vendas.
         </p>
       </div>
     </section>

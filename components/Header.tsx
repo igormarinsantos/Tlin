@@ -168,7 +168,12 @@ export function Header() {
 
           <div className="flex items-center gap-2">
              <LanguageSelector />
-             <a href="#" className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors">
+             <a 
+               href="https://app.tlin.cloud" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors"
+             >
                 {t.nav.login}
              </a>
              <HeaderCTA padding="px-5 py-2.5" />

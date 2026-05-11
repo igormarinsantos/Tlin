@@ -445,7 +445,7 @@ export function LiaPopup() {
                  <p className={`text-center text-[10px] text-zinc-400 font-medium opacity-40 transition-all duration-300 ${
                    messages.length > 0 ? 'mt-2' : 'mt-4'
                  }`}>
-                   a lia pode cometer falhas. verifique antes.
+                   {t.liaPopup.errorWarning}
                  </p>
               </div>
             </div>

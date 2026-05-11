@@ -258,12 +258,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
+      if (e.key === "Escape") onClose();
       if (e.key === "ArrowUp" || e.key === "ArrowLeft") handleBack();
       if (e.key === " " && (e.target as HTMLElement).tagName !== "INPUT") e.preventDefault();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, currentStep, isTyping]);
+  }, [isOpen, currentStep, isTyping, onClose]);
 
   if (!mounted) return null;
 
@@ -299,8 +300,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
             {/* Header */}
             <div className="shrink-0 flex justify-end p-6 z-50">
-              <button onClick={onClose} className="text-sm font-bold text-white/40 hover:text-white transition-all underline underline-offset-4 decoration-white/10 hover:decoration-white">
-                Fechar
+              <button 
+                onClick={onClose} 
+                className="group relative text-sm font-bold text-white/40 hover:text-white transition-all overflow-hidden py-1"
+              >
+                <span>Fechar</span>
+                <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-white transform -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
               </button>
             </div>
 
@@ -310,7 +315,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
               >
-                {/* Anchor to bottom logic: use flex flex-col justify-end with a min-h-full wrapper */}
                 <div className="min-h-full flex flex-col justify-end py-10 gap-12">
                   {chatHistory.map((msg, idx) => {
                     const latestBotIdx = chatHistory.map(m => m.role).lastIndexOf('bot');
