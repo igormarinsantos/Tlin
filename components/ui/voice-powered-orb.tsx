@@ -319,8 +319,8 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
       }
       container.appendChild(glContext.canvas as any);
 
-      const geometry = new Triangle(glContext);
-      program = new Program(glContext, {
+      const geometry = new Triangle(glContext as any);
+      program = new Program(glContext as any, {
         vertex: vert,
         fragment: frag,
         uniforms: {
@@ -339,7 +339,7 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
         },
       });
 
-      const mesh = new Mesh(glContext, { geometry, program });
+      const mesh = new Mesh(glContext as any, { geometry, program });
 
       const resize = () => {
         if (!container || !rendererInstance || !glContext) return;
