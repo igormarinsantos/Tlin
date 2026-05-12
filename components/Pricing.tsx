@@ -336,7 +336,7 @@ export function Pricing() {
                              {plan.features.map((feat) => (
                                 <li key={feat} className="flex items-start gap-3">
                                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                      <Image src="/check.png" alt="check" width={20} height={20} className="w-full h-full object-contain" />
+                                      <Image src="/Check.png" alt="check" width={20} height={20} className="w-full h-full object-contain" />
                                    </div>
                                    <span className="text-sm font-bold opacity-80">{feat}</span>
                                 </li>

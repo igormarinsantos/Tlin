@@ -378,7 +378,7 @@ export function Hero() {
                     preload="none"
                     className="w-full h-full object-cover opacity-90"
                   >
-                    <source src="/robocamera.mp4" type="video/mp4" />
+                    <source src="/RoboCamera.mp4" type="video/mp4" />
                   </video>
                 </motion.div>
               )}

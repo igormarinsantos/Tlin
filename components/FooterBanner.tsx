@@ -227,7 +227,7 @@ export function FooterBanner() {
           preload="none"
           className="absolute inset-0 w-full h-full object-cover opacity-100 z-0"
         >
-          <source src="/robocamera.mp4" type="video/mp4" />
+          <source src="/RoboCamera.mp4" type="video/mp4" />
         </video>
 
         <canvas 
