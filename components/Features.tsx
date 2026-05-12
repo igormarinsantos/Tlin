@@ -191,7 +191,7 @@ export function Features() {
       id: "f1",
       title: t.features.f1_title,
       desc: t.features.f1_desc,
-      asset: "/raio.png",
+      asset: "/RAIO.png",
       video: "https://v1.bg.bing.com/az/hprichbg/rb/WaterCycle_EN-US11175626217_1920x1080.mp4"
     },
     {
