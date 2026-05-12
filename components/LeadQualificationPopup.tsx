@@ -87,7 +87,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     countryCode: '+55',
     volume: '',
     team: '',
-    pain: ''
+    email: ''
   });
   
   const initialMsg = `Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o nome da [sua empresa]?`;
@@ -138,7 +138,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   const resetForm = () => {
     setCurrentStep(1);
-    setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', pain: '' });
+    setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', email: '' });
     setChatHistory([{ role: 'bot', text: initialMsg }]);
   };
 
@@ -148,7 +148,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       `*WhatsApp:* ${data.countryCode} ${data.phone}\n` +
       `*Volume:* ${data.volume}\n` +
       `*Equipe:* ${data.team}\n` +
-      `*Dor:* ${data.pain}`;
+      `*E-mail:* ${data.email}`;
     
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -162,7 +162,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 3: return `O número [${data.countryCode} ${data.phone}] está correto?`;
       case 4: return `[${aff}]! Qual o [Volume mensal] de atendimentos?`;
       case 5: return `[Entendido]. Qual o tamanho da [equipe atual]?`;
-      case 6: return `[Show]. Qual o principal [dor ou gargalo]?`;
+      case 6: return `[Show]. Qual o seu melhor [e-mail corporativo]?`;
       case 7: return `Então, deixa eu ver se [eu entendi tudo] certinho:`;
       case 8: return `[Confirmado]! Nossa equipe entrará em contato via [WhatsApp] em breve.`;
       default: return "";
@@ -174,7 +174,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 3: return ["Sim, está correto", "Não, quero corrigir"];
       case 4: return ["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"];
       case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
-      case 6: return ["Demora", "Sem Métricas", "Desorganização", "Custos"];
       case 7: return ["Confirmar dados", "Corrigir algo"];
       case 8: return ["Reiniciar formulário"];
       default: return null;
@@ -370,8 +369,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   <span className="font-bold text-white">{formData.team}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                  <span className="text-zinc-500">Principal dor:</span>
-                                  <span className="font-bold text-[#38E3FF]">{formData.pain}</span>
+                                  <span className="text-zinc-500">E-mail:</span>
+                                  <span className="font-bold text-[#38E3FF]">{formData.email}</span>
                                 </div>
                               </div>
                             )}
@@ -379,7 +378,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                             {getOptions(currentStep)?.map((opt) => (
                               <button
                                 key={opt}
-                                onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : currentStep === 6 ? 'pain' : undefined)}
+                                onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
                                 className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
                                   opt === "Confirmar dados" || opt === "Sim, está correto"
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
@@ -503,6 +502,29 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   pressione <span className="font-black">ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                                </div>
+                              </button>
+                            </div>
+                          </form>
+                        </motion.div>
+                      )}
+
+                      {currentStep === 6 && (
+                        <motion.div
+                          key="email-input"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <form onSubmit={(e) => { e.preventDefault(); if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email'); }} className="flex flex-col gap-4">
+                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                              <input autoFocus type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="nome@empresa.com.br..." className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" />
+                              <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit">
+                                <span className={`text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                                  pressione <span className="font-black">ENTER ↵</span>
+                                </span>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                                 </div>
                               </button>

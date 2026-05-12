@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { name, phone, countryCode, volume, team, pain, planName } = data;
+    const { name, phone, countryCode, volume, team, email, planName } = data;
 
     const fullPhone = `${countryCode || "+55"}${phone || ""}`.replace(/\D/g, "");
 
@@ -103,8 +103,8 @@ export async function POST(req: NextRequest) {
                 <td style="padding: 10px 0; color: #0c0d0d;">${team || "-"}</td>
               </tr>
               <tr>
-                <td style="padding: 10px 0; font-weight: bold; color: #71717a;">Principal Dor:</td>
-                <td style="padding: 10px 0; color: #0ea5e9; font-weight: bold;">${pain || "-"}</td>
+                <td style="padding: 10px 0; font-weight: bold; color: #71717a;">E-mail:</td>
+                <td style="padding: 10px 0; color: #0ea5e9; font-weight: bold;">${email || "-"}</td>
               </tr>
             </table>
             
