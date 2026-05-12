@@ -228,9 +228,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...updatedData, planName })
-          }).catch(err => console.error("Erro ao notificar API:", err));
-
-          handleWhatsAppRedirect(updatedData);
+          })
+          .then(res => res.json())
+          .then(data => console.log("Status do envio:", data))
+          .catch(err => console.error("Erro ao notificar API:", err))
+          .finally(() => {
+            handleWhatsAppRedirect(updatedData);
+          });
         }
       }, 1500);
     }
