@@ -225,6 +225,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setCurrentStep(prev => prev + 1);
         
         if (currentStep === 7 && userValue === "Confirmar dados") {
+          fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...updatedData, planName })
+          }).catch(err => console.error("Erro ao notificar API:", err));
+
           handleWhatsAppRedirect(updatedData);
         }
       }, 1500);
