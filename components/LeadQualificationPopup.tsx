@@ -129,7 +129,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      resetForm();
+      // Mantém os dados caso tenha saído no meio do formulário
+      if (currentStep > 1 && currentStep < 8) {
+        setChatHistory(prev => {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg && !lastMsg.text.includes("Que bom que voltou")) {
+            return [...prev, { role: 'bot', text: "Que bom que voltou! Vamos continuar de onde paramos?" }];
+          }
+          return prev;
+        });
+      }
     } else {
       document.body.style.overflow = '';
     }
@@ -164,7 +173,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 5: return `[Entendido]. Qual o tamanho da [equipe atual]?`;
       case 6: return `[Show]. Qual o seu melhor [e-mail corporativo]?`;
       case 7: return `Então, deixa eu ver se [eu entendi tudo] certinho:`;
-      case 8: return `[Confirmado]! Nossa equipe entrará em contato via [WhatsApp] em breve.`;
+      case 8: return `Já recebemos a sua solicitação! Entraremos em contato o mais breve possível via [WhatsApp]. Deseja fazer uma [nova solicitação]?`;
       default: return "";
     }
   };
@@ -175,7 +184,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 4: return ["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"];
       case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
       case 7: return ["Confirmar dados", "Corrigir algo"];
-      case 8: return ["Reiniciar formulário"];
+      case 8: return ["Fazer uma nova solicitação"];
       default: return null;
     }
   };
@@ -203,7 +212,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       return;
     }
 
-    if (currentStep === 8 && userValue === "Reiniciar formulário") {
+    if (currentStep === 8 && (userValue === "Reiniciar formulário" || userValue === "Fazer uma nova solicitação")) {
       resetForm();
       return;
     }
@@ -384,7 +393,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                 key={opt}
                                 onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
                                 className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
-                                  opt === "Confirmar dados" || opt === "Sim, está correto"
+                                  opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
                                   : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
                                 }`}
