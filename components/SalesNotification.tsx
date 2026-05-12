@@ -13,17 +13,20 @@ interface Notification {
   avatar: string;
 }
 
-const names = ["Ricardo M.", "Ana Paula", "Bruno S.", "Lucas G.", "Carla F.", "Roberto T.", "Juliana K."];
-const values = ["R$ 450,00", "R$ 1.200,00", "R$ 890,00", "R$ 3.500,00", "R$ 670,00", "R$ 2.100,00"];
-const avatars = [
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=faces"
+const profiles = [
+  { name: "Ricardo M.", avatar: "/lotties/2_peeled.png" },
+  { name: "Ana Paula", avatar: "/lotties/1_peeled.png" },
+  { name: "Bruno S.", avatar: "/lotties/3_peeled.png" },
+  { name: "Carla F.", avatar: "/lotties/6_peeled.png" },
+  { name: "Lucas G.", avatar: "/lotties/9_peeled.png" },
+  { name: "Juliana K.", avatar: "/lotties/10_peeled.png" },
+  { name: "Roberto T.", avatar: "/lotties/5_peeled.png" },
+  { name: "Mariana L.", avatar: "/lotties/7_peeled.png" },
+  { name: "Sônia R.", avatar: "/lotties/4_peeled.png" },
+  { name: "Fernando H.", avatar: "/lotties/8_peeled.png" }
 ];
+
+const values = ["R$ 450,00", "R$ 1.200,00", "R$ 890,00", "R$ 3.500,00", "R$ 670,00", "R$ 2.100,00"];
 
 export function SalesNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -31,11 +34,12 @@ export function SalesNotification() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      const profile = profiles[Math.floor(Math.random() * profiles.length)];
       const newNotif = {
         id: Date.now(),
-        name: names[Math.floor(Math.random() * names.length)],
+        name: profile.name,
         value: values[Math.floor(Math.random() * values.length)],
-        avatar: avatars[Math.floor(Math.random() * avatars.length)],
+        avatar: profile.avatar,
         time: t.salesNotification.now,
       };
       setNotifications(prev => [...prev.slice(-4), newNotif]);

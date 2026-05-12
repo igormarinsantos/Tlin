@@ -126,7 +126,7 @@ export function WhatsAppQualifyAnimation() {
               <div className="flex gap-2 mt-2 w-full">
                 <div className="flex-1 bg-zinc-50 rounded-xl p-3 border border-zinc-100 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-indigo-100 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Marcos" className="w-full h-full object-cover" />
+                    <img src="/lotties/8_peeled.png" alt="Marcos" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-800">Marcos Oliveira</div>
@@ -161,7 +161,7 @@ function ConversationMessage({
   showAvatar?: boolean;
   isTyping?: boolean;
 }) {
-  const leadPhoto = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop";
+  const leadPhoto = "/lotties/8_peeled.png";
 
   return (
     <div className={`flex items-start gap-2 w-full ${side === "right" ? "flex-row-reverse" : "flex-row"} ${showAvatar ? 'mb-2 mt-1' : 'mb-0'}`}>
@@ -169,7 +169,7 @@ function ConversationMessage({
       <div className="w-6 h-6 shrink-0 flex items-start justify-center mt-1">
         {showAvatar && (
           side === "left" ? (
-            <div className="w-6 h-6 rounded-full bg-zinc-800 shrink-0 overflow-hidden border border-white/10">
+            <div className="w-6 h-6 rounded-full bg-zinc-100 shrink-0 overflow-hidden border border-zinc-200/80">
               <img src={leadPhoto} alt="Lead" className="w-full h-full object-cover" />
             </div>
           ) : (

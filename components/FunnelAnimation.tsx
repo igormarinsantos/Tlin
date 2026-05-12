@@ -16,16 +16,19 @@ interface Lead {
   meetingDate?: string;
 }
 
-const names = ["Ricardo M.", "Ana Paula", "Bruno S.", "Lucas G.", "Carla F.", "Roberto T.", "Juliana K.", "Marcos O.", "Fernanda S.", "Paulo R."];
-const hours = ["09:00", "10:30", "14:00", "15:30", "17:00"];
-const avatars = [
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
-  "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&h=150&fit=crop",
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop"
+const profiles = [
+  { name: "Ricardo M.", avatar: "/lotties/2_peeled.png" },
+  { name: "Ana Paula", avatar: "/lotties/1_peeled.png" },
+  { name: "Bruno S.", avatar: "/lotties/3_peeled.png" },
+  { name: "Lucas G.", avatar: "/lotties/9_peeled.png" },
+  { name: "Carla F.", avatar: "/lotties/6_peeled.png" },
+  { name: "Roberto T.", avatar: "/lotties/5_peeled.png" },
+  { name: "Juliana K.", avatar: "/lotties/10_peeled.png" },
+  { name: "Marcos O.", avatar: "/lotties/8_peeled.png" },
+  { name: "Fernanda S.", avatar: "/lotties/7_peeled.png" },
+  { name: "Paulo R.", avatar: "/lotties/2_peeled.png" }
 ];
+const hours = ["09:00", "10:30", "14:00", "15:30", "17:00"];
 
 export function FunnelAnimation() {
   const { t } = useLanguage();
@@ -53,16 +56,16 @@ export function FunnelAnimation() {
 
   useEffect(() => {
     setLeads([
-      { id: 12, name: "Paulo R.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[0] },
-      { id: 11, name: "Fernanda S.", avatar: avatars[4], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 10, name: "Lucas G.", avatar: avatars[3], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 9, name: "Carla F.", avatar: avatars[4], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 8, name: "Ana Paula", avatar: avatars[1], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 7, name: "Roberto T.", avatar: avatars[5], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 6, name: "Bruno S.", avatar: avatars[2], stage: "meio", justMoved: false, hasCursor: false },
-      { id: 5, name: "Ricardo M.", avatar: avatars[0], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[1]}, 14:00` },
-      { id: 4, name: "Juliana K.", avatar: avatars[5], stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[0]}, 16:30` },
-      { id: 3, name: "Marcos O.", avatar: avatars[0], stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[1] }
+      { id: 12, name: "Paulo R.", avatar: "/lotties/2_peeled.png", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[0] },
+      { id: 11, name: "Fernanda S.", avatar: "/lotties/7_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 10, name: "Lucas G.", avatar: "/lotties/9_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 9, name: "Carla F.", avatar: "/lotties/6_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 8, name: "Ana Paula", avatar: "/lotties/1_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 7, name: "Roberto T.", avatar: "/lotties/5_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 6, name: "Bruno S.", avatar: "/lotties/3_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 5, name: "Ricardo M.", avatar: "/lotties/2_peeled.png", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[1]}, 14:00` },
+      { id: 4, name: "Juliana K.", avatar: "/lotties/10_peeled.png", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[0]}, 16:30` },
+      { id: 3, name: "Marcos O.", avatar: "/lotties/8_peeled.png", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[1] }
     ]);
 
     const interval = setInterval(() => {
@@ -107,10 +110,11 @@ export function FunnelAnimation() {
           const toAdd = Math.floor(Math.random() * 2) + 1;
           const newBatch: Lead[] = [];
           for (let i = 0; i < toAdd; i++) {
+            const profile = profiles[Math.floor(Math.random() * profiles.length)];
             newBatch.push({
               id: Date.now() + i,
-              name: names[Math.floor(Math.random() * names.length)],
-              avatar: avatars[Math.floor(Math.random() * avatars.length)],
+              name: profile.name,
+              avatar: profile.avatar,
               stage: "topo",
               justMoved: false,
               hasCursor: false,
@@ -359,7 +363,7 @@ function AnimatedLeadCard({ lead, isHighlighted }: { lead: Lead, isHighlighted?:
       )}
       
       <div className={`flex-1 flex items-center gap-2 relative z-10 w-full ${!showMouse && isHighlighted && lead.stage === 'meio' ? 'bg-white rounded-[10px] p-2 md:p-2.5' : ''}`}>
-        <img src={lead.avatar} alt="" className="w-6 h-6 md:w-7 md:h-7 rounded-full object-cover shrink-0 border border-zinc-100" />
+        <img src={lead.avatar} alt="" className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-zinc-100 object-cover shrink-0 border border-zinc-100" />
         <div className="min-w-0 flex-1">
           <div className="text-[9px] md:text-[10px] font-black text-zinc-800 truncate leading-tight">{lead.name}</div>
           <div className={`text-[7px] md:text-[8px] font-bold truncate mt-0.5 ${isHighlighted && lead.stage === 'meio' ? 'text-[#B597FF]' : 'text-zinc-400'}`}>

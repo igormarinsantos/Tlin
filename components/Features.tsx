@@ -84,7 +84,11 @@ function FeatureCard({
             {/* Desktop Button */}
             <div className="hidden md:block relative w-max mt-6">
               <button
-                onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  const lenis = (window as any).lenis;
+                  if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
+                  else document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 onMouseEnter={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   mouseX.set(e.clientX - rect.left);
@@ -135,7 +139,11 @@ function FeatureCard({
         {/* Mobile Button */}
         <div className="md:hidden px-8 pb-4 w-full mt-8">
            <button
-             onClick={() => document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' })}
+             onClick={() => {
+               const lenis = (window as any).lenis;
+               if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
+               else document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' });
+             }}
              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
            >
              <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"

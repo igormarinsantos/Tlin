@@ -403,7 +403,11 @@ export function RoiCalculator() {
                       </div>
 
                       <button
-                        onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => {
+                          const lenis = (window as any).lenis;
+                          if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
+                          else document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         className="w-full py-4 rounded-full bg-black text-white font-black text-sm tracking-wide hover:bg-zinc-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                       >
                         Alavancar meu comercial agora <ArrowRight className="w-4 h-4" />

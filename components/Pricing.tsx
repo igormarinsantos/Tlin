@@ -190,7 +190,6 @@ export function Pricing() {
 
   return (
     <section 
-      id="pricing"
       onMouseMove={handleMouseMove}
       className="w-full py-24 relative overflow-hidden bg-white"
     >
@@ -247,7 +246,7 @@ export function Pricing() {
 
           {/* Offer Bar moved to LiaPopup globally */}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
+          <div id="pricing" className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4 scroll-mt-[40px]">
              {plans.map((plan, idx) => {
                const priceToShow = isAnnual ? plan.priceAnnual : plan.priceMonthly;
                const isHovered = hoveredIndex === idx;
