@@ -73,8 +73,8 @@ export async function POST(req: NextRequest) {
       });
 
       const mailOptions = {
-        from: `"Tlin IA" <${smtpUser}>`,
-        to: process.env.NOTIFICATION_EMAIL || smtpUser, // envia para a equipe ou pro cliente
+        from: `"Tlin IA" <${process.env.SMTP_FROM || (smtpUser === "resend" ? "notificacoes@tlin.cloud" : smtpUser)}>`,
+        to: process.env.NOTIFICATION_EMAIL || (smtpUser === "resend" ? "contato@tlin.cloud" : smtpUser),
         subject: `Novo Lead Qualificado: ${name || "Empresa"} - Plano ${planName || "TLIN"}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4e4e7; border-radius: 12px;">
