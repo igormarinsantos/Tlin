@@ -365,12 +365,58 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             <div className="shrink-0 flex justify-end p-6 z-50">
               <button 
                 onClick={onClose} 
-                className="group relative text-sm font-bold text-white/40 hover:text-white transition-all overflow-hidden py-1"
+                className="group relative text-sm font-bold text-white/40 hover:text-white transition-all overflow-hidden py-1 cursor-pointer"
               >
                 <span>Fechar</span>
                 <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-white transform -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
               </button>
             </div>
+
+            {/* Overlay de Boas Vindas Centralizado com Desfoque do Fundo */}
+            <AnimatePresence>
+              {isAskingToContinue && (
+                <motion.div
+                  initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  animate={{ opacity: 1, backdropFilter: "blur(24px)" }}
+                  exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-6 sm:p-12 bg-[#0c0d0d]/80 text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.9, y: 10 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 10 }}
+                    className="max-w-xl w-full flex flex-col items-center gap-6"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center border border-white/10 mb-2">
+                      <Image src="/TlinIA.svg" alt="Tlin Mascot" width={40} height={40} className="w-10 h-10 object-contain" />
+                    </div>
+
+                    <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:balance]">
+                      Que bom que voltou! Vamos <HighlightText text="[continuar]" /> de onde paramos?
+                    </h2>
+
+                    <div className="flex flex-col sm:flex-row gap-4 w-full mt-4">
+                      <button
+                        onClick={() => {
+                          setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
+                        }}
+                        className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer shadow-xl"
+                      >
+                        Sim, continuar
+                      </button>
+                      <button
+                        onClick={() => {
+                          resetForm();
+                        }}
+                        className="flex-1 text-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#B597FF] text-base sm:text-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
+                      >
+                        Reiniciar solicitação
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Chat Container */}
             <div className="flex-1 overflow-hidden relative flex flex-col px-6 sm:px-12">
@@ -379,9 +425,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
               >
                 <div className="min-h-full flex flex-col justify-start py-10 gap-12">
-                  {chatHistory.map((msg, idx) => {
-                    const latestBotIdx = chatHistory.map(m => m.role).lastIndexOf('bot');
-                    const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
+                  {chatHistory.filter(m => !m.text.includes("Que bom que voltou")).map((msg, idx) => {
+                    const filteredHistory = chatHistory.filter(m => !m.text.includes("Que bom que voltou"));
+                    const latestBotIdx = filteredHistory.map(m => m.role).lastIndexOf('bot');
+                    const isLastMessageBot = filteredHistory[filteredHistory.length - 1]?.role === 'bot';
 
                     return (
                       <motion.div
@@ -432,42 +479,19 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               </div>
                             )}
 
-                            {isAskingToContinue ? (
-                              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                                <button
-                                  onClick={() => {
-                                    setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
-                                  }}
-                                  className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer"
-                                >
-                                  Sim, continuar
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    resetForm();
-                                  }}
-                                  className="flex-1 text-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#B597FF] text-base sm:text-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
-                                >
-                                  Reiniciar solicitação
-                                </button>
-                              </div>
-                            ) : (
-                              <>
-                                {getOptions(currentStep)?.map((opt) => (
-                                  <button
-                                    key={opt}
-                                    onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
-                                    className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
-                                      opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
-                                      ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
-                                      : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
-                                    }`}
-                                  >
-                                    {opt}
-                                  </button>
-                                ))}
-                              </>
-                            )}
+                            {getOptions(currentStep)?.map((opt) => (
+                              <button
+                                key={opt}
+                                onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
+                                className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
+                                  opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
+                                  ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
+                                  : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                }`}
+                              >
+                                {opt}
+                              </button>
+                            ))}
                           </motion.div>
                         )}
                       </motion.div>
