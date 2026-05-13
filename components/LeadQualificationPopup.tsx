@@ -329,6 +329,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   if (!mounted) return null;
 
+  const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text.includes("Que bom que voltou");
+
   return createPortal(
     <AnimatePresence>
       {isOpen && (
@@ -394,7 +396,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           ) : (
                             <div className="text-xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:pretty]">
                               {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
-                              {msg.role === 'bot' && <span className="text-white/20">.</span>}
                             </div>
                           )}
                         </div>
@@ -431,19 +432,50 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               </div>
                             )}
 
-                            {getOptions(currentStep)?.map((opt) => (
-                              <button
-                                key={opt}
-                                onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
-                                className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
-                                  opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
-                                  ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
-                                  : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
-                                }`}
-                              >
-                                {opt}
-                              </button>
-                            ))}
+                            {isAskingToContinue ? (
+                              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                                <button
+                                  onClick={() => {
+                                    setChatHistory(prev => {
+                                      const filtered = prev.filter(m => !m.text.includes("Que bom que voltou"));
+                                      return [...filtered, { role: 'user', text: "Sim, continuar de onde parei" }];
+                                    });
+                                    setIsTyping(true);
+                                    setTimeout(() => {
+                                      setIsTyping(false);
+                                      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(currentStep, formData) }]);
+                                    }, 800);
+                                  }}
+                                  className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer"
+                                >
+                                  Sim, continuar
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    resetForm();
+                                  }}
+                                  className="flex-1 text-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#B597FF] text-base sm:text-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
+                                >
+                                  Reiniciar solicitação
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                {getOptions(currentStep)?.map((opt) => (
+                                  <button
+                                    key={opt}
+                                    onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
+                                    className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
+                                      opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
+                                      ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
+                                      : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                    }`}
+                                  >
+                                    {opt}
+                                  </button>
+                                ))}
+                              </>
+                            )}
                           </motion.div>
                         )}
                       </motion.div>
@@ -468,7 +500,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             {/* Input & Footer Area - Fixed at the bottom */}
             <div className="shrink-0 px-6 sm:px-12 pt-4 pb-10 z-20">
                 <AnimatePresence mode="wait">
-                  {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && (
+                  {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
                     <>
                       {currentStep === 1 && (
                         <motion.div
