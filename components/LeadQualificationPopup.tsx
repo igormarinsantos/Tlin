@@ -101,6 +101,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const countryRef = useRef<HTMLDivElement>(null);
+  const isLiveSession = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -160,8 +161,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // Mantém os dados caso tenha saído no meio do formulário
-      if (currentStep > 1 && currentStep < 8) {
+      // Mantém os dados apenas se a sessão tiver sido restaurada de um carregamento prévio (não em live session)
+      if (currentStep > 1 && currentStep < 8 && !isLiveSession.current) {
         setChatHistory(prev => {
           const lastMsg = prev[prev.length - 1];
           if (lastMsg && !lastMsg.text.includes("Que bom que voltou")) {
@@ -177,6 +178,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, [isOpen, currentStep]);
 
   const resetForm = () => {
+    isLiveSession.current = false;
     setCurrentStep(1);
     setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', email: '' });
     setChatHistory([{ role: 'bot', text: initialMsg }]);
@@ -247,6 +249,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       return;
     }
 
+    isLiveSession.current = true;
     const updatedData = { ...formData };
     if (field) updatedData[field] = userValue;
     setFormData(updatedData);
@@ -429,6 +432,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                     <div className="flex flex-col sm:flex-row gap-4 w-full mt-2">
                       <button
                         onClick={() => {
+                          isLiveSession.current = true;
                           setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
                         }}
                         className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer shadow-xl"
