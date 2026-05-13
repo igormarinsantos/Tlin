@@ -55,27 +55,27 @@ export async function POST(req: NextRequest) {
       console.log("Aviso: Variáveis WHATSAPP_API_TOKEN ou WHATSAPP_PHONE_NUMBER_ID não configuradas. Pulando disparo oficial.");
     }
 
-    // 2. Envio de E-mail gratuito via Nodemailer
-    // Usando SMTP genérico configurável (Gmail, Webmail, etc.)
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
+    // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
+    // Desobriga a inserção de variáveis de ambiente no painel da Vercel para funcionar instantaneamente
+    const smtpUser = process.env.SMTP_USER || "resend";
+    const smtpPass = process.env.SMTP_PASS || "re_8VppHXFD_6u7HhuUvymwWCPDKDmHcBTuV";
     let emailSent = false;
 
     if (smtpUser && smtpPass) {
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || "smtp.gmail.com",
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: Number(process.env.SMTP_PORT) === 465,
+        host: process.env.SMTP_HOST || "smtp.resend.com",
+        port: Number(process.env.SMTP_PORT || 465),
+        secure: true,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
       });
 
-      const teamEmail = process.env.NOTIFICATION_EMAIL || (smtpUser === "resend" ? "contato@tlin.cloud" : smtpUser);
+      const teamEmail = process.env.NOTIFICATION_EMAIL || "contato@tlin.cloud";
       
       const mailOptions = {
-        from: `"Tlin" <${process.env.SMTP_FROM || (smtpUser === "resend" ? "nao-responda@tlin.cloud" : smtpUser)}>`,
+        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.cloud"}>`,
         to: email || teamEmail,
         bcc: email ? teamEmail : undefined, // Garante que a equipe comercial também receba uma cópia em tempo real
         subject: `Bem-vindo à Tlin, ${name || "Empreendedor"}! 👋`,
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       };
 
       try {
-        console.log(`Tentando enviar e-mail via Resend SMTP para: ${mailOptions.to}...`);
+        console.log(`Tentando enviar e-mail via Resend SMTP direto pelo código para: ${mailOptions.to}...`);
         const info = await transporter.sendMail(mailOptions);
         console.log("E-mail enviado com sucesso! Resposta SMTP:", info.response);
         emailSent = true;
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         console.error("Erro ao enviar e-mail via Nodemailer/Resend:", err);
       }
     } else {
-      console.log("Aviso: Variáveis SMTP_USER ou SMTP_PASS não configuradas. Pulando envio de e-mail.");
+      console.log("Aviso: Credenciais de envio ausentes. Pulando disparo de e-mail.");
     }
 
     return NextResponse.json({ 
