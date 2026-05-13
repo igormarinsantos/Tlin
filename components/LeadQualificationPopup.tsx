@@ -152,12 +152,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   };
 
   const handleWhatsAppRedirect = (data: typeof formData) => {
-    const text = `Olá, vim pelo site e tenho interesse no plano *${planName || 'TLIN'}*.\n\n` +
-      `*Nome/Empresa:* ${data.name}\n` +
-      `*WhatsApp:* ${data.countryCode} ${data.phone}\n` +
-      `*Volume:* ${data.volume}\n` +
-      `*Equipe:* ${data.team}\n` +
-      `*E-mail:* ${data.email}`;
+    const text = `Olá! Fiz uma solicitação no site da Tlin e gostaria de mais informações. 🚀`;
     
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
