@@ -110,8 +110,39 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       }
     };
     window.addEventListener("mousedown", handleClickOutside);
+
+    // Carrega o histórico salvo localmente se existir para continuar exatamente de onde parou
+    try {
+      const saved = localStorage.getItem("tlin_lead_qualify_state");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.currentStep && parsed?.formData && parsed?.chatHistory) {
+          setCurrentStep(parsed.currentStep);
+          setFormData(parsed.formData);
+          setChatHistory(parsed.chatHistory);
+        }
+      }
+    } catch (e) {
+      console.error("Erro ao carregar estado do localStorage:", e);
+    }
+
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Salva automaticamente o progresso sempre que o usuário avança ou altera os dados
+  useEffect(() => {
+    if (mounted) {
+      try {
+        localStorage.setItem("tlin_lead_qualify_state", JSON.stringify({
+          currentStep,
+          formData,
+          chatHistory
+        }));
+      } catch (e) {
+        console.error("Erro ao salvar estado no localStorage:", e);
+      }
+    }
+  }, [currentStep, formData, chatHistory, mounted]);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -143,12 +174,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  }, [isOpen, currentStep]);
 
   const resetForm = () => {
     setCurrentStep(1);
     setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', email: '' });
     setChatHistory([{ role: 'bot', text: initialMsg }]);
+    try {
+      localStorage.removeItem("tlin_lead_qualify_state");
+    } catch (e) {}
   };
 
   const handleWhatsAppRedirect = (data: typeof formData) => {
