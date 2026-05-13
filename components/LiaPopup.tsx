@@ -362,11 +362,11 @@ export function LiaPopup() {
                   </div>
 
                 ) : (
-                  <div className="flex flex-col gap-2.5 py-4">
+                  <div className="flex flex-col gap-3 py-4">
                     {messages.map((msg, i) => {
                       const isFirstInBlock = i === 0 || messages[i-1].role !== msg.role;
                       return (
-                        <div key={i} className={`flex items-start gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} ${isFirstInBlock && i > 0 ? 'mt-3' : ''}`}>
+                        <div key={i} className={`flex items-start gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} ${!isFirstInBlock ? '-mt-1.5' : ''}`}>
                           {msg.role === 'bot' && msg.type !== 'handoff' && (
                             <div className="w-8 h-8 shrink-0">
                               {isFirstInBlock && (
