@@ -271,9 +271,23 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowUp" || e.key === "ArrowLeft") handleBack();
-      if (e.key === " " && (e.target as HTMLElement).tagName !== "INPUT") e.preventDefault();
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA";
+
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      // As setas só contam como atalho para voltar de etapa se não estiver editando ou com texto selecionado em um input
+      if (!isInput && (e.key === "ArrowUp" || e.key === "ArrowLeft")) {
+        e.preventDefault();
+        handleBack();
+      }
+
+      if (e.key === " " && !isInput) {
+        e.preventDefault();
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -431,10 +445,23 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.name.trim()) advanceChat(formData.name, 'name'); }} className="flex flex-col gap-4">
                             <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
-                              <input autoFocus type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Nome da empresa..." className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" />
+                              <input 
+                                autoFocus 
+                                type="text" 
+                                value={formData.name} 
+                                onChange={e => setFormData({...formData, name: e.target.value})} 
+                                onKeyDown={e => {
+                                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                                    e.preventDefault();
+                                    if(formData.name.trim()) advanceChat(formData.name, 'name');
+                                  }
+                                }}
+                                placeholder="Nome da empresa..." 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                              />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit">
                                 <span className={`text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ↵</span>
+                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -502,12 +529,18 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                 type="text" 
                                 value={formData.phone} 
                                 onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})} 
+                                onKeyDown={e => {
+                                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                                    e.preventDefault();
+                                    if(isPhoneValid()) advanceChat(formData.phone, 'phone');
+                                  }
+                                }}
                                 placeholder="Seu número aqui..." 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit">
                                 <span className={`text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ↵</span>
+                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -527,10 +560,23 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email'); }} className="flex flex-col gap-4">
                             <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
-                              <input autoFocus type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="nome@empresa.com.br..." className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" />
+                              <input 
+                                autoFocus 
+                                type="email" 
+                                value={formData.email} 
+                                onChange={e => setFormData({...formData, email: e.target.value})} 
+                                onKeyDown={e => {
+                                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                                    e.preventDefault();
+                                    if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email');
+                                  }
+                                }}
+                                placeholder="nome@empresa.com.br..." 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                              />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit">
                                 <span className={`text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ↵</span>
+                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
