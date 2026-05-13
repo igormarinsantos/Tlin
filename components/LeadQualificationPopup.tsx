@@ -196,6 +196,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     const aff = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
     
     switch(step) {
+      case 1: return initialMsg;
       case 2: return `[${aff}]! Qual o [WhatsApp] para contato?`;
       case 3: return `O número [${data.countryCode} ${data.phone}] está correto?`;
       case 4: return `[${aff}]! Qual o [Volume mensal] de atendimentos?`;
@@ -286,9 +287,38 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
       const targetStep = currentStep - 1;
       setCurrentStep(targetStep);
-      // Para manter a fluidez do chat e garantir que a pergunta anterior seja redigitada na tela,
-      // anexamos a pergunta da etapa alvo como uma nova mensagem no final do feed.
-      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(targetStep, formData) }]);
+      
+      // Solução de nível sênior: deriva o histórico de forma 100% pura e determinística 
+      // a partir dos dados já preenchidos (formData) até a etapa alvo.
+      const rebuiltHistory: Message[] = [{ role: 'bot', text: initialMsg }];
+      
+      if (targetStep >= 2) {
+        rebuiltHistory.push({ role: 'user', text: formData.name });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(2, formData) });
+      }
+      if (targetStep >= 3) {
+        const phoneDisplay = formData.countryCode === '+55' ? formatPhone(formData.phone) : formData.phone;
+        rebuiltHistory.push({ role: 'user', text: `${formData.countryCode} ${phoneDisplay}` });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(3, formData) });
+      }
+      if (targetStep >= 4) {
+        rebuiltHistory.push({ role: 'user', text: "Sim, está correto" });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(4, formData) });
+      }
+      if (targetStep >= 5) {
+        rebuiltHistory.push({ role: 'user', text: formData.volume || "Até 1.000" });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(5, formData) });
+      }
+      if (targetStep >= 6) {
+        rebuiltHistory.push({ role: 'user', text: formData.team || "1 a 3" });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(6, formData) });
+      }
+      if (targetStep >= 7) {
+        rebuiltHistory.push({ role: 'user', text: formData.email });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(7, formData) });
+      }
+
+      setChatHistory(rebuiltHistory);
     }
   };
 
