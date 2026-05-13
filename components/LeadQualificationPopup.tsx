@@ -280,8 +280,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   const handleBack = () => {
     if (currentStep > 1 && !isTyping && currentStep < 8) {
-      setCurrentStep(prev => prev - 1);
-      setChatHistory(prev => prev.slice(0, -2));
+      // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
+      const isAsking = chatHistory[chatHistory.length - 1]?.text.includes("Que bom que voltou");
+      if (isAsking) return;
+
+      const targetStep = currentStep - 1;
+      setCurrentStep(targetStep);
+      // Para manter a fluidez do chat e garantir que a pergunta anterior seja redigitada na tela,
+      // anexamos a pergunta da etapa alvo como uma nova mensagem no final do feed.
+      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(targetStep, formData) }]);
     }
   };
 

@@ -92,6 +92,7 @@ export function Hero() {
   const globalMouseY = useMotionValue(0);
   const isIdle = useRef(false);
   const baseIdlePos = useRef({ x: 0, y: 0 });
+  const hasEnteredOnce = useRef(false);
 
   useEffect(() => {
     let frameId: number;
@@ -129,6 +130,7 @@ export function Hero() {
     };
 
     const trackMouse = (e: MouseEvent) => {
+      hasEnteredOnce.current = true;
       globalMouseX.set(e.clientX);
       globalMouseY.set(e.clientY);
       isIdle.current = false;
@@ -137,10 +139,20 @@ export function Hero() {
     };
 
     const handleMouseLeave = () => {
+      // Conforme solicitado, se o mouse já entrou na página uma vez, o mascote fica onde está e não volta a se mexer sozinho
+      if (hasEnteredOnce.current) return;
+      
       isIdle.current = true;
       startTime = performance.now();
       wander();
     };
+
+    // Inicia movimentação autônoma caso a página carregue em segundo plano ou antes do primeiro movimento do mouse
+    if (!hasEnteredOnce.current) {
+      isIdle.current = true;
+      startTime = performance.now();
+      wander();
+    }
 
     window.addEventListener("mousemove", trackMouse);
     document.addEventListener("mouseleave", handleMouseLeave);
