@@ -436,15 +436,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                                 <button
                                   onClick={() => {
-                                    setChatHistory(prev => {
-                                      const filtered = prev.filter(m => !m.text.includes("Que bom que voltou"));
-                                      return [...filtered, { role: 'user', text: "Sim, continuar de onde parei" }];
-                                    });
-                                    setIsTyping(true);
-                                    setTimeout(() => {
-                                      setIsTyping(false);
-                                      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(currentStep, formData) }]);
-                                    }, 800);
+                                    setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
                                   }}
                                   className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer"
                                 >
