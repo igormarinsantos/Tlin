@@ -385,17 +385,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                     initial={{ scale: 0.9, y: 10 }}
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.9, y: 10 }}
-                    className="max-w-xl w-full flex flex-col items-center gap-6"
+                    className="max-w-xl w-full flex flex-col items-center gap-8"
                   >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center border border-white/10 mb-2">
-                      <Image src="/TlinIA.svg" alt="Tlin Mascot" width={40} height={40} className="w-10 h-10 object-contain" />
-                    </div>
+                    <TypewriterQuestion text="Que bom que voltou! Vamos [continuar] de onde paramos?" />
 
-                    <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:balance]">
-                      Que bom que voltou! Vamos <HighlightText text="[continuar]" /> de onde paramos?
-                    </h2>
-
-                    <div className="flex flex-col sm:flex-row gap-4 w-full mt-4">
+                    <div className="flex flex-col sm:flex-row gap-4 w-full mt-2">
                       <button
                         onClick={() => {
                           setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
