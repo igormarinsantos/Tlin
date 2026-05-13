@@ -103,26 +103,27 @@ export function Hero() {
 
     const wander = () => {
       if (!isIdle.current) return;
-      const time = (performance.now() - startTime) / 1000;
+      const elapsed = (performance.now() - startTime) / 1000;
       
       const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2.2; // Slightly above center where text is
+      const cy = window.innerHeight / 2.2;
       
-      // Orbit radius - keeps it away from center text/buttons
       const rx = Math.min(window.innerWidth * 0.42, 600); 
       const ry = Math.min(window.innerHeight * 0.35, 400);
 
-      // Calculate initial angle so it starts the orbit near where the mouse left
-      const dx = baseIdlePos.current.x - cx;
-      const dy = baseIdlePos.current.y - cy;
-      const initialPhase = Math.atan2(dy, dx);
+      // Organic slithering pattern (Infinity loop with high-fidelity snake micro-wiggles like slither.io)
+      const targetX = cx + Math.sin(elapsed * 0.5) * rx + Math.cos(elapsed * 1.5) * 40;
+      const targetY = cy + Math.sin(elapsed * 1.0) * ry * 0.7 + Math.sin(elapsed * 2.0) * 25;
       
-      // Perfectly smooth elliptical orbit (perimeter patrol)
-      const newX = cx + Math.cos(time * 0.4 + initialPhase) * rx;
-      const newY = cy + Math.sin(time * 0.4 + initialPhase) * ry;
+      // Easing suave a partir do ponto de repouso atual do mouse para transição sem solavancos
+      const progress = Math.min(elapsed / 1.5, 1);
+      const easeProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
       
-      globalMouseX.set(newX);
-      globalMouseY.set(newY);
+      const currentX = baseIdlePos.current.x + (targetX - baseIdlePos.current.x) * easeProgress;
+      const currentY = baseIdlePos.current.y + (targetY - baseIdlePos.current.y) * easeProgress;
+      
+      globalMouseX.set(currentX);
+      globalMouseY.set(currentY);
       
       frameId = requestAnimationFrame(wander);
     };
@@ -505,12 +506,14 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
 
       if (isScrolledPast) return;
 
-      const dx = x - mascotX.get();
-      const dy = y - mascotY.get();
+      const currentRenderedX = springX.get();
+      const currentRenderedY = springY.get();
+      const dx = x - currentRenderedX;
+      const dy = y - currentRenderedY;
       const dist = Math.hypot(dx, dy);
 
-      if (dist > 0.1) {
-        // Smooth rotation towards target
+      if (dist > 1.0) {
+        // Alinhamento cinemático perfeito: olha exatamente na direção do vetor de velocidade real como slither.io
         let targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
         let delta = targetAngle - lastAngle.current;
         if (delta > 180) delta -= 360;
@@ -519,13 +522,13 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         cumulativeRotation.current += delta;
         lastAngle.current = targetAngle;
         
-        mascotX.set(x);
-        mascotY.set(y);
-        
         if (!isAbducted) {
           mascotRotate.set(cumulativeRotation.current);
         }
       }
+
+      mascotX.set(x);
+      mascotY.set(y);
     };
 
     // Initial sync to current mouse position to prevent sticking at start
@@ -549,8 +552,9 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         position: "fixed",
         left: 0,
         top: 0,
-        opacity: springOpacity,
-        scale: springScale,
+        display: isScrolledPast ? "none" : "block",
+        opacity: isScrolledPast ? 0 : springOpacity,
+        scale: isScrolledPast ? 0 : springScale,
         x: springX,
         y: springY,
         rotate: finalRotate,
