@@ -382,7 +382,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-[10px] bg-black/60 backdrop-blur-md">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-[10px] bg-black/60 backdrop-blur-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -423,7 +423,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
               <>
             {/* Scrollable Message Area */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 custom-scrollbar">
-              <div className="max-w-3xl mx-auto flex flex-col justify-end min-h-full">
+              <div className="w-full flex flex-col justify-start min-h-full">
                 <div className="space-y-6 sm:space-y-8">
                   {chatHistory.map((msg, idx) => {
                     return (
