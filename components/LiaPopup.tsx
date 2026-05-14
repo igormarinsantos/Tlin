@@ -453,10 +453,10 @@ export function LiaPopup() {
         )}
       </AnimatePresence>
 
-      {/* Floating Buttons: Only visible after Hero animation is done */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
+      {/* Floating Buttons: Only visible after Hero animation is done or chat is open */}
+      <div className="fixed bottom-6 right-6 z-[200] flex flex-col items-center">
         <AnimatePresence>
-          {canShow && !isOpen && (
+          {(canShow || isOpen) && (
             <>
               {/* Lia Button */}
               <motion.div

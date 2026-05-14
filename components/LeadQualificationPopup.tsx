@@ -103,6 +103,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const countryRef = useRef<HTMLDivElement>(null);
   const isLiveSession = useRef(false);
 
+  // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
+  const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
+  const hasAutoClosed = useRef(false);
+
   useEffect(() => {
     setMounted(true);
     const handleClickOutside = (e: MouseEvent) => {
@@ -145,6 +149,21 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     }
   }, [currentStep, formData, chatHistory, mounted]);
 
+  // Controle de Fechamento Automático em 3 segundos na primeira vez que atinge a tela de sucesso
+  useEffect(() => {
+    if (currentStep === 8) {
+      if (isLiveSession.current && !hasAutoClosed.current) {
+        hasAutoClosed.current = true;
+        const timer = setTimeout(() => {
+          onClose();
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      hasAutoClosed.current = false;
+    }
+  }, [currentStep, onClose]);
+
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -179,6 +198,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   const resetForm = () => {
     isLiveSession.current = false;
+    hasAutoClosed.current = false;
     setCurrentStep(1);
     setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', email: '' });
     setChatHistory([{ role: 'bot', text: initialMsg }]);
@@ -189,7 +209,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   const handleWhatsAppRedirect = (data: typeof formData) => {
     const text = `Olá! Fiz uma solicitação no site da Tlin e gostaria de mais informações. 🚀`;
-    
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -215,7 +234,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 3: return ["Sim, está correto", "Não, quero corrigir"];
       case 4: return ["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"];
       case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
-      case 7: return ["Confirmar dados", "Corrigir algo"];
+      case 7: return ["Confirmar dados"]; // Corrigir algo removido pois cada linha agora é editável de forma independente!
       case 8: return ["Fazer uma nova solicitação"];
       default: return null;
     }
@@ -229,17 +248,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setIsTyping(false);
         setCurrentStep(2);
         setChatHistory(prev => [...prev, { role: 'bot', text: "Sem problemas! Qual o [WhatsApp] correto?" }]);
-      }, 800);
-      return;
-    }
-
-    if (currentStep === 7 && userValue === "Corrigir algo") {
-      setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        setCurrentStep(1);
-        setChatHistory(prev => [...prev, { role: 'bot', text: "Entendido! Vamos recomeçar para garantir que tudo esteja certo. " + initialMsg }]);
       }, 800);
       return;
     }
@@ -288,8 +296,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       const targetStep = currentStep - 1;
       setCurrentStep(targetStep);
       
-      // Solução de nível sênior: deriva o histórico de forma 100% pura e determinística 
-      // a partir dos dados já preenchidos (formData) até a etapa alvo.
       const rebuiltHistory: Message[] = [{ role: 'bot', text: initialMsg }];
       
       if (targetStep >= 2) {
@@ -350,131 +356,79 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         return;
       }
 
-      // As setas só contam como atalho para voltar de etapa se não estiver editando ou com texto selecionado em um input
-      if (!isInput && (e.key === "ArrowUp" || e.key === "ArrowLeft")) {
+      if (!isInput && !editingField && (e.key === "ArrowUp" || e.key === "ArrowLeft")) {
         e.preventDefault();
         handleBack();
       }
-
-      if (e.key === " " && !isInput) {
-        e.preventDefault();
-      }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, currentStep, isTyping, onClose]);
+  }, [isOpen, currentStep, isTyping, chatHistory, formData, editingField, onClose]);
 
   if (!mounted) return null;
 
   const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text.includes("Que bom que voltou");
+  const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
+  
+  let latestBotIdx = -1;
+  for (let i = chatHistory.length - 1; i >= 0; i--) {
+    if (chatHistory[i].role === 'bot') {
+      latestBotIdx = i;
+      break;
+    }
+  }
 
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-zinc-950/60 backdrop-blur-md"
-          />
-
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-[10px] bg-black/60 backdrop-blur-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`fixed inset-2 sm:inset-[10px] flex flex-col overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl border border-white/10 transition-all duration-700 ${
-              currentStep === 8 ? "bg-gradient-to-br from-[#B597FF] via-[#7DBDFF] to-[#38E3FF] text-zinc-950" : "bg-[#0c0d0d] text-white"
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative w-full max-w-[calc(100vw-20px)] bg-[#0c0d0d] border border-white/10 rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+              currentStep === 8 ? "h-[450px] sm:h-[550px]" : "h-[600px] sm:h-[700px]"
             }`}
           >
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B597FF]/5 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#38E3FF]/5 rounded-full blur-[100px] pointer-events-none" />
+            {/* Overlay de fundo em degradê na etapa 8 */}
+            <div 
+              className={`absolute inset-0 transition-opacity duration-1000 z-0 ${
+                currentStep === 8 ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              style={{
+                background: "linear-gradient(135deg, #B597FF 0%, #38E3FF 100%)"
+              }}
+            />
 
-            {/* Progress Bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-white/5 z-50">
-              <motion.div 
-                className="h-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]"
-                initial={{ width: "0%" }}
-                animate={{ width: `${(currentStep / 8) * 100}%` }}
-              />
-            </div>
-
-            {/* Header */}
-            <div className="shrink-0 flex justify-end p-4 sm:p-6 z-50">
-              <button 
-                onClick={onClose} 
-                className={`group relative text-sm font-bold transition-all overflow-hidden py-1 cursor-pointer ${
-                  currentStep === 8 ? "text-zinc-950/60 hover:text-zinc-950" : "text-white/40 hover:text-white"
+            {/* Header / Botão Fechar */}
+            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
+              <button
+                onClick={onClose}
+                className={`p-2.5 rounded-full backdrop-blur-md border transition-all active:scale-95 ${
+                  currentStep === 8 
+                  ? "bg-black/10 border-black/10 text-zinc-900 hover:bg-black/20" 
+                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <span>Fechar</span>
-                <span className={`absolute bottom-0 left-0 w-full h-[1.5px] transform -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-300 ease-out ${
-                  currentStep === 8 ? "bg-zinc-950" : "bg-white"
-                }`} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
               </button>
             </div>
 
-            {/* Overlay de Boas Vindas Centralizado com Desfoque do Fundo */}
-            <AnimatePresence>
-              {isAskingToContinue && (
-                <motion.div
-                  initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                  animate={{ opacity: 1, backdropFilter: "blur(24px)" }}
-                  exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                  className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-6 sm:p-12 bg-[#0c0d0d]/80 text-center"
-                >
-                  <motion.div
-                    initial={{ scale: 0.9, y: 10 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.9, y: 10 }}
-                    className="max-w-xl w-full flex flex-col items-center gap-8"
-                  >
-                    <TypewriterQuestion text="Que bom que voltou! Vamos [continuar] de onde paramos?" />
-
-                    <div className="flex flex-col sm:flex-row gap-4 w-full mt-2">
-                      <button
-                        onClick={() => {
-                          isLiveSession.current = true;
-                          setChatHistory(prev => prev.filter(m => !m.text.includes("Que bom que voltou")));
-                        }}
-                        className="flex-1 text-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 text-base sm:text-xl font-bold transition-all active:scale-[0.98] hover:opacity-90 cursor-pointer shadow-xl"
-                      >
-                        Sim, continuar
-                      </button>
-                      <button
-                        onClick={() => {
-                          resetForm();
-                        }}
-                        className="flex-1 text-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-[#B597FF] text-base sm:text-xl font-bold transition-all active:scale-[0.98] cursor-pointer"
-                      >
-                        Reiniciar solicitação
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {currentStep < 8 ? (
               <>
-            {/* Chat Container */}
-            <div className="flex-1 overflow-hidden relative flex flex-col px-4 sm:px-12">
-               <div 
-                ref={scrollRef}
-                className="flex-1 overflow-y-auto pr-2 sm:pr-4 scrollbar-hide"
-              >
-                <div className="min-h-full flex flex-col justify-start py-4 sm:py-10 gap-6 sm:gap-12">
-                  {chatHistory.filter(m => !m.text.includes("Que bom que voltou")).map((msg, idx) => {
-                    const filteredHistory = chatHistory.filter(m => !m.text.includes("Que bom que voltou"));
-                    const latestBotIdx = filteredHistory.map(m => m.role).lastIndexOf('bot');
-                    const isLastMessageBot = filteredHistory[filteredHistory.length - 1]?.role === 'bot';
-
+            {/* Scrollable Message Area */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 custom-scrollbar">
+              <div className="max-w-3xl mx-auto flex flex-col justify-end min-h-full">
+                <div className="space-y-6 sm:space-y-8">
+                  {chatHistory.map((msg, idx) => {
                     return (
                       <motion.div
-                        key={`${idx}-${msg.role}-${msg.text.slice(0, 5)}`}
-                        initial={{ opacity: 0, y: 10 }}
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
                         className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                       >
                         <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
@@ -495,26 +449,54 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                             className="mt-4 sm:mt-8 flex flex-col gap-2 sm:gap-3 w-full max-w-md"
                           >
                             {currentStep === 7 && (
-                              <div className="mb-4 sm:mb-6 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 space-y-2 sm:space-y-3">
-                                <div className="flex justify-between items-center text-xs sm:text-sm">
+                              <div className="mb-4 sm:mb-6 p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 space-y-2 sm:space-y-3 text-left">
+                                <button 
+                                  onClick={() => setEditingField('name')}
+                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                >
                                   <span className="text-zinc-500">Empresa:</span>
-                                  <span className="font-bold text-white">{formData.name}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs sm:text-sm">
+                                  <span className="font-bold text-white flex items-center gap-2">
+                                    {formData.name} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
+                                  </span>
+                                </button>
+                                <button 
+                                  onClick={() => setEditingField('phone')}
+                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                >
                                   <span className="text-zinc-500">WhatsApp:</span>
-                                  <span className="font-bold text-white">{formData.countryCode} {formData.phone}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs sm:text-sm">
+                                  <span className="font-bold text-white flex items-center gap-2">
+                                    {formData.countryCode} {formData.phone} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
+                                  </span>
+                                </button>
+                                <button 
+                                  onClick={() => setEditingField('volume')}
+                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                >
                                   <span className="text-zinc-500">Volume:</span>
-                                  <span className="font-bold text-white">{formData.volume}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs sm:text-sm">
+                                  <span className="font-bold text-white flex items-center gap-2">
+                                    {formData.volume} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
+                                  </span>
+                                </button>
+                                <button 
+                                  onClick={() => setEditingField('team')}
+                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                >
                                   <span className="text-zinc-500">Equipe:</span>
-                                  <span className="font-bold text-white">{formData.team}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs sm:text-sm">
+                                  <span className="font-bold text-white flex items-center gap-2">
+                                    {formData.team} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
+                                  </span>
+                                </button>
+                                <button 
+                                  onClick={() => setEditingField('email')}
+                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                >
                                   <span className="text-zinc-500">E-mail:</span>
-                                  <span className="font-bold text-[#38E3FF]">{formData.email}</span>
+                                  <span className="font-bold text-[#38E3FF] flex items-center gap-2">
+                                    {formData.email} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
+                                  </span>
+                                </button>
+                                <div className="text-[10px] text-zinc-500 text-center italic pt-2 border-t border-white/5">
+                                  💡 Clique sobre o dado que deseja editar
                                 </div>
                               </div>
                             )}
@@ -527,7 +509,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
                                   : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
-                                }`}
+                                }}`}
                               >
                                 {opt}
                               </button>
@@ -579,7 +561,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="Nome da empresa..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
@@ -658,7 +640,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="Seu número aqui..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
@@ -694,7 +676,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="nome@empresa.com.br..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
@@ -719,6 +701,121 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   </button>
                 </div>
             </div>
+
+            {/* Overlay de Edição Direta de Campo */}
+            <AnimatePresence>
+              {editingField && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-4 sm:p-6 bg-[#0c0d0d]/95 backdrop-blur-md text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.9, y: 10 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 10 }}
+                    className="max-w-md w-full bg-zinc-900 border border-white/10 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col gap-4 text-left"
+                  >
+                    <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                      <span className="text-xs font-black text-[#B597FF] uppercase tracking-wider">
+                        Editar {editingField === 'name' ? 'Empresa' : editingField === 'phone' ? 'WhatsApp' : editingField === 'volume' ? 'Volume Mensal' : editingField === 'team' ? 'Tamanho da Equipe' : 'E-mail'}
+                      </span>
+                      <button onClick={() => setEditingField(null)} className="text-zinc-500 hover:text-white text-xs font-bold transition-colors">
+                        Cancelar
+                      </button>
+                    </div>
+
+                    {editingField === 'name' && (
+                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
+                        <input 
+                          autoFocus 
+                          type="text" 
+                          value={formData.name} 
+                          onChange={e => setFormData({...formData, name: e.target.value})}
+                          placeholder="Nome da empresa..."
+                          className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
+                        />
+                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
+                          Salvar alteração
+                        </button>
+                      </form>
+                    )}
+
+                    {editingField === 'phone' && (
+                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
+                        <div className="flex gap-2">
+                          <select 
+                            value={formData.countryCode} 
+                            onChange={e => setFormData({...formData, countryCode: e.target.value})}
+                            className="bg-black/50 border border-white/10 rounded-xl px-3 py-3 text-white font-bold outline-none"
+                          >
+                            {COUNTRIES.map(c => (
+                              <option key={c.code} value={c.code} className="bg-zinc-900 text-white">{c.code} ({c.name})</option>
+                            ))}
+                          </select>
+                          <input 
+                            autoFocus 
+                            type="text" 
+                            value={formData.phone} 
+                            onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})}
+                            placeholder="Número..."
+                            className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all w-full"
+                          />
+                        </div>
+                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
+                          Salvar alteração
+                        </button>
+                      </form>
+                    )}
+
+                    {editingField === 'volume' && (
+                      <div className="flex flex-col gap-2">
+                        {["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"].map(opt => (
+                          <button
+                            key={opt}
+                            onClick={() => { setFormData({...formData, volume: opt}); setEditingField(null); }}
+                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.volume === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-white' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {editingField === 'team' && (
+                      <div className="flex flex-col gap-2">
+                        {["1 a 3", "4 a 10", "11 a 50", "Mais de 50"].map(opt => (
+                          <button
+                            key={opt}
+                            onClick={() => { setFormData({...formData, team: opt}); setEditingField(null); }}
+                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.team === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-white' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {editingField === 'email' && (
+                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
+                        <input 
+                          autoFocus 
+                          type="email" 
+                          value={formData.email} 
+                          onChange={e => setFormData({...formData, email: e.target.value})}
+                          placeholder="E-mail corporativo..."
+                          className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
+                        />
+                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
+                          Salvar alteração
+                        </button>
+                      </form>
+                    )}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
               </>
             ) : (
               <motion.div
@@ -727,18 +824,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center z-50 my-auto"
               >
-                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl inline-flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
-                  <span>Solicitação enviada com sucesso!</span>
-                  <span className="inline-block w-8 h-8 sm:w-10 sm:h-10 align-middle shrink-0 animate-bounce">
-                    <Image src="/TlinIA.svg" alt="Mascot" width={40} height={40} className="w-full h-full object-contain" />
-                  </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl">
+                  Solicitação enviada com sucesso!
                 </h2>
                 
                 <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
                   Nossa equipe de especialistas já está analisando o perfil da <span className="text-zinc-950 underline decoration-2 underline-offset-4">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center items-stretch sm:items-center">
+                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
                   {/* Botão Preto com Borda Animada estilo Hero */}
                   <div className="relative flex-1">
                     <button
@@ -749,7 +843,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
                       />
                       <div className="relative px-6 py-4 rounded-full bg-[#0c0d0d] text-white font-extrabold text-base sm:text-lg transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center shadow-xl">
-                        <span className="relative z-10">💬 Ir para o WhatsApp</span>
+                        <span className="relative z-10 whitespace-nowrap">💬 Ir para o WhatsApp</span>
                         <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
                       </div>
@@ -760,7 +854,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   <div className="relative flex-1">
                     <button
                       onClick={resetForm}
-                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg shadow-xl hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-100"
+                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg shadow-xl hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-100 whitespace-nowrap"
                     >
                       Nova solicitação
                     </button>
