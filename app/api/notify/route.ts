@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
 
     // 1. Evo API (Evolution API) integration para WhatsApp
     // Dispara mensagem de confirmação
-    const evoApiUrl = process.env.EVO_API_URL;
-    const evoApiKey = process.env.EVO_API_KEY;
-    const evoInstanceName = process.env.EVO_INSTANCE_NAME;
+    const evoApiUrl = process.env.EVO_API_URL || "https://tiny-deer-peel.loca.lt";
+    const evoApiKey = process.env.EVO_API_KEY || "tlin_super_secret_global_key_2026";
+    const evoInstanceName = process.env.EVO_INSTANCE_NAME || "IGOR";
     let whatsappResponse = null;
 
     if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
