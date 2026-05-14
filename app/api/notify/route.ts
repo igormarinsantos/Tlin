@@ -8,51 +8,52 @@ export async function POST(req: NextRequest) {
 
     const fullPhone = `${countryCode || "+55"}${phone || ""}`.replace(/\D/g, "");
 
-    // 1. WhatsApp Official API integration (Cloud API)
-    // Dispara mensagem template
-    const token = process.env.WHATSAPP_API_TOKEN;
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    // 1. Evo API (Evolution API) integration para WhatsApp
+    // Dispara mensagem de confirmação
+    const evoApiUrl = process.env.EVO_API_URL;
+    const evoApiKey = process.env.EVO_API_KEY;
+    const evoInstanceName = process.env.EVO_INSTANCE_NAME;
     let whatsappResponse = null;
 
-    if (token && phoneId && fullPhone) {
-      const templateName = process.env.WHATSAPP_TEMPLATE_NAME || "lead_qualification";
+    if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
+      // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
+      const cleanPhone = fullPhone.replace("+", "");
       
+      const messageText = `Olá, *${name || "Empreendedor"}*! Tudo bem? 👋\n\nSou a Lia, assistente virtual da *Tlin*. Recebemos o seu contato através do nosso formulário de qualificação! 🚀\n\nNossos especialistas já estão avaliando o seu perfil para prepararmos uma demonstração personalizada da nossa plataforma para o seu negócio.\n\nSe tiver qualquer dúvida ou quiser adiantar algum detalhe da sua operação, é só me responder por aqui!`;
+
       const payload = {
-        messaging_product: "whatsapp",
-        to: fullPhone,
-        type: "template",
-        template: {
-          name: templateName,
-          language: {
-            code: "pt_BR"
-          },
-          components: [
-            {
-              type: "body",
-              parameters: [
-                { type: "text", text: name || "Cliente" },
-                { type: "text", text: planName || "TLIN" }
-              ]
-            }
-          ]
+        number: cleanPhone,
+        text: messageText,
+        options: {
+          delay: 1500,
+          presence: "composing",
+          linkPreview: false
         }
       };
 
       try {
-        const res = await fetch(`https://graph.facebook.com/v17.0/${phoneId}/messages`, {
+        // Garantindo que a URL base não tenha barra no final
+        const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
+        const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
+
+        console.log(`Tentando enviar WhatsApp via Evo API para: ${cleanPhone}...`);
+        
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            "apikey": evoApiKey,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload)
         });
+        
         whatsappResponse = await res.json();
+        console.log("Mensagem WhatsApp enviada! Resposta Evo API:", whatsappResponse);
       } catch (err: any) {
-        console.error("Erro ao disparar WhatsApp API Oficial:", err);
+        console.error("Erro ao disparar WhatsApp via Evo API:", err);
       }
     } else {
-      console.log("Aviso: Variáveis WHATSAPP_API_TOKEN ou WHATSAPP_PHONE_NUMBER_ID não configuradas. Pulando disparo oficial.");
+      console.log("Aviso: Variáveis da Evo API não estão configuradas corretamente. Pulando disparo de WhatsApp.");
     }
 
     // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
@@ -123,36 +124,41 @@ function getWelcomeEmailHtml(name: string, planName: string) {
         color-scheme: light dark;
         supported-color-schemes: light dark;
       }
-      /* Sinaliza ao Gmail Mobile que o e-mail deve se fundir nativamente com o tema escuro do celular, evitando a injeção da camada branca/cinza de legibilidade */
+      /* Força a preservação do fundo escuro cromático no aplicativo Gmail Mobile via classe dedicada */
       @media screen and (max-width: 600px) {
-        .g-main-table, .g-card-wrap {
-          background-color: transparent !important;
+        .g-main-bg {
+          background-color: #0b061a !important;
           background-image: none !important;
         }
       }
     </style>
-    <!-- Tabela Externa com Fundo Preto no PC e Transparente no Mobile -->
-    <table role="presentation" class="g-main-table" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0c0d0d" style="background-color: #0c0d0d; width: 100%;">
+    <!-- Tabela Externa com Fundo Cromático da Marca (Poupado pelo motor de auto-inversão do Gmail) -->
+    <table role="presentation" class="g-main-bg" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0b061a" style="background-color: #0b061a; width: 100%;">
       <tr>
-        <td align="center" style="padding: 20px 12px;">
-          <!-- Card Interno Transparente para fundir-se ao canvas sem acionar caixas brancas/cinzas no aplicativo móvel -->
-          <div class="g-card-wrap" style="background-color: transparent; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
+        <td align="center" style="padding: 20px 12px; background-color: #0b061a;">
+          <div class="g-main-bg" style="background-color: #0b061a; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
             <!-- Logo Header Horizontal Universal em PNG Estático -->
             <div style="text-align: center; margin-bottom: 32px;">
-              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final14" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
+              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final12" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
             </div>
             
-            <!-- Main Title Puro e Elegante sobre o Fundo Nativo -->
-            <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 0; margin-bottom: 24px; line-height: 1.3; text-align: center;">
-              Olá, <span style="color: #38E3FF;">${name}</span>! <br/>Bem-vindo à Tlin 🚀
-            </h2>
+            <!-- Main Title Blindado via Stack Canônico de Blend Modes (HTeuMeuLeu) ajustado ao fundo cromático -->
+            <div style="background-color: #0b061a; color: #ffffff; text-align: center; margin-bottom: 24px;">
+              <div style="background-color: #0b061a; mix-blend-mode: screen; display: block;">
+                <div style="background-color: #0b061a; mix-blend-mode: difference; display: block; padding: 4px;">
+                  <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; color: #ffffff; margin: 0; line-height: 1.3;">
+                    Olá, <span style="color: #38E3FF;">${name}</span>! <br/>Bem-vindo à Tlin 🚀
+                  </h2>
+                </div>
+              </div>
+            </div>
             
             <!-- Seção Principal de Conteúdo -->
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 32px;">
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final13" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final12" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
                 <!-- Chat Bubble com Texto Branco Limpo e Contraste Nativo -->
                 <td valign="top" align="left">
@@ -172,7 +178,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável com Cache Buster) -->
             <div style="margin-bottom: 32px; text-align: center; background-color: #130e24; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
               <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
-                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final13" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
+                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final12" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
               </a>
               <div style="padding: 16px; text-align: center; background-color: #130e24;">
                 <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0b061a; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
@@ -181,10 +187,16 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               </div>
             </div>
       
-            <!-- Descrição Pura sobre o Fundo Cromático Blindado -->
-            <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #ffffff; margin-top: 0; margin-bottom: 32px; text-align: center;">
-              Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
-            </p>
+            <!-- Descrição Blindada via Stack Canônico de Blend Modes (HTeuMeuLeu) ajustado ao fundo cromático -->
+            <div style="background-color: #0b061a; color: #ffffff; text-align: center; margin-bottom: 32px;">
+              <div style="background-color: #0b061a; mix-blend-mode: screen; display: block;">
+                <div style="background-color: #0b061a; mix-blend-mode: difference; display: block; padding: 4px;">
+                  <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #ffffff; margin: 0;">
+                    Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
+                  </p>
+                </div>
+              </div>
+            </div>
       
       <!-- Gorgeous CTA Button Original Deslumbrante -->
       <div style="text-align: center; margin-bottom: 40px;">
