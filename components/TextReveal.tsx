@@ -40,7 +40,7 @@ export function TextReveal() {
     const animationProgress = Math.min(latest / 0.9, 1);
     const idx = Math.min(Math.floor(animationProgress * parts.length), parts.length - 1);
     
-    if (idx >= 0) {
+    if (idx >= 0 && idx !== activeWord) {
       setActiveWord(idx);
       setRevealed((prev) => {
         const next = [...prev];
@@ -49,7 +49,7 @@ export function TextReveal() {
       });
     }
 
-    if (animationProgress >= 1) {
+    if (animationProgress >= 1 && !isFinished) {
       setIsFinished(true);
       setActiveWord(-1);
     }
