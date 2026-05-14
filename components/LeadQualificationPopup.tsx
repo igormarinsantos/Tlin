@@ -406,10 +406,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
               <button
                 onClick={onClose}
-                className={`relative py-2 px-4 rounded-full backdrop-blur-md border transition-all active:scale-95 text-xs sm:text-sm font-bold group/close ${
+                className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
                   currentStep === 8 
-                  ? "bg-black/10 border-black/10 text-zinc-900 hover:bg-black/15" 
-                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
+                  ? "text-zinc-900 hover:text-black" 
+                  : "text-zinc-400 hover:text-white"
                 }`}
               >
                 <span className="relative inline-block pb-0.5">
