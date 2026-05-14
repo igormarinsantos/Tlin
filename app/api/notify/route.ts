@@ -125,13 +125,13 @@ function getWelcomeEmailHtml(name: string, planName: string) {
       }
     </style>
     <!-- Tabela Externa com Trava de Gradiente Inerte para impedir auto-inversão de cor do Gmail -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0c0d0d" style="background-color: #0c0d0d; width: 100%;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0c0d0d" style="background-color: #0c0d0d; background-image: linear-gradient(#0c0d0d, #0c0d0d); width: 100%;">
       <tr>
         <td align="center" style="padding: 20px 12px;">
-          <div style="background-color: #0c0d0d; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
+          <div style="background-color: #0c0d0d; background-image: linear-gradient(#0c0d0d, #0c0d0d); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
             <!-- Logo Header Horizontal Universal em PNG Estático -->
             <div style="text-align: center; margin-bottom: 32px;">
-              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final10" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
+              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final11" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
             </div>
             
             <!-- Main Title Blindado via Stack Canônico de Blend Modes (HTeuMeuLeu) -->
@@ -150,7 +150,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final10" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final11" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
                 <!-- Chat Bubble com Texto Branco Limpo e Contraste Nativo -->
                 <td valign="top" align="left">
@@ -170,7 +170,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável com Cache Buster) -->
             <div style="margin-bottom: 32px; text-align: center; background-color: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
               <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
-                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final10" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
+                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final11" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
               </a>
               <div style="padding: 16px; text-align: center; background-color: #18181b;">
                 <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0c0d0d; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
