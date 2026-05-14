@@ -727,31 +727,44 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center z-50 my-auto"
               >
-                <div className="w-20 h-20 sm:w-28 sm:h-28 mb-6 sm:mb-8 rounded-full bg-white shadow-2xl flex items-center justify-center p-4 transform hover:scale-105 transition-transform duration-500 shrink-0">
-                  <Image src="/TlinIA.svg" alt="Sucesso" width={80} height={80} className="w-full h-full object-contain" />
-                </div>
-                
-                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl">
-                  Solicitação enviada com sucesso! 🚀
+                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl inline-flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+                  <span>Solicitação enviada com sucesso!</span>
+                  <span className="inline-block w-8 h-8 sm:w-10 sm:h-10 align-middle shrink-0 animate-bounce">
+                    <Image src="/TlinIA.svg" alt="Mascot" width={40} height={40} className="w-full h-full object-contain" />
+                  </span>
                 </h2>
                 
-                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-8 leading-relaxed">
+                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
                   Nossa equipe de especialistas já está analisando o perfil da <span className="text-zinc-950 underline decoration-2 underline-offset-4">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-                  <button
-                    onClick={() => handleWhatsAppRedirect(formData)}
-                    className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-zinc-950 text-white font-extrabold text-base sm:text-lg shadow-xl hover:bg-zinc-900 transition-all active:scale-95 cursor-pointer"
-                  >
-                    💬 Ir para o WhatsApp
-                  </button>
-                  <button
-                    onClick={resetForm}
-                    className="flex items-center justify-center px-8 py-4 rounded-full bg-white/20 border border-zinc-950/10 text-zinc-950 font-bold text-base sm:text-lg hover:bg-white/30 transition-all active:scale-95 cursor-pointer"
-                  >
-                    Nova solicitação
-                  </button>
+                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center items-stretch sm:items-center">
+                  {/* Botão Preto com Borda Animada estilo Hero */}
+                  <div className="relative flex-1">
+                    <button
+                      onClick={() => handleWhatsAppRedirect(formData)}
+                      className="relative p-[1.5px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
+                    >
+                      <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
+                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
+                      />
+                      <div className="relative px-6 py-4 rounded-full bg-[#0c0d0d] text-white font-extrabold text-base sm:text-lg transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center shadow-xl">
+                        <span className="relative z-10">💬 Ir para o WhatsApp</span>
+                        <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Botão Branco */}
+                  <div className="relative flex-1">
+                    <button
+                      onClick={resetForm}
+                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg shadow-xl hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-100"
+                    >
+                      Nova solicitação
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             )}
