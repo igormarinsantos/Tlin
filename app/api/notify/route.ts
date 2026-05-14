@@ -19,9 +19,9 @@ export async function POST(req: NextRequest) {
       // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
       const cleanPhone = fullPhone.replace("+", "");
       const messagesToSend = [
-        `Olá, *${name || "Empreendedor"}*! Tudo bem? 👋`,
-        `Sou o Igor, consultor dedicado ao seu caso aqui na *Tlin*. Recebi o seu formulário de qualificação e já estou analisando o seu cenário! 🚀`,
-        `Para prepararmos uma demonstração perfeita da nossa plataforma de IA aplicada ao seu negócio, quando seria o melhor momento para conversarmos rapidamente?`
+        `Olá, ${name || "Empresa"}! Tudo bem? 👋`,
+        `Me chamo *Igor* e sou *especialista da Tlin*, dedicado ao atendimento da sua solicitação`,
+        `Para começarmos, me diz: como você prefere que eu te chame?`
       ];
 
       try {
