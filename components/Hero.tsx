@@ -60,6 +60,14 @@ export function Hero() {
   const title = t.hero.title;
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
   
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
   const allChars = useMemo(() => {
     const chars: { char: string; isHighlighted: boolean; line: number; isStars?: boolean }[] = [];
     const lines = title.split("\n");
@@ -103,7 +111,7 @@ export function Hero() {
     }
 
     const wander = () => {
-      if (!isIdle.current) return;
+      if (!isIdle.current || !isDesktop) return;
       const elapsed = (performance.now() - startTime) / 1000;
       
       const cx = window.innerWidth / 2;
@@ -399,18 +407,16 @@ export function Hero() {
           </a>
         </motion.div>
 
-        {/* Mascot Follower (PC Only) */}
+        {/* Mascot Follower (PC Only) - Desmontado no Mobile para poupar CPU/GPU */}
         <AnimatePresence>
-          {phase === "done" && lastInlinePos.x !== 0 && (
-            <div className="hidden lg:block">
-              <MascotFollower 
-                initialX={lastInlinePos.x} 
-                initialY={lastInlinePos.y} 
-                isNearCta={isCtaHovered || isDemoHovered}
-                globalMouseX={globalMouseX}
-                globalMouseY={globalMouseY}
-              />
-            </div>
+          {isDesktop && phase === "done" && lastInlinePos.x !== 0 && (
+            <MascotFollower 
+              initialX={lastInlinePos.x} 
+              initialY={lastInlinePos.y} 
+              isNearCta={isCtaHovered || isDemoHovered}
+              globalMouseX={globalMouseX}
+              globalMouseY={globalMouseY}
+            />
           )}
         </AnimatePresence>
 
@@ -508,7 +514,9 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
     
     const triggerSpin = () => {
       if (isAbducted) {
-        abductionRotate.set(abductionRotate.get() + 30);
+        // Reduz a velocidade da rotação e normaliza para evitar infinity bugs no Framer Motion
+        const nextRotate = (abductionRotate.get() + 15) % 360000;
+        abductionRotate.set(nextRotate);
         spinFrame = requestAnimationFrame(triggerSpin);
       }
     };
