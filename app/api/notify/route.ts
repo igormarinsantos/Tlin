@@ -123,20 +123,33 @@ function getWelcomeEmailHtml(name: string, planName: string) {
         color-scheme: light dark;
         supported-color-schemes: light dark;
       }
+      /* Técnica Sênior de CSS Blend Mode Específica para Gmail Mobile em Modo Escuro */
+      @media screen and (max-width: 600px) {
+        .g-blend-outer {
+          background-color: #ffffff !important;
+          mix-blend-mode: lighten !important;
+          display: inline !important;
+        }
+        .g-blend-inner {
+          color: #000000 !important;
+          mix-blend-mode: exclusion !important;
+          display: inline !important;
+        }
+      }
     </style>
     <!-- Tabela Externa com Trava de Gradiente Inerte para impedir auto-inversão de cor do Gmail -->
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0c0d0d" style="background-color: #0c0d0d; background-image: linear-gradient(#0c0d0d, #0c0d0d); width: 100%;">
       <tr>
         <td align="center" style="padding: 20px 12px;">
-          <div style="background-color: #0c0d0d; background-image: linear-gradient(#0c0d0d, #0c0d0d); color: #fcfcfc; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
+          <div style="background-color: #0c0d0d; background-image: linear-gradient(#0c0d0d, #0c0d0d); color: #ffffff; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
             <!-- Logo Header Horizontal Universal em PNG Estático -->
             <div style="text-align: center; margin-bottom: 32px;">
-              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final5" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
+              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final8" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
             </div>
             
-            <!-- Main Title Blindado Nativamente com Gradient Text Lock -->
+            <!-- Main Title Blindado Nativamente com CSS Blend Mode -->
             <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; margin-top: 0; margin-bottom: 24px; line-height: 1.3;">
-              <span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Olá, </span><span style="color: #38E3FF; background-image: linear-gradient(#38e3ff, #38e3ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">${name}</span><span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">! Bem-vindo à Tlin 🚀</span>
+              <span class="g-blend-outer" style="color: #ffffff;" data-ogsc="color: #ffffff;"><span class="g-blend-inner" style="color: #ffffff;">Olá, </span></span><span style="color: #38E3FF;">${name}</span><span class="g-blend-outer" style="color: #ffffff;" data-ogsc="color: #ffffff;"><span class="g-blend-inner" style="color: #ffffff;">! Bem-vindo à Tlin 🚀</span></span>
             </h2>
             
             <!-- Seção Principal de Conteúdo -->
@@ -144,15 +157,17 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final7" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final8" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
-                <!-- Chat Bubble Blindado Nativamente via Nested Table com texto gradient lock e bgcolor roxo premium -->
+                <!-- Chat Bubble Blindado Nativamente via Nested Table com texto blend mode e bgcolor roxo premium -->
                 <td valign="top" align="left">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse: separate; border-radius: 0px 20px 20px 20px; overflow: hidden;">
                     <tr>
                       <td bgcolor="#9333ea" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(90deg, #B597FF 0%, #38E3FF 100%); background-color: #9333ea; padding: 16px 20px; border-radius: 0px 20px 20px 20px; text-align: left;">
-                        <span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 15px; line-height: 1.5; display: inline-block;">
-                          Recebemos a sua solicitação com sucesso! Ficamos muito felizes pelo seu interesse em dar o próximo passo e escalar o faturamento da sua operação usando nossos agentes de Inteligência Artificial.
+                        <span class="g-blend-outer" style="color: #ffffff;" data-ogsc="color: #ffffff;">
+                          <span class="g-blend-inner" style="color: #ffffff; font-weight: 700; font-size: 15px; line-height: 1.5;">
+                            Recebemos a sua solicitação com sucesso! Ficamos muito felizes pelo seu interesse em dar o próximo passo e escalar o faturamento da sua operação usando nossos agentes de Inteligência Artificial.
+                          </span>
                         </span>
                       </td>
                     </tr>
@@ -166,7 +181,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável com Cache Buster) -->
             <div style="margin-bottom: 32px; text-align: center; background-color: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
               <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
-                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final7" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
+                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final8" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
               </a>
               <div style="padding: 16px; text-align: center; background-color: #18181b;">
                 <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0c0d0d; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
@@ -176,8 +191,10 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             </div>
       
       <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; margin-bottom: 32px; text-align: center;">
-        <span style="color: #e4e4e7; background-image: linear-gradient(#e4e4e7, #e4e4e7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-          Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
+        <span class="g-blend-outer" style="color: #e4e4e7;" data-ogsc="color: #e4e4e7;">
+          <span class="g-blend-inner" style="color: #e4e4e7;">
+            Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
+          </span>
         </span>
       </p>
       
