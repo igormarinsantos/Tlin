@@ -13,3 +13,7 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 *.local
+
+# Evolution API
+evolution-api/.env
+evolution-api/instances/

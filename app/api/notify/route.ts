@@ -18,39 +18,55 @@ export async function POST(req: NextRequest) {
     if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
       // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
       const cleanPhone = fullPhone.replace("+", "");
-      
-      const messageText = `Olá, *${name || "Empreendedor"}*! Tudo bem? 👋\n\nSou a Lia, assistente virtual da *Tlin*. Recebemos o seu contato através do nosso formulário de qualificação! 🚀\n\nNossos especialistas já estão avaliando o seu perfil para prepararmos uma demonstração personalizada da nossa plataforma para o seu negócio.\n\nSe tiver qualquer dúvida ou quiser adiantar algum detalhe da sua operação, é só me responder por aqui!`;
-
-      const payload = {
-        number: cleanPhone,
-        text: messageText,
-        options: {
-          delay: 1500,
-          presence: "composing",
-          linkPreview: false
-        }
-      };
+      const messagesToSend = [
+        `Olá, *${name || "Empreendedor"}*! Tudo bem? 👋`,
+        `Sou o Igor, consultor dedicado ao seu caso aqui na *Tlin*. Recebi o seu formulário de qualificação e já estou analisando o seu cenário! 🚀`,
+        `Para prepararmos uma demonstração perfeita da nossa plataforma de IA aplicada ao seu negócio, quando seria o melhor momento para conversarmos rapidamente?`
+      ];
 
       try {
-        // Garantindo que a URL base não tenha barra no final
         const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
         const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
+        
+        const responses = [];
 
-        console.log(`Tentando enviar WhatsApp via Evo API para: ${cleanPhone}...`);
+        console.log(`Iniciando envio sequencial via Evo API para: ${cleanPhone}...`);
+
+        for (let i = 0; i < messagesToSend.length; i++) {
+          const text = messagesToSend[i];
+          // Delay aumenta ligeiramente para textos maiores, garantindo naturalidade
+          const calculatedDelay = Math.max(1500, text.length * 40); 
+          
+          const payload = {
+            number: cleanPhone,
+            text: text,
+            options: {
+              delay: calculatedDelay,
+              presence: "composing",
+              linkPreview: false
+            }
+          };
+
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "apikey": evoApiKey,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload)
+          });
+          
+          const jsonResponse = await res.json();
+          responses.push(jsonResponse);
+          
+          // Aguarda o término de um disparo antes do próximo para não encavalar
+          // Embora a Evo API já coloque em fila, o delay aqui no Node previne problemas
+        }
         
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "apikey": evoApiKey,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload)
-        });
-        
-        whatsappResponse = await res.json();
-        console.log("Mensagem WhatsApp enviada! Resposta Evo API:", whatsappResponse);
+        whatsappResponse = responses;
+        console.log("Mensagens sequenciais do WhatsApp enviadas com sucesso!");
       } catch (err: any) {
-        console.error("Erro ao disparar WhatsApp via Evo API:", err);
+        console.error("Erro ao disparar WhatsApp sequencial via Evo API:", err);
       }
     } else {
       console.log("Aviso: Variáveis da Evo API não estão configuradas corretamente. Pulando disparo de WhatsApp.");
