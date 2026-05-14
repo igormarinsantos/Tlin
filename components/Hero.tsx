@@ -485,7 +485,8 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
     };
 
     const handleScroll = () => {
-      setIsScrolledPast(window.scrollY > 800);
+      // Dispara o efeito de abdução mais cedo (a partir de 350px de rolagem) para o usuário acompanhar visualmente
+      setIsScrolledPast(window.scrollY > 350);
     };
 
     window.addEventListener("mouseover", handleGlobalHover);
@@ -500,6 +501,27 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
     };
   }, []);
 
+  // Loop autônomo de rotação para garantir a animação do Vortex de Abdução mesmo quando o mouse estiver parado na rolagem
+  useEffect(() => {
+    let spinFrame: number;
+    const isAbducted = isNearCta || isAbductedGlobal || isScrolledPast;
+    
+    const triggerSpin = () => {
+      if (isAbducted) {
+        abductionRotate.set(abductionRotate.get() + 30);
+        spinFrame = requestAnimationFrame(triggerSpin);
+      }
+    };
+
+    if (isAbducted) {
+      spinFrame = requestAnimationFrame(triggerSpin);
+    } else {
+      abductionRotate.set(0);
+    }
+
+    return () => cancelAnimationFrame(spinFrame);
+  }, [isNearCta, isAbductedGlobal, isScrolledPast, abductionRotate]);
+
   useEffect(() => {
     const updatePosition = (x: number, y: number) => {
       const isAbducted = isNearCta || isAbductedGlobal || isScrolledPast;
@@ -507,16 +529,10 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       if (isAbducted) {
         mascotOpacity.set(0);
         mascotScale.set(0);
-        // Rapid vortex spin during abduction - only affects abductionRotate
-        abductionRotate.set(abductionRotate.get() + 25); 
       } else {
         mascotOpacity.set(1);
         mascotScale.set(1);
-        // Reset abduction spin when not abducted
-        abductionRotate.set(0);
       }
-
-      if (isScrolledPast) return;
 
       const currentRenderedX = springX.get();
       const currentRenderedY = springY.get();
@@ -564,9 +580,8 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         position: "fixed",
         left: 0,
         top: 0,
-        display: isScrolledPast ? "none" : undefined,
-        opacity: isScrolledPast ? 0 : springOpacity,
-        scale: isScrolledPast ? 0 : springScale,
+        opacity: springOpacity,
+        scale: springScale,
         x: springX,
         y: springY,
         rotate: finalRotate,
