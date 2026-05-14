@@ -406,13 +406,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
               <button
                 onClick={onClose}
-                className={`p-2.5 rounded-full backdrop-blur-md border transition-all active:scale-95 ${
+                className={`relative py-2 px-4 rounded-full backdrop-blur-md border transition-all active:scale-95 text-xs sm:text-sm font-bold group/close ${
                   currentStep === 8 
-                  ? "bg-black/10 border-black/10 text-zinc-900 hover:bg-black/20" 
+                  ? "bg-black/10 border-black/10 text-zinc-900 hover:bg-black/15" 
                   : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                <span className="relative inline-block pb-0.5">
+                  Fechar
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
+                </span>
               </button>
             </div>
 
