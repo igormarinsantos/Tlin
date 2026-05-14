@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { useLanguage } from "@/lib/LanguageContext";
 
 type Message = {
   role: 'bot' | 'user';
@@ -29,7 +30,7 @@ const COUNTRIES = [
   { code: '+52', flag: '🇲🇽', name: 'México' },
 ];
 
-const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
+
 
 // Helper to render text with gradient highlights
 const HighlightText = ({ text }: { text: string }) => {
@@ -78,6 +79,7 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
 };
 
 export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualificationPopupProps) {
+  const { t } = useLanguage();
   const WHATSAPP_NUMBER = "5511916248604";
   
   const [currentStep, setCurrentStep] = useState(1);
@@ -90,7 +92,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     email: ''
   });
   
-  const initialMsg = `Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o nome da [sua empresa]?`;
+  const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
+  const initialMsg = t.leadQualify.initialMsg;
 
   const [chatHistory, setChatHistory] = useState<Message[]>([
     { role: 'bot', text: initialMsg }
@@ -218,36 +221,36 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     
     switch(step) {
       case 1: return initialMsg;
-      case 2: return `[${aff}]! Qual o [WhatsApp] para contato?`;
-      case 3: return `O número [${data.countryCode} ${data.phone}] está correto?`;
-      case 4: return `[${aff}]! Qual o [Volume mensal] de atendimentos?`;
-      case 5: return `[Entendido]. Qual o tamanho da [equipe atual]?`;
-      case 6: return `[Show]. Qual o seu melhor [e-mail corporativo]?`;
-      case 7: return `Então, deixa eu ver se [eu entendi tudo] certinho:`;
-      case 8: return `[Solicitação enviada com sucesso]! Nossa equipe de especialistas já está analisando o perfil da [${data.name}] e entrará em contato em breve via [WhatsApp].`;
+      case 2: return t.leadQualify.step2;
+      case 3: return t.leadQualify.step3.replace("{phone}", `${data.countryCode} ${data.phone}`);
+      case 4: return t.leadQualify.step4;
+      case 5: return t.leadQualify.step5;
+      case 6: return t.leadQualify.step6;
+      case 7: return t.leadQualify.step7;
+      case 8: return t.leadQualify.step8.replace("{name}", data.name);
       default: return "";
     }
   };
 
   const getOptions = (step: number) => {
     switch(step) {
-      case 3: return ["Sim, está correto", "Não, quero corrigir"];
-      case 4: return ["Até 40", "40 a 150", "150 a 500", "500 a 1.5k", "Mais de 5k"];
-      case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
-      case 7: return ["Confirmar dados"]; // Corrigir algo removido pois cada linha agora é editável de forma independente!
-      case 8: return ["Fazer uma nova solicitação"];
+      case 3: return [t.leadQualify.yesCorrect, t.leadQualify.noCorrect];
+      case 4: return t.leadQualify.volumeOptions;
+      case 5: return t.leadQualify.teamOptions;
+      case 7: return [t.leadQualify.confirm]; // Corrigir algo removido pois cada linha agora é editável de forma independente!
+      case 8: return [t.leadQualify.newRequest];
       default: return null;
     }
   };
 
   const advanceChat = (userValue: string, field?: keyof typeof formData) => {
-    if (currentStep === 3 && userValue === "Não, quero corrigir") {
+    if (currentStep === 3 && userValue === t.leadQualify.noCorrect) {
       setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
         setCurrentStep(2);
-        setChatHistory(prev => [...prev, { role: 'bot', text: "Sem problemas! Qual o [WhatsApp] correto?" }]);
+        setChatHistory(prev => [...prev, { role: 'bot', text: t.leadQualify.step2 }]);
       }, 800);
       return;
     }
@@ -401,8 +404,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   : "text-zinc-400 hover:text-white"
                 }`}
               >
-                <span className="relative inline-block pb-0.5">
-                  Fechar
+                <span className="relative inline-block pb-0.5">{t.liaPopup.close}
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
                 </span>
               </button>
@@ -488,7 +490,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   </span>
                                 </button>
                                 <div className="text-[10px] text-zinc-500 text-center font-medium pt-2 border-t border-white/5">
-                                  💡 Clique sobre o dado que deseja editar
+                                  {t.leadQualify.clickToEdit}
                                 </div>
                               </div>
                             )}
@@ -552,7 +554,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(formData.name.trim()) advanceChat(formData.name, 'name');
                                   }
                                 }}
-                                placeholder="Nome da empresa..." 
+                                placeholder={t.leadQualify.placeholders.name} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
@@ -631,7 +633,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(isPhoneValid()) advanceChat(formData.phone, 'phone');
                                   }
                                 }}
-                                placeholder="Seu número aqui..." 
+                                placeholder={t.leadQualify.placeholders.phone} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
@@ -667,7 +669,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email');
                                   }
                                 }}
-                                placeholder="nome@empresa.com.br..." 
+                                placeholder={t.leadQualify.placeholders.email} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">

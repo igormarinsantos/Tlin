@@ -183,7 +183,17 @@ const ptBR = {
     errorWarning: "A Lia pode cometer erros. Considere verificar informações importantes.",
     placeholder: "Pergunte para a Lia...",
     close: "Fechar",
-    talkToLia: "Fale com a Lia"
+    talkToLia: "Fale com a Lia",
+    fullPlaceholder: "Pergunte qualquer coisa para Lia...",
+    errorTech: "Ops, tive um probleminha técnico. Pode tentar de novo ou clicar no botão aqui embaixo?",
+    handoffForwarding: "Encaminhando para nossa equipe...",
+    handoffRedirect: "Redirecionando em",
+    handoffOpening: "Abrindo WhatsApp...",
+    handoffOpenNow: "Abrir WhatsApp Agora",
+    handoffCancel: "Cancelar redirecionamento",
+    handoffCancelled: "Encaminhamento cancelado.",
+    handoffAutoRedirect: "Você será redirecionado automaticamente",
+    handoffChangeMind: "Clique no botão de WhatsApp se mudar de ideia."
   },
   salesNotification: {
     now: "agora",
@@ -230,6 +240,39 @@ const ptBR = {
   },
   revenueGravityHero: {
     saleCompleted: "Venda concluída"
+  },
+  leadQualify: {
+    initialMsg: "Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o nome da [sua empresa]?",
+    step2: "[Ótimo]! Qual o [WhatsApp] para contato?",
+    step3: "O número [{phone}] está correto?",
+    step4: "[Ótimo]! Qual o [Volume mensal] de atendimentos?",
+    step5: "[Entendido]. Qual o tamanho da [equipe atual]?",
+    step6: "[Show]. Qual o seu melhor [e-mail corporativo]?",
+    step7: "Então, deixa eu ver se [eu entendi tudo] certinho:",
+    step8: "[Solicitação enviada com sucesso]! Nossa equipe de especialistas já está analisando o perfil da [{name}] e entrará em contato em breve via [WhatsApp].",
+    back: "Voltar",
+    edit: "Editar",
+    cancel: "Cancelar",
+    confirm: "Confirmar dados",
+    newRequest: "Fazer uma nova solicitação",
+    yesCorrect: "Sim, está correto",
+    noCorrect: "Não, quero corrigir",
+    clickToEdit: "💡 Clique sobre o dado que deseja editar",
+    pressEnter: "pressione ENTER ou CTRL+ENTER ↵",
+    placeholders: {
+      name: "Nome da empresa...",
+      phone: "Seu número aqui...",
+      email: "nome@empresa.com.br..."
+    },
+    fields: {
+      company: "Empresa",
+      whatsapp: "WhatsApp",
+      volume: "Volume",
+      team: "Equipe",
+      email: "E-mail"
+    },
+    volumeOptions: ["Até 40", "40 a 150", "150 a 500", "500 a 1.5k", "Mais de 5k"],
+    teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"]
   }
 };
 
@@ -416,7 +459,17 @@ const enUS: TranslationDictionary = {
     errorWarning: "Lia can make mistakes. Verify the answers.",
     placeholder: "Ask Lia...",
     close: "Close",
-    talkToLia: "Talk to Lia"
+    talkToLia: "Talk to Lia",
+    fullPlaceholder: "Ask Lia anything...",
+    errorTech: "Oops, I had a technical issue. Could you try again or click the button below?",
+    handoffForwarding: "Forwarding to our team...",
+    handoffRedirect: "Redirecting in",
+    handoffOpening: "Opening WhatsApp...",
+    handoffOpenNow: "Open WhatsApp Now",
+    handoffCancel: "Cancel redirect",
+    handoffCancelled: "Forwarding cancelled.",
+    handoffAutoRedirect: "You will be redirected automatically",
+    handoffChangeMind: "Click the WhatsApp button if you change your mind."
   },
   salesNotification: {
     now: "now",
@@ -463,6 +516,39 @@ const enUS: TranslationDictionary = {
   },
   revenueGravityHero: {
     saleCompleted: "Sale completed"
+  },
+  leadQualify: {
+    initialMsg: "Let's [scale your revenue] with AI right now! To begin, what is your [company name]?",
+    step2: "[Great]! What is the best [WhatsApp number] for contact?",
+    step3: "Is the number [{phone}] correct?",
+    step4: "[Awesome]! What is your [monthly lead volume]?",
+    step5: "[Got it]. What is your [current team size]?",
+    step6: "[Perfect]. What is your best [corporate email]?",
+    step7: "Let me check if [I got everything] right:",
+    step8: "[Request successfully sent]! Our team of experts is already analyzing [{name}]'s profile and will contact you shortly via [WhatsApp].",
+    back: "Back",
+    edit: "Edit",
+    cancel: "Cancel",
+    confirm: "Confirm details",
+    newRequest: "Make a new request",
+    yesCorrect: "Yes, it's correct",
+    noCorrect: "No, I want to edit",
+    clickToEdit: "💡 Click on the data you want to edit",
+    pressEnter: "press ENTER or CTRL+ENTER ↵",
+    placeholders: {
+      name: "Company name...",
+      phone: "Your number here...",
+      email: "name@company.com..."
+    },
+    fields: {
+      company: "Company",
+      whatsapp: "WhatsApp",
+      volume: "Volume",
+      team: "Team",
+      email: "E-mail"
+    },
+    volumeOptions: ["Up to 40", "40 to 150", "150 to 500", "500 to 1.5k", "More than 5k"],
+    teamOptions: ["1 to 3", "4 to 10", "11 to 50", "More than 50"]
   }
 };
 
@@ -649,7 +735,17 @@ const esES: TranslationDictionary = {
     errorWarning: "Lia puede cometer errores. Verifica las respuestas.",
     placeholder: "Pregúntale a Lia...",
     close: "Cerrar",
-    talkToLia: "Habla con Lia"
+    talkToLia: "Habla con Lia",
+    fullPlaceholder: "Pregúntale cualquier cosa a Lia...",
+    errorTech: "Ups, tuve un problema técnico. ¿Puedes intentarlo de nuevo o hacer clic en el botón de abajo?",
+    handoffForwarding: "Redirigiendo a nuestro equipo...",
+    handoffRedirect: "Redirigiendo en",
+    handoffOpening: "Abriendo WhatsApp...",
+    handoffOpenNow: "Abrir WhatsApp Ahora",
+    handoffCancel: "Cancelar redirección",
+    handoffCancelled: "Redirección cancelada.",
+    handoffAutoRedirect: "Serás redirigido automáticamente",
+    handoffChangeMind: "Haz clic en el botón de WhatsApp si cambias de opinión."
   },
   salesNotification: {
     now: "ahora",
@@ -696,6 +792,39 @@ const esES: TranslationDictionary = {
   },
   revenueGravityHero: {
     saleCompleted: "Venta completada"
+  },
+  leadQualify: {
+    initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es el nombre de [tu empresa]?",
+    step2: "¡[Genial]! ¿Cuál es el [WhatsApp] de contacto?",
+    step3: "¿El número [{phone}] es correcto?",
+    step4: "¡[Perfecto]! ¿Cuál es el [volumen mensual] de atención?",
+    step5: "[Entendido]. ¿Cuál es el tamaño del [equipo actual]?",
+    step6: "[Excelente]. ¿Cuál es tu mejor [correo corporativo]?",
+    step7: "Entonces, déjame ver si [entendí todo] bien:",
+    step8: "¡[Solicitud enviada con éxito]! Nuestro equipo de especialistas ya está analizando el perfil de [{name}] y te contactará pronto por [WhatsApp].",
+    back: "Volver",
+    edit: "Editar",
+    cancel: "Cancelar",
+    confirm: "Confirmar datos",
+    newRequest: "Hacer una nueva solicitud",
+    yesCorrect: "Sí, es correcto",
+    noCorrect: "No, quiero corregir",
+    clickToEdit: "💡 Haz clic en el dato que deseas editar",
+    pressEnter: "presiona ENTER o CTRL+ENTER ↵",
+    placeholders: {
+      name: "Nombre de la empresa...",
+      phone: "Tu número aquí...",
+      email: "nombre@empresa.com..."
+    },
+    fields: {
+      company: "Empresa",
+      whatsapp: "WhatsApp",
+      volume: "Volumen",
+      team: "Equipo",
+      email: "Correo"
+    },
+    volumeOptions: ["Hasta 40", "40 a 150", "150 a 500", "500 a 1.5k", "Más de 5k"],
+    teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Más de 50"]
   }
 };
 

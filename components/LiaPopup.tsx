@@ -16,7 +16,7 @@ export function LiaPopup() {
   const [placeholder, setPlaceholder] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const fullPlaceholder = "Pergunte qualquer coisa para Lia...";
+  const fullPlaceholder = t.liaPopup.fullPlaceholder;
 
   useEffect(() => {
     if (isOpen) {
@@ -80,7 +80,7 @@ export function LiaPopup() {
     setMessages(prev => [...prev, { role: 'user', text: userMsg, type: 'text' }]);
     setInputValue("");
     setIsTyping(true);
-    setStatus("digitando...");
+    setStatus(t.liaPopup.typing);
 
     // Call Gemini API
     try {
@@ -96,7 +96,7 @@ export function LiaPopup() {
       const botResponse = data.text;
       
       setIsTyping(false);
-      setStatus("online");
+      setStatus(t.liaPopup.online);
 
       // Process tools (scroll)
       const scrollMatch = botResponse.match(/\[scrollToSection:(\w+)\]/);
@@ -126,7 +126,7 @@ export function LiaPopup() {
 
       for (let i = 0; i < blocks.length; i++) {
         const block = blocks[i];
-        setStatus("digitando...");
+        setStatus(t.liaPopup.typing);
         setIsTyping(true);
         
         // Human-like typing delay formula: 25ms per char, cap at 2.5s
@@ -135,7 +135,7 @@ export function LiaPopup() {
         
         setIsTyping(false);
         setMessages(prev => [...prev, { role: 'bot', text: block, type: 'text' }]);
-        setStatus("online");
+        setStatus(t.liaPopup.online);
         
         if (i < blocks.length - 1) {
           await new Promise(r => setTimeout(r, 600)); // Pause between blocks
@@ -152,11 +152,11 @@ export function LiaPopup() {
     } catch (error) {
       console.error(error);
       setIsTyping(false);
-      setStatus("online");
+      setStatus(t.liaPopup.online);
       setMessages(prev => [...prev, 
         { 
           role: 'bot', 
-          text: "Ops, tive um probleminha técnico. Pode tentar de novo ou clicar no botão aqui embaixo?",
+          text: t.liaPopup.errorTech,
           type: 'text'
         },
         {
@@ -204,9 +204,9 @@ export function LiaPopup() {
         className="bg-green-50 border border-green-200 rounded-2xl p-4 flex flex-col items-center gap-3 w-full"
       >
         <div className="flex flex-col items-center gap-1 text-green-700 font-bold text-sm">
-          Encaminhando para nossa equipe...
+          {t.liaPopup.handoffForwarding}
           {!isCancelled && !isRedirected && (
-            <span className="text-[10px] font-medium opacity-60">Redirecionando em {countdown}s</span>
+            <span className="text-[10px] font-medium opacity-60">{t.liaPopup.handoffRedirect} {countdown}s</span>
           )}
         </div>
 
@@ -216,23 +216,23 @@ export function LiaPopup() {
               onClick={handleRedirect}
               className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group"
             >
-              {isRedirected ? "Abrindo WhatsApp..." : "Abrir WhatsApp Agora"}
+              {isRedirected ? t.liaPopup.handoffOpening : t.liaPopup.handoffOpenNow}
             </button>
             <button 
               onClick={handleCancel}
               className="text-[11px] text-green-700/50 hover:text-green-700 font-bold underline transition-colors"
             >
-              Cancelar redirecionamento
+              {t.liaPopup.handoffCancel}
             </button>
           </div>
         ) : (
           <div className="text-green-800 font-bold text-sm py-2">
-            Encaminhamento cancelado.
+            {t.liaPopup.handoffCancelled}
           </div>
         )}
 
         <p className="text-[10px] text-green-600/70 font-medium text-center">
-          {!isCancelled ? "Você será redirecionado automaticamente" : "Clique no botão de WhatsApp se mudar de ideia."}
+          {!isCancelled ? t.liaPopup.handoffAutoRedirect : t.liaPopup.handoffChangeMind}
         </p>
       </motion.div>
     );
