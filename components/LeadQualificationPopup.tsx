@@ -224,7 +224,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 5: return `[Entendido]. Qual o tamanho da [equipe atual]?`;
       case 6: return `[Show]. Qual o seu melhor [e-mail corporativo]?`;
       case 7: return `Então, deixa eu ver se [eu entendi tudo] certinho:`;
-      case 8: return `Já recebemos a sua solicitação! Entraremos em contato o mais breve possível via [WhatsApp]. Deseja fazer uma [nova solicitação]?`;
+      case 8: return `[Solicitação enviada com sucesso]! Nossa equipe de especialistas já está analisando o perfil da [${data.name}] e entrará em contato em breve via [WhatsApp].`;
       default: return "";
     }
   };
@@ -232,7 +232,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const getOptions = (step: number) => {
     switch(step) {
       case 3: return ["Sim, está correto", "Não, quero corrigir"];
-      case 4: return ["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"];
+      case 4: return ["Até 40", "40 a 150", "150 a 500", "500 a 1.5k", "Mais de 5k"];
       case 5: return ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"];
       case 7: return ["Confirmar dados"]; // Corrigir algo removido pois cada linha agora é editável de forma independente!
       case 8: return ["Fazer uma nova solicitação"];
@@ -388,19 +388,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full max-w-[calc(100vw-20px)] bg-[#0c0d0d] border border-white/10 rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
-              currentStep === 8 ? "h-[450px] sm:h-[550px]" : "h-[600px] sm:h-[700px]"
-            }`}
+            className={`relative w-full h-full max-w-[calc(100vw-20px)] bg-[#0c0d0d] border border-white/10 rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700`}
           >
-            {/* Overlay de fundo em degradê na etapa 8 */}
-            <div 
-              className={`absolute inset-0 transition-opacity duration-1000 z-0 ${
-                currentStep === 8 ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-              style={{
-                background: "linear-gradient(135deg, #B597FF 0%, #38E3FF 100%)"
-              }}
-            />
 
             {/* Header / Botão Fechar */}
             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
