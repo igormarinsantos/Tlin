@@ -18,18 +18,18 @@ interface Avatar {
 
 const AVATARS: Avatar[] = [
   // Left side
-  { id: 1, x: 12, y: 35, size: 48, image: "/testimonials/ceo.png", delay: 0, floatSpeed: 12, floatRange: 8 },
-  { id: 2, x: 18, y: 55, size: 40, image: "/testimonials/director.png", delay: 0.1, floatSpeed: 15, floatRange: 6 },
-  { id: 3, x: 8, y: 70, size: 56, image: "/testimonials/founder.png", delay: 0.2, floatSpeed: 18, floatRange: 10 },
+  { id: 1, x: 12, y: 35, size: 48, image: "/testimonials/ceo.webp", delay: 0, floatSpeed: 12, floatRange: 8 },
+  { id: 2, x: 18, y: 55, size: 40, image: "/testimonials/director.webp", delay: 0.1, floatSpeed: 15, floatRange: 6 },
+  { id: 3, x: 8, y: 70, size: 56, image: "/testimonials/founder.webp", delay: 0.2, floatSpeed: 18, floatRange: 10 },
   
   // Right side
-  { id: 4, x: 82, y: 30, size: 52, image: "/testimonials/founder.png", delay: 0.05, floatSpeed: 14, floatRange: 7 },
-  { id: 5, x: 88, y: 50, size: 44, image: "/testimonials/ceo.png", delay: 0.15, floatSpeed: 16, floatRange: 9 },
-  { id: 6, x: 80, y: 75, size: 48, image: "/testimonials/director.png", delay: 0.25, floatSpeed: 20, floatRange: 12 },
+  { id: 4, x: 82, y: 30, size: 52, image: "/testimonials/founder.webp", delay: 0.05, floatSpeed: 14, floatRange: 7 },
+  { id: 5, x: 88, y: 50, size: 44, image: "/testimonials/ceo.webp", delay: 0.15, floatSpeed: 16, floatRange: 9 },
+  { id: 6, x: 80, y: 75, size: 48, image: "/testimonials/director.webp", delay: 0.25, floatSpeed: 20, floatRange: 12 },
   
   // Bottom area (avoiding CTA)
-  { id: 7, x: 30, y: 85, size: 36, image: "/testimonials/director.png", delay: 0.3, floatSpeed: 13, floatRange: 5 },
-  { id: 8, x: 70, y: 82, size: 42, image: "/testimonials/founder.png", delay: 0.35, floatSpeed: 17, floatRange: 8 },
+  { id: 7, x: 30, y: 85, size: 36, image: "/testimonials/director.webp", delay: 0.3, floatSpeed: 13, floatRange: 5 },
+  { id: 8, x: 70, y: 82, size: 42, image: "/testimonials/founder.webp", delay: 0.35, floatSpeed: 17, floatRange: 8 },
 ];
 
 export function RevenueGravityHero({ isVisible }: { isVisible: boolean }) {

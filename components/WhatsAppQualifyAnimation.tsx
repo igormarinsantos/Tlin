@@ -117,7 +117,7 @@ export function WhatsAppQualifyAnimation() {
           >
             <div className="bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(181,151,255,0.3)] border border-[#B597FF]/20 flex flex-col items-center gap-4 min-w-[280px]">
               <div className="w-20 h-20 -mb-2">
-                <img src="/Check.png" alt="Check" className="w-full h-full object-contain" />
+                <img src="/Check.webp" alt="Check" className="w-full h-full object-contain" />
               </div>
               <div className="text-center">
                 <h4 className="text-xl font-black text-zinc-800">{f.qualified}</h4>
@@ -126,7 +126,7 @@ export function WhatsAppQualifyAnimation() {
               <div className="flex gap-2 mt-2 w-full">
                 <div className="flex-1 bg-zinc-50 rounded-xl p-3 border border-zinc-100 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-indigo-100 overflow-hidden">
-                    <img src="/lotties/8_peeled.png" alt="Marcos" className="w-full h-full object-cover" />
+                    <img src="/lotties/8_peeled.webp" alt="Marcos" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-800">Marcos Oliveira</div>
@@ -161,7 +161,7 @@ function ConversationMessage({
   showAvatar?: boolean;
   isTyping?: boolean;
 }) {
-  const leadPhoto = "/lotties/8_peeled.png";
+  const leadPhoto = "/lotties/8_peeled.webp";
 
   return (
     <div className={`flex items-start gap-2 w-full ${side === "right" ? "flex-row-reverse" : "flex-row"} ${showAvatar ? 'mb-2 mt-1' : 'mb-0'}`}>

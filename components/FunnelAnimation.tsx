@@ -17,16 +17,16 @@ interface Lead {
 }
 
 const profiles = [
-  { name: "Ricardo M.", avatar: "/lotties/2_peeled.png" },
-  { name: "Ana Paula", avatar: "/lotties/1_peeled.png" },
-  { name: "Bruno S.", avatar: "/lotties/3_peeled.png" },
-  { name: "Lucas G.", avatar: "/lotties/9_peeled.png" },
-  { name: "Carla F.", avatar: "/lotties/6_peeled.png" },
-  { name: "Roberto T.", avatar: "/lotties/5_peeled.png" },
-  { name: "Juliana K.", avatar: "/lotties/10_peeled.png" },
-  { name: "Marcos O.", avatar: "/lotties/8_peeled.png" },
-  { name: "Fernanda S.", avatar: "/lotties/7_peeled.png" },
-  { name: "Paulo R.", avatar: "/lotties/2_peeled.png" }
+  { name: "Ricardo M.", avatar: "/lotties/2_peeled.webp" },
+  { name: "Ana Paula", avatar: "/lotties/1_peeled.webp" },
+  { name: "Bruno S.", avatar: "/lotties/3_peeled.webp" },
+  { name: "Lucas G.", avatar: "/lotties/9_peeled.webp" },
+  { name: "Carla F.", avatar: "/lotties/6_peeled.webp" },
+  { name: "Roberto T.", avatar: "/lotties/5_peeled.webp" },
+  { name: "Juliana K.", avatar: "/lotties/10_peeled.webp" },
+  { name: "Marcos O.", avatar: "/lotties/8_peeled.webp" },
+  { name: "Fernanda S.", avatar: "/lotties/7_peeled.webp" },
+  { name: "Paulo R.", avatar: "/lotties/2_peeled.webp" }
 ];
 const hours = ["09:00", "10:30", "14:00", "15:30", "17:00"];
 
@@ -56,16 +56,16 @@ export function FunnelAnimation() {
 
   useEffect(() => {
     setLeads([
-      { id: 12, name: "Paulo R.", avatar: "/lotties/2_peeled.png", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[0] },
-      { id: 11, name: "Fernanda S.", avatar: "/lotties/7_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 10, name: "Lucas G.", avatar: "/lotties/9_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 9, name: "Carla F.", avatar: "/lotties/6_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 8, name: "Ana Paula", avatar: "/lotties/1_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 7, name: "Roberto T.", avatar: "/lotties/5_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 6, name: "Bruno S.", avatar: "/lotties/3_peeled.png", stage: "meio", justMoved: false, hasCursor: false },
-      { id: 5, name: "Ricardo M.", avatar: "/lotties/2_peeled.png", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[1]}, 14:00` },
-      { id: 4, name: "Juliana K.", avatar: "/lotties/10_peeled.png", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[0]}, 16:30` },
-      { id: 3, name: "Marcos O.", avatar: "/lotties/8_peeled.png", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[1] }
+      { id: 12, name: "Paulo R.", avatar: "/lotties/2_peeled.webp", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[0] },
+      { id: 11, name: "Fernanda S.", avatar: "/lotties/7_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 10, name: "Lucas G.", avatar: "/lotties/9_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 9, name: "Carla F.", avatar: "/lotties/6_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 8, name: "Ana Paula", avatar: "/lotties/1_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 7, name: "Roberto T.", avatar: "/lotties/5_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 6, name: "Bruno S.", avatar: "/lotties/3_peeled.webp", stage: "meio", justMoved: false, hasCursor: false },
+      { id: 5, name: "Ricardo M.", avatar: "/lotties/2_peeled.webp", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[1]}, 14:00` },
+      { id: 4, name: "Juliana K.", avatar: "/lotties/10_peeled.webp", stage: "fundo", justMoved: false, hasCursor: false, meetingDate: `${f.days[0]}, 16:30` },
+      { id: 3, name: "Marcos O.", avatar: "/lotties/8_peeled.webp", stage: "topo", justMoved: false, hasCursor: false, origin: f.origins[1] }
     ]);
 
     const interval = setInterval(() => {

@@ -22,7 +22,7 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
         style={{ opacity: isVisible ? 1 : 0 }} 
         className="inline-flex items-center mx-1 align-middle h-[1.2em]"
       >
-        <Image src="/3STARS.png" alt="Stars" width={120} height={40} className="h-[1em] w-auto object-contain" />
+        <Image src="/3STARS.webp" alt="Stars" width={120} height={40} className="h-[1em] w-auto object-contain" />
       </span>
     );
   }

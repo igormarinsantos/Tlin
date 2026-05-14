@@ -174,7 +174,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
       <div style="margin-bottom: 32px; text-align: center;">
         <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #27272a; line-height: 0;">
           <!-- Thumbnail Image com link absoluto inviolável hospedado direto no edge de produção -->
-          <img src="https://tlin.cloud/platform-preview.png" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; aspect-ratio: 16/9; object-fit: cover; display: block; opacity: 0.9;" />
+          <img src="https://tlin.cloud/platform-preview.webp" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; aspect-ratio: 16/9; object-fit: cover; display: block; opacity: 0.9;" />
           
           <!-- Botão sobreposto no centro da imagem (Com ícone idêntico ao Lucide Play da Hero) -->
           <div style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ffffff; color: #0c0d0d; padding: 12px 24px; border-radius: 50px; border: 1px solid #e4e4e7; font-weight: 700; font-size: 14px; line-height: 1;">

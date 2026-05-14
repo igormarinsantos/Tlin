@@ -16,6 +16,7 @@ export function MockupPlayer({ children }: { children: (isPlaying: boolean) => R
        <div className="absolute top-2 right-2 z-30 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
           <button 
              onClick={() => setIsPlaying(!isPlaying)}
+             aria-label={isPlaying ? "Pausar demonstração" : "Reproduzir demonstração"}
              className="w-7 h-7 rounded-full bg-[#0c0d0d]/80 text-white flex items-center justify-center backdrop-blur-md hover:scale-105 active:scale-95 transition-all shadow-md"
           >
              {isPlaying ? (

@@ -193,28 +193,28 @@ export function Features() {
       id: "f1",
       title: t.features.f1_title,
       desc: t.features.f1_desc,
-      asset: "/RAIO.png",
+      asset: "/RAIO.webp",
       video: "https://v1.bg.bing.com/az/hprichbg/rb/WaterCycle_EN-US11175626217_1920x1080.mp4"
     },
     {
       id: "f2",
       title: t.features.f2_title,
       desc: t.features.f2_desc,
-      asset: "/Imã.png",
+      asset: "/Imã.webp",
       video: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-18155-large.mp4"
     },
     {
       id: "f3",
       title: t.features.f3_title,
       desc: t.features.f3_desc,
-      asset: "/Foguete.png",
+      asset: "/Foguete.webp",
       video: "https://assets.mixkit.co/videos/preview/mixkit-tech-worker-examining-the-server-room-23654-large.mp4"
     },
     {
       id: "f4",
       title: t.features.f4_title,
       desc: t.features.f4_desc,
-      asset: "/Funil.png",
+      asset: "/Funil.webp",
       video: "https://assets.mixkit.co/videos/preview/mixkit-business-charts-on-a-digital-screen-2268-large.mp4"
     }
   ];
