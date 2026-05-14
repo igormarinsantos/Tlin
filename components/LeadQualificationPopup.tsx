@@ -273,10 +273,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           })
           .then(res => res.json())
           .then(data => console.log("Status do envio:", data))
-          .catch(err => console.error("Erro ao notificar API:", err))
-          .finally(() => {
-            handleWhatsAppRedirect(updatedData);
-          });
+          .catch(err => console.error("Erro ao notificar API:", err));
         }
       }, 1500);
     }
@@ -387,7 +384,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-2 sm:inset-[10px] flex flex-col bg-[#0c0d0d] text-white overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl border border-white/10"
+            className={`fixed inset-2 sm:inset-[10px] flex flex-col overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl border border-white/10 transition-all duration-700 ${
+              currentStep === 8 ? "bg-gradient-to-br from-[#B597FF] via-[#7DBDFF] to-[#38E3FF] text-zinc-950" : "bg-[#0c0d0d] text-white"
+            }`}
           >
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B597FF]/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#38E3FF]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -405,10 +404,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             <div className="shrink-0 flex justify-end p-4 sm:p-6 z-50">
               <button 
                 onClick={onClose} 
-                className="group relative text-sm font-bold text-white/40 hover:text-white transition-all overflow-hidden py-1 cursor-pointer"
+                className={`group relative text-sm font-bold transition-all overflow-hidden py-1 cursor-pointer ${
+                  currentStep === 8 ? "text-zinc-950/60 hover:text-zinc-950" : "text-white/40 hover:text-white"
+                }`}
               >
                 <span>Fechar</span>
-                <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-white transform -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                <span className={`absolute bottom-0 left-0 w-full h-[1.5px] transform -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-300 ease-out ${
+                  currentStep === 8 ? "bg-zinc-950" : "bg-white"
+                }`} />
               </button>
             </div>
 
@@ -453,6 +456,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
               )}
             </AnimatePresence>
 
+            {currentStep < 8 ? (
+              <>
             {/* Chat Container */}
             <div className="flex-1 overflow-hidden relative flex flex-col px-4 sm:px-12">
                <div 
@@ -714,6 +719,42 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   </button>
                 </div>
             </div>
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center z-50 my-auto"
+              >
+                <div className="w-20 h-20 sm:w-28 sm:h-28 mb-6 sm:mb-8 rounded-full bg-white shadow-2xl flex items-center justify-center p-4 transform hover:scale-105 transition-transform duration-500 shrink-0">
+                  <Image src="/TlinIA.svg" alt="Sucesso" width={80} height={80} className="w-full h-full object-contain" />
+                </div>
+                
+                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl">
+                  Solicitação enviada com sucesso! 🚀
+                </h2>
+                
+                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-8 leading-relaxed">
+                  Nossa equipe de especialistas já está analisando o perfil da <span className="text-zinc-950 underline decoration-2 underline-offset-4">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
+                  <button
+                    onClick={() => handleWhatsAppRedirect(formData)}
+                    className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-zinc-950 text-white font-extrabold text-base sm:text-lg shadow-xl hover:bg-zinc-900 transition-all active:scale-95 cursor-pointer"
+                  >
+                    💬 Ir para o WhatsApp
+                  </button>
+                  <button
+                    onClick={resetForm}
+                    className="flex items-center justify-center px-8 py-4 rounded-full bg-white/20 border border-zinc-950/10 text-zinc-950 font-bold text-base sm:text-lg hover:bg-white/30 transition-all active:scale-95 cursor-pointer"
+                  >
+                    Nova solicitação
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       )}
