@@ -495,7 +495,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     {formData.email} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <div className="text-[10px] text-zinc-500 text-center italic pt-2 border-t border-white/5">
+                                <div className="text-[10px] text-zinc-500 text-center font-medium pt-2 border-t border-white/5">
                                   💡 Clique sobre o dado que deseja editar
                                 </div>
                               </div>

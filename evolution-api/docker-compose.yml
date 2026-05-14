@@ -13,8 +13,13 @@ services:
       - AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}
       - DATABASE_PROVIDER=postgresql
       - DATABASE_CONNECTION_URI=${DATABASE_CONNECTION_URI}
+      - REDIS_ENABLED=true
       - REDIS_URI=${REDIS_URI}
       - REDIS_PREFIX_KEY=evo
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=${REDIS_URI}
+      - CACHE_REDIS_PREFIX_KEY=evocache
+      - CACHE_REDIS_SAVE_INSTANCES=true
     volumes:
       - evolution_instances:/evolution/instances
     depends_on:
