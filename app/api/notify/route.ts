@@ -120,9 +120,9 @@ function getWelcomeEmailHtml(name: string, planName: string) {
       @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap');
     </style>
     <div style="background-color: #0c0d0d; color: #ffffff; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: 1px solid #27272a; border-radius: 24px;">
-      <!-- Logo Header Universal em JPG Estático (Substitui SVG removido por Webmails) -->
+      <!-- Logo Header Horizontal Universal em PNG Estático -->
       <div style="text-align: center; margin-bottom: 32px;">
-        <img src="https://tlin.cloud/web-app-manifest-512x512.png" alt="Tlin" width="64" height="64" style="display: block; margin: 0 auto; width: 64px; height: 64px; border-radius: 16px;" />
+        <img src="https://tlin.cloud/logo-horizontal-email.png" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
       </div>
       
       <!-- Main Title -->
@@ -135,7 +135,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
         <tr>
           <!-- Avatar da Tlin AI Injetado em JPG Universal à prova de bloqueio -->
           <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-            <img src="https://tlin.cloud/lia-perfil-email.jpg" alt="Lia" width="28" height="28" style="display: block; width: 28px; height: 28px; border-radius: 50%;" />
+            <img src="https://tlin.cloud/lia-perfil-email.jpg" alt="Lia" width="28" height="28" style="display: block; width: 28px; height: 28px; border-radius: 50%; background-color: #38e3ff;" />
           </td>
           <!-- Chat Bubble com Gradiente Deslumbrante Original -->
           <td valign="top" align="left">
@@ -148,17 +148,16 @@ function getWelcomeEmailHtml(name: string, planName: string) {
         </tr>
       </table>
       
-      <!-- Video Player Component (Thumbnail JPG Universal com Botão Play Centralizado Sobreposto) -->
-      <div style="margin-bottom: 32px; text-align: center;">
-        <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #27272a; line-height: 0;">
-          <!-- Thumbnail Image Universal JPG hospedada direto no edge de produção -->
-          <img src="https://tlin.cloud/platform-preview-email.jpg" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; aspect-ratio: 16/9; object-fit: cover; display: block; opacity: 0.9;" />
-          
-          <!-- Botão sobreposto no centro da imagem (Com ícone nativo ▶ à prova de remoção de SVGs) -->
-          <div style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ffffff; color: #0c0d0d; padding: 12px 24px; border-radius: 50px; border: 1px solid #e4e4e7; font-weight: 700; font-size: 14px; line-height: 1;">
-            ▶&nbsp;&nbsp;Assistir demo
-          </div>
+      <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável) -->
+      <div style="margin-bottom: 32px; text-align: center; background-color: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
+        <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
+          <img src="https://tlin.cloud/platform-preview-email.jpg" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
         </a>
+        <div style="padding: 16px; text-align: center; background-color: #18181b;">
+          <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0c0d0d; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
+            ▶&nbsp;&nbsp;Assistir demo
+          </a>
+        </div>
       </div>
       
       <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #e4e4e7; margin-bottom: 32px; text-align: center;">
