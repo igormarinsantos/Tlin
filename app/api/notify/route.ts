@@ -142,15 +142,15 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Seção Principal de Conteúdo -->
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 32px;">
               <tr>
-                <!-- Avatar da Tlin AI com Cache Buster Incremental -->
+                <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/lia-perfil-email.jpg?v=final4" alt="Lia" width="28" height="28" style="display: block; width: 28px; height: 28px; border-radius: 50%; background-color: #38e3ff;" />
+                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final5" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
-                <!-- Chat Bubble Blindado Nativamente via Nested Table com bgcolor absoluto -->
+                <!-- Chat Bubble Blindado Nativamente via Nested Table com texto branco e bgcolor roxo premium -->
                 <td valign="top" align="left">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse: separate; border-radius: 0px 20px 20px 20px; overflow: hidden;">
                     <tr>
-                      <td bgcolor="#38E3FF" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(90deg, #B597FF 0%, #38E3FF 100%); background-color: #38E3FF; color: #0c0d0d; font-weight: 600; font-size: 15px; line-height: 1.5; padding: 16px 20px; border-radius: 0px 20px 20px 20px; text-align: left;">
+                      <td bgcolor="#9333ea" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(90deg, #B597FF 0%, #38E3FF 100%); background-color: #9333ea; color: #ffffff; font-weight: 600; font-size: 15px; line-height: 1.5; padding: 16px 20px; border-radius: 0px 20px 20px 20px; text-align: left;">
                         Recebemos a sua solicitação com sucesso! Ficamos muito felizes pelo seu interesse em dar o próximo passo e escalar o faturamento da sua operação usando nossos agentes de Inteligência Artificial.
                       </td>
                     </tr>
@@ -164,7 +164,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável com Cache Buster) -->
             <div style="margin-bottom: 32px; text-align: center; background-color: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
               <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
-                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final4" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
+                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final5" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
               </a>
               <div style="padding: 16px; text-align: center; background-color: #18181b;">
                 <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0c0d0d; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
