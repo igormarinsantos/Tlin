@@ -387,7 +387,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-[10px] flex flex-col bg-[#0c0d0d] text-white overflow-hidden rounded-[40px] shadow-2xl border border-white/10"
+            className="fixed inset-2 sm:inset-[10px] flex flex-col bg-[#0c0d0d] text-white overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl border border-white/10"
           >
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B597FF]/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#38E3FF]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -402,7 +402,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </div>
 
             {/* Header */}
-            <div className="shrink-0 flex justify-end p-6 z-50">
+            <div className="shrink-0 flex justify-end p-4 sm:p-6 z-50">
               <button 
                 onClick={onClose} 
                 className="group relative text-sm font-bold text-white/40 hover:text-white transition-all overflow-hidden py-1 cursor-pointer"
@@ -454,12 +454,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </AnimatePresence>
 
             {/* Chat Container */}
-            <div className="flex-1 overflow-hidden relative flex flex-col px-6 sm:px-12">
+            <div className="flex-1 overflow-hidden relative flex flex-col px-4 sm:px-12">
                <div 
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
+                className="flex-1 overflow-y-auto pr-2 sm:pr-4 scrollbar-hide"
               >
-                <div className="min-h-full flex flex-col justify-start py-10 gap-12">
+                <div className="min-h-full flex flex-col justify-start py-4 sm:py-10 gap-6 sm:gap-12">
                   {chatHistory.filter(m => !m.text.includes("Que bom que voltou")).map((msg, idx) => {
                     const filteredHistory = chatHistory.filter(m => !m.text.includes("Que bom que voltou"));
                     const latestBotIdx = filteredHistory.map(m => m.role).lastIndexOf('bot');
@@ -487,27 +487,27 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="mt-8 flex flex-col gap-3 w-full max-w-md"
+                            className="mt-4 sm:mt-8 flex flex-col gap-2 sm:gap-3 w-full max-w-md"
                           >
                             {currentStep === 7 && (
-                              <div className="mb-6 p-6 rounded-3xl bg-white/5 border border-white/10 space-y-3">
-                                <div className="flex justify-between items-center text-sm">
+                              <div className="mb-4 sm:mb-6 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 space-y-2 sm:space-y-3">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                   <span className="text-zinc-500">Empresa:</span>
                                   <span className="font-bold text-white">{formData.name}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                   <span className="text-zinc-500">WhatsApp:</span>
                                   <span className="font-bold text-white">{formData.countryCode} {formData.phone}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                   <span className="text-zinc-500">Volume:</span>
                                   <span className="font-bold text-white">{formData.volume}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                   <span className="text-zinc-500">Equipe:</span>
                                   <span className="font-bold text-white">{formData.team}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                   <span className="text-zinc-500">E-mail:</span>
                                   <span className="font-bold text-[#38E3FF]">{formData.email}</span>
                                 </div>
@@ -518,7 +518,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               <button
                                 key={opt}
                                 onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
-                                className={`w-full text-left px-6 py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
+                                className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
                                   opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
                                   : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
@@ -549,7 +549,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </div>
 
             {/* Input & Footer Area - Fixed at the bottom */}
-            <div className="shrink-0 px-6 sm:px-12 pt-4 pb-10 z-20">
+            <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-4 sm:pb-10 z-20">
                 <AnimatePresence mode="wait">
                   {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
                     <>
@@ -561,7 +561,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.name.trim()) advanceChat(formData.name, 'name'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
                               <input 
                                 autoFocus 
                                 type="text" 
@@ -574,10 +574,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="Nome da empresa..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
                               />
-                              <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit">
-                                <span className={`text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                              <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
+                                <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
@@ -597,18 +597,18 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(isPhoneValid()) advanceChat(formData.phone, 'phone'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
                               <div className="relative shrink-0" ref={countryRef}>
                                 <button 
                                   type="button"
                                   onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
                                 >
-                                  <span className="text-xl leading-none">
+                                  <span className="text-lg sm:text-xl leading-none">
                                     {COUNTRIES.find(c => c.code === formData.countryCode)?.flag || '🇧🇷'}
                                   </span>
-                                  <span className="text-lg font-bold text-zinc-400">{formData.countryCode}</span>
-                                  <svg className={`w-4 h-4 text-zinc-500 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="m6 9 6 6 6-6" strokeWidth="3" /></svg>
+                                  <span className="text-base sm:text-lg font-bold text-zinc-400">{formData.countryCode}</span>
+                                  <svg className={`w-3 sm:w-4 h-3 sm:h-4 text-zinc-500 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="m6 9 6 6 6-6" strokeWidth="3" /></svg>
                                 </button>
                                 
                                 <AnimatePresence>
@@ -653,10 +653,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="Seu número aqui..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
                               />
-                              <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit">
-                                <span className={`text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                              <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
+                                <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
@@ -676,7 +676,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-4">
+                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
                               <input 
                                 autoFocus 
                                 type="email" 
@@ -689,10 +689,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   }
                                 }}
                                 placeholder="nome@empresa.com.br..." 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800" 
+                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0" 
                               />
-                              <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit">
-                                <span className={`text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
+                              <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">
+                                <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
@@ -707,7 +707,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   )}
                 </AnimatePresence>
 
-                <div className="mt-4 flex items-center justify-between text-[10px] font-black text-zinc-600 uppercase pt-4">
+                <div className="mt-2 sm:mt-4 flex items-center justify-between text-[10px] font-black text-zinc-600 uppercase pt-2 sm:pt-4">
                   <button onClick={handleBack} className="hover:text-zinc-400 flex items-center gap-2 transition-colors disabled:opacity-20" disabled={currentStep === 1 || currentStep >= 8}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="m15 18-6-6 6-6"/></svg>
                     Voltar

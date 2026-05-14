@@ -3,142 +3,139 @@
 import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Shield, FileText, Cookie } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useState, useMemo, Suspense } from "react";
+import { ENCYCLOPEDIA_DATA, TermEntry } from "@/lib/encyclopediaData";
 
-function LegalContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("termos");
+const CATEGORIES = ["Todos", "Termos de Uso", "Privacidade e LGPD", "Política de Cookies", "Glossário de IA"];
 
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab && ["termos", "privacidade", "cookies"].includes(tab)) {
-      setActiveTab(tab);
-    }
-  }, [searchParams]);
+function EncyclopediaContent() {
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    router.push(`/legal?tab=${tab}`, { scroll: false });
-  };
-
-  const tabs = [
-    { id: "termos", label: "Termos de Uso", icon: FileText },
-    { id: "privacidade", label: "Privacidade", icon: Shield },
-    { id: "cookies", label: "Cookies", icon: Cookie },
-  ];
+  const filteredTerms = useMemo(() => {
+    return ENCYCLOPEDIA_DATA.filter(term => {
+      const matchesCategory = selectedCategory === "Todos" || term.category === selectedCategory;
+      const matchesSearch = term.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            term.definition.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
 
   return (
     <main className="flex min-h-screen flex-col bg-white text-[#0c0d0d]">
-      <div className="max-w-4xl mx-auto px-6 py-24 md:py-32 w-full">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-32 w-full flex-1">
+        
+        {/* Navigation Link */}
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-[#B597FF] transition-colors mb-12 font-bold text-sm group"
+          className="inline-block text-zinc-400 hover:text-[#B597FF] transition-colors mb-12 font-bold text-xs sm:text-sm uppercase tracking-widest"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Voltar para Home
+          ← Voltar para a Página Inicial
         </Link>
 
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-bold tracking-tight mb-12"
-        >
-          Central <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">Jurídica</span>
-        </motion.h1>
-
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-12 bg-zinc-50 p-1.5 rounded-2xl border border-zinc-100 w-fit">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
-                  isActive 
-                    ? "bg-white text-[#B597FF] shadow-md border border-zinc-100" 
-                    : "text-zinc-500 hover:text-zinc-800 hover:bg-white/50"
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? "text-[#B597FF]" : "text-zinc-400"}`} />
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Header Section */}
+        <div className="max-w-3xl mb-16">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl sm:text-6xl font-black tracking-tight mb-4 text-[#0c0d0d]"
+          >
+            Enciclopédia <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">Tlin</span>
+          </motion.h1>
+          <p className="text-base sm:text-xl text-zinc-500 font-medium leading-relaxed">
+            Navegue pelos nossos termos jurídicos, políticas regulatórias e conceitos técnicos de Inteligência Artificial de maneira centralizada e transparente.
+          </p>
         </div>
 
-        {/* Content */}
-        <div className="min-h-[400px] relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.3 }}
-              className="prose prose-zinc max-w-none space-y-8 text-zinc-600 font-medium leading-relaxed"
-            >
-              {activeTab === "termos" && (
-                <div className="space-y-8">
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">1. Aceitação dos Termos</h2>
-                    <p>Ao acessar e utilizar a plataforma Tlin.ai, você concorda em cumprir e estar vinculado a estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deverá utilizar nossos serviços.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">2. Descrição do Serviço</h2>
-                    <p>A Tlin.ai fornece soluções de Inteligência Artificial para automação de vendas e atendimento via WhatsApp. Nossos agentes de IA são ferramentas de suporte e não substituem a responsabilidade final da empresa sobre a comunicação com seus clientes.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">3. Responsabilidades do Usuário</h2>
-                    <p>O usuário é responsável por manter a confidencialidade de sua conta e por todas as atividades que ocorram nela. É proibido o uso da plataforma para envio de spam, conteúdo ilegal ou qualquer prática que viole as políticas do WhatsApp/Meta.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">4. Propriedade Intelectual</h2>
-                    <p>Todo o conteúdo, algoritmos e tecnologias da Tlin.ai são de propriedade exclusiva da nossa empresa e protegidos por leis de direitos autorais e propriedade intelectual.</p>
-                  </section>
-                </div>
-              )}
+        {/* Search and Filter Layout */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-12 items-stretch lg:items-center justify-between border-b border-zinc-100 pb-8">
+          
+          {/* Categories Horizontal Scroll */}
+          <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide shrink-0">
+            {CATEGORIES.map((cat) => {
+              const isActive = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-300 border ${
+                    isActive 
+                      ? "bg-zinc-950 text-white border-zinc-950" 
+                      : "bg-white text-zinc-500 border-zinc-200 hover:border-[#B597FF]/40 hover:text-zinc-900"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
 
-              {activeTab === "privacidade" && (
-                <div className="space-y-8">
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">1. Coleta de Dados</h2>
-                    <p>Coletamos informações necessárias para a prestação de nossos serviços, incluindo dados de contato, interações com a IA e logs de utilização para fins de melhoria contínua e suporte.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">2. Uso das Informações</h2>
-                    <p>Seus dados são utilizados exclusivamente para operar a plataforma Tlin.ai, personalizar a experiência dos seus agentes e garantir a segurança da operação comercial.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">3. Segurança dos Dados</h2>
-                    <p>Implementamos medidas técnicas e organizacionais avançadas para proteger seus dados contra acessos não autorizados, perda ou alteração, em total conformidade com a LGPD.</p>
-                  </section>
-                </div>
-              )}
+          {/* Clean Search Input without icons or shadows */}
+          <div className="w-full lg:w-80 relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar termo ou definição..."
+              className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/50 text-sm font-bold text-zinc-900 outline-none focus:border-[#B597FF] focus:bg-white transition-all placeholder:text-zinc-400 placeholder:font-medium"
+            />
+          </div>
 
-              {activeTab === "cookies" && (
-                <div className="space-y-8">
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">1. O que são Cookies?</h2>
-                    <p>Cookies são pequenos arquivos de texto enviados para o seu navegador quando você visita nosso site. Eles nos ajudam a entender como você interage com a plataforma e a melhorar sua experiência de navegação.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">2. Cookies Essenciais</h2>
-                    <p>Estes são necessários para o funcionamento básico do site, como autenticação de usuário e salvamento de preferências de sessão. Sem eles, algumas funcionalidades podem não operar corretamente.</p>
-                  </section>
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0c0d0d] mb-4">3. Cookies Analíticos</h2>
-                    <p>Utilizamos ferramentas como Google Analytics para entender o volume de visitas e as páginas mais acessadas. Estes dados são coletados de forma anônima.</p>
-                  </section>
-                </div>
-              )}
-            </motion.div>
+        </div>
+
+        {/* Terms Encyclopedia Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[300px]">
+          <AnimatePresence>
+            {filteredTerms.length > 0 ? (
+              filteredTerms.map((term) => (
+                <motion.div
+                  layout
+                  key={term.id}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex"
+                >
+                  <Link
+                    href={`/legal/${term.id}`}
+                    className="w-full border border-zinc-100 bg-white hover:border-[#B597FF]/40 p-6 sm:p-8 rounded-[2rem] flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1"
+                  >
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md bg-zinc-50 border border-zinc-100 text-zinc-500 group-hover:border-[#B597FF]/20 group-hover:text-[#B597FF] transition-colors">
+                          {term.category}
+                        </span>
+                        
+                        <span className="text-xs font-bold text-zinc-300 group-hover:text-[#B597FF] transition-colors">
+                          Ler artigo →
+                        </span>
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 mt-2 group-hover:text-[#B597FF] transition-colors">
+                        {term.title}
+                      </h3>
+
+                      <p className="text-sm sm:text-base text-zinc-500 font-medium leading-relaxed mt-1 line-clamp-3">
+                        {term.definition}
+                      </p>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full py-20 text-center flex flex-col items-center gap-2"
+              >
+                <span className="text-lg font-bold text-zinc-400">Nenhum termo encontrado</span>
+                <p className="text-sm text-zinc-400 font-medium">Tente buscar por outras palavras-chave ou redefina os filtros.</p>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
+
       </div>
       <Footer />
     </main>
@@ -148,7 +145,7 @@ function LegalContent() {
 export default function LegalPage() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-white" />}>
-      <LegalContent />
+      <EncyclopediaContent />
     </Suspense>
   );
 }

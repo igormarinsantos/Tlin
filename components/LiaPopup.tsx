@@ -273,7 +273,7 @@ export function LiaPopup() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-[340px] sm:w-[420px] z-[150] rounded-[2.5rem] overflow-hidden p-[2px] h-[560px] max-h-[80vh]"
+            className="fixed bottom-4 left-3 right-3 sm:left-auto sm:bottom-24 sm:right-6 sm:w-[420px] z-[150] rounded-[2.5rem] overflow-hidden p-[2px] h-[560px] max-h-[85vh]"
           >
             {/* Animated Gradient Border Layer */}
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] pointer-events-none"
@@ -314,7 +314,7 @@ export function LiaPopup() {
               </div>
 
               {/* Scrollable Content */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10">
+              <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10">
                 
                 {messages.length === 0 ? (
                   <div className="flex-1 flex flex-col pt-1 pb-6">
@@ -328,14 +328,14 @@ export function LiaPopup() {
                       <div className="grid grid-cols-1 gap-1.5">
                         <button 
                           onClick={() => setInputValue(t.liaPopup.suggestion1)} 
-                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-5"
+                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-4 sm:px-5"
                         >
                           <span className="text-[13px] text-zinc-700 font-bold leading-tight">{t.liaPopup.suggestion1}</span>
                         </button>
 
                         <button 
                           onClick={() => setInputValue(t.liaPopup.suggestion2)} 
-                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-5"
+                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-4 sm:px-5"
                         >
                           <span className="text-[13px] text-zinc-700 font-bold leading-tight">{t.liaPopup.suggestion2}</span>
                         </button>
@@ -415,7 +415,7 @@ export function LiaPopup() {
                 )}
               </div>
 
-              <div className="px-6 pb-5 bg-transparent shrink-0 z-10 mt-auto">
+              <div className="px-4 sm:px-6 pb-4 sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-zinc-200/50 rounded-[1.5rem] bg-white flex flex-col focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'p-2 py-2.5' : 'p-3 py-4'
                  }`}>
@@ -456,7 +456,7 @@ export function LiaPopup() {
       {/* Floating Buttons: Only visible after Hero animation is done */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
         <AnimatePresence>
-          {canShow && (
+          {canShow && !isOpen && (
             <>
               {/* Lia Button */}
               <motion.div

@@ -157,11 +157,11 @@ function FeatureCard({
         </div>
 
         <div className="h-[480px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
-          <div className="w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden relative flex items-center justify-center p-[2px]">
+          <div className="w-full h-full rounded-t-[2rem] rounded-b-none md:rounded-[3rem] overflow-hidden relative flex items-center justify-center pt-[2px] px-[2px] pb-0 md:p-[2px]">
             <div className="absolute inset-[-100%] opacity-100 animate-[spin_4s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
             />
-            <div className="absolute inset-[2px] bg-[#F8F6FF] rounded-[1.9rem] md:rounded-[2.9rem] z-0" />
+            <div className="absolute top-[2px] inset-x-[2px] bottom-0 md:inset-[2px] bg-[#F8F6FF] rounded-t-[1.9rem] rounded-b-none md:rounded-[2.9rem] z-0" />
             <div className="relative z-10 w-full h-full">
               {feature.id === "f1" ? (
                 <ObjectionAnimation />
@@ -176,6 +176,8 @@ function FeatureCard({
               )}
             </div>
           </div>
+          {/* Mobile deep gradient overlay to completely cover the bottom border/fade into white bg */}
+          <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-white via-white/95 to-transparent z-40 pointer-events-none md:hidden" />
         </div>
 
       </motion.div>

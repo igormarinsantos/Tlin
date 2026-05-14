@@ -402,13 +402,15 @@ export function Hero() {
         {/* Mascot Follower (PC Only) */}
         <AnimatePresence>
           {phase === "done" && lastInlinePos.x !== 0 && (
-            <MascotFollower 
-              initialX={lastInlinePos.x} 
-              initialY={lastInlinePos.y} 
-              isNearCta={isCtaHovered || isDemoHovered}
-              globalMouseX={globalMouseX}
-              globalMouseY={globalMouseY}
-            />
+            <div className="hidden lg:block">
+              <MascotFollower 
+                initialX={lastInlinePos.x} 
+                initialY={lastInlinePos.y} 
+                isNearCta={isCtaHovered || isDemoHovered}
+                globalMouseX={globalMouseX}
+                globalMouseY={globalMouseY}
+              />
+            </div>
           )}
         </AnimatePresence>
 
@@ -423,20 +425,18 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
 
   return (
     <motion.div
-      initial={{ x: "-10vw", y: "0px", opacity: 0 }}
+      initial={{ x: "-15vw", y: "0px", opacity: 1 }}
       animate={{ 
-        x: ["-10vw", "110vw"],
+        x: ["-15vw", "115vw"],
         y: ["0px", "25px", "-15px", "30px", "0px"], 
         rotate: [15, -10, 20, -15, 15],
-        opacity: 1
       }}
       transition={{ 
-        x: { duration: 10, repeat: Infinity, ease: "linear" },
-        y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
-        rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-        opacity: { duration: 1 }
+        x: { duration: 12, repeat: Infinity, ease: "linear" },
+        y: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+        rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
       }}
-      className="absolute top-[18%] w-8 h-8 z-20 lg:hidden pointer-events-none flex items-center justify-center"
+      className="absolute left-0 top-[18%] w-8 h-8 z-20 lg:hidden pointer-events-none flex items-center justify-center"
     >
       <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={32} height={32} priority />
     </motion.div>
@@ -564,7 +564,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
         position: "fixed",
         left: 0,
         top: 0,
-        display: isScrolledPast ? "none" : "block",
+        display: isScrolledPast ? "none" : undefined,
         opacity: isScrolledPast ? 0 : springOpacity,
         scale: isScrolledPast ? 0 : springScale,
         x: springX,
