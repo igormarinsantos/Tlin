@@ -123,25 +123,26 @@ function getWelcomeEmailHtml(name: string, planName: string) {
         color-scheme: light dark;
         supported-color-schemes: light dark;
       }
-      /* Força a preservação do fundo escuro cromático no aplicativo Gmail Mobile via classe dedicada */
+      /* Sinaliza ao Gmail Mobile que o e-mail deve se fundir nativamente com o tema escuro do celular, evitando a injeção da camada branca/cinza de legibilidade */
       @media screen and (max-width: 600px) {
-        .g-main-bg {
-          background-color: #0b061a !important;
+        .g-main-table, .g-card-wrap {
+          background-color: transparent !important;
           background-image: none !important;
         }
       }
     </style>
-    <!-- Tabela Externa com Fundo Cromático da Marca (Poupado pelo motor de auto-inversão do Gmail) -->
-    <table role="presentation" class="g-main-bg" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0b061a" style="background-color: #0b061a; width: 100%;">
+    <!-- Tabela Externa com Fundo Preto no PC e Transparente no Mobile -->
+    <table role="presentation" class="g-main-table" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#0c0d0d" style="background-color: #0c0d0d; width: 100%;">
       <tr>
-        <td align="center" style="padding: 20px 12px; background-color: #0b061a;">
-          <div class="g-main-bg" style="background-color: #0b061a; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
+        <td align="center" style="padding: 20px 12px;">
+          <!-- Card Interno Transparente para fundir-se ao canvas sem acionar caixas brancas/cinzas no aplicativo móvel -->
+          <div class="g-card-wrap" style="background-color: transparent; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: none; border-radius: 24px;">
             <!-- Logo Header Horizontal Universal em PNG Estático -->
             <div style="text-align: center; margin-bottom: 32px;">
-              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final12" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
+              <img src="https://tlin.cloud/logo-horizontal-email.png?v=final14" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
             </div>
             
-            <!-- Main Title Puro e Elegante sobre o Fundo Cromático Blindado -->
+            <!-- Main Title Puro e Elegante sobre o Fundo Nativo -->
             <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 0; margin-bottom: 24px; line-height: 1.3; text-align: center;">
               Olá, <span style="color: #38E3FF;">${name}</span>! <br/>Bem-vindo à Tlin 🚀
             </h2>
