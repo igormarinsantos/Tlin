@@ -134,9 +134,9 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <img src="https://tlin.cloud/logo-horizontal-email.png?v=final5" alt="Tlin" width="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
             </div>
             
-            <!-- Main Title Blindado Nativamente com Off-White Seguro -->
-            <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; color: #fcfcfc; margin-top: 0; margin-bottom: 24px; line-height: 1.3;">
-              Olá, <span style="color: #38E3FF;">${name}</span>! Bem-vindo à Tlin 🚀
+            <!-- Main Title Blindado Nativamente com Gradient Text Lock -->
+            <h2 style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 800; margin-top: 0; margin-bottom: 24px; line-height: 1.3;">
+              <span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Olá, </span><span style="color: #38E3FF; background-image: linear-gradient(#38e3ff, #38e3ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">${name}</span><span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">! Bem-vindo à Tlin 🚀</span>
             </h2>
             
             <!-- Seção Principal de Conteúdo -->
@@ -144,14 +144,16 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final6" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final7" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
-                <!-- Chat Bubble Blindado Nativamente via Nested Table com texto off-white e bgcolor roxo premium -->
+                <!-- Chat Bubble Blindado Nativamente via Nested Table com texto gradient lock e bgcolor roxo premium -->
                 <td valign="top" align="left">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse: separate; border-radius: 0px 20px 20px 20px; overflow: hidden;">
                     <tr>
-                      <td bgcolor="#9333ea" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(90deg, #B597FF 0%, #38E3FF 100%); background-color: #9333ea; color: #fcfcfc; font-weight: 600; font-size: 15px; line-height: 1.5; padding: 16px 20px; border-radius: 0px 20px 20px 20px; text-align: left;">
-                        Recebemos a sua solicitação com sucesso! Ficamos muito felizes pelo seu interesse em dar o próximo passo e escalar o faturamento da sua operação usando nossos agentes de Inteligência Artificial.
+                      <td bgcolor="#9333ea" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(90deg, #B597FF 0%, #38E3FF 100%); background-color: #9333ea; padding: 16px 20px; border-radius: 0px 20px 20px 20px; text-align: left;">
+                        <span style="color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 15px; line-height: 1.5; display: inline-block;">
+                          Recebemos a sua solicitação com sucesso! Ficamos muito felizes pelo seu interesse em dar o próximo passo e escalar o faturamento da sua operação usando nossos agentes de Inteligência Artificial.
+                        </span>
                       </td>
                     </tr>
                   </table>
@@ -164,7 +166,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component (Controle Centralizado como Painel Inferior Inquebrável com Cache Buster) -->
             <div style="margin-bottom: 32px; text-align: center; background-color: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden;">
               <a href="https://tlin.cloud#demo" target="_blank" style="display: block; text-decoration: none; line-height: 0;">
-                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final6" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
+                <img src="https://tlin.cloud/platform-preview-email.jpg?v=final7" alt="Demonstração da Plataforma Tlin" style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; opacity: 0.95;" />
               </a>
               <div style="padding: 16px; text-align: center; background-color: #18181b;">
                 <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #0c0d0d; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; text-align: center;">
@@ -173,8 +175,10 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               </div>
             </div>
       
-      <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #e4e4e7; margin-bottom: 32px; text-align: center;">
-        Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
+      <p style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; margin-bottom: 32px; text-align: center;">
+        <span style="color: #e4e4e7; background-image: linear-gradient(#e4e4e7, #e4e4e7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+          Nossos especialistas já estão analisando o seu perfil para preparar uma demonstração personalizada. Se quiser acelerar o seu atendimento agora mesmo, clique no botão abaixo:
+        </span>
       </p>
       
       <!-- Gorgeous CTA Button Original Deslumbrante -->
