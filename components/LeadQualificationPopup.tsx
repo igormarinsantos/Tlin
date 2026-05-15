@@ -396,13 +396,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-[10px] bg-black/60 backdrop-blur-md">
+        <div className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center p-2 sm:p-[10px] bg-black/60 backdrop-blur-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full max-w-[calc(100vw-20px)] border rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+            className={`relative w-full h-full max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
               currentStep === 8 
                 ? 'border-zinc-200' 
                 : 'border-white/10'
