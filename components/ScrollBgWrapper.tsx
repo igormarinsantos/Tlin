@@ -12,7 +12,7 @@ export function ScrollBgWrapper({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className={`w-full min-h-screen transition-all duration-700 ${isFocusActive ? 'pricing-focus-active' : ''}`}>
+    <div className={`w-full min-h-[100svh] transition-all duration-700 ${isFocusActive ? 'pricing-focus-active' : ''}`}>
       {children}
     </div>
   );

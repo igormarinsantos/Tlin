@@ -20,7 +20,7 @@ const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificat
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col text-[#0c0d0d] bg-white">
+    <main className="flex min-h-[100svh] flex-col text-[#0c0d0d] bg-white">
       <GlobalBackground />
       <ScrollBgWrapper>
         {/* ATTENTION - Hero is priority */}

@@ -61,7 +61,7 @@ export function TextReveal() {
       className="relative w-full bg-white"
       style={{ height: "200vh" }}
     >
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+      <div className="sticky top-0 h-[100svh] flex items-center justify-center overflow-hidden">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-12">
           <div 
             className="flex flex-wrap justify-center font-bold tracking-tight text-center gap-x-[0.3em] gap-y-[0.1em]"
