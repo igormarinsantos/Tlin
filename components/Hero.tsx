@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { m, LazyMotion, domAnimation, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
@@ -223,14 +223,14 @@ export function Hero() {
 
   const Cursor = () => (
     <span className="relative inline-flex w-0 h-[1em] items-center shrink-0" style={{ visibility: phase === "done" ? "hidden" : "visible" }}>
-      <motion.span 
+      <m.span 
         animate={phase === "thinking" ? { opacity: [1, 0.4, 1], scale: [1, 1.05, 1] } : { opacity: 1, scale: 1 }}
         transition={phase === "thinking" ? { duration: 0.8, repeat: Infinity } : { duration: 0 }}
         className="absolute left-1 md:left-2 flex items-center"
         style={{ width: "0.8em", height: "0.8em" }}
       >
         <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin IA Cursor" width={32} height={32} priority />
-      </motion.span>
+      </m.span>
     </span>
   );
 
@@ -243,8 +243,9 @@ export function Hero() {
   const uiSpringY = useSpring(uiMouseY, { damping: 25, stiffness: 150 });
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-screen pt-40 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
+    <LazyMotion features={domAnimation}>
+      <section ref={containerRef} className="relative w-full min-h-screen pt-40 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
           <h1 className="text-[36px] xs:text-[42px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-6 min-h-[4em] md:min-h-[2.5em] [text-wrap:balance]">
@@ -298,17 +299,17 @@ export function Hero() {
             })}
           </h1>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 15 }}
             animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
             transition={{ duration: 0.8 }}
             className="text-zinc-500 font-medium text-base md:text-lg max-w-2xl mx-auto text-center mb-10"
           >
             {t.hero.subtitle}
-          </motion.p>
+          </m.p>
         </div>
 
-        <motion.div 
+        <m.div 
           initial={{ opacity: 0, y: 20 }}
           animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -342,7 +343,7 @@ export function Hero() {
             </button>
             <AnimatePresence>
               {isCtaHovered && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -356,7 +357,7 @@ export function Hero() {
                       <span className="text-[10px] font-bold tracking-wide leading-none">{t.hero.demoHover}</span>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
@@ -383,7 +384,7 @@ export function Hero() {
             </div>
             <AnimatePresence>
               {isDemoHovered && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -401,11 +402,11 @@ export function Hero() {
                   >
                     <source src="/RoboCamera.mp4" type="video/mp4" />
                   </video>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </a>
-        </motion.div>
+        </m.div>
 
         {/* Mascot Follower (PC Only) - Desmontado no Mobile para poupar CPU/GPU */}
         <AnimatePresence>
@@ -422,7 +423,8 @@ export function Hero() {
 
         {/* Mascot Patrol (Mobile Only) */}
         <MobileMascot isFinished={isFinished} />
-    </section>
+      </section>
+    </LazyMotion>
   );
 }
 
@@ -430,7 +432,7 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
   if (!isFinished) return null;
 
   return (
-    <motion.div
+    <m.div
       initial={{ x: "-15vw", y: "0px", opacity: 1 }}
       animate={{ 
         x: ["-15vw", "115vw"],
@@ -445,7 +447,7 @@ function MobileMascot({ isFinished }: { isFinished: boolean }) {
       className="absolute left-0 top-[18%] w-8 h-8 z-20 lg:hidden pointer-events-none flex items-center justify-center"
     >
       <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={32} height={32} priority />
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -581,7 +583,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
   }, [isNearCta, isAbductedGlobal, isScrolledPast, globalMouseX, globalMouseY, initialX, initialY]);
 
   return (
-    <motion.div
+    <m.div
       initial={false}
       animate={{ opacity: 1, scale: 1 }}
       style={{
@@ -603,6 +605,6 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       className="hidden lg:block"
     >
       <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin Mascot" width={32} height={32} priority />
-    </motion.div>
+    </m.div>
   );
 }

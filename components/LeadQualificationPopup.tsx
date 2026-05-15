@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
-import confetti from 'canvas-confetti';
+// confetti is dynamically imported
 
 type Message = {
   role: 'bot' | 'user';
@@ -165,12 +165,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       if (!confettiFired.current) {
         confettiFired.current = true;
         console.log("SUCCESS SCREEN REACHED - Triggering Confetti and Timer");
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#B597FF', '#38E3FF', '#ffffff'],
-          zIndex: 999
+        import('canvas-confetti').then((confettiModule) => {
+          const confetti = confettiModule.default;
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#B597FF', '#38E3FF', '#ffffff'],
+            zIndex: 999
+          });
         });
       }
 
@@ -263,7 +266,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       return;
     }
 
-    if (currentStep === 8 && (userValue === "Reiniciar formulário" || userValue === "Fazer uma nova solicitação")) {
+    if (currentStep === 8 && (userValue === "Reiniciar formulário" || userValue === t?.leadQualify?.newRequest || userValue === "Fazer uma nova solicitação")) {
       resetForm();
       return;
     }
@@ -284,7 +287,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
         setCurrentStep(prev => prev + 1);
         
-        if (currentStep === 7 && userValue === "Confirmar dados") {
+        if (currentStep === 7 && (userValue === "Confirmar dados" || userValue === t?.leadQualify?.confirm)) {
           fetch('/api/notify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -319,7 +322,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         rebuiltHistory.push({ role: 'bot', text: getQuestion(3, formData) });
       }
       if (targetStep >= 4) {
-        rebuiltHistory.push({ role: 'user', text: "Sim, está correto" });
+        rebuiltHistory.push({ role: 'user', text: t?.leadQualify?.yesCorrect || "Sim, está correto" });
         rebuiltHistory.push({ role: 'bot', text: getQuestion(4, formData) });
       }
       if (targetStep >= 5) {
@@ -443,7 +446,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
                   <div className="max-w-2xl w-full flex flex-col items-center gap-12">
                     <div className="w-full">
-                      <TypewriterQuestion text="[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?" />
+                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || "[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?"} />
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
@@ -459,7 +462,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         }}
                         className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-black text-lg sm:text-xl shadow-2xl shadow-purple-500/20 transition-all active:scale-[0.98] hover:opacity-90"
                       >
-                        Continuar
+                        {t?.leadQualify?.resumeContinue || "Continuar"}
                       </button>
                       <button
                         onClick={() => {
@@ -468,7 +471,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         }}
                         className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 font-bold text-lg sm:text-xl transition-all hover:text-white hover:bg-white/10 active:scale-[0.98]"
                       >
-                        Recomeçar
+                        {t?.leadQualify?.resumeRestart || "Recomeçar"}
                       </button>
                     </div>
                   </div>
@@ -530,7 +533,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   onClick={() => setEditingField('name')}
                                   className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
                                 >
-                                  <span className="text-zinc-500">Empresa:</span>
+                                  <span className="text-zinc-500">{t?.leadQualify?.fields?.company || "Empresa"}:</span>
                                   <span className="font-bold text-white flex items-center gap-2">
                                     {formData.name} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
@@ -539,7 +542,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   onClick={() => setEditingField('phone')}
                                   className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
                                 >
-                                  <span className="text-zinc-500">WhatsApp:</span>
+                                  <span className="text-zinc-500">{t?.leadQualify?.fields?.whatsapp || "WhatsApp"}:</span>
                                   <span className="font-bold text-white flex items-center gap-2">
                                     {formData.countryCode} {formData.phone} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
@@ -548,7 +551,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   onClick={() => setEditingField('volume')}
                                   className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
                                 >
-                                  <span className="text-zinc-500">Volume:</span>
+                                  <span className="text-zinc-500">{t?.leadQualify?.fields?.volume || "Volume"}:</span>
                                   <span className="font-bold text-white flex items-center gap-2">
                                     {formData.volume} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
@@ -557,7 +560,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   onClick={() => setEditingField('team')}
                                   className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
                                 >
-                                  <span className="text-zinc-500">Equipe:</span>
+                                  <span className="text-zinc-500">{t?.leadQualify?.fields?.team || "Equipe"}:</span>
                                   <span className="font-bold text-white flex items-center gap-2">
                                     {formData.team} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
@@ -566,7 +569,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   onClick={() => setEditingField('email')}
                                   className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
                                 >
-                                  <span className="text-zinc-500">E-mail:</span>
+                                  <span className="text-zinc-500">{t?.leadQualify?.fields?.email || "E-mail"}:</span>
                                   <span className="font-bold text-[#38E3FF] flex items-center gap-2">
                                     {formData.email} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
@@ -582,7 +585,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                 key={opt}
                                 onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
                                 className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
-                                  opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
+                                  opt === t?.leadQualify?.confirm || opt === t?.leadQualify?.yesCorrect || opt === t?.leadQualify?.newRequest || opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
                                   : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
                                 }}`}

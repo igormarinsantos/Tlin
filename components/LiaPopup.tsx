@@ -319,8 +319,8 @@ export function LiaPopup() {
                 {messages.length === 0 ? (
                   <div className="flex-1 flex flex-col pt-1 pb-6">
                     <div className="mb-3 mt-1">
-                      <h2 className="text-xl font-black bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent mb-1 tracking-tight">Como posso te ajudar?</h2>
-                      <p className="text-[12px] text-zinc-500 font-medium leading-tight">Selecione um tópico abaixo para começar ou pergunte qualquer coisa.</p>
+                      <h2 className="text-xl font-black bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent mb-1 tracking-tight">{t.liaPopup.greetingTitle}</h2>
+                      <p className="text-[12px] text-zinc-500 font-medium leading-tight">{t.liaPopup.greetingSubtitle}</p>
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -354,8 +354,8 @@ export function LiaPopup() {
                           </svg>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[14px] font-bold leading-tight mb-0.5">Falar com a Equipe</span>
-                          <span className="text-[11px] text-white/80 font-medium">Atendimento humano via WhatsApp</span>
+                          <span className="text-[14px] font-bold leading-tight mb-0.5">{t.liaPopup.whatsappTeamTitle}</span>
+                          <span className="text-[11px] text-white/80 font-medium">{t.liaPopup.whatsappTeamSubtitle}</span>
                         </div>
                       </button>
                     </div>
