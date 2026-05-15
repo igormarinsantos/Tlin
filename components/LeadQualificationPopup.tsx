@@ -385,6 +385,61 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className={`relative w-full h-full max-w-[calc(100vw-20px)] bg-[#0c0d0d] border border-white/10 rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700`}
           >
+            {/* Overlay de Retomada de Sessão */}
+            <AnimatePresence>
+              {showResumeOverlay && savedState && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-[400] flex items-center justify-center bg-[#0c0d0d]/95 backdrop-blur-[60px] text-center p-6 sm:p-12"
+                >
+                  {/* Botão Fechar no Overlay */}
+                  <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
+                    <button
+                      onClick={onClose}
+                      className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
+                    >
+                      <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
+                        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="max-w-2xl w-full flex flex-col items-center gap-12">
+                    <div className="w-full">
+                      <TypewriterQuestion text="[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?" />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                      <button
+                        onClick={() => {
+                          if (savedState) {
+                            setCurrentStep(savedState.currentStep);
+                            setFormData(savedState.formData);
+                            setChatHistory(savedState.chatHistory);
+                          }
+                          setShowResumeOverlay(false);
+                          isLiveSession.current = true;
+                        }}
+                        className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-black text-lg sm:text-xl shadow-2xl shadow-purple-500/20 transition-all active:scale-[0.98] hover:opacity-90"
+                      >
+                        Continuar
+                      </button>
+                      <button
+                        onClick={() => {
+                          resetForm();
+                          setShowResumeOverlay(false);
+                        }}
+                        className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 font-bold text-lg sm:text-xl transition-all hover:text-white hover:bg-white/10 active:scale-[0.98]"
+                      >
+                        Recomeçar
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Header / Botão Fechar */}
             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
@@ -852,61 +907,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         </div>
       )}
 
-      {/* Overlay de Retomada de Sessão */}
-      <AnimatePresence>
-        {isOpen && showResumeOverlay && savedState && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-[400] flex items-center justify-center p-6 sm:p-12 bg-[#0c0d0d] backdrop-blur-[40px] text-center"
-          >
-            {/* Botão Fechar no Overlay */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
-              <button
-                onClick={onClose}
-                className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
-              >
-                <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
-                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
-                </span>
-              </button>
-            </div>
-
-            <div className="max-w-4xl w-full flex flex-col items-center gap-12">
-              <div className="w-full">
-                <TypewriterQuestion text="[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?" />
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <button
-                  onClick={() => {
-                    if (savedState) {
-                      setCurrentStep(savedState.currentStep);
-                      setFormData(savedState.formData);
-                      setChatHistory(savedState.chatHistory);
-                    }
-                    setShowResumeOverlay(false);
-                    isLiveSession.current = true;
-                  }}
-                  className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-black text-lg sm:text-xl shadow-2xl shadow-purple-500/20 transition-all active:scale-[0.98] hover:opacity-90"
-                >
-                  Continuar
-                </button>
-                <button
-                  onClick={() => {
-                    resetForm();
-                    setShowResumeOverlay(false);
-                  }}
-                  className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 font-bold text-lg sm:text-xl transition-all hover:text-white hover:bg-white/10 active:scale-[0.98]"
-                >
-                  Recomeçar
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </AnimatePresence>,
     document.body
   );

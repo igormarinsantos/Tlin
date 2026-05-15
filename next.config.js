@@ -28,6 +28,29 @@ const nextConfig = {
 
   // ── Headers: Cache busting for static assets (resolves cache audit) ───────
   async headers() {
+    // Only apply aggressive caching in production to avoid stale files in development
+    if (process.env.NODE_ENV !== 'production') {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            },
+            {
+              key: 'Pragma',
+              value: 'no-cache',
+            },
+            {
+              key: 'Expires',
+              value: '0',
+            },
+          ],
+        },
+      ];
+    }
+
     return [
       {
         // Immutable cache for hashed static files (JS, CSS chunks)
