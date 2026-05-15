@@ -93,12 +93,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   });
   
   const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
-  const initialMsg = t.leadQualify.initialMsg;
-
-  const [chatHistory, setChatHistory] = useState<Message[]>([
-    { role: 'bot', text: initialMsg }
-  ]);
   
+  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const initialMsg = t?.leadQualify?.initialMsg || "";
   const [isTyping, setIsTyping] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
@@ -109,6 +106,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
   const hasAutoClosed = useRef(false);
+  const [showResumeOverlay, setShowResumeOverlay] = useState(false);
+  const [savedState, setSavedState] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -124,10 +123,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       const saved = localStorage.getItem("tlin_lead_qualify_state");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed?.currentStep && parsed?.formData && parsed?.chatHistory) {
-          setCurrentStep(parsed.currentStep);
-          setFormData(parsed.formData);
-          setChatHistory(parsed.chatHistory);
+        if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < 8) {
+          setSavedState(parsed);
+          setShowResumeOverlay(true);
         }
       }
     } catch (e) {
@@ -136,6 +134,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Initialize chat history when translation is ready
+  useEffect(() => {
+    if (t?.leadQualify && chatHistory.length === 0) {
+      setChatHistory([{ role: 'bot', text: t?.leadQualify?.initialMsg || "" }]);
+    }
+  }, [t, chatHistory.length]);
 
   // Salva automaticamente o progresso sempre que o usuário avança ou altera os dados
   useEffect(() => {
@@ -181,23 +186,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, [chatHistory, isTyping, currentStep]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      // Mantém os dados apenas se a sessão tiver sido restaurada de um carregamento prévio (não em live session)
-      if (currentStep > 1 && currentStep < 8 && !isLiveSession.current) {
-        setChatHistory(prev => {
-          const lastMsg = prev[prev.length - 1];
-          if (lastMsg && !lastMsg.text.includes("Que bom que voltou")) {
-            return [...prev, { role: 'bot', text: "Que bom que voltou! Vamos continuar de onde paramos?" }];
-          }
-          return prev;
-        });
-      }
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [isOpen, currentStep]);
+  }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
 
   const resetForm = () => {
     isLiveSession.current = false;
@@ -221,36 +212,37 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     
     switch(step) {
       case 1: return initialMsg;
-      case 2: return t.leadQualify.step2;
-      case 3: return t.leadQualify.step3.replace("{phone}", `${data.countryCode} ${data.phone}`);
-      case 4: return t.leadQualify.step4;
-      case 5: return t.leadQualify.step5;
-      case 6: return t.leadQualify.step6;
-      case 7: return t.leadQualify.step7;
-      case 8: return t.leadQualify.step8.replace("{name}", data.name);
+      case 2: return t?.leadQualify?.step2 || "";
+      case 3: return t?.leadQualify?.step3?.replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
+      case 4: return t?.leadQualify?.step4 || "";
+      case 5: return t?.leadQualify?.step5 || "";
+      case 6: return t?.leadQualify?.step6 || "";
+      case 7: return t?.leadQualify?.step7 || "";
+      case 8: return t?.leadQualify?.step8?.replace("{name}", data.name) || "";
       default: return "";
     }
   };
 
   const getOptions = (step: number) => {
+    if (!t?.leadQualify) return null;
     switch(step) {
-      case 3: return [t.leadQualify.yesCorrect, t.leadQualify.noCorrect];
-      case 4: return t.leadQualify.volumeOptions;
-      case 5: return t.leadQualify.teamOptions;
-      case 7: return [t.leadQualify.confirm]; // Corrigir algo removido pois cada linha agora é editável de forma independente!
-      case 8: return [t.leadQualify.newRequest];
+      case 3: return [t?.leadQualify?.yesCorrect || "", t?.leadQualify?.noCorrect || ""];
+      case 4: return t?.leadQualify?.volumeOptions || [];
+      case 5: return t?.leadQualify?.teamOptions || [];
+      case 7: return [t?.leadQualify?.confirm || "Confirmar"];
+      case 8: return [t?.leadQualify?.newRequest || "Nova solicitação"];
       default: return null;
     }
   };
 
   const advanceChat = (userValue: string, field?: keyof typeof formData) => {
-    if (currentStep === 3 && userValue === t.leadQualify.noCorrect) {
+    if (t?.leadQualify && currentStep === 3 && userValue === t?.leadQualify?.noCorrect) {
       setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
         setCurrentStep(2);
-        setChatHistory(prev => [...prev, { role: 'bot', text: t.leadQualify.step2 }]);
+        setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.step2 || "" }]);
       }, 800);
       return;
     }
@@ -404,7 +396,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   : "text-zinc-400 hover:text-white"
                 }`}
               >
-                <span className="relative inline-block pb-0.5">{t.liaPopup.close}
+                <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
                 </span>
               </button>
@@ -490,7 +482,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                   </span>
                                 </button>
                                 <div className="text-[10px] text-zinc-500 text-center font-medium pt-2 border-t border-white/5">
-                                  {t.leadQualify.clickToEdit}
+                                  {t?.leadQualify?.clickToEdit || "Clique para editar"}
                                 </div>
                               </div>
                             )}
@@ -554,7 +546,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(formData.name.trim()) advanceChat(formData.name, 'name');
                                   }
                                 }}
-                                placeholder={t.leadQualify.placeholders.name} 
+                                placeholder={t?.leadQualify?.placeholders?.name || "Empresa..."} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
@@ -633,7 +625,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(isPhoneValid()) advanceChat(formData.phone, 'phone');
                                   }
                                 }}
-                                placeholder={t.leadQualify.placeholders.phone} 
+                                placeholder={t?.leadQualify?.placeholders?.phone || "WhatsApp..."} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
@@ -669,7 +661,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                     if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email');
                                   }
                                 }}
-                                placeholder={t.leadQualify.placeholders.email} 
+                                placeholder={t?.leadQualify?.placeholders?.email || "E-mail..."} 
                                 className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
                               />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">
@@ -859,6 +851,62 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           </motion.div>
         </div>
       )}
+
+      {/* Overlay de Retomada de Sessão */}
+      <AnimatePresence>
+        {isOpen && showResumeOverlay && savedState && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[400] flex items-center justify-center p-6 sm:p-12 bg-[#0c0d0d] backdrop-blur-[40px] text-center"
+          >
+            {/* Botão Fechar no Overlay */}
+            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
+              <button
+                onClick={onClose}
+                className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
+              >
+                <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
+                </span>
+              </button>
+            </div>
+
+            <div className="max-w-4xl w-full flex flex-col items-center gap-12">
+              <div className="w-full">
+                <TypewriterQuestion text="[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?" />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                <button
+                  onClick={() => {
+                    if (savedState) {
+                      setCurrentStep(savedState.currentStep);
+                      setFormData(savedState.formData);
+                      setChatHistory(savedState.chatHistory);
+                    }
+                    setShowResumeOverlay(false);
+                    isLiveSession.current = true;
+                  }}
+                  className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-black text-lg sm:text-xl shadow-2xl shadow-purple-500/20 transition-all active:scale-[0.98] hover:opacity-90"
+                >
+                  Continuar
+                </button>
+                <button
+                  onClick={() => {
+                    resetForm();
+                    setShowResumeOverlay(false);
+                  }}
+                  className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 font-bold text-lg sm:text-xl transition-all hover:text-white hover:bg-white/10 active:scale-[0.98]"
+                >
+                  Recomeçar
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>,
     document.body
   );
