@@ -7,11 +7,10 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
 
-// Lazy load heavy inner animations
-const SalesNotification = dynamic(() => import("./SalesNotification").then(m => m.SalesNotification), { ssr: false });
-const FunnelAnimation = dynamic(() => import("./FunnelAnimation").then(m => m.FunnelAnimation), { ssr: false });
-const WhatsAppQualifyAnimation = dynamic(() => import("./WhatsAppQualifyAnimation").then(m => m.WhatsAppQualifyAnimation), { ssr: false });
-const ObjectionAnimation = dynamic(() => import("./ObjectionAnimation").then(m => m.ObjectionAnimation), { ssr: false });
+import { SalesNotification } from "./SalesNotification";
+import { FunnelAnimation } from "./FunnelAnimation";
+import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
+import { ObjectionAnimation } from "./ObjectionAnimation";
 
 function FeatureMedia({ id }: { id: string }) {
   const gradients: Record<string, string> = {
