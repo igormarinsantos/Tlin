@@ -396,7 +396,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center p-2 sm:p-[10px] bg-black/60 backdrop-blur-md">
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center p-2 sm:p-[10px] bg-black/60 backdrop-blur-md"
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -946,7 +952,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
               </motion.div>
             )}
           </motion.div>
-        </div>
+        </motion.div>
       )}
 
     </AnimatePresence>,
