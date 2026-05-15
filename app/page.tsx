@@ -7,13 +7,13 @@ import { TextReveal } from "@/components/TextReveal";
 import { ScrollBgWrapper } from "@/components/ScrollBgWrapper";
 import { GlobalBackground } from "@/components/GlobalBackground";
 
-const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
-const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(mod => mod.RoiCalculator));
-const Pricing = dynamic(() => import("@/components/Pricing").then(mod => mod.Pricing));
-const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials));
-const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
-const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(mod => mod.FooterBanner));
-const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer));
+import { Features } from "@/components/Features";
+import { RoiCalculator } from "@/components/RoiCalculator";
+import { Pricing } from "@/components/Pricing";
+import { Testimonials } from "@/components/Testimonials";
+import { Faq } from "@/components/Faq";
+import { FooterBanner } from "@/components/FooterBanner";
+import { Footer } from "@/components/Footer";
 const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(mod => mod.LiaPopup), { ssr: false });
 const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificationPopup").then(mod => mod.LeadQualificationPopup), { ssr: false });
 
