@@ -477,7 +477,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </AnimatePresence>
 
             {/* Header / Botão Fechar */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-50">
+            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100]">
               <button
                 onClick={onClose}
                 className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
@@ -904,7 +904,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={120} height={42} priority />
                 </div>
 
-                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl">
+                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-4xl w-full whitespace-nowrap overflow-visible">
                   Solicitação enviada com sucesso!
                 </h2>
                 
