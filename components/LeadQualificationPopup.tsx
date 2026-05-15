@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
+import confetti from 'canvas-confetti';
 
 type Message = {
   role: 'bot' | 'user';
@@ -157,18 +158,33 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     }
   }, [currentStep, formData, chatHistory, mounted]);
 
-  // Controle de Fechamento Automático em 3 segundos na primeira vez que atinge a tela de sucesso
+  // Controle de Fechamento Automático em 10 segundos na primeira vez que atinge a tela de sucesso
+  const confettiFired = useRef(false);
   useEffect(() => {
     if (currentStep === 8) {
-      if (isLiveSession.current && !hasAutoClosed.current) {
+      if (!confettiFired.current) {
+        confettiFired.current = true;
+        console.log("SUCCESS SCREEN REACHED - Triggering Confetti and Timer");
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#B597FF', '#38E3FF', '#ffffff'],
+          zIndex: 999
+        });
+      }
+
+      if (!hasAutoClosed.current) {
         hasAutoClosed.current = true;
         const timer = setTimeout(() => {
+          console.log("AUTO-CLOSING success screen after 10s");
           onClose();
-        }, 3000);
+        }, 10000);
         return () => clearTimeout(timer);
       }
     } else {
       hasAutoClosed.current = false;
+      confettiFired.current = false;
     }
   }, [currentStep, onClose]);
 
@@ -383,8 +399,27 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full max-w-[calc(100vw-20px)] bg-[#0c0d0d] border border-white/10 rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700`}
+            className={`relative w-full h-full max-w-[calc(100vw-20px)] border rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+              currentStep === 8 
+                ? 'border-zinc-200' 
+                : 'border-white/10'
+            }`}
+            style={{ backgroundColor: currentStep === 8 ? '#ffffff' : '#0c0d0d' }}
           >
+            {/* Elementos Visuais Animados (Estilo Lia) para o Sucesso */}
+            <AnimatePresence>
+              {currentStep === 8 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 pointer-events-none overflow-hidden"
+                >
+                  <div className="absolute -top-32 -right-32 w-80 h-80 bg-[#B597FF]/20 rounded-full blur-[80px] animate-pulse" />
+                  <div className="absolute top-1/2 -left-32 w-80 h-80 bg-[#38E3FF]/15 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+                </motion.div>
+              )}
+            </AnimatePresence>
             {/* Overlay de Retomada de Sessão */}
             <AnimatePresence>
               {showResumeOverlay && savedState && (
@@ -870,7 +905,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 </h2>
                 
                 <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
-                  Nossa equipe de especialistas já está analisando o perfil da <span className="text-zinc-950 underline decoration-2 underline-offset-4">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
+                  Nossa equipe de especialistas já está analisando o perfil da <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
@@ -884,7 +919,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
                       />
                       <div className="relative px-6 py-4 rounded-full bg-[#0c0d0d] text-white font-extrabold text-base sm:text-lg transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center shadow-xl">
-                        <span className="relative z-10 whitespace-nowrap">💬 Ir para o WhatsApp</span>
+                        <span className="relative z-10 whitespace-nowrap">Falar com a equipe</span>
                         <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
                       </div>
@@ -895,7 +930,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   <div className="relative flex-1">
                     <button
                       onClick={resetForm}
-                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg shadow-xl hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-100 whitespace-nowrap"
+                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-200 whitespace-nowrap"
                     >
                       Nova solicitação
                     </button>
