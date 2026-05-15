@@ -900,6 +900,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center z-50 my-auto"
               >
+                <div className="mb-8 opacity-90">
+                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={120} height={42} priority />
+                </div>
+
                 <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-3xl">
                   Solicitação enviada com sucesso!
                 </h2>
