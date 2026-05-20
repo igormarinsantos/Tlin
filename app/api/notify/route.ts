@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
 
     // 1. Evo API (Evolution API) integration para WhatsApp
     // Dispara mensagem de confirmação
-    const evoApiUrl = process.env.EVO_API_URL || "http://localhost:8080";
-    const evoApiKey = process.env.EVO_API_KEY || "tlin_super_secret_global_key_2026";
-    const evoInstanceName = process.env.EVO_INSTANCE_NAME || "IGOR";
+    const evoApiUrl = process.env.EVO_API_URL || "";
+    const evoApiKey = process.env.EVO_API_KEY || "";
+    const evoInstanceName = process.env.EVO_INSTANCE_NAME || "";
     let whatsappResponse = null;
 
     if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
@@ -74,8 +74,8 @@ export async function POST(req: NextRequest) {
 
     // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
     // Desobriga a inserção de variáveis de ambiente no painel da Vercel para funcionar instantaneamente
-    const smtpUser = process.env.SMTP_USER || "resend";
-    const smtpPass = process.env.SMTP_PASS || "re_8VppHXFD_6u7HhuUvymwWCPDKDmHcBTuV";
+    const smtpUser = process.env.SMTP_USER || "";
+    const smtpPass = process.env.SMTP_PASS || "";
     let emailSent = false;
 
     if (smtpUser && smtpPass) {
