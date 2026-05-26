@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     const evoApiKey = process.env.EVO_API_KEY || "";
     const evoInstanceName = process.env.EVO_INSTANCE_NAME || "";
     let whatsappResponse = null;
+    let whatsappError = null;
 
     if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
       // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
@@ -40,11 +41,8 @@ export async function POST(req: NextRequest) {
           const payload = {
             number: cleanPhone,
             text: text,
-            options: {
-              delay: calculatedDelay,
-              presence: "composing",
-              linkPreview: false
-            }
+            delay: calculatedDelay,
+            linkPreview: false
           };
 
           const res = await fetch(endpoint, {
@@ -56,7 +54,13 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify(payload)
           });
           
-          const jsonResponse = await res.json();
+          const responseText = await res.text();
+          const jsonResponse = responseText ? JSON.parse(responseText) : null;
+
+          if (!res.ok) {
+            throw new Error(`Evo API retornou HTTP ${res.status}: ${responseText}`);
+          }
+
           responses.push(jsonResponse);
           
           // Aguarda o término de um disparo antes do próximo para não encavalar
@@ -67,9 +71,11 @@ export async function POST(req: NextRequest) {
         console.log("Mensagens sequenciais do WhatsApp enviadas com sucesso!");
       } catch (err: any) {
         console.error("Erro ao disparar WhatsApp sequencial via Evo API:", err);
+        whatsappError = err.message || "Falha ao chamar a Evo API";
       }
     } else {
       console.log("Aviso: Variáveis da Evo API não estão configuradas corretamente. Pulando disparo de WhatsApp.");
+      whatsappError = "Variáveis EVO_API_URL, EVO_API_KEY, EVO_INSTANCE_NAME ou telefone ausentes";
     }
 
     // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
@@ -115,6 +121,7 @@ export async function POST(req: NextRequest) {
       success: true, 
       whatsappTriggered: !!whatsappResponse, 
       whatsappResponse,
+      whatsappError,
       emailSent 
     });
 
