@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     const evoInstanceName = process.env.EVO_INSTANCE_NAME || "";
     let whatsappResponse = null;
     let whatsappError = null;
+    let whatsappDebug = null;
 
     if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
       // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
       try {
         const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
         const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
+        whatsappDebug = getEvoDebugInfo(evoApiUrl, evoInstanceName);
         
         const responses = [];
 
@@ -71,11 +73,12 @@ export async function POST(req: NextRequest) {
         console.log("Mensagens sequenciais do WhatsApp enviadas com sucesso!");
       } catch (err: any) {
         console.error("Erro ao disparar WhatsApp sequencial via Evo API:", err);
-        whatsappError = err.message || "Falha ao chamar a Evo API";
+        whatsappError = formatErrorMessage(err);
       }
     } else {
       console.log("Aviso: Variáveis da Evo API não estão configuradas corretamente. Pulando disparo de WhatsApp.");
       whatsappError = "Variáveis EVO_API_URL, EVO_API_KEY, EVO_INSTANCE_NAME ou telefone ausentes";
+      whatsappDebug = getEvoDebugInfo(evoApiUrl, evoInstanceName);
     }
 
     // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
@@ -122,12 +125,42 @@ export async function POST(req: NextRequest) {
       whatsappTriggered: !!whatsappResponse, 
       whatsappResponse,
       whatsappError,
+      whatsappDebug,
       emailSent 
     });
 
   } catch (error: any) {
     console.error("Erro no endpoint /api/notify:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+function formatErrorMessage(error: any) {
+  const parts = [error?.message, error?.cause?.code, error?.cause?.message]
+    .filter(Boolean)
+    .map(String);
+
+  return parts.join(" | ") || "Falha ao chamar a Evo API";
+}
+
+function getEvoDebugInfo(evoApiUrl: string, evoInstanceName: string) {
+  try {
+    const url = evoApiUrl ? new URL(evoApiUrl) : null;
+
+    return {
+      evoApiUrlConfigured: !!evoApiUrl,
+      evoApiHost: url?.host || null,
+      evoApiProtocol: url?.protocol || null,
+      evoInstanceConfigured: !!evoInstanceName,
+    };
+  } catch {
+    return {
+      evoApiUrlConfigured: !!evoApiUrl,
+      evoApiHost: null,
+      evoApiProtocol: null,
+      evoInstanceConfigured: !!evoInstanceName,
+      evoApiUrlInvalid: true,
+    };
   }
 }
 
