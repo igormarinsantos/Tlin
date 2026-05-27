@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { name, phone, countryCode, volume, team, email, planName } = data;
+    const { name, phone, countryCode, volume, team, email, planName, utm } = data;
 
     const fullPhone = `${countryCode || "+55"}${phone || ""}`.replace(/\D/g, "");
 
@@ -99,17 +99,35 @@ export async function POST(req: NextRequest) {
       });
 
       const teamEmail = process.env.NOTIFICATION_EMAIL || "contato@tlin.cloud";
+
+      const internalMailOptions = {
+        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.cloud"}>`,
+        to: teamEmail,
+        subject: `Novo lead Tlin - ${name || "Empresa sem nome"} - ${planName || "Sem plano"}`,
+        html: getLeadNotificationHtml({
+          name,
+          phone,
+          countryCode,
+          volume,
+          team,
+          email,
+          planName,
+          utm,
+        }),
+      };
       
       const mailOptions = {
         from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.cloud"}>`,
         to: email || teamEmail,
-        bcc: email ? teamEmail : undefined, // Garante que a equipe comercial também receba uma cópia em tempo real
         subject: `Bem-vindo à Tlin, ${name || "Empreendedor"}! 👋`,
         html: getWelcomeEmailHtml(name || "Empreendedor", planName || "TLIN")
       };
 
       try {
         console.log(`Tentando enviar e-mail via Resend SMTP direto pelo código para: ${mailOptions.to}...`);
+        const internalInfo = await transporter.sendMail(internalMailOptions);
+        console.log("Notificacao interna enviada com sucesso! Resposta SMTP:", internalInfo.response);
+
         const info = await transporter.sendMail(mailOptions);
         console.log("E-mail enviado com sucesso! Resposta SMTP:", info.response);
         emailSent = true;
@@ -162,6 +180,62 @@ function getEvoDebugInfo(evoApiUrl: string, evoInstanceName: string) {
       evoApiUrlInvalid: true,
     };
   }
+}
+
+function escapeHtml(value: unknown) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatAttributionValue(value: unknown) {
+  const text = String(value || "").trim();
+  return text || "nao informado";
+}
+
+function getLeadNotificationHtml(lead: Record<string, any>) {
+  const utm = lead.utm || {};
+  const fullPhone = `${lead.countryCode || "+55"} ${lead.phone || ""}`.trim();
+  const cleanPhone = String(`${lead.countryCode || "+55"}${lead.phone || ""}`).replace(/\D/g, "");
+  const whatsappUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "https://wa.me/5511916248604";
+
+  const rows = [
+    ["Empresa", lead.name],
+    ["WhatsApp", fullPhone],
+    ["E-mail", lead.email],
+    ["Plano", lead.planName],
+    ["Volume de leads", lead.volume],
+    ["Equipe", lead.team],
+    ["Origem atual", `${formatAttributionValue(utm.last_utm_source)} / ${formatAttributionValue(utm.last_utm_medium)}`],
+    ["Campanha atual", utm.last_utm_campaign],
+    ["Termo atual", utm.last_utm_term],
+    ["Conteudo atual", utm.last_utm_content],
+    ["Primeira origem", `${formatAttributionValue(utm.first_utm_source)} / ${formatAttributionValue(utm.first_utm_medium)}`],
+    ["Primeira campanha", utm.first_utm_campaign],
+  ];
+
+  const tableRows = rows.map(([label, value]) => `
+    <tr>
+      <td style="padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: #52525b; font-size: 13px;">${escapeHtml(label)}</td>
+      <td style="padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 14px; font-weight: 700;">${escapeHtml(formatAttributionValue(value))}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #111827;">
+      <h1 style="font-size: 22px; margin: 0 0 8px;">Novo lead qualificado Tlin</h1>
+      <p style="margin: 0 0 20px; color: #52525b;">Este lead confirmou os dados na landing page. A origem abaixo veio escondida da URL/cookies de UTM.</p>
+      <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+        ${tableRows}
+      </table>
+      <p style="margin: 22px 0 0;">
+        <a href="${escapeHtml(whatsappUrl)}" style="display: inline-block; background: #111827; color: #ffffff; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 700;">Abrir WhatsApp do lead</a>
+      </p>
+    </div>
+  `;
 }
 
 /**
