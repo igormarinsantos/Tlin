@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 import { SmoothScroll } from "@/components/SmoothScroll";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-9LQN3ZWCNS";
 
 export default function RootLayout({
   children,
