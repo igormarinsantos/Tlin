@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
+import { getUtmLeadPayload, trackConversion } from "@/lib/utm";
 // confetti is dynamically imported
 
 type Message = {
@@ -221,6 +222,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   };
 
   const handleWhatsAppRedirect = (data: typeof formData) => {
+    trackConversion('close_convert_lead', {
+      plan_name: planName || 'not_selected',
+      lead_volume: data.volume || 'not_set',
+      team_size: data.team || 'not_set',
+      lead_country_code: data.countryCode || '+55',
+    });
+
     const text = `Olá! Fiz uma solicitação no site da Tlin e gostaria de mais informações. 🚀`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -288,10 +296,21 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setCurrentStep(prev => prev + 1);
         
         if (currentStep === 7 && (userValue === "Confirmar dados" || userValue === t?.leadQualify?.confirm)) {
+          trackConversion('qualify_lead', {
+            plan_name: planName || 'not_selected',
+            lead_volume: updatedData.volume || 'not_set',
+            team_size: updatedData.team || 'not_set',
+            lead_country_code: updatedData.countryCode || '+55',
+          });
+
           fetch('/api/notify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...updatedData, planName })
+            body: JSON.stringify({
+              ...updatedData,
+              planName,
+              utm: getUtmLeadPayload(),
+            })
           })
           .then(res => res.json())
           .then(data => console.log("Status do envio:", data))

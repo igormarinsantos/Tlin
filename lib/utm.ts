@@ -168,20 +168,13 @@ declare global {
   }
 }
 
-/**
- * Sends UTM data as a GA4 custom event.
- * @param eventName - GA4 event name (default: 'utm_capture')
- */
-export function sendUtmToGA(eventName = 'utm_capture'): void {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
-    log('gtag not available yet, skipping GA send');
-    return;
-  }
+type EventParam = string | number | boolean | undefined;
 
+function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
   const first = getFirstTouch();
   const last  = getLastTouch();
 
-  const payload = {
+  const payload: Record<string, string | number | boolean> = {
     first_utm_source:   first.utm_source,
     first_utm_medium:   first.utm_medium,
     first_utm_campaign: first.utm_campaign,
@@ -194,8 +187,31 @@ export function sendUtmToGA(eventName = 'utm_capture'): void {
     last_utm_content:   last.utm_content,
   };
 
+  Object.entries(extraData).forEach(([key, value]) => {
+    if (value !== undefined) payload[key] = value;
+  });
+
+  return payload;
+}
+
+/**
+ * Sends UTM data as a GA4 custom event.
+ * @param eventName - GA4 event name (default: 'utm_capture')
+ */
+export function sendUtmToGA(eventName = 'utm_capture', extraData: Record<string, EventParam> = {}): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+    log('gtag not available yet, skipping GA send');
+    return;
+  }
+
+  const payload = getUtmEventPayload(extraData);
+
   window.gtag('event', eventName, payload);
   log('Sent to GA4:', eventName, payload);
+}
+
+export function getUtmLeadPayload() {
+  return getUtmEventPayload();
 }
 
 // ─── Form Injection ───────────────────────────────────────────────────────────
@@ -245,8 +261,8 @@ export function injectUtmsIntoForms(): void {
  * Call this when a lead converts (form submit, CTA click, etc).
  * Sends a 'form_submit' event to GA4 with full UTM context.
  */
-export function trackConversion(extraData?: Record<string, string>): void {
-  sendUtmToGA('form_submit');
+export function trackConversion(eventName = 'qualify_lead', extraData: Record<string, EventParam> = {}): void {
+  sendUtmToGA(eventName, extraData);
   if (extraData) {
     log('Conversion extra data:', extraData);
   }
