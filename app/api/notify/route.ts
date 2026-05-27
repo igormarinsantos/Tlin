@@ -213,8 +213,15 @@ function getLeadNotificationHtml(lead: Record<string, any>) {
     ["Campanha atual", utm.last_utm_campaign],
     ["Termo atual", utm.last_utm_term],
     ["Conteudo atual", utm.last_utm_content],
+    ["Pagina de entrada atual", utm.last_landing_page],
+    ["Pagina atual", utm.last_current_page],
+    ["Referencia atual", utm.last_referrer],
+    ["Dominio de referencia atual", utm.last_referrer_host],
     ["Primeira origem", `${formatAttributionValue(utm.first_utm_source)} / ${formatAttributionValue(utm.first_utm_medium)}`],
     ["Primeira campanha", utm.first_utm_campaign],
+    ["Primeira pagina de entrada", utm.first_landing_page],
+    ["Primeira referencia", utm.first_referrer],
+    ["Primeiro dominio de referencia", utm.first_referrer_host],
   ];
 
   const tableRows = rows.map(([label, value]) => `

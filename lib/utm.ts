@@ -11,6 +11,11 @@ export type UtmParams = {
   utm_campaign: string;
   utm_term: string;
   utm_content: string;
+  landing_page?: string;
+  current_page?: string;
+  referrer?: string;
+  referrer_host?: string;
+  captured_at?: string;
   gclid?: string;
   fbclid?: string;
 };
@@ -42,6 +47,9 @@ function log(...args: unknown[]) {
  */
 export function parseUtmFromUrl(search: string = ''): UtmParams | null {
   const params = new URLSearchParams(search);
+  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
+  const referrer = typeof document !== 'undefined' ? document.referrer : '';
+  const referrerHost = getReferrerHost(referrer);
 
   const source   = params.get('utm_source');
   const medium   = params.get('utm_medium');
@@ -60,6 +68,11 @@ export function parseUtmFromUrl(search: string = ''): UtmParams | null {
     utm_campaign: campaign || '(not set)',
     utm_term:     term,
     utm_content:  content,
+    landing_page: locationHref,
+    current_page: locationHref,
+    referrer,
+    referrer_host: referrerHost,
+    captured_at: new Date().toISOString(),
     ...(gclid  && { gclid }),
     ...(fbclid && { fbclid }),
   };
@@ -67,13 +80,36 @@ export function parseUtmFromUrl(search: string = ''): UtmParams | null {
 
 /** Default fallback for direct/untracked traffic */
 export function getFallbackUtm(): UtmParams {
+  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
+  const referrer = typeof document !== 'undefined' ? document.referrer : '';
+  const referrerHost = getReferrerHost(referrer);
+
   return {
-    utm_source:   'direct',
-    utm_medium:   'none',
+    utm_source:   referrerHost || 'direct',
+    utm_medium:   referrerHost ? 'referral' : 'none',
     utm_campaign: '(not set)',
     utm_term:     '',
     utm_content:  '',
+    landing_page: locationHref,
+    current_page: locationHref,
+    referrer,
+    referrer_host: referrerHost,
+    captured_at: new Date().toISOString(),
   };
+}
+
+function getReferrerHost(referrer: string): string {
+  if (!referrer) return '';
+  try {
+    const host = new URL(referrer).hostname.replace(/^www\./, '');
+    const currentHost = typeof window !== 'undefined'
+      ? window.location.hostname.replace(/^www\./, '')
+      : '';
+
+    return host && host !== currentHost ? host : '';
+  } catch {
+    return '';
+  }
 }
 
 // ─── Cookie Manager ───────────────────────────────────────────────────────────
@@ -180,11 +216,18 @@ function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
     first_utm_campaign: first.utm_campaign,
     first_utm_term:     first.utm_term,
     first_utm_content:  first.utm_content,
+    first_landing_page: first.landing_page || '',
+    first_referrer:     first.referrer || '',
+    first_referrer_host: first.referrer_host || '',
     last_utm_source:    last.utm_source,
     last_utm_medium:    last.utm_medium,
     last_utm_campaign:  last.utm_campaign,
     last_utm_term:      last.utm_term,
     last_utm_content:   last.utm_content,
+    last_landing_page:  last.landing_page || '',
+    last_current_page:  last.current_page || '',
+    last_referrer:      last.referrer || '',
+    last_referrer_host: last.referrer_host || '',
   };
 
   Object.entries(extraData).forEach(([key, value]) => {
@@ -232,11 +275,18 @@ export function injectUtmsIntoForms(): void {
     first_utm_campaign: first.utm_campaign,
     first_utm_term:     first.utm_term,
     first_utm_content:  first.utm_content,
+    first_landing_page: first.landing_page || '',
+    first_referrer:     first.referrer || '',
+    first_referrer_host: first.referrer_host || '',
     last_utm_source:    last.utm_source,
     last_utm_medium:    last.utm_medium,
     last_utm_campaign:  last.utm_campaign,
     last_utm_term:      last.utm_term,
     last_utm_content:   last.utm_content,
+    last_landing_page:  last.landing_page || '',
+    last_current_page:  last.current_page || '',
+    last_referrer:      last.referrer || '',
+    last_referrer_host: last.referrer_host || '',
   };
 
   document.querySelectorAll('form').forEach((form) => {
