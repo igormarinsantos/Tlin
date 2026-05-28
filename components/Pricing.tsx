@@ -9,6 +9,7 @@ import Image from "next/image";
 
 import { useLanguage } from "@/lib/LanguageContext";
 import { LeadQualificationPopup } from "./LeadQualificationPopup";
+import { trackFunnelEvent } from "@/lib/utm";
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -187,6 +188,21 @@ export function Pricing() {
   };
 
   const { timeLeft, formattedTime } = useOfferTimer();
+  const openPlanQualification = (planName: string, source: string) => {
+    trackFunnelEvent("select_plan", {
+      plan_name: planName,
+      cta_source: source,
+      billing_period: isAnnual ? "annual" : "monthly",
+    });
+    trackFunnelEvent("click_pricing_cta", {
+      plan_name: planName,
+      cta_source: source,
+      billing_period: isAnnual ? "annual" : "monthly",
+    });
+    window.dispatchEvent(new CustomEvent("open-qualification", {
+      detail: { plan: planName, source },
+    }));
+  };
 
   return (
     <section 
@@ -262,7 +278,7 @@ export function Pricing() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: plan.name } }))}
+                    onClick={() => openPlanQualification(plan.name, "pricing_card")}
                     onMouseEnter={() => setHoveredIndex(idx)}
                     onMouseLeave={() => setHoveredIndex(null)}
                     className={`group relative flex flex-col rounded-[2.5rem] transition-all duration-300 ease-out p-[2px] cursor-pointer
@@ -323,8 +339,11 @@ export function Pricing() {
 
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
-                       <button 
-                          onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: plan.name } }))}
+                        <button 
+                           onClick={(event) => {
+                             event.stopPropagation();
+                             openPlanQualification(plan.name, "pricing_button");
+                           }}
                           className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 shadow-sm hover:shadow-xl active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
                        >
                           {plan.cta}

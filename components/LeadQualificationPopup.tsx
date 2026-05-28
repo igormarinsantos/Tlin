@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
-import { getUtmLeadPayload, trackConversion } from "@/lib/utm";
+import { calculateLeadScore, getUtmLeadPayload, trackConversion, trackFunnelEvent } from "@/lib/utm";
 // confetti is dynamically imported
 
 type Message = {
@@ -182,7 +182,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         hasAutoClosed.current = true;
         const timer = setTimeout(() => {
           console.log("AUTO-CLOSING success screen after 10s");
-          onClose();
+          closePopup();
         }, 10000);
         return () => clearTimeout(timer);
       }
@@ -221,12 +221,33 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     } catch (e) {}
   };
 
+  const closePopup = () => {
+    if (currentStep > 1 && currentStep < 8) {
+      trackFunnelEvent('lead_form_abandoned', {
+        lead_step: currentStep,
+        plan_name: planName || 'not_selected',
+        lead_volume: formData.volume || 'not_set',
+        team_size: formData.team || 'not_set',
+      });
+    }
+
+    onClose();
+  };
+
   const handleWhatsAppRedirect = (data: typeof formData) => {
+    const score = calculateLeadScore({
+      planName,
+      volume: data.volume,
+      team: data.team,
+      wentToWhatsApp: true,
+    });
+
     trackConversion('close_convert_lead', {
       plan_name: planName || 'not_selected',
       lead_volume: data.volume || 'not_set',
       team_size: data.team || 'not_set',
       lead_country_code: data.countryCode || '+55',
+      ...score,
     });
 
     const text = `Olá! Fiz uma solicitação no site da Tlin e gostaria de mais informações. 🚀`;
@@ -283,6 +304,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     const updatedData = { ...formData };
     if (field) updatedData[field] = userValue;
     setFormData(updatedData);
+    trackFunnelEvent('lead_step_completed', {
+      lead_step: currentStep,
+      field_name: field || `step_${currentStep}`,
+      plan_name: planName || 'not_selected',
+      lead_volume: updatedData.volume || 'not_set',
+      team_size: updatedData.team || 'not_set',
+    });
     
     const displayText = field === 'phone' ? `${formData.countryCode} ${userValue}` : userValue;
     setChatHistory(prev => [...prev, { role: 'user', text: displayText }]);
@@ -296,11 +324,18 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setCurrentStep(prev => prev + 1);
         
         if (currentStep === 7 && (userValue === "Confirmar dados" || userValue === t?.leadQualify?.confirm)) {
+          const score = calculateLeadScore({
+            planName,
+            volume: updatedData.volume,
+            team: updatedData.team,
+          });
+
           trackConversion('qualify_lead', {
             plan_name: planName || 'not_selected',
             lead_volume: updatedData.volume || 'not_set',
             team_size: updatedData.team || 'not_set',
             lead_country_code: updatedData.countryCode || '+55',
+            ...score,
           });
 
           fetch('/api/notify', {
@@ -309,6 +344,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             body: JSON.stringify({
               ...updatedData,
               planName,
+              ...score,
               utm: getUtmLeadPayload(),
             })
           })
@@ -385,7 +421,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA";
 
       if (e.key === "Escape") {
-        onClose();
+        closePopup();
         return;
       }
 
@@ -460,7 +496,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   {/* Botão Fechar no Overlay */}
                   <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
                     <button
-                      onClick={onClose}
+                      onClick={closePopup}
                       className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
                     >
                       <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
@@ -507,7 +543,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             {/* Header / Botão Fechar */}
             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100]">
               <button
-                onClick={onClose}
+                onClick={closePopup}
                 className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
                   currentStep === 8 
                   ? "text-zinc-900 hover:text-black" 

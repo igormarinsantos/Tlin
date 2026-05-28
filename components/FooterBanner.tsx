@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 
 const HOLE_RADIUS = 60; // Base radius in CSS pixels
 
@@ -279,7 +280,13 @@ export function FooterBanner() {
               className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0"
            >
               <button 
-                onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
+                onClick={() => {
+                  trackFunnelEvent("click_pricing_cta", {
+                    cta_source: "footer_banner",
+                    plan_name: "TLIN",
+                  });
+                  window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "footer_banner" } }));
+                }}
                 className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block w-full md:w-auto"
               >
                 <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
@@ -295,6 +302,7 @@ export function FooterBanner() {
                 href="https://wa.me/5511916248604" 
                 target="_blank" 
                 rel="noopener noreferrer" 
+                onClick={() => trackConversion("click_whatsapp", { cta_source: "footer_banner" })}
                 className="hidden md:flex px-6 md:px-10 py-4 rounded-full bg-white text-[#0c0d0d] font-bold text-[14px] hover:bg-zinc-100 transition-all whitespace-nowrap"
               >
                  {t.footerBanner.cta2}

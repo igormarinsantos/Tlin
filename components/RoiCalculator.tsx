@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Minus, Plus, RotateCcw } from "lucide-react";
 
 import { useLanguage } from "@/lib/LanguageContext";
+import { trackFunnelEvent } from "@/lib/utm";
 
 // ── Brand purple palette ────────────────────────────────────────────────────
 const PURPLE_TOP    = "#9D7BFF"; // topo — lilas vibrante
@@ -19,6 +20,18 @@ export function RoiCalculator() {
   const [ticket, setTicket]             = useState(500);
   const [currentSales, setCurrentSales] = useState(10);
   const [step, setStep]                 = useState<"input" | "result">("input");
+  const hasTrackedRoiUse = useRef(false);
+
+  const trackRoiInteraction = (interaction: string, values?: { leads?: number; ticket?: number; currentSales?: number }) => {
+    if (hasTrackedRoiUse.current && interaction !== "calculate_result") return;
+    hasTrackedRoiUse.current = true;
+    trackFunnelEvent("roi_calculator_used", {
+      interaction,
+      roi_leads: values?.leads ?? leads,
+      roi_ticket: values?.ticket ?? ticket,
+      roi_current_sales: values?.currentSales ?? currentSales,
+    });
+  };
 
   const r = useMemo(() => {
     // 1. Conversão Atual (vendasMensais / leadsMensais)
@@ -154,7 +167,7 @@ export function RoiCalculator() {
                         {LEADS_SUGGESTIONS.map(s => (
                           <button 
                             key={s} 
-                            onClick={() => { setLeads(s); setStep("input"); }}
+                            onClick={() => { setLeads(s); setStep("input"); trackRoiInteraction("leads_suggestion", { leads: s }); }}
                             className={`text-[10px] font-bold px-2 py-1 rounded-md border transition-all ${leads === s ? 'bg-[#B597FF] border-[#B597FF] text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300'}`}
                           >
                             {s >= 1000 ? `${s/1000}k` : s}
@@ -163,7 +176,7 @@ export function RoiCalculator() {
                       </div>
                       <div className="flex items-center gap-2">
                         <button 
-                          onClick={() => { setLeads(Math.max(20, leads - 10)); setStep("input"); }}
+                          onClick={() => { const nextLeads = Math.max(20, leads - 10); setLeads(nextLeads); setStep("input"); trackRoiInteraction("leads_stepper", { leads: nextLeads }); }}
                           className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                         >
                           <Minus className="w-3 h-3" />
@@ -174,14 +187,16 @@ export function RoiCalculator() {
                             value={leads.toLocaleString("pt-BR")}
                             onChange={(e) => {
                               const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
-                              setLeads(Math.min(val, 100000));
+                              const nextLeads = Math.min(val, 100000);
+                              setLeads(nextLeads);
                               setStep("input");
+                              trackRoiInteraction("leads_input", { leads: nextLeads });
                             }}
                             className="w-24 text-right px-3 py-1.5 rounded-xl bg-[#B597FF]/5 text-[#8A63D2] text-sm font-black border-2 border-transparent focus:border-[#B597FF]/30 outline-none transition-all"
                           />
                         </div>
                         <button 
-                          onClick={() => { setLeads(leads + 10); setStep("input"); }}
+                          onClick={() => { const nextLeads = leads + 10; setLeads(nextLeads); setStep("input"); trackRoiInteraction("leads_stepper", { leads: nextLeads }); }}
                           className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                         >
                           <Plus className="w-3 h-3" />
@@ -203,7 +218,7 @@ export function RoiCalculator() {
                         {TICKET_SUGGESTIONS.map(s => (
                           <button 
                             key={s} 
-                            onClick={() => { setTicket(s); setStep("input"); }}
+                            onClick={() => { setTicket(s); setStep("input"); trackRoiInteraction("ticket_suggestion", { ticket: s }); }}
                             className={`text-[10px] font-bold px-2.5 py-1.5 rounded-md border transition-all whitespace-nowrap ${ticket === s ? 'bg-[#B597FF] border-[#B597FF] text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:border-zinc-300'}`}
                           >
                             R$ {s}
@@ -212,7 +227,7 @@ export function RoiCalculator() {
                       </div>
                       <div className="flex items-center gap-2">
                         <button 
-                          onClick={() => { setTicket(Math.max(1, ticket - 50)); setStep("input"); }}
+                          onClick={() => { const nextTicket = Math.max(1, ticket - 50); setTicket(nextTicket); setStep("input"); trackRoiInteraction("ticket_stepper", { ticket: nextTicket }); }}
                           className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                         >
                           <Minus className="w-3 h-3" />
@@ -224,14 +239,16 @@ export function RoiCalculator() {
                             value={ticket.toLocaleString("pt-BR")}
                             onChange={(e) => {
                               const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
-                              setTicket(Math.max(1, Math.min(val, 1000000)));
+                              const nextTicket = Math.max(1, Math.min(val, 1000000));
+                              setTicket(nextTicket);
                               setStep("input");
+                              trackRoiInteraction("ticket_input", { ticket: nextTicket });
                             }}
                             className="w-28 text-right pl-8 pr-3 py-1.5 rounded-xl bg-[#B597FF]/5 text-[#8A63D2] text-sm font-black border-2 border-transparent focus:border-[#B597FF]/30 outline-none transition-all"
                           />
                         </div>
                         <button 
-                          onClick={() => { setTicket(ticket + 50); setStep("input"); }}
+                          onClick={() => { const nextTicket = ticket + 50; setTicket(nextTicket); setStep("input"); trackRoiInteraction("ticket_stepper", { ticket: nextTicket }); }}
                           className="w-7 h-7 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors"
                         >
                           <Plus className="w-3 h-3" />
@@ -250,7 +267,7 @@ export function RoiCalculator() {
                   <div className="flex items-center gap-3">
                     <button
                       aria-label="Diminuir Vendas"
-                      onClick={() => { setCurrentSales(Math.max(1, currentSales - 1)); setStep("input"); }}
+                      onClick={() => { const nextSales = Math.max(1, currentSales - 1); setCurrentSales(nextSales); setStep("input"); trackRoiInteraction("sales_stepper", { currentSales: nextSales }); }}
                       className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors active:scale-95"
                     >
                       <Minus className="w-4 h-4" />
@@ -261,15 +278,17 @@ export function RoiCalculator() {
                           value={currentSales}
                           onChange={(e) => {
                             const val = parseInt(e.target.value.replace(/\D/g, "") || "0");
-                            setCurrentSales(Math.min(val, leads));
+                            const nextSales = Math.min(val, leads);
+                            setCurrentSales(nextSales);
                             setStep("input");
+                            trackRoiInteraction("sales_input", { currentSales: nextSales });
                           }}
                           className="w-full bg-transparent text-center text-lg font-black text-zinc-800 outline-none"
                         />
                     </div>
                     <button
                       aria-label="Aumentar Vendas"
-                      onClick={() => { setCurrentSales(currentSales + 1); setStep("input"); }}
+                      onClick={() => { const nextSales = currentSales + 1; setCurrentSales(nextSales); setStep("input"); trackRoiInteraction("sales_stepper", { currentSales: nextSales }); }}
                       className="w-11 h-11 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-400 hover:border-[#B597FF] hover:text-[#8A63D2] transition-colors active:scale-95"
                     >
                       <Plus className="w-4 h-4" />
@@ -283,7 +302,10 @@ export function RoiCalculator() {
             <div className="mt-10">
               {step === "input" ? (
                 <button
-                  onClick={() => setStep("result")}
+                  onClick={() => {
+                    setStep("result");
+                    trackRoiInteraction("calculate_result");
+                  }}
                   className="w-full py-4 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-black font-black text-sm tracking-wide hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   Ver em quanto tempo a Tlin se paga? <ArrowRight className="w-4 h-4" />
@@ -404,6 +426,13 @@ export function RoiCalculator() {
 
                       <button
                         onClick={() => {
+                          trackFunnelEvent("click_pricing_cta", {
+                            cta_source: "roi_result",
+                            roi_leads: leads,
+                            roi_ticket: ticket,
+                            roi_current_sales: currentSales,
+                            roi_projected_annual: Math.round(r.projecaoAnual),
+                          });
                           const lenis = (window as any).lenis;
                           if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
                           else document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });

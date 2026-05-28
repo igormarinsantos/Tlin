@@ -204,7 +204,14 @@ declare global {
   }
 }
 
-type EventParam = string | number | boolean | undefined;
+export type EventParam = string | number | boolean | undefined;
+
+export type LeadScoreInput = {
+  planName?: string | null;
+  volume?: string;
+  team?: string;
+  wentToWhatsApp?: boolean;
+};
 
 function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
   const first = getFirstTouch();
@@ -255,6 +262,44 @@ export function sendUtmToGA(eventName = 'utm_capture', extraData: Record<string,
 
 export function getUtmLeadPayload() {
   return getUtmEventPayload();
+}
+
+export function trackFunnelEvent(eventName: string, extraData: Record<string, EventParam> = {}): void {
+  sendUtmToGA(eventName, {
+    event_category: 'lead_funnel',
+    ...extraData,
+  });
+}
+
+export function calculateLeadScore(input: LeadScoreInput) {
+  const plan = (input.planName || '').toLowerCase();
+  const volume = (input.volume || '').toLowerCase();
+  const team = (input.team || '').toLowerCase();
+
+  let score = 20;
+
+  if (plan.includes('enterprise') || plan.includes('sob consulta')) score += 35;
+  else if (plan.includes('scale')) score += 25;
+  else if (plan.includes('starter')) score += 10;
+
+  if (/5000|5k|10\.000|10000|acima|mais/.test(volume)) score += 35;
+  else if (/1500|1\.500|2000|2\.000|1000|1\.000/.test(volume)) score += 25;
+  else if (/500|quinhentos/.test(volume)) score += 15;
+  else if (/150|100/.test(volume)) score += 8;
+
+  if (/10|20|50|equipe|time|comercial/.test(team)) score += 20;
+  else if (/5|6|7|8|9|4/.test(team)) score += 12;
+  else if (/2|3/.test(team)) score += 6;
+
+  if (input.wentToWhatsApp) score += 20;
+
+  const normalizedScore = Math.min(score, 100);
+  const quality = normalizedScore >= 75 ? 'high' : normalizedScore >= 45 ? 'medium' : 'low';
+
+  return {
+    lead_score: normalizedScore,
+    lead_quality: quality,
+  };
 }
 
 // ─── Form Injection ───────────────────────────────────────────────────────────

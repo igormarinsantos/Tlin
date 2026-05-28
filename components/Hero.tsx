@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { trackFunnelEvent } from "@/lib/utm";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
   char: string; 
@@ -317,7 +318,13 @@ export function Hero() {
         >
           <div className="relative">
             <button 
-              onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
+              onClick={() => {
+                trackFunnelEvent("click_pricing_cta", {
+                  cta_source: "hero_primary",
+                  plan_name: "TLIN",
+                });
+                window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
+              }}
               className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block w-full`}
               onMouseEnter={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
@@ -364,6 +371,7 @@ export function Hero() {
 
           <a
             href="#demo"
+            onClick={() => trackFunnelEvent("click_demo_anchor", { cta_source: "hero_secondary" })}
             className="relative cursor-pointer"
             onMouseEnter={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();

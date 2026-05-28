@@ -3,6 +3,7 @@
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 
 export function LiaPopup() {
   const { t } = useLanguage();
@@ -70,6 +71,7 @@ export function LiaPopup() {
   }, [messages, isTyping]);
 
   const openWhatsApp = () => {
+    trackConversion("click_whatsapp", { cta_source: "lia_popup" });
     window.open("https://wa.me/5511916248604?text=Olá! Vim pelo site da Tlin e gostaria de falar com a equipe.", "_blank");
   };
 
@@ -77,6 +79,10 @@ export function LiaPopup() {
     if (!inputValue.trim()) return;
     
     const userMsg = inputValue.trim();
+    trackFunnelEvent("lia_message_sent", {
+      message_length: userMsg.length,
+      previous_messages: messages.length,
+    });
     setMessages(prev => [...prev, { role: 'user', text: userMsg, type: 'text' }]);
     setInputValue("");
     setIsTyping(true);
@@ -471,7 +477,11 @@ export function LiaPopup() {
                 <div className={`absolute -inset-2 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full blur-xl transition duration-1000 opacity-30 group-hover:opacity-60 pointer-events-none ${isOpen ? 'opacity-20' : ''}`}></div>
                 
                 <button
-                  onClick={() => setIsOpen(!isOpen)}
+                  onClick={() => {
+                    const nextOpen = !isOpen;
+                    setIsOpen(nextOpen);
+                    if (nextOpen) trackFunnelEvent("lia_chat_opened", { cta_source: "floating_lia" });
+                  }}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                   className={`relative flex items-center h-12 bg-zinc-950 text-white rounded-full transition-all active:scale-95 z-10 cursor-pointer ${isOpen ? 'px-8 justify-center min-w-[120px]' : 'px-2 pr-6'}`}

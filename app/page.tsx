@@ -14,6 +14,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { Faq } from "@/components/Faq";
 import { FooterBanner } from "@/components/FooterBanner";
 import { Footer } from "@/components/Footer";
+import { trackFunnelEvent } from "@/lib/utm";
 const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(mod => mod.LiaPopup), { ssr: false });
 const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificationPopup").then(mod => mod.LeadQualificationPopup), { ssr: false });
 
@@ -81,7 +82,14 @@ export default function Home() {
           const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
           
           useEffect(() => {
-            const handleOpen = (e: any) => setQualifyPlan(e.detail?.plan || "TLIN");
+            const handleOpen = (e: any) => {
+              const plan = e.detail?.plan || "TLIN";
+              setQualifyPlan(plan);
+              trackFunnelEvent("start_lead_form", {
+                plan_name: plan,
+                cta_source: e.detail?.source || "unknown",
+              });
+            };
             window.addEventListener("open-qualification", handleOpen);
             return () => window.removeEventListener("open-qualification", handleOpen);
           }, []);

@@ -209,6 +209,8 @@ function getLeadNotificationHtml(lead: Record<string, any>) {
     ["Plano", lead.planName],
     ["Volume de leads", lead.volume],
     ["Equipe", lead.team],
+    ["Lead score", lead.lead_score ? `${lead.lead_score}/100` : ""],
+    ["Qualidade do lead", lead.lead_quality],
     ["Origem atual", `${formatAttributionValue(utm.last_utm_source)} / ${formatAttributionValue(utm.last_utm_medium)}`],
     ["Campanha atual", utm.last_utm_campaign],
     ["Termo atual", utm.last_utm_term],

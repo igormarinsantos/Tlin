@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
+import { trackFunnelEvent } from "@/lib/utm";
 
 function LanguageSelector() {
   const { lang, setLang } = useLanguage();
@@ -93,7 +94,13 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
   return (
     <div className="relative">
       <button 
-        onClick={() => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN" } }))}
+        onClick={() => {
+          trackFunnelEvent("click_pricing_cta", {
+            cta_source: "header",
+            plan_name: "TLIN",
+          });
+          window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "header" } }));
+        }}
         className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isHovered ? 'z-[100]' : 'z-10'} block w-full`}
         onMouseEnter={(e) => {
            const rect = e.currentTarget.getBoundingClientRect();
