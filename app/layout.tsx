@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Header } from "@/components/Header";
-import { LanguageProvider } from "@/lib/LanguageContext";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { UTMTracker } from "@/components/UTMTracker";
+import { LanguageProvider } from "@/lib/LanguageContext";
+import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -14,8 +16,65 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: "Tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
-  description: "A Tlin.ai cria Agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7 sem inchar sua folha de pagamento.",
+  description:
+    "A Tlin.ai cria agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7 sem inchar sua folha de pagamento.",
+  keywords: [
+    "Tlin.ai",
+    "agência de inteligência artificial",
+    "automação de vendas",
+    "agentes de IA",
+    "IA para vendas",
+    "qualificação de leads",
+    "SDR com IA",
+    "automação comercial",
+  ],
+  alternates: {
+    canonical: absoluteUrl("/"),
+    languages: {
+      "pt-BR": absoluteUrl("/"),
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    url: absoluteUrl("/"),
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: absoluteUrl("/platform-preview-email.jpg"),
+        width: 1200,
+        height: 630,
+        alt: "Tlin.ai - Agentes de IA para vendas",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [absoluteUrl("/platform-preview-email.jpg")],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "technology",
+  other: {
+    "geo.region": "BR-SP",
+    "geo.placename": "Sao Paulo, Brazil",
+    "business:contact_data:country_name": "Brazil",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -27,8 +86,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
-import { SmoothScroll } from "@/components/SmoothScroll";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-9LQN3ZWCNS";
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-NH79DSND";
@@ -60,7 +117,6 @@ export default function RootLayout({
         )}
       </head>
       <body className={`${dmSans.className} flex flex-col`} suppressHydrationWarning>
-
         {GTM_ID && (
           <noscript>
             <iframe
@@ -72,7 +128,6 @@ export default function RootLayout({
           </noscript>
         )}
 
-        {/* ── Google Analytics 4 ────────────────────────────────────────── */}
         {GA_ID && (
           <>
             <Script
@@ -93,17 +148,14 @@ export default function RootLayout({
           </>
         )}
 
-        {/* ── UTM Tracker ─────────────────────────────────────────────── */}
         <UTMTracker />
 
-        {/* ── App Shell ───────────────────────────────────────────────── */}
         <LanguageProvider>
           <SmoothScroll>
             <Header />
             {children}
           </SmoothScroll>
         </LanguageProvider>
-
       </body>
     </html>
   );
