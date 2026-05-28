@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { ENCYCLOPEDIA_DATA } from "@/lib/encyclopediaData";
-import { absoluteUrl } from "@/lib/siteConfig";
+import { absoluteAppUrl, absoluteUrl } from "@/lib/siteConfig";
 
 const lastModified = new Date();
 
@@ -24,6 +24,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly",
       priority: 0.7,
+    },
+    {
+      url: absoluteAppUrl("/"),
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     ...legalArticles,
   ];
