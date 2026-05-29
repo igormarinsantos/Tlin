@@ -18,6 +18,16 @@ export function LiaPopup() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const fullPlaceholder = t.liaPopup.fullPlaceholder;
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  const keepInputVisible = () => {
+    setTimeout(scrollToBottom, 80);
+    setTimeout(scrollToBottom, 280);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -54,20 +64,56 @@ export function LiaPopup() {
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (!isOpen) return;
+
+    const scrollY = window.scrollY;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const lenis = (window as any).lenis;
+
+    const updateViewportVars = () => {
+      const viewport = window.visualViewport;
+      const height = viewport?.height ?? window.innerHeight;
+      const offsetTop = viewport?.offsetTop ?? 0;
+
+      document.documentElement.style.setProperty("--lia-popup-height", `${height}px`);
+      document.documentElement.style.setProperty("--lia-popup-offset-top", `${offsetTop}px`);
+      keepInputVisible();
+    };
+
+    lenis?.stop?.();
+    updateViewportVars();
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    window.visualViewport?.addEventListener("resize", updateViewportVars);
+    window.visualViewport?.addEventListener("scroll", updateViewportVars);
+    window.addEventListener("resize", updateViewportVars);
+
     return () => {
-      document.body.style.overflow = "unset";
+      window.visualViewport?.removeEventListener("resize", updateViewportVars);
+      window.visualViewport?.removeEventListener("scroll", updateViewportVars);
+      window.removeEventListener("resize", updateViewportVars);
+      document.documentElement.style.removeProperty("--lia-popup-height");
+      document.documentElement.style.removeProperty("--lia-popup-offset-top");
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      lenis?.start?.();
+      window.scrollTo(0, scrollY);
     };
   }, [isOpen]);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages, isTyping]);
 
   const openWhatsApp = () => {
@@ -279,7 +325,7 @@ export function LiaPopup() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-4 left-3 right-3 sm:left-auto sm:bottom-24 sm:right-6 sm:w-[420px] z-[150] rounded-[2.5rem] overflow-hidden p-[2px] h-[560px] max-h-[85vh]"
+            className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-3 right-3 sm:left-auto sm:bottom-24 sm:right-6 sm:w-[420px] z-[150] rounded-[2.5rem] overflow-hidden p-[2px] h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))] max-h-[calc(var(--lia-popup-height,100dvh)-2rem)]"
           >
             {/* Animated Gradient Border Layer */}
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] pointer-events-none"
@@ -421,7 +467,7 @@ export function LiaPopup() {
                 )}
               </div>
 
-              <div className="px-4 sm:px-6 pb-4 sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
+              <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-zinc-200/50 rounded-[1.5rem] bg-white flex flex-col focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'p-2 py-2.5' : 'p-3 py-4'
                  }`}>
@@ -429,6 +475,7 @@ export function LiaPopup() {
                      aria-label="Mensagem para Lia"
                      value={inputValue}
                      onChange={(e) => setInputValue(e.target.value)}
+                     onFocus={keepInputVisible}
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                      placeholder={placeholder}
                      className={`bg-transparent border-none outline-none text-sm text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
@@ -460,7 +507,7 @@ export function LiaPopup() {
       </AnimatePresence>
 
       {/* Floating Buttons: Only visible after Hero animation is done or chat is open */}
-      <div className="fixed bottom-6 right-6 z-[200] flex flex-col items-center">
+      <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-6 z-[200] flex flex-col items-center">
         <AnimatePresence>
           {(canShow || isOpen) && (
             <>
