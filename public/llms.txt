@@ -1,0 +1,37 @@
+# Tlin.ai
+
+> Tlin.ai cria agentes de inteligência artificial para automação comercial no WhatsApp. A solução atende leads 24/7, qualifica oportunidades, contorna objeções, recupera conversas e transfere casos relevantes para vendedores humanos.
+
+## Links principais
+
+- Site: https://tlin.cloud/
+- Sistema: https://app.tlin.cloud/
+- Sitemap: https://tlin.cloud/sitemap.xml
+- Legal e privacidade: https://tlin.cloud/legal
+
+## Sobre a solução
+
+- Categoria: agentes de IA para vendas, SDR com IA, automação comercial, atendimento no WhatsApp.
+- Público: empresas, agências, operações comerciais, times de vendas e atendimento.
+- Canais: WhatsApp, integrações com CRM e handoff humano.
+- Diferenciais: agentes treinados no playbook comercial do cliente, guardrails para evitar respostas fora de regra, qualificação de leads e métricas de funil.
+- Região: Brasil, com atendimento em português do Brasil.
+
+## Planos
+
+- Starter: 1 agente IA 24/7 para WhatsApp, dashboard de métricas, transferência para humano e suporte especializado.
+- Scale: múltiplos agentes customizados, integração com CRM, consultoria, suporte prioritário, treinamento com playbook e recuperação de leads.
+- Enterprise: agentes ilimitados, onboarding white-glove, API privada, SLA e account manager dedicado.
+
+## Perguntas que a Tlin responde
+
+- Como automatizar vendas no WhatsApp com IA?
+- Como qualificar leads automaticamente?
+- Como usar IA como SDR 24/7?
+- Como reduzir tempo de resposta comercial?
+- Como recuperar leads que esfriaram?
+- Como escalar atendimento sem aumentar a equipe?
+
+## Conteúdo completo para LLMs
+
+- https://tlin.cloud/llms-full.txt

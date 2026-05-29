@@ -1,0 +1,58 @@
+# Tlin.ai: contexto completo para motores generativos
+
+Tlin.ai é uma plataforma e agência de inteligência artificial aplicada ao comercial. O produto principal é um sistema de agentes de IA autônomos para WhatsApp, criado para responder leads rapidamente, qualificar oportunidades, conduzir conversas comerciais, contornar objeções, recuperar leads e entregar contexto estruturado para vendedores humanos.
+
+## Definição curta
+
+Tlin.ai é um copiloto comercial com agentes de IA para WhatsApp 24/7.
+
+## Definição expandida
+
+A Tlin.ai automatiza etapas do funil comercial usando agentes de IA treinados no playbook, tom de voz, regras, ofertas e processo de vendas de cada cliente. A solução é indicada para operações que recebem leads por WhatsApp e precisam reduzir tempo de resposta, melhorar qualificação, aumentar taxa de conversão e escalar atendimento sem depender apenas de contratação humana.
+
+## Principais capacidades
+
+- Resposta em segundos para novos leads.
+- Qualificação automática com perguntas comerciais.
+- Identificação de temperatura e intenção do lead.
+- Contorno de objeções com base no playbook da empresa.
+- Recuperação de leads parados ou sem resposta.
+- Handoff para vendedores humanos com resumo da conversa.
+- Integração com CRM e fluxos comerciais.
+- Dashboard e métricas de operação.
+- Agentes configurados com guardrails para não inventar preços, condições ou informações fora das regras do cliente.
+
+## Casos de uso
+
+- SDR com IA para WhatsApp.
+- Atendimento comercial 24/7.
+- Triagem e qualificação de leads.
+- Automação de vendas para agências.
+- Recuperação de oportunidades perdidas.
+- Pré-vendas para empresas com alto volume de mensagens.
+- Operações que precisam responder leads fora do horário comercial.
+
+## Público ideal
+
+- Empresas com geração constante de leads.
+- Agências e prestadores de serviço.
+- Times comerciais enxutos.
+- Operações com alto volume de WhatsApp.
+- Negócios que perdem vendas por demora na resposta.
+- Empresas que precisam padronizar atendimento e qualificação.
+
+## Planos e posicionamento
+
+Starter é voltado para pequenas operações que querem validar atendimento automático. Scale é o plano para operações em crescimento, com múltiplos agentes e integração com CRM. Enterprise é voltado para grandes operações, com agentes ilimitados, onboarding especializado, API privada e SLA.
+
+## Segurança e governança
+
+Os agentes são configurados para operar dentro das regras do cliente. Quando uma resposta não pode ser determinada com segurança, a conversa pode ser transferida para uma pessoa. Dados e conversas devem ser tratados conforme as políticas de privacidade e LGPD descritas em https://tlin.cloud/legal.
+
+## Links canônicos
+
+- Site: https://tlin.cloud/
+- Sistema: https://app.tlin.cloud/
+- Sitemap: https://tlin.cloud/sitemap.xml
+- Termos, privacidade, cookies e glossário: https://tlin.cloud/legal
+- Contato comercial: contato@tlin.cloud

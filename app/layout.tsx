@@ -6,6 +6,7 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 import { UTMTracker } from "@/components/UTMTracker";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
+import { stringifyStructuredData } from "@/lib/structuredData";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -115,6 +116,12 @@ export default function RootLayout({
             }}
           />
         )}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: stringifyStructuredData(),
+          }}
+        />
       </head>
       <body className={`${dmSans.className} flex flex-col`} suppressHydrationWarning>
         {GTM_ID && (
