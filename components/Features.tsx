@@ -12,7 +12,7 @@ import { FunnelAnimation } from "./FunnelAnimation";
 import { WhatsAppQualifyAnimation } from "./WhatsAppQualifyAnimation";
 import { ObjectionAnimation } from "./ObjectionAnimation";
 
-function FeatureMedia({ id }: { id: string }) {
+function FeatureMedia({ id, animated = true }: { id: string; animated?: boolean }) {
   const gradients: Record<string, string> = {
     "f1": "radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0c0d0d 100%)",
     "f2": "radial-gradient(circle at 50% 50%, #16102b 0%, #0c0d0d 100%)",
@@ -23,14 +23,18 @@ function FeatureMedia({ id }: { id: string }) {
   return (
     <div className="w-full h-full relative group/media overflow-hidden" style={{ background: gradients[id] || gradients["f1"] }}>
       <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.05, 1],
-          opacity: [0.4, 0.6, 0.4] 
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[100px] rounded-full pointer-events-none"
-      />
+      {animated ? (
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.05, 1],
+            opacity: [0.4, 0.6, 0.4] 
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[100px] rounded-full pointer-events-none"
+        />
+      ) : (
+        <div className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/15 to-[#38E3FF]/15 blur-[80px] rounded-full pointer-events-none" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d0d] via-transparent to-transparent pointer-events-none" />
     </div>
   );
@@ -45,10 +49,20 @@ function FeatureCard({
 }) {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   return (
     <div className="w-full h-[900px] md:h-[650px] relative py-8 md:py-0">
@@ -145,7 +159,7 @@ function FeatureCard({
              }}
              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
            >
-             <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
+             <div className="absolute inset-[-150%] opacity-100 md:animate-[spin_3s_linear_infinite]"
                style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
              />
              <div className="relative px-8 py-4 rounded-full font-bold text-base z-10 block w-full text-white transition-colors duration-300 text-center">
@@ -157,12 +171,14 @@ function FeatureCard({
 
         <div className="h-[480px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
           <div className="w-full h-full rounded-t-[2rem] rounded-b-none md:rounded-[3rem] overflow-hidden relative flex items-center justify-center pt-[2px] px-[2px] pb-0 md:p-[2px]">
-            <div className="absolute inset-[-100%] opacity-100 animate-[spin_4s_linear_infinite]"
+            <div className="absolute inset-[-100%] opacity-100 md:animate-[spin_4s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
             />
             <div className="absolute top-[2px] inset-x-[2px] bottom-0 md:inset-[2px] bg-[#F8F6FF] rounded-t-[1.9rem] rounded-b-none md:rounded-[2.9rem] z-0" />
             <div className="relative z-10 w-full h-full">
-              {feature.id === "f1" ? (
+              {isMobile ? (
+                <FeatureMedia id={feature.id} animated={false} />
+              ) : feature.id === "f1" ? (
                 <ObjectionAnimation />
               ) : feature.id === "f3" ? (
                 <SalesNotification />

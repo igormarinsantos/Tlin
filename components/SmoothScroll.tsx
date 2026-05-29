@@ -5,6 +5,13 @@ import Lenis from "lenis";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    const shouldUseNativeScroll = window.matchMedia("(pointer: coarse), (max-width: 767px)").matches;
+
+    if (shouldUseNativeScroll) {
+      (window as any).lenis = null;
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

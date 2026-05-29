@@ -20,25 +20,37 @@ export function FooterBanner() {
   const isHoveredRef = useRef(false);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const timeRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
   
   const isInView = useInView(containerRef, { margin: "200px" });
   const isInViewRef = useRef(isInView);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   
   useEffect(() => {
     isInViewRef.current = isInView;
   }, [isInView]);
 
   useEffect(() => {
+    if (isMobile) return;
     if (!videoRef.current) return;
     if (isInView) {
       videoRef.current.play().catch(() => {});
     } else {
       videoRef.current.pause();
     }
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
   // Handle Canvas Drawing and Mask Generation
   useEffect(() => {
+    if (isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
@@ -177,10 +189,11 @@ export function FooterBanner() {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isMobile]);
 
   // Handle Resize and DPI sync
   useEffect(() => {
+    if (isMobile) return;
     const updateSize = () => {
       if (canvasRef.current && containerRef.current) {
         const dpr = window.devicePixelRatio || 1;
@@ -200,7 +213,7 @@ export function FooterBanner() {
     updateSize();
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
-  }, []);
+  }, [isMobile]);
 
   return (
     <section className="w-full py-10 md:py-20 px-4 md:px-10 relative">
@@ -219,38 +232,44 @@ export function FooterBanner() {
         }}
         className="w-full h-[600px] md:h-[750px] relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] group bg-[#0c0d0d]"
       >
-        <video
-          ref={videoRef}
-          aria-hidden="true"
-          muted
-          loop
-          playsInline
-          preload="none"
-          className="absolute inset-0 w-full h-full object-cover opacity-100 z-0"
-        >
-          <source src="/RoboCamera.mp4" type="video/mp4" />
-        </video>
+        {isMobile ? (
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(56,227,255,0.26),transparent_34%),radial-gradient(circle_at_75%_75%,rgba(181,151,255,0.32),transparent_38%),#0c0d0d]" />
+        ) : (
+          <>
+            <video
+              ref={videoRef}
+              aria-hidden="true"
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="absolute inset-0 w-full h-full object-cover opacity-100 z-0"
+            >
+              <source src="/RoboCamera.mp4" type="video/mp4" />
+            </video>
 
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 z-10 w-full h-full pointer-events-none" 
-        />
+            <canvas 
+              ref={canvasRef} 
+              className="absolute inset-0 z-10 w-full h-full pointer-events-none" 
+            />
 
-        <div 
-          ref={cursorRef}
-          className="absolute z-20 rounded-full pointer-events-none transition-opacity duration-300"
-          style={{ 
-            width: `${HOLE_RADIUS * 2}px`,
-            height: `${HOLE_RADIUS * 2}px`,
-            opacity: isHovered ? 1 : 0,
-            left: `-1000px`,
-            top: `-1000px`,
-            transform: 'translate(-50%, -50%)',
-            willChange: 'left, top',
-            background: 'radial-gradient(circle, transparent 70%, rgba(255,255,255,0.05) 100%)',
-            border: '4px solid rgba(255, 255, 255, 0.8)',
-          }}
-        />
+            <div 
+              ref={cursorRef}
+              className="absolute z-20 rounded-full pointer-events-none transition-opacity duration-300"
+              style={{ 
+                width: `${HOLE_RADIUS * 2}px`,
+                height: `${HOLE_RADIUS * 2}px`,
+                opacity: isHovered ? 1 : 0,
+                left: `-1000px`,
+                top: `-1000px`,
+                transform: 'translate(-50%, -50%)',
+                willChange: 'left, top',
+                background: 'radial-gradient(circle, transparent 70%, rgba(255,255,255,0.05) 100%)',
+                border: '4px solid rgba(255, 255, 255, 0.8)',
+              }}
+            />
+          </>
+        )}
 
         <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-center text-center pointer-events-none">
            <motion.h2 

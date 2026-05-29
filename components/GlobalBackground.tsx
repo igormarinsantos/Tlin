@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function GlobalBackground() {
   return (
-    <div className="fixed inset-0 -z-50 overflow-hidden bg-white pointer-events-none">
+    <div className="fixed inset-0 -z-50 hidden overflow-hidden bg-white pointer-events-none md:block">
       {/* 
         High-Performance Static CSS Blobs
         Using fixed radial gradients and blur to eliminate Main-Thread Canvas calculations.
