@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
+import { getDictionary } from "@/lib/dictionaries";
 import { calculateLeadScore, getUtmLeadPayload, trackConversion, trackFunnelEvent } from "@/lib/utm";
 // confetti is dynamically imported
 
@@ -31,6 +32,16 @@ const COUNTRIES = [
   { code: '+57', flag: '🇨🇴', name: 'Colômbia' },
   { code: '+52', flag: '🇲🇽', name: 'México' },
 ];
+
+const LANGUAGE_CODES = ["PT", "EN", "ES"] as const;
+const FALLBACK_FORM_DATA = {
+  name: '',
+  phone: '',
+  countryCode: '+55',
+  volume: '',
+  team: '',
+  email: ''
+};
 
 
 
@@ -81,18 +92,11 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
 };
 
 export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualificationPopupProps) {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const WHATSAPP_NUMBER = "5511916248604";
   
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    countryCode: '+55',
-    volume: '',
-    team: '',
-    email: ''
-  });
+  const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
   
   const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
   
@@ -104,12 +108,67 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const scrollRef = useRef<HTMLDivElement>(null);
   const countryRef = useRef<HTMLDivElement>(null);
   const isLiveSession = useRef(false);
+  const previousLangRef = useRef(lang);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
   const hasAutoClosed = useRef(false);
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
+
+  const translateOptionValue = (value: string, group: 'volumeOptions' | 'teamOptions', fromLang = previousLangRef.current) => {
+    const targetOptions = t?.leadQualify?.[group] || [];
+    if (!value || targetOptions.includes(value)) return value;
+
+    for (const code of LANGUAGE_CODES) {
+      const sourceOptions = getDictionary(code)?.leadQualify?.[group] || [];
+      const index = sourceOptions.indexOf(value);
+      if (index >= 0) return targetOptions[index] || value;
+    }
+
+    const sourceOptions = getDictionary(fromLang)?.leadQualify?.[group] || [];
+    const index = sourceOptions.indexOf(value);
+    return index >= 0 ? targetOptions[index] || value : value;
+  };
+
+  const localizeFormData = (data: typeof FALLBACK_FORM_DATA, fromLang = previousLangRef.current) => ({
+    ...FALLBACK_FORM_DATA,
+    ...data,
+    volume: translateOptionValue(data?.volume || '', 'volumeOptions', fromLang),
+    team: translateOptionValue(data?.team || '', 'teamOptions', fromLang),
+  });
+
+  const buildLocalizedHistory = (step: number, data: typeof FALLBACK_FORM_DATA) => {
+    const history: Message[] = [{ role: 'bot', text: getQuestion(1, data) }];
+
+    if (step >= 2 && data.name) {
+      history.push({ role: 'user', text: data.name });
+      history.push({ role: 'bot', text: getQuestion(2, data) });
+    }
+    if (step >= 3 && data.phone) {
+      const phoneDisplay = data.countryCode === '+55' ? formatPhone(data.phone) : data.phone;
+      history.push({ role: 'user', text: `${data.countryCode} ${phoneDisplay}` });
+      history.push({ role: 'bot', text: getQuestion(3, data) });
+    }
+    if (step >= 4) {
+      history.push({ role: 'user', text: t?.leadQualify?.yesCorrect || "" });
+      history.push({ role: 'bot', text: getQuestion(4, data) });
+    }
+    if (step >= 5 && data.volume) {
+      history.push({ role: 'user', text: data.volume });
+      history.push({ role: 'bot', text: getQuestion(5, data) });
+    }
+    if (step >= 6 && data.team) {
+      history.push({ role: 'user', text: data.team });
+      history.push({ role: 'bot', text: getQuestion(6, data) });
+    }
+    if (step >= 7 && data.email) {
+      history.push({ role: 'user', text: data.email });
+      history.push({ role: 'bot', text: getQuestion(7, data) });
+    }
+
+    return history;
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -121,34 +180,66 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     window.addEventListener("mousedown", handleClickOutside);
 
     // Carrega o histórico salvo localmente se existir para continuar exatamente de onde parou
+    return () => window.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (t?.leadQualify && chatHistory.length === 0) {
+      setChatHistory([{ role: 'bot', text: initialMsg }]);
+    }
+  }, [t, chatHistory.length, initialMsg]);
+
+  useEffect(() => {
+    if (!mounted || !t?.leadQualify || currentStep !== 1 || isLiveSession.current) return;
+
     try {
       const saved = localStorage.getItem("tlin_lead_qualify_state");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < 8) {
-          setSavedState(parsed);
-          setShowResumeOverlay(true);
-        }
+      if (!saved) return;
+
+      const parsed = JSON.parse(saved);
+      if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < 8) {
+        const localizedData = localizeFormData(parsed.formData || FALLBACK_FORM_DATA, parsed.lang || lang);
+        setSavedState({
+          ...parsed,
+          formData: localizedData,
+          chatHistory: buildLocalizedHistory(parsed.currentStep, localizedData),
+          lang,
+        });
+        setShowResumeOverlay(true);
       }
     } catch (e) {
       console.error("Erro ao carregar estado do localStorage:", e);
     }
+  }, [mounted, lang, currentStep]);
 
-    return () => window.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Initialize chat history when translation is ready
   useEffect(() => {
-    if (t?.leadQualify && chatHistory.length === 0) {
-      setChatHistory([{ role: 'bot', text: t?.leadQualify?.initialMsg || "" }]);
+    if (!t?.leadQualify) return;
+
+    if (previousLangRef.current !== lang) {
+      const localizedData = localizeFormData(formData, previousLangRef.current);
+      setFormData(localizedData);
+      setChatHistory(buildLocalizedHistory(currentStep, localizedData));
+      setSavedState((prev: any) => {
+        if (!prev) return prev;
+        const resumeData = localizeFormData(prev.formData || FALLBACK_FORM_DATA, prev.lang || previousLangRef.current);
+        return {
+          ...prev,
+          formData: resumeData,
+          chatHistory: buildLocalizedHistory(prev.currentStep || currentStep, resumeData),
+          lang,
+        };
+      });
+      previousLangRef.current = lang;
     }
-  }, [t, chatHistory.length]);
+  }, [lang, t]);
 
   // Salva automaticamente o progresso sempre que o usuário avança ou altera os dados
   useEffect(() => {
     if (mounted) {
+      if (currentStep <= 1 && !isLiveSession.current) return;
       try {
         localStorage.setItem("tlin_lead_qualify_state", JSON.stringify({
+          lang,
           currentStep,
           formData,
           chatHistory
@@ -157,7 +248,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         console.error("Erro ao salvar estado no localStorage:", e);
       }
     }
-  }, [currentStep, formData, chatHistory, mounted]);
+  }, [lang, currentStep, formData, chatHistory, mounted]);
 
   // Controle de Fechamento Automático em 10 segundos na primeira vez que atinge a tela de sucesso
   const confettiFired = useRef(false);
@@ -268,7 +359,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     isLiveSession.current = false;
     hasAutoClosed.current = false;
     setCurrentStep(1);
-    setFormData({ name: '', phone: '', countryCode: '+55', volume: '', team: '', email: '' });
+    setFormData(FALLBACK_FORM_DATA);
     setChatHistory([{ role: 'bot', text: initialMsg }]);
     try {
       localStorage.removeItem("tlin_lead_qualify_state");
@@ -349,7 +440,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       return;
     }
 
-    if (currentStep === 8 && (userValue === "Reiniciar formulário" || userValue === t?.leadQualify?.newRequest || userValue === "Fazer uma nova solicitação")) {
+    if (currentStep === 8 && userValue === t?.leadQualify?.newRequest) {
       resetForm();
       return;
     }
@@ -377,7 +468,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
         setCurrentStep(prev => prev + 1);
         
-        if (currentStep === 7 && (userValue === "Confirmar dados" || userValue === t?.leadQualify?.confirm)) {
+        if (currentStep === 7 && userValue === t?.leadQualify?.confirm) {
           const score = calculateLeadScore({
             planName,
             volume: updatedData.volume,
@@ -413,7 +504,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const handleBack = () => {
     if (currentStep > 1 && !isTyping && currentStep < 8) {
       // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
-      const isAsking = chatHistory[chatHistory.length - 1]?.text.includes("Que bom que voltou");
+      const isAsking = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
       if (isAsking) return;
 
       const targetStep = currentStep - 1;
@@ -431,7 +522,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         rebuiltHistory.push({ role: 'bot', text: getQuestion(3, formData) });
       }
       if (targetStep >= 4) {
-        rebuiltHistory.push({ role: 'user', text: t?.leadQualify?.yesCorrect || "Sim, está correto" });
+        rebuiltHistory.push({ role: 'user', text: t?.leadQualify?.yesCorrect || "" });
         rebuiltHistory.push({ role: 'bot', text: getQuestion(4, formData) });
       }
       if (targetStep >= 5) {
@@ -491,7 +582,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   if (!mounted) return null;
 
-  const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text.includes("Que bom que voltou");
+  const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
   const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
   
   let latestBotIdx = -1;
@@ -563,7 +654,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
                   <div className="max-w-2xl w-full flex flex-col items-center gap-12">
                     <div className="w-full">
-                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || "[Que bom que voltou]! Identificamos uma solicitação em andamento. Como deseja prosseguir?"} />
+                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || ""} />
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
@@ -702,7 +793,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                                 key={opt}
                                 onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
                                 className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
-                                  opt === t?.leadQualify?.confirm || opt === t?.leadQualify?.yesCorrect || opt === t?.leadQualify?.newRequest || opt === "Confirmar dados" || opt === "Sim, está correto" || opt === "Fazer uma nova solicitação"
+                                  opt === t?.leadQualify?.confirm || opt === t?.leadQualify?.yesCorrect || opt === t?.leadQualify?.newRequest
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
                                   : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
                                 }}`}
@@ -762,7 +853,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
+                                  {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -842,7 +933,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
+                                  {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -879,7 +970,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
-                                  pressione <span className="font-black">ENTER ou CTRL+ENTER ↵</span>
+                                  {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -896,7 +987,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 <div className="mt-2 sm:mt-4 flex items-center justify-between text-[10px] font-black text-zinc-600 uppercase pt-2 sm:pt-4">
                   <button onClick={handleBack} className="hover:text-zinc-400 flex items-center gap-2 transition-colors disabled:opacity-20" disabled={currentStep === 1 || currentStep >= 8}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="m15 18-6-6 6-6"/></svg>
-                    Voltar
+                    {t?.leadQualify?.back || "Voltar"}
                   </button>
                 </div>
             </div>
@@ -918,10 +1009,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   >
                     <div className="flex justify-between items-center border-b border-white/10 pb-3">
                       <span className="text-xs font-black text-[#B597FF] uppercase tracking-wider">
-                        Editar {editingField === 'name' ? 'Empresa' : editingField === 'phone' ? 'WhatsApp' : editingField === 'volume' ? 'Volume Mensal' : editingField === 'team' ? 'Tamanho da Equipe' : 'E-mail'}
+                        {(t?.leadQualify?.editTitles as Record<string, string> | undefined)?.[editingField] || editingField}
                       </span>
                       <button onClick={() => setEditingField(null)} className="text-zinc-500 hover:text-white text-xs font-bold transition-colors">
-                        Cancelar
+                        {t?.leadQualify?.cancel || "Cancelar"}
                       </button>
                     </div>
 
@@ -933,11 +1024,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           onFocus={keepInputVisible}
                           value={formData.name} 
                           onChange={e => setFormData({...formData, name: e.target.value})}
-                          placeholder="Nome da empresa..."
+                          placeholder={t?.leadQualify?.placeholders?.name || "Empresa..."}
                           className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
                         />
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          Salvar alteração
+                          {t?.leadQualify?.saveChange || "Salvar"}
                         </button>
                       </form>
                     )}
@@ -960,19 +1051,19 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                             onFocus={keepInputVisible}
                             value={formData.phone} 
                             onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})}
-                            placeholder="Número..."
+                            placeholder={t?.leadQualify?.placeholders?.phone || "WhatsApp..."}
                             className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all w-full"
                           />
                         </div>
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          Salvar alteração
+                          {t?.leadQualify?.saveChange || "Salvar"}
                         </button>
                       </form>
                     )}
 
                     {editingField === 'volume' && (
                       <div className="flex flex-col gap-2">
-                        {["Até 1.000", "1.000 a 5.000", "5.000 a 10.000", "Mais de 10.000"].map(opt => (
+                        {(t?.leadQualify?.volumeOptions || []).map(opt => (
                           <button
                             key={opt}
                             onClick={() => { setFormData({...formData, volume: opt}); setEditingField(null); }}
@@ -986,7 +1077,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
                     {editingField === 'team' && (
                       <div className="flex flex-col gap-2">
-                        {["1 a 3", "4 a 10", "11 a 50", "Mais de 50"].map(opt => (
+                        {(t?.leadQualify?.teamOptions || []).map(opt => (
                           <button
                             key={opt}
                             onClick={() => { setFormData({...formData, team: opt}); setEditingField(null); }}
@@ -1006,11 +1097,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           onFocus={keepInputVisible}
                           value={formData.email} 
                           onChange={e => setFormData({...formData, email: e.target.value})}
-                          placeholder="E-mail corporativo..."
+                          placeholder={t?.leadQualify?.placeholders?.email || "E-mail..."}
                           className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
                         />
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          Salvar alteração
+                          {t?.leadQualify?.saveChange || "Salvar"}
                         </button>
                       </form>
                     )}
@@ -1031,11 +1122,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 </div>
 
                 <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-4xl w-full whitespace-nowrap overflow-visible">
-                  Solicitação enviada com sucesso!
+                  {t?.leadQualify?.successTitle || ""}
                 </h2>
                 
                 <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
-                  Nossa equipe de especialistas já está analisando o perfil da <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || "sua empresa"}</span> e entrará em contato em breve via WhatsApp.
+                  {(t?.leadQualify?.successMessage || "{name}").split("{name}")[0]}
+                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || "empresa"}</span>
+                  {(t?.leadQualify?.successMessage || "{name}").split("{name}")[1]}
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
@@ -1049,7 +1142,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
                       />
                       <div className="relative px-6 py-4 rounded-full bg-[#0c0d0d] text-white font-extrabold text-base sm:text-lg transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center shadow-xl">
-                        <span className="relative z-10 whitespace-nowrap">Falar com a equipe</span>
+                        <span className="relative z-10 whitespace-nowrap">{t?.leadQualify?.talkToTeam || ""}</span>
                         <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
                       </div>
@@ -1062,7 +1155,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                       onClick={resetForm}
                       className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-200 whitespace-nowrap"
                     >
-                      Nova solicitação
+                      {t?.leadQualify?.newRequest || "Nova solicitação"}
                     </button>
                   </div>
                 </div>

@@ -278,6 +278,17 @@ const ptBR = {
       team: "Equipe",
       email: "E-mail"
     },
+    editTitles: {
+      name: "Editar Empresa",
+      phone: "Editar WhatsApp",
+      volume: "Editar Volume Mensal",
+      team: "Editar Tamanho da Equipe",
+      email: "Editar E-mail"
+    },
+    successTitle: "Solicitação enviada com sucesso!",
+    successMessage: "Nossa equipe de especialistas já está analisando o perfil da {name} e entrará em contato em breve via WhatsApp.",
+    talkToTeam: "Falar com a equipe",
+    saveChange: "Salvar alteração",
     volumeOptions: ["Até 40", "40 a 150", "150 a 500", "500 a 1.5k", "Mais de 5k"],
     teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"]
   }
@@ -561,6 +572,17 @@ const enUS: TranslationDictionary = {
       team: "Team",
       email: "E-mail"
     },
+    editTitles: {
+      name: "Edit Company",
+      phone: "Edit WhatsApp",
+      volume: "Edit Monthly Volume",
+      team: "Edit Team Size",
+      email: "Edit E-mail"
+    },
+    successTitle: "Request successfully sent!",
+    successMessage: "Our team of experts is already analyzing {name}'s profile and will contact you shortly via WhatsApp.",
+    talkToTeam: "Talk to the team",
+    saveChange: "Save change",
     volumeOptions: ["Up to 40", "40 to 150", "150 to 500", "500 to 1.5k", "More than 5k"],
     teamOptions: ["1 to 3", "4 to 10", "11 to 50", "More than 50"]
   }
@@ -844,6 +866,17 @@ const esES: TranslationDictionary = {
       team: "Equipo",
       email: "Correo"
     },
+    editTitles: {
+      name: "Editar Empresa",
+      phone: "Editar WhatsApp",
+      volume: "Editar Volumen Mensual",
+      team: "Editar Tamaño del Equipo",
+      email: "Editar Correo"
+    },
+    successTitle: "¡Solicitud enviada con éxito!",
+    successMessage: "Nuestro equipo de especialistas ya está analizando el perfil de {name} y te contactará pronto por WhatsApp.",
+    talkToTeam: "Hablar con el equipo",
+    saveChange: "Guardar cambio",
     volumeOptions: ["Hasta 40", "40 a 150", "150 a 500", "500 a 1.5k", "Más de 5k"],
     teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Más de 50"]
   }

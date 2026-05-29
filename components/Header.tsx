@@ -187,12 +187,9 @@ export function Header() {
                href="https://app.tlin.cloud" 
                target="_blank" 
                rel="noopener noreferrer"
-               className="group/login relative hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors"
+               className="relative hidden md:block px-4 py-2 rounded-full text-sm font-bold text-zinc-600 hover:bg-zinc-100 hover:text-[#0c0d0d] transition-all duration-300 ease-out"
              >
-                <span className="relative inline-block">
-                  {t.nav.login}
-                  <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/login:scale-x-100" />
-                </span>
+                {t.nav.login}
              </a>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>

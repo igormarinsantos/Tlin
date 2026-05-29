@@ -40,7 +40,11 @@ export function LiaPopup() {
       }, 40);
       return () => clearInterval(interval);
     }
-  }, [isOpen]);
+  }, [isOpen, fullPlaceholder]);
+
+  useEffect(() => {
+    setStatus(isTyping ? t.liaPopup.typing : t.liaPopup.online);
+  }, [t, isTyping]);
 
   const { scrollY } = useScroll();
 
