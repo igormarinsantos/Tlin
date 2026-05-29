@@ -49,20 +49,10 @@ function FeatureCard({
 }) {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
-
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(media.matches);
-
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
 
   return (
     <div className="w-full h-[900px] md:h-[650px] relative py-8 md:py-0">
@@ -176,9 +166,7 @@ function FeatureCard({
             />
             <div className="absolute top-[2px] inset-x-[2px] bottom-0 md:inset-[2px] bg-[#F8F6FF] rounded-t-[1.9rem] rounded-b-none md:rounded-[2.9rem] z-0" />
             <div className="relative z-10 w-full h-full">
-              {isMobile ? (
-                <FeatureMedia id={feature.id} animated={false} />
-              ) : feature.id === "f1" ? (
+              {feature.id === "f1" ? (
                 <ObjectionAnimation />
               ) : feature.id === "f3" ? (
                 <SalesNotification />

@@ -23,7 +23,6 @@ export function TextReveal() {
   const [activeWord, setActiveWord] = useState<number>(-1);
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const [isFinished, setIsFinished] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setRevealed(Array(parts.length).fill(false));
@@ -31,22 +30,13 @@ export function TextReveal() {
     setActiveWord(-1);
   }, [t.textReveal.text]);
 
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(media.matches);
-
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
-
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (isMobile || isFinished) return;
+    if (isFinished) return;
     const animationProgress = Math.min(latest / 0.9, 1);
     const idx = Math.min(Math.floor(animationProgress * parts.length), parts.length - 1);
     
@@ -65,33 +55,11 @@ export function TextReveal() {
     }
   });
 
-  if (isMobile) {
-    return (
-      <section ref={containerRef} className="relative w-full bg-white py-24">
-        <div className="w-full max-w-6xl mx-auto px-6">
-          <div
-            className="flex flex-wrap justify-center font-bold tracking-tight text-center gap-x-[0.3em] gap-y-[0.1em] text-[2rem] leading-[1.05]"
-            style={{ textWrap: "balance" as any }}
-          >
-            {parts.map((part, i) => (
-              <span
-                key={i}
-                className={part.isHighlighted ? "bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-transparent" : "text-[#0c0d0d]"}
-              >
-                {part.text}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
       ref={containerRef}
       className="relative w-full bg-white"
-      style={{ height: "200vh" }}
+      style={{ height: "180vh" }}
     >
       <div className="sticky top-0 h-[100svh] flex items-center justify-center overflow-hidden">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-12">

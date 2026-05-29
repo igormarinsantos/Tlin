@@ -20,7 +20,10 @@ export function FooterBanner() {
   const isHoveredRef = useRef(false);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const timeRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 767px)").matches;
+  });
   
   const isInView = useInView(containerRef, { margin: "200px" });
   const isInViewRef = useRef(isInView);
@@ -233,7 +236,13 @@ export function FooterBanner() {
         className="w-full h-[600px] md:h-[750px] relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] group bg-[#0c0d0d]"
       >
         {isMobile ? (
-          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(56,227,255,0.26),transparent_34%),radial-gradient(circle_at_75%_75%,rgba(181,151,255,0.32),transparent_38%),#0c0d0d]" />
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              background:
+                "radial-gradient(circle at 22% 18%, rgba(56,227,255,0.75), transparent 34%), radial-gradient(circle at 82% 78%, rgba(181,151,255,0.82), transparent 42%), linear-gradient(135deg, #131015 0%, #241d3a 52%, #0c0d0d 100%)",
+            }}
+          />
         ) : (
           <>
             <video
