@@ -406,11 +406,11 @@ export function Hero() {
             <AnimatePresence>
               {showDemoNotice && (
                 <m.div
-                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute left-1/2 top-full z-[120] mt-3 -translate-x-1/2 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-4 py-2 text-xs font-black text-zinc-700 shadow-xl shadow-zinc-950/10"
+                  initial={{ opacity: 0, x: "-50%", y: "calc(-50% + 18px)", scale: 0.94 }}
+                  animate={{ opacity: 1, x: "-50%", y: "-50%", scale: 1 }}
+                  exit={{ opacity: 0, x: "-50%", y: "calc(-50% + 18px)", scale: 0.94 }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  className="fixed left-1/2 top-1/2 z-[250] whitespace-nowrap rounded-full border border-[#B597FF]/40 bg-[#B597FF] px-6 py-3 text-sm font-black text-white shadow-2xl shadow-[#B597FF]/35"
                 >
                   {t.hero.demoSoon}
                 </m.div>
