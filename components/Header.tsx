@@ -72,21 +72,18 @@ function LanguageSelector() {
 function NavLinks() {
   const { t } = useLanguage();
   const linkClass = "group/navlink relative py-2 px-4 hover:text-[#0c0d0d] transition-colors";
-  const underlineClass = "absolute bottom-1 left-4 right-4 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/navlink:scale-x-100";
+  const underlineClass = "absolute -bottom-0.5 left-0 right-0 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/navlink:scale-x-100";
 
   return (
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
       <a href="#" className={linkClass}>
-        <span className="relative">{t.nav.product}</span>
-        <span className={underlineClass} />
+        <span className="relative inline-block">{t.nav.product}<span className={underlineClass} /></span>
       </a>
       <a href="#features" className={linkClass}>
-        <span className="relative">{t.nav.resources}</span>
-        <span className={underlineClass} />
+        <span className="relative inline-block">{t.nav.resources}<span className={underlineClass} /></span>
       </a>
       <a href="#pricing" className={linkClass}>
-        <span className="relative">{t.nav.pricing}</span>
-        <span className={underlineClass} />
+        <span className="relative inline-block">{t.nav.pricing}<span className={underlineClass} /></span>
       </a>
     </nav>
   );
@@ -193,8 +190,10 @@ export function Header() {
                rel="noopener noreferrer"
                className="group/login relative hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors"
              >
-                <span className="relative">{t.nav.login}</span>
-                <span className="absolute bottom-1 left-4 right-4 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/login:scale-x-100" />
+                <span className="relative inline-block">
+                  {t.nav.login}
+                  <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/login:scale-x-100" />
+                </span>
              </a>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
