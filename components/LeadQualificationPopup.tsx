@@ -206,8 +206,25 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, [chatHistory, isTyping, currentStep]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const lenis = (window as any).lenis;
+
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      lenis?.stop?.();
+    } else {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      lenis?.start?.();
+    }
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      lenis?.start?.();
+    };
   }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
 
   const resetForm = () => {
@@ -456,14 +473,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           animate={{ opacity: 1 }} 
           exit={{ opacity: 0 }} 
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center p-2 sm:p-[10px] bg-black/60 backdrop-blur-md"
+          onWheelCapture={(event) => event.stopPropagation()}
+          onTouchMoveCapture={(event) => event.stopPropagation()}
+          className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/60 backdrop-blur-md overscroll-none"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+            className={`relative w-full h-full min-h-0 max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
               currentStep === 8 
                 ? 'border-zinc-200' 
                 : 'border-white/10'
@@ -559,7 +578,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             {currentStep < 8 ? (
               <>
             {/* Scrollable Message Area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 custom-scrollbar">
+            <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 custom-scrollbar">
               <div className="w-full flex flex-col justify-start min-h-full">
                 <div className="space-y-6 sm:space-y-8">
                   {chatHistory.map((msg, idx) => {
