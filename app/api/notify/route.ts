@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
     const smtpUser = process.env.SMTP_USER || "";
     const smtpPass = process.env.SMTP_PASS || "";
     let emailSent = false;
+    let emailError = null;
 
     if (smtpUser && smtpPass) {
       const transporter = nodemailer.createTransport({
@@ -133,19 +134,24 @@ export async function POST(req: NextRequest) {
         emailSent = true;
       } catch (err) {
         console.error("Erro ao enviar e-mail via Nodemailer/Resend:", err);
+        emailError = formatErrorMessage(err);
       }
     } else {
       console.log("Aviso: Credenciais de envio ausentes. Pulando disparo de e-mail.");
+      emailError = "Variáveis SMTP_USER ou SMTP_PASS ausentes";
     }
 
+    const success = !!whatsappResponse || emailSent;
+
     return NextResponse.json({ 
-      success: true, 
+      success, 
       whatsappTriggered: !!whatsappResponse, 
       whatsappResponse,
       whatsappError,
       whatsappDebug,
-      emailSent 
-    });
+      emailSent,
+      emailError,
+    }, { status: success ? 200 : 502 });
 
   } catch (error: any) {
     console.error("Erro no endpoint /api/notify:", error);

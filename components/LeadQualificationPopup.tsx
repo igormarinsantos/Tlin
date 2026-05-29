@@ -109,12 +109,20 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const countryRef = useRef<HTMLDivElement>(null);
   const isLiveSession = useRef(false);
   const previousLangRef = useRef(lang);
+  const pendingAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
   const hasAutoClosed = useRef(false);
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
+
+  const clearPendingAdvance = () => {
+    if (pendingAdvanceTimeoutRef.current) {
+      clearTimeout(pendingAdvanceTimeoutRef.current);
+      pendingAdvanceTimeoutRef.current = null;
+    }
+  };
 
   const translateOptionValue = (value: string, group: 'volumeOptions' | 'teamOptions', fromLang = previousLangRef.current) => {
     const targetOptions = t?.leadQualify?.[group] || [];
@@ -184,6 +192,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, []);
 
   useEffect(() => {
+    return () => clearPendingAdvance();
+  }, []);
+
+  useEffect(() => {
     if (t?.leadQualify && chatHistory.length === 0) {
       setChatHistory([{ role: 'bot', text: initialMsg }]);
     }
@@ -216,6 +228,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     if (!t?.leadQualify) return;
 
     if (previousLangRef.current !== lang) {
+      clearPendingAdvance();
+      setIsTyping(false);
       const localizedData = localizeFormData(formData, previousLangRef.current);
       setFormData(localizedData);
       setChatHistory(buildLocalizedHistory(currentStep, localizedData));
@@ -356,6 +370,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
 
   const resetForm = () => {
+    clearPendingAdvance();
     isLiveSession.current = false;
     hasAutoClosed.current = false;
     setCurrentStep(1);
@@ -367,6 +382,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   };
 
   const closePopup = () => {
+    clearPendingAdvance();
     if (currentStep > 1 && currentStep < 8) {
       trackFunnelEvent('lead_form_abandoned', {
         lead_step: currentStep,
@@ -422,17 +438,20 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       case 3: return [t?.leadQualify?.yesCorrect || "", t?.leadQualify?.noCorrect || ""];
       case 4: return t?.leadQualify?.volumeOptions || [];
       case 5: return t?.leadQualify?.teamOptions || [];
-      case 7: return [t?.leadQualify?.confirm || "Confirmar"];
-      case 8: return [t?.leadQualify?.newRequest || "Nova solicitação"];
+      case 7: return [t?.leadQualify?.confirm || ""];
+      case 8: return [t?.leadQualify?.newRequest || ""];
       default: return null;
     }
   };
 
   const advanceChat = (userValue: string, field?: keyof typeof formData) => {
+    clearPendingAdvance();
+
     if (t?.leadQualify && currentStep === 3 && userValue === t?.leadQualify?.noCorrect) {
       setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
       setIsTyping(true);
-      setTimeout(() => {
+      pendingAdvanceTimeoutRef.current = setTimeout(() => {
+        pendingAdvanceTimeoutRef.current = null;
         setIsTyping(false);
         setCurrentStep(2);
         setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.step2 || "" }]);
@@ -462,47 +481,60 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     
     if (currentStep < 8) {
       setIsTyping(true);
-      setTimeout(() => {
+      pendingAdvanceTimeoutRef.current = setTimeout(async () => {
+        pendingAdvanceTimeoutRef.current = null;
         setIsTyping(false);
         const nextQ = getQuestion(currentStep + 1, updatedData);
-        setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
-        setCurrentStep(prev => prev + 1);
-        
-        if (currentStep === 7 && userValue === t?.leadQualify?.confirm) {
+        const isConfirming = currentStep === 7 && userValue === t?.leadQualify?.confirm;
+
+        if (isConfirming) {
           const score = calculateLeadScore({
             planName,
             volume: updatedData.volume,
             team: updatedData.team,
           });
 
-          trackConversion('qualify_lead', {
-            plan_name: planName || 'not_selected',
-            lead_volume: updatedData.volume || 'not_set',
-            team_size: updatedData.team || 'not_set',
-            lead_country_code: updatedData.countryCode || '+55',
-            ...score,
-          });
+          try {
+            const response = await fetch('/api/notify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...updatedData,
+                planName,
+                ...score,
+                utm: getUtmLeadPayload(),
+              })
+            });
+            const notifyResult = await response.json();
 
-          fetch('/api/notify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...updatedData,
-              planName,
+            if (!response.ok || !notifyResult?.success) {
+              throw new Error(notifyResult?.whatsappError || notifyResult?.emailError || "Falha ao notificar API");
+            }
+
+            console.log("Status do envio:", notifyResult);
+            trackConversion('qualify_lead', {
+              plan_name: planName || 'not_selected',
+              lead_volume: updatedData.volume || 'not_set',
+              team_size: updatedData.team || 'not_set',
+              lead_country_code: updatedData.countryCode || '+55',
               ...score,
-              utm: getUtmLeadPayload(),
-            })
-          })
-          .then(res => res.json())
-          .then(data => console.log("Status do envio:", data))
-          .catch(err => console.error("Erro ao notificar API:", err));
+            });
+          } catch (err) {
+            console.error("Erro ao notificar API:", err);
+            setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.sendError || "" }]);
+            return;
+          }
         }
+
+        setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
+        setCurrentStep(prev => prev + 1);
       }, 1500);
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1 && !isTyping && currentStep < 8) {
+      clearPendingAdvance();
       // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
       const isAsking = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
       if (isAsking) return;
@@ -526,11 +558,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         rebuiltHistory.push({ role: 'bot', text: getQuestion(4, formData) });
       }
       if (targetStep >= 5) {
-        rebuiltHistory.push({ role: 'user', text: formData.volume || "Até 1.000" });
+        rebuiltHistory.push({ role: 'user', text: formData.volume || t?.leadQualify?.volumeOptions?.[0] || "" });
         rebuiltHistory.push({ role: 'bot', text: getQuestion(5, formData) });
       }
       if (targetStep >= 6) {
-        rebuiltHistory.push({ role: 'user', text: formData.team || "1 a 3" });
+        rebuiltHistory.push({ role: 'user', text: formData.team || t?.leadQualify?.teamOptions?.[0] || "" });
         rebuiltHistory.push({ role: 'bot', text: getQuestion(6, formData) });
       }
       if (targetStep >= 7) {
@@ -1127,7 +1159,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                 
                 <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[0]}
-                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || "empresa"}</span>
+                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || "company"}</span>
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[1]}
                 </p>
 
@@ -1155,7 +1187,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                       onClick={resetForm}
                       className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-200 whitespace-nowrap"
                     >
-                      {t?.leadQualify?.newRequest || "Nova solicitação"}
+                      {t?.leadQualify?.newRequest || ""}
                     </button>
                   </div>
                 </div>
