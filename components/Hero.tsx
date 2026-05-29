@@ -410,13 +410,13 @@ export function Hero() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="fixed inset-0 z-[250] flex items-center justify-center pointer-events-none"
+                  className="fixed inset-x-0 top-0 z-[250] flex justify-center pointer-events-none px-4 pt-[max(1.25rem,env(safe-area-inset-top))]"
                 >
                   <m.div
-                    initial={{ y: 18, scale: 0.94 }}
+                    initial={{ y: -80, scale: 0.96 }}
                     animate={{ y: 0, scale: 1 }}
-                    exit={{ y: 18, scale: 0.94 }}
-                    transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                    exit={{ y: -80, scale: 0.96 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     className="whitespace-nowrap rounded-full border border-[#B597FF]/40 bg-[#B597FF] px-6 py-3 text-sm font-black text-white shadow-2xl shadow-[#B597FF]/35"
                   >
                     {t.hero.demoSoon}
