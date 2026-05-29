@@ -109,6 +109,13 @@ body {
   border-radius: 999px;
 }
 
+.lead-popup-scrollbar::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 .lead-popup-scrollbar::-webkit-scrollbar-thumb {
   background: #52525b !important;
   border-radius: 999px;

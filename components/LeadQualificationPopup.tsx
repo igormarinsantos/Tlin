@@ -560,7 +560,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </AnimatePresence>
 
             {/* Header / Botão Fechar */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100]">
+            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]">
               <button
                 onClick={closePopup}
                 className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
