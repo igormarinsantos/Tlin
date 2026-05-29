@@ -220,7 +220,7 @@ export function FooterBanner() {
 
   return (
     <section className="w-full py-10 md:py-20 px-4 md:px-10 relative">
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[500px] bg-[#B597FF]/10 blur-[150px] pointer-events-none rounded-full" />
+      <div className="absolute inset-x-0 top-1/2 hidden h-[500px] -translate-y-1/2 rounded-full bg-[#B597FF]/10 blur-[150px] pointer-events-none md:block" />
       
       <div 
         ref={containerRef}
@@ -239,8 +239,7 @@ export function FooterBanner() {
           <div
             className="absolute inset-0 z-0"
             style={{
-              background:
-                "radial-gradient(circle at 22% 18%, rgba(56,227,255,0.75), transparent 34%), radial-gradient(circle at 82% 78%, rgba(181,151,255,0.82), transparent 42%), linear-gradient(135deg, #131015 0%, #241d3a 52%, #0c0d0d 100%)",
+              background: "linear-gradient(135deg, #B597FF 0%, #38E3FF 100%)",
             }}
           />
         ) : (
@@ -281,32 +280,39 @@ export function FooterBanner() {
         )}
 
         <div className="relative z-30 h-full max-w-5xl mx-auto px-8 flex flex-col items-center justify-center text-center pointer-events-none">
-           <motion.h2 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-tight"
-           >
-              {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
-           </motion.h2>
+           {isMobile ? (
+             <>
+               <h2 className="text-4xl font-bold tracking-tight text-white mb-4 leading-tight">
+                 {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
+               </h2>
+               <p className="text-base text-white mb-8 max-w-2xl">
+                 {t.footerBanner.subtitle}
+               </p>
+             </>
+           ) : (
+             <>
+               <motion.h2 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-tight"
+               >
+                  {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
+               </motion.h2>
 
-           <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-base md:text-lg text-white mb-8 max-w-2xl"
-           >
-              {t.footerBanner.subtitle}
-           </motion.p>
+               <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="text-base md:text-lg text-white mb-8 max-w-2xl"
+               >
+                  {t.footerBanner.subtitle}
+               </motion.p>
+             </>
+           )}
 
-           <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0"
-           >
+           <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0">
               <button 
                 onClick={() => {
                   trackFunnelEvent("click_pricing_cta", {
@@ -335,7 +341,7 @@ export function FooterBanner() {
               >
                  {t.footerBanner.cta2}
               </a>
-           </motion.div>
+           </div>
         </div>
       </div>
     </section>
