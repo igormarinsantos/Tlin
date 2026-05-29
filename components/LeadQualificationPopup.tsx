@@ -198,6 +198,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     }
   };
 
+  const keepInputVisible = () => {
+    setTimeout(scrollToBottom, 80);
+    setTimeout(scrollToBottom, 280);
+  };
+
   useEffect(() => {
     scrollToBottom();
     const t = setInterval(scrollToBottom, 100);
@@ -208,21 +213,53 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyWidth = document.body.style.width;
+    const previousBodyTop = document.body.style.top;
     const lenis = (window as any).lenis;
+    const scrollY = window.scrollY;
+
+    const syncViewportHeight = () => {
+      const viewport = window.visualViewport;
+      const height = viewport?.height || window.innerHeight;
+      document.documentElement.style.setProperty("--lead-popup-height", `${height}px`);
+      document.documentElement.style.setProperty("--lead-popup-offset-top", `${viewport?.offsetTop || 0}px`);
+    };
 
     if (isOpen) {
+      syncViewportHeight();
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollY}px`;
       lenis?.stop?.();
+      window.visualViewport?.addEventListener("resize", syncViewportHeight);
+      window.visualViewport?.addEventListener("scroll", syncViewportHeight);
+      window.addEventListener("resize", syncViewportHeight);
     } else {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.width = previousBodyWidth;
+      document.body.style.top = previousBodyTop;
+      document.documentElement.style.removeProperty("--lead-popup-height");
+      document.documentElement.style.removeProperty("--lead-popup-offset-top");
       lenis?.start?.();
     }
 
     return () => {
+      window.visualViewport?.removeEventListener("resize", syncViewportHeight);
+      window.visualViewport?.removeEventListener("scroll", syncViewportHeight);
+      window.removeEventListener("resize", syncViewportHeight);
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.width = previousBodyWidth;
+      document.body.style.top = previousBodyTop;
+      document.documentElement.style.removeProperty("--lead-popup-height");
+      document.documentElement.style.removeProperty("--lead-popup-offset-top");
+      if (isOpen) window.scrollTo(0, scrollY);
       lenis?.start?.();
     };
   }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
@@ -475,14 +512,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           transition={{ duration: 0.3 }}
           onWheelCapture={(event) => event.stopPropagation()}
           onTouchMoveCapture={(event) => event.stopPropagation()}
-          className="fixed inset-0 h-[100dvh] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/60 backdrop-blur-md overscroll-none"
+          className="fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/60 backdrop-blur-md overscroll-none"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full min-h-0 max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+            className={`relative w-full h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
               currentStep === 8 
                 ? 'border-zinc-200' 
                 : 'border-white/10'
@@ -695,7 +732,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </div>
 
             {/* Input & Footer Area - Fixed at the bottom */}
-            <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-4 sm:pb-10 z-20">
+            <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
                 <AnimatePresence mode="wait">
                   {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
                     <>
@@ -711,6 +748,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               <input 
                                 autoFocus 
                                 type="text" 
+                                onFocus={keepInputVisible}
                                 value={formData.name} 
                                 onChange={e => setFormData({...formData, name: e.target.value})} 
                                 onKeyDown={e => {
@@ -790,6 +828,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               <input 
                                 autoFocus 
                                 type="text" 
+                                onFocus={keepInputVisible}
                                 value={formData.phone} 
                                 onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})} 
                                 onKeyDown={e => {
@@ -826,6 +865,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                               <input 
                                 autoFocus 
                                 type="email" 
+                                onFocus={keepInputVisible}
                                 value={formData.email} 
                                 onChange={e => setFormData({...formData, email: e.target.value})} 
                                 onKeyDown={e => {
@@ -890,6 +930,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         <input 
                           autoFocus 
                           type="text" 
+                          onFocus={keepInputVisible}
                           value={formData.name} 
                           onChange={e => setFormData({...formData, name: e.target.value})}
                           placeholder="Nome da empresa..."
@@ -916,6 +957,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                           <input 
                             autoFocus 
                             type="text" 
+                            onFocus={keepInputVisible}
                             value={formData.phone} 
                             onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})}
                             placeholder="Número..."
@@ -961,6 +1003,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         <input 
                           autoFocus 
                           type="email" 
+                          onFocus={keepInputVisible}
                           value={formData.email} 
                           onChange={e => setFormData({...formData, email: e.target.value})}
                           placeholder="E-mail corporativo..."
