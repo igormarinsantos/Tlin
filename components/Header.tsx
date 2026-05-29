@@ -174,7 +174,7 @@ export function Header() {
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 cursor-pointer">
+          <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
              <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
           </div>
 
@@ -212,7 +212,7 @@ export function Header() {
           >
             <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
               
-              <div className="flex items-center gap-2 cursor-pointer">
+              <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
               </div>
 

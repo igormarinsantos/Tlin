@@ -496,7 +496,7 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
   useEffect(() => {
     const handleGlobalHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isOverInteractive = !!target.closest('button') || !!target.closest('a') || !!target.closest('[role="button"]');
+      const isOverInteractive = !!target.closest('button') || !!target.closest('a') || !!target.closest('[role="button"]') || !!target.closest('[data-mascot-hide]');
       setIsAbductedGlobal(isOverInteractive);
     };
 
