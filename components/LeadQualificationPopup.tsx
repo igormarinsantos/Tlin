@@ -578,7 +578,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             {currentStep < 8 ? (
               <>
             {/* Scrollable Message Area */}
-            <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 custom-scrollbar">
+            <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y ml-0 mr-1 sm:mr-2 px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 lead-popup-scrollbar">
               <div className="w-full flex flex-col justify-start min-h-full">
                 <div className="space-y-6 sm:space-y-8">
                   {chatHistory.map((msg, idx) => {
