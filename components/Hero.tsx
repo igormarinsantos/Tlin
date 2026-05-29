@@ -192,11 +192,11 @@ export function Hero() {
 
     let frameId: number;
     let frameCount = 0;
-    const REVEAL_EVERY_FRAMES = 3;
+    const revealEveryFrames = isDesktop ? 3 : 2;
 
     const tick = () => {
       frameCount++;
-      if (frameCount % REVEAL_EVERY_FRAMES === 0) {
+      if (frameCount % revealEveryFrames === 0) {
         setVisibleCount((v) => {
           const next = v + 1;
           if (next >= allChars.length) {
@@ -220,7 +220,7 @@ export function Hero() {
 
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [phase, allChars.length]);
+  }, [phase, allChars.length, isDesktop]);
 
   const Cursor = () => (
     <span className="relative inline-flex w-0 h-[1em] items-center shrink-0" style={{ visibility: phase === "done" ? "hidden" : "visible" }}>
