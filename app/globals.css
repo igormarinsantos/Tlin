@@ -96,24 +96,31 @@ body {
 
 .lead-popup-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #3f3f46 transparent;
+  scrollbar-color: #52525b #0c0d0d;
 }
 
 .lead-popup-scrollbar::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
+  background: #0c0d0d !important;
 }
 
 .lead-popup-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lead-popup-scrollbar::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #0c0d0d !important;
   border-radius: 999px;
 }
 
+.lead-popup-scrollbar::-webkit-scrollbar-thumb {
+  background: #52525b !important;
+  border-radius: 999px;
+  border: 2px solid #0c0d0d;
+}
+
 .lead-popup-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #71717a !important;
+}
+
+.lead-popup-scrollbar::-webkit-scrollbar-corner {
+  background: #0c0d0d !important;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
