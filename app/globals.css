@@ -60,6 +60,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+::selection {
+  background: rgba(56, 227, 255, 0.32);
+  color: #0c0d0d;
+}
+
+::-moz-selection {
+  background: rgba(56, 227, 255, 0.32);
+  color: #0c0d0d;
+}
+
 /* .section-to-blur is used by Pricing to dim other sections */
 .section-to-blur {
   transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
