@@ -55,7 +55,9 @@ export function Hero() {
   const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("idle");
   const [isFinished, setIsFinished] = useState(false);
   const [lastInlinePos, setLastInlinePos] = useState({ x: 0, y: 0 });
+  const [showDemoNotice, setShowDemoNotice] = useState(false);
   const lastCharRef = useRef<HTMLSpanElement>(null);
+  const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
   const title = t.hero.title;
@@ -67,6 +69,12 @@ export function Hero() {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (demoNoticeTimeout.current) clearTimeout(demoNoticeTimeout.current);
+    };
   }, []);
   
   const allChars = useMemo(() => {
@@ -369,9 +377,14 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <a
-            href="#demo"
-            onClick={() => trackFunnelEvent("click_demo_anchor", { cta_source: "hero_secondary" })}
+          <button
+            type="button"
+            onClick={() => {
+              trackFunnelEvent("click_demo_anchor", { cta_source: "hero_secondary" });
+              setShowDemoNotice(true);
+              if (demoNoticeTimeout.current) clearTimeout(demoNoticeTimeout.current);
+              demoNoticeTimeout.current = setTimeout(() => setShowDemoNotice(false), 2200);
+            }}
             className="relative cursor-pointer"
             onMouseEnter={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();
@@ -391,6 +404,17 @@ export function Hero() {
               {t.hero.watchDemo}
             </div>
             <AnimatePresence>
+              {showDemoNotice && (
+                <m.div
+                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute left-1/2 top-full z-[120] mt-3 -translate-x-1/2 whitespace-nowrap rounded-full border border-zinc-200 bg-white px-4 py-2 text-xs font-black text-zinc-700 shadow-xl shadow-zinc-950/10"
+                >
+                  {t.hero.demoSoon}
+                </m.div>
+              )}
               {isDemoHovered && (
                 <m.div
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -413,7 +437,7 @@ export function Hero() {
                 </m.div>
               )}
             </AnimatePresence>
-          </a>
+          </button>
         </m.div>
 
         {/* Mascot Follower (PC Only) - Desmontado no Mobile para poupar CPU/GPU */}
