@@ -406,13 +406,21 @@ export function Hero() {
             <AnimatePresence>
               {showDemoNotice && (
                 <m.div
-                  initial={{ opacity: 0, x: "-50%", y: "calc(-50% + 18px)", scale: 0.94 }}
-                  animate={{ opacity: 1, x: "-50%", y: "-50%", scale: 1 }}
-                  exit={{ opacity: 0, x: "-50%", y: "calc(-50% + 18px)", scale: 0.94 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="fixed left-1/2 top-1/2 z-[250] whitespace-nowrap rounded-full border border-[#B597FF]/40 bg-[#B597FF] px-6 py-3 text-sm font-black text-white shadow-2xl shadow-[#B597FF]/35"
+                  className="fixed inset-0 z-[250] flex items-center justify-center pointer-events-none"
                 >
-                  {t.hero.demoSoon}
+                  <m.div
+                    initial={{ y: 18, scale: 0.94 }}
+                    animate={{ y: 0, scale: 1 }}
+                    exit={{ y: 18, scale: 0.94 }}
+                    transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                    className="whitespace-nowrap rounded-full border border-[#B597FF]/40 bg-[#B597FF] px-6 py-3 text-sm font-black text-white shadow-2xl shadow-[#B597FF]/35"
+                  >
+                    {t.hero.demoSoon}
+                  </m.div>
                 </m.div>
               )}
               {isDemoHovered && (
