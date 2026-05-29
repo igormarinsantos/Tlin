@@ -71,11 +71,23 @@ function LanguageSelector() {
 
 function NavLinks() {
   const { t } = useLanguage();
+  const linkClass = "group/navlink relative py-2 px-4 hover:text-[#0c0d0d] transition-colors";
+  const underlineClass = "absolute bottom-1 left-4 right-4 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/navlink:scale-x-100";
+
   return (
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <a href="#" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.product}</a>
-      <a href="#features" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.resources}</a>
-      <a href="#pricing" className="py-2 px-4 hover:text-[#0c0d0d] transition-colors">{t.nav.pricing}</a>
+      <a href="#" className={linkClass}>
+        <span className="relative">{t.nav.product}</span>
+        <span className={underlineClass} />
+      </a>
+      <a href="#features" className={linkClass}>
+        <span className="relative">{t.nav.resources}</span>
+        <span className={underlineClass} />
+      </a>
+      <a href="#pricing" className={linkClass}>
+        <span className="relative">{t.nav.pricing}</span>
+        <span className={underlineClass} />
+      </a>
     </nav>
   );
 }
@@ -179,9 +191,10 @@ export function Header() {
                href="https://app.tlin.cloud" 
                target="_blank" 
                rel="noopener noreferrer"
-               className="hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors"
+               className="group/login relative hidden md:block px-4 py-2 text-sm font-bold text-zinc-600 hover:text-[#0c0d0d] transition-colors"
              >
-                {t.nav.login}
+                <span className="relative">{t.nav.login}</span>
+                <span className="absolute bottom-1 left-4 right-4 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/login:scale-x-100" />
              </a>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
