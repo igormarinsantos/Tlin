@@ -71,19 +71,18 @@ function LanguageSelector() {
 
 function NavLinks() {
   const { t } = useLanguage();
-  const linkClass = "group/navlink relative py-2 px-4 hover:text-[#0c0d0d] transition-colors";
-  const underlineClass = "absolute -bottom-0.5 left-0 right-0 h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/navlink:scale-x-100";
+  const linkClass = "relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200";
 
   return (
     <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
       <a href="#" className={linkClass}>
-        <span className="relative inline-block">{t.nav.product}<span className={underlineClass} /></span>
+        {t.nav.product}
       </a>
       <a href="#features" className={linkClass}>
-        <span className="relative inline-block">{t.nav.resources}<span className={underlineClass} /></span>
+        {t.nav.resources}
       </a>
       <a href="#pricing" className={linkClass}>
-        <span className="relative inline-block">{t.nav.pricing}<span className={underlineClass} /></span>
+        {t.nav.pricing}
       </a>
     </nav>
   );
