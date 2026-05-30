@@ -26,13 +26,9 @@ export async function POST(req: NextRequest) {
       const cleanPhone = fullPhone.replace("+", "");
       const companyName = name || "sua empresa";
       const messagesToSend = [
-        `Parabéns! Seja bem-vindo à Tlin 🩵
-
-Recebemos o formulário da ${companyName} com sucesso e agora você avançou para a próxima etapa do nosso processo.
-
-Um especialista da Tlin vai acompanhar seu atendimento e te orientar de forma personalizada.
-
-Para começarmos, qual é hoje o principal desafio comercial da ${companyName}?`
+        `*Parabéns!* Seja bem-vindo à *Tlin* 🩵`,
+        `Recebemos o formulário da *${companyName}* com sucesso e agora você avançou para a *próxima etapa* do nosso processo.`,
+        `Um *especialista da Tlin* vai acompanhar seu atendimento e te orientar de forma personalizada.\n\nPara começarmos, qual é hoje o *principal desafio comercial* da *${companyName}*?`
       ];
 
       try {
