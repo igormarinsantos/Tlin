@@ -13,11 +13,15 @@ export async function POST(req: NextRequest) {
     const evoApiUrl = process.env.EVO_API_URL || "";
     const evoApiKey = process.env.EVO_API_KEY || "";
     const evoInstanceName = process.env.EVO_INSTANCE_NAME || "";
+    const evoGroupId = process.env.EVO_GROUP_ID || "";
+    const hasEvoConfig = !!(evoApiUrl && evoApiKey && evoInstanceName);
     let whatsappResponse = null;
     let whatsappError = null;
     let whatsappDebug = null;
+    let groupResponse = null;
+    let groupError = null;
 
-    if (evoApiUrl && evoApiKey && evoInstanceName && fullPhone) {
+    if (hasEvoConfig && fullPhone) {
       // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
       const cleanPhone = fullPhone.replace("+", "");
       const companyName = name || "sua empresa";
@@ -86,6 +90,51 @@ Para começarmos, qual é hoje o principal desafio comercial da ${companyName}?`
       whatsappDebug = getEvoDebugInfo(evoApiUrl, evoInstanceName);
     }
 
+    if (hasEvoConfig && evoGroupId) {
+      try {
+        const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
+        const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
+        const groupText = [
+          `Novo lead Tlin 🚀`,
+          ``,
+          `Empresa: ${name || "Não informado"}`,
+          `WhatsApp: ${countryCode || "+55"} ${phone || "Não informado"}`,
+          `Volume: ${volume || "Não informado"}`,
+          `Equipe: ${team || "Não informado"}`,
+          `E-mail: ${email || "Não informado"}`,
+          `Plano: ${planName || "TLIN"}`,
+        ].join("\n");
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "apikey": evoApiKey,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            number: evoGroupId,
+            text: groupText,
+            delay: 1200,
+            linkPreview: false,
+          })
+        });
+
+        const responseText = await res.text();
+        groupResponse = responseText ? JSON.parse(responseText) : null;
+
+        if (!res.ok) {
+          throw new Error(`Evo API grupo retornou HTTP ${res.status}: ${responseText}`);
+        }
+
+        console.log(`Grupo Evo notificado com sucesso: ${evoGroupId}`);
+      } catch (err: any) {
+        console.error("Erro ao notificar grupo via Evo API:", err);
+        groupError = formatErrorMessage(err);
+      }
+    } else if (hasEvoConfig && !evoGroupId) {
+      groupError = "Variável EVO_GROUP_ID ausente";
+    }
+
     // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
     // Desobriga a inserção de variáveis de ambiente no painel da Vercel para funcionar instantaneamente
     const smtpUser = process.env.SMTP_USER || "";
@@ -146,7 +195,7 @@ Para começarmos, qual é hoje o principal desafio comercial da ${companyName}?`
       emailError = "Variáveis SMTP_USER ou SMTP_PASS ausentes";
     }
 
-    const success = !!whatsappResponse || emailSent;
+    const success = !!whatsappResponse || !!groupResponse || emailSent;
 
     return NextResponse.json({ 
       success, 
@@ -154,6 +203,9 @@ Para começarmos, qual é hoje o principal desafio comercial da ${companyName}?`
       whatsappResponse,
       whatsappError,
       whatsappDebug,
+      groupTriggered: !!groupResponse,
+      groupResponse,
+      groupError,
       emailSent,
       emailError,
     }, { status: success ? 200 : 502 });
