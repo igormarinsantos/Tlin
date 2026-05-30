@@ -110,6 +110,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const isLiveSession = useRef(false);
   const previousLangRef = useRef(lang);
   const pendingAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasTrackedQualifiedLeadRef = useRef(false);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
@@ -372,6 +373,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const resetForm = () => {
     clearPendingAdvance();
     isLiveSession.current = false;
+    hasTrackedQualifiedLeadRef.current = false;
     hasAutoClosed.current = false;
     setCurrentStep(1);
     setFormData(FALLBACK_FORM_DATA);
@@ -494,6 +496,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             team: updatedData.team,
           });
 
+          if (!hasTrackedQualifiedLeadRef.current) {
+            hasTrackedQualifiedLeadRef.current = true;
+            trackConversion('qualify_lead', {
+              plan_name: planName || 'not_selected',
+              lead_volume: updatedData.volume || 'not_set',
+              team_size: updatedData.team || 'not_set',
+              lead_country_code: updatedData.countryCode || '+55',
+              ...score,
+            });
+          }
+
           try {
             const response = await fetch('/api/notify', {
               method: 'POST',
@@ -512,13 +525,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             }
 
             console.log("Status do envio:", notifyResult);
-            trackConversion('qualify_lead', {
-              plan_name: planName || 'not_selected',
-              lead_volume: updatedData.volume || 'not_set',
-              team_size: updatedData.team || 'not_set',
-              lead_country_code: updatedData.countryCode || '+55',
-              ...score,
-            });
           } catch (err) {
             console.error("Erro ao notificar API:", err);
             setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.sendError || "" }]);
