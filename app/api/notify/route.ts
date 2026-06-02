@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { name, phone, countryCode, volume, team, email, planName, utm } = data;
+    const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm } = data;
 
     const fullPhone = `${countryCode || "+55"}${phone || ""}`.replace(/\D/g, "");
+    const supabaseResult = await saveLeadSubmission({
+      name,
+      phone,
+      countryCode,
+      volume,
+      team,
+      email,
+      planName,
+      lead_score,
+      lead_quality,
+      utm,
+      payload: data,
+    });
+    const supabaseLeadId = Array.isArray(supabaseResult.row)
+      ? (supabaseResult.row[0] as any)?.id || null
+      : (supabaseResult.row as any)?.id || null;
 
     // 1. Evo API (Evolution API) integration para WhatsApp
     // Dispara mensagem de confirmação
@@ -164,6 +181,8 @@ export async function POST(req: NextRequest) {
           team,
           email,
           planName,
+          lead_score,
+          lead_quality,
           utm,
         }),
       };
@@ -193,9 +212,23 @@ export async function POST(req: NextRequest) {
     }
 
     const success = !!whatsappResponse || !!groupResponse || emailSent;
+    const notificationResult = {
+      success,
+      whatsappTriggered: !!whatsappResponse,
+      whatsappError,
+      groupTriggered: !!groupResponse,
+      groupError,
+      emailSent,
+      emailError,
+    };
+
+    await updateLeadSubmissionNotification(supabaseLeadId, notificationResult);
 
     return NextResponse.json({ 
       success, 
+      supabaseSaved: supabaseResult.saved,
+      supabaseError: supabaseResult.error,
+      supabaseLeadId,
       whatsappTriggered: !!whatsappResponse, 
       whatsappResponse,
       whatsappError,
