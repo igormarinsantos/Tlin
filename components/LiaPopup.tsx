@@ -315,7 +315,7 @@ export function LiaPopup() {
               {/* Top Bar */}
               <div className="flex items-center justify-between p-3.5 bg-transparent shrink-0 z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 overflow-hidden shrink-0 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-zinc-100 overflow-hidden shrink-0">
                     <img 
                       src="/LIA PERFIL.webp" 
                       alt="Lia" 
@@ -407,7 +407,7 @@ export function LiaPopup() {
                           {msg.role === 'bot' && msg.type !== 'handoff' && (
                             <div className="w-8 h-8 shrink-0">
                               {isFirstInBlock && (
-                                <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 overflow-hidden shadow-sm mt-1">
+                                <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden mt-1">
                                   <img 
                                     src="/LIA PERFIL.webp" 
                                     alt="Lia" 
@@ -423,7 +423,7 @@ export function LiaPopup() {
                           ) : (
                             <div className={`max-w-[82%] p-3.5 rounded-2xl text-[13px] font-semibold leading-relaxed transition-all ${
                               msg.role === 'user' 
-                                ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 shadow-sm ${isFirstInBlock ? 'rounded-tr-none' : ''}` 
+                                ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${isFirstInBlock ? 'rounded-tr-none' : ''}` 
                                 : `bg-white text-zinc-800 border border-zinc-200 ${isFirstInBlock ? 'rounded-tl-none' : ''}`
                             }`}>
                               <FormattedMessage text={msg.text} />
@@ -434,7 +434,7 @@ export function LiaPopup() {
                     })}
                     {isTyping && (
                       <div className="flex items-start gap-2">
-                         <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 overflow-hidden shrink-0 mt-1 shadow-sm">
+                         <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden shrink-0 mt-1">
                            <img 
                              src="/LIA PERFIL.webp" 
                              alt="Lia" 
