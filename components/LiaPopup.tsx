@@ -16,6 +16,7 @@ export function LiaPopup() {
   const [status, setStatus] = useState("online");
   const [placeholder, setPlaceholder] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const chatSessionRef = useRef(0);
 
   const fullPlaceholder = t.liaPopup.fullPlaceholder;
   const scrollToBottom = () => {
@@ -70,14 +71,6 @@ export function LiaPopup() {
   useEffect(() => {
     if (!isOpen) return;
 
-    const scrollY = window.scrollY;
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousBodyPosition = document.body.style.position;
-    const previousBodyTop = document.body.style.top;
-    const previousBodyWidth = document.body.style.width;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-    const lenis = (window as any).lenis;
-
     const updateViewportVars = () => {
       const viewport = window.visualViewport;
       const height = viewport?.height ?? window.innerHeight;
@@ -88,13 +81,7 @@ export function LiaPopup() {
       keepInputVisible();
     };
 
-    lenis?.stop?.();
     updateViewportVars();
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
 
     window.visualViewport?.addEventListener("resize", updateViewportVars);
     window.visualViewport?.addEventListener("scroll", updateViewportVars);
@@ -106,13 +93,6 @@ export function LiaPopup() {
       window.removeEventListener("resize", updateViewportVars);
       document.documentElement.style.removeProperty("--lia-popup-height");
       document.documentElement.style.removeProperty("--lia-popup-offset-top");
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.overflow = previousBodyOverflow;
-      document.body.style.position = previousBodyPosition;
-      document.body.style.top = previousBodyTop;
-      document.body.style.width = previousBodyWidth;
-      lenis?.start?.();
-      window.scrollTo(0, scrollY);
     };
   }, [isOpen]);
 
@@ -125,8 +105,18 @@ export function LiaPopup() {
     window.open("https://wa.me/5511916248604?text=Olá! Vim pelo site da Tlin e gostaria de falar com a equipe.", "_blank");
   };
 
+  const resetChat = () => {
+    chatSessionRef.current += 1;
+    setMessages([]);
+    setInputValue("");
+    setIsTyping(false);
+    setStatus(t.liaPopup.online);
+    trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
+    const sessionId = chatSessionRef.current;
     
     const userMsg = inputValue.trim();
     trackFunnelEvent("lia_message_sent", {
@@ -150,37 +140,17 @@ export function LiaPopup() {
       
       const data = await response.json();
       const botResponse = data.text;
+      if (sessionId !== chatSessionRef.current) return;
       
       setIsTyping(false);
       setStatus(t.liaPopup.online);
 
-      // Process tools (scroll)
-      const scrollMatch = botResponse.match(/\[scrollToSection:(\w+)\]/);
-      if (scrollMatch) {
-        const sectionId = scrollMatch[1];
-        setTimeout(() => {
-          const element = document.getElementById(sectionId);
-          if (element) {
-            const lenis = (window as any).lenis;
-            const customOffset = sectionId === 'pricing' ? -20 : -80;
-            if (lenis) {
-              lenis.scrollTo(element, { offset: customOffset });
-            } else {
-              const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({
-                top: elementPosition - customOffset,
-                behavior: "smooth"
-              });
-            }
-          }
-        }, 500);
-      }
-
-      // Clean tool tags and split into blocks
+      // Clean tool tags and split into blocks. Lia does not control page scroll.
       const cleanText = botResponse.replace(/\[scrollToSection:\w+\]/g, "").replace(/\[openWhatsApp\]/g, "").trim();
       const blocks = cleanText.split('\n').filter(b => b.trim() !== "");
 
       for (let i = 0; i < blocks.length; i++) {
+        if (sessionId !== chatSessionRef.current) return;
         const block = blocks[i];
         setStatus(t.liaPopup.typing);
         setIsTyping(true);
@@ -188,6 +158,7 @@ export function LiaPopup() {
         // Human-like typing delay formula: 25ms per char, cap at 2.5s
         const typingDelay = Math.min(block.length * 25, 2500);
         await new Promise(r => setTimeout(r, typingDelay));
+        if (sessionId !== chatSessionRef.current) return;
         
         setIsTyping(false);
         setMessages(prev => [...prev, { role: 'bot', text: block, type: 'text' }]);
@@ -198,7 +169,7 @@ export function LiaPopup() {
         }
       }
 
-      if (botResponse.includes("[openWhatsApp]")) {
+      if (sessionId === chatSessionRef.current && botResponse.includes("[openWhatsApp]")) {
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: "",
@@ -358,15 +329,25 @@ export function LiaPopup() {
                     </span>
                   </div>
                 </div>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 text-zinc-400 hover:text-zinc-900 transition-all"
-                  aria-label={t.liaPopup.close}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                  </svg>
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={resetChat}
+                    className="h-9 px-3 flex items-center justify-center rounded-full hover:bg-black/5 text-[11px] font-black text-zinc-400 hover:text-zinc-900 transition-all"
+                    aria-label={t.liaPopup.newChat}
+                    title={t.liaPopup.newChat}
+                  >
+                    {t.liaPopup.newChat}
+                  </button>
+                  <button 
+                    onClick={() => setIsOpen(false)}
+                    className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 text-zinc-400 hover:text-zinc-900 transition-all"
+                    aria-label={t.liaPopup.close}
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* Scrollable Content */}
