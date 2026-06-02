@@ -453,8 +453,8 @@ export function LiaPopup() {
               </div>
 
               <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
-                 <div className={`border border-zinc-200/50 rounded-[1.5rem] bg-white flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
-                   messages.length > 0 ? 'flex-row items-end gap-2 p-2' : 'flex-col p-3 py-4'
+                 <div className={`border border-zinc-200/50 bg-white flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
+                   messages.length > 0 ? 'flex-row items-center gap-1.5 rounded-[1.25rem] p-1.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
                    <textarea 
                      aria-label="Mensagem para Lia"
@@ -462,9 +462,9 @@ export function LiaPopup() {
                      onChange={(e) => setInputValue(e.target.value)}
                      onFocus={keepInputVisible}
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
-                     placeholder={placeholder}
-                     className={`bg-transparent border-none outline-none text-sm text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'h-10 min-h-10 max-h-24 py-2.5' : 'min-h-[60px]'
+                     placeholder={messages.length === 0 ? placeholder : ""}
+                     className={`bg-transparent border-none outline-none text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
+                       messages.length > 0 ? 'h-8 min-h-8 max-h-20 py-1.5 text-[13px]' : 'min-h-[60px] text-sm'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
@@ -472,11 +472,11 @@ export function LiaPopup() {
                        aria-label="Enviar mensagem"
                        onClick={handleSendMessage}
                        disabled={!inputValue.trim()}
-                       className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                       className={`${messages.length > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center transition-all ${
                           inputValue.trim() ? 'bg-zinc-950 text-white' : 'bg-zinc-100 text-zinc-400'
                        }`}
                      >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                        <svg width={messages.length > 0 ? 17 : 20} height={messages.length > 0 ? 17 : 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
                      </button>
                    </div>
                  </div>
