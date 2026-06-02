@@ -464,7 +464,7 @@ export function LiaPopup() {
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                      placeholder={messages.length === 0 ? placeholder : ""}
                      className={`bg-transparent border-none outline-none text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'h-8 min-h-8 max-h-20 py-1.5 text-[13px]' : 'min-h-[60px] text-sm'
+                       messages.length > 0 ? 'h-8 min-h-8 max-h-20 py-1.5 text-[13px] overflow-hidden' : 'min-h-[60px] text-sm'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
