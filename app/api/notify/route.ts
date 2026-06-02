@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       const companyName = name || "sua empresa";
       const messagesToSend = [
         `*Parabéns!* Seja bem-vindo à *Tlin* 🩵`,
-        `Recebemos o formulário da *${companyName}* com sucesso e agora você avançou para a *próxima etapa* do nosso processo.`,
+        `Recebemos a solicitação da *${companyName}* com sucesso e agora você avançou para a *próxima etapa* do nosso processo.`,
         `Um *especialista da Tlin* vai acompanhar seu atendimento e te orientar de forma personalizada.\n\nPara começarmos, qual é hoje o *principal desafio comercial* da *${companyName}*?`
       ];
 
@@ -91,15 +91,16 @@ export async function POST(req: NextRequest) {
         const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
         const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
         const groupText = [
-          `Novo lead Tlin 🚀`,
+          `🚨 *Novo lead Tlin*`,
           ``,
-          `Empresa: ${name || "Não informado"}`,
-          `WhatsApp: ${countryCode || "+55"} ${phone || "Não informado"}`,
-          `Volume: ${volume || "Não informado"}`,
-          `Equipe: ${team || "Não informado"}`,
-          `E-mail: ${email || "Não informado"}`,
-          `Plano: ${planName || "TLIN"}`,
-        ].join("\n");
+          `*Empresa:* ${name || "Não informado"}`,
+          `*WhatsApp:* ${countryCode || "+55"} ${phone || "Não informado"}`,
+          `*Volume:* ${volume || "Não informado"}`,
+          `*Equipe:* ${team || "Não informado"}`,
+          `*E-mail:* ${email || "Não informado"}`,
+          `*Plano:* ${planName || "TLIN"}`,
+          utm?.client_id ? `*GA Client ID:* ${utm.client_id}` : "",
+        ].filter(Boolean).join("\n");
 
         const res = await fetch(endpoint, {
           method: "POST",
@@ -270,6 +271,7 @@ function getLeadNotificationHtml(lead: Record<string, any>) {
     ["Equipe", lead.team],
     ["Lead score", lead.lead_score ? `${lead.lead_score}/100` : ""],
     ["Qualidade do lead", lead.lead_quality],
+    ["Google Analytics Client ID", utm.client_id],
     ["Origem atual", `${formatAttributionValue(utm.last_utm_source)} / ${formatAttributionValue(utm.last_utm_medium)}`],
     ["Campanha atual", utm.last_utm_campaign],
     ["Termo atual", utm.last_utm_term],
