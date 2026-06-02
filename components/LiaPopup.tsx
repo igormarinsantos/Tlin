@@ -453,8 +453,8 @@ export function LiaPopup() {
               </div>
 
               <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
-                 <div className={`border border-zinc-200/50 rounded-[1.5rem] bg-white flex flex-col focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
-                   messages.length > 0 ? 'p-2 py-2.5' : 'p-3 py-4'
+                 <div className={`border border-zinc-200/50 rounded-[1.5rem] bg-white flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
+                   messages.length > 0 ? 'flex-row items-end gap-2 p-2' : 'flex-col p-3 py-4'
                  }`}>
                    <textarea 
                      aria-label="Mensagem para Lia"
@@ -464,10 +464,10 @@ export function LiaPopup() {
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                      placeholder={placeholder}
                      className={`bg-transparent border-none outline-none text-sm text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'min-h-[44px]' : 'min-h-[60px]'
+                       messages.length > 0 ? 'h-10 min-h-10 max-h-24 py-2.5' : 'min-h-[60px]'
                      }`}
                    />
-                   <div className="flex justify-end mt-1">
+                   <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
                      <button 
                        aria-label="Enviar mensagem"
                        onClick={handleSendMessage}
