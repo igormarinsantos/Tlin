@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 
@@ -16,6 +16,7 @@ export function LiaPopup() {
   const [status, setStatus] = useState("online");
   const [placeholder, setPlaceholder] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatSessionRef = useRef(0);
 
   const fullPlaceholder = t.liaPopup.fullPlaceholder;
@@ -29,6 +30,24 @@ export function LiaPopup() {
     setTimeout(scrollToBottom, 80);
     setTimeout(scrollToBottom, 280);
   };
+
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const isCompact = messages.length > 0;
+    const minHeight = isCompact ? 32 : 60;
+    const maxHeight = isCompact ? 88 : 120;
+
+    textarea.style.height = "auto";
+    const nextHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+  };
+
+  useLayoutEffect(() => {
+    resizeTextarea();
+  }, [inputValue, messages.length, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -454,9 +473,10 @@ export function LiaPopup() {
 
               <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-zinc-200/50 bg-white flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
-                   messages.length > 0 ? 'flex-row items-center gap-1.5 rounded-[1.25rem] p-1.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
+                   messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-1.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
                    <textarea 
+                     ref={textareaRef}
                      aria-label="Mensagem para Lia"
                      value={inputValue}
                      onChange={(e) => setInputValue(e.target.value)}
@@ -464,7 +484,7 @@ export function LiaPopup() {
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                      placeholder={messages.length === 0 ? placeholder : ""}
                      className={`bg-transparent border-none outline-none text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'h-8 min-h-8 max-h-20 py-1.5 text-[13px] overflow-hidden' : 'min-h-[60px] text-sm'
+                       messages.length > 0 ? 'min-h-8 py-1.5 text-[13px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-sm'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
