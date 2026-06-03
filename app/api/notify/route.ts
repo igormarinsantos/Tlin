@@ -108,16 +108,33 @@ export async function POST(req: NextRequest) {
         const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
         const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
         const groupText = [
-          `🚨 *Novo lead Tlin*`,
+          `🚨 *NOVO LEAD TLIN*`,
           ``,
-          `*Empresa:* ${name || "Não informado"}`,
-          `*WhatsApp:* ${countryCode || "+55"} ${phone || "Não informado"}`,
-          `*Volume:* ${volume || "Não informado"}`,
-          `*Equipe:* ${team || "Não informado"}`,
-          `*E-mail:* ${email || "Não informado"}`,
-          `*Plano:* ${planName || "TLIN"}`,
-          utm?.client_id ? `*GA Client ID:* ${utm.client_id}` : "",
-        ].filter(Boolean).join("\n");
+          `*1. DADOS DO CLIENTE*`,
+          `Empresa: ${name || "Não informado"}`,
+          `WhatsApp: ${countryCode || "+55"} ${phone || "Não informado"}`,
+          `E-mail: ${email || "Não informado"}`,
+          ``,
+          `*2. QUALIFICAÇÃO COMERCIAL*`,
+          `Plano de interesse: ${planName || "TLIN"}`,
+          `Volume mensal: ${volume || "Não informado"}`,
+          `Tamanho da equipe: ${team || "Não informado"}`,
+          `Score: ${lead_score ? `${lead_score}/100` : "Não informado"}`,
+          `Qualidade: ${lead_quality || "Não informado"}`,
+          ``,
+          `*3. DADOS DE CAMPANHA*`,
+          `Origem atual: ${formatAttributionValue(utm?.last_utm_source)} / ${formatAttributionValue(utm?.last_utm_medium)}`,
+          `Campanha atual: ${formatAttributionValue(utm?.last_utm_campaign)}`,
+          `Termo atual: ${formatAttributionValue(utm?.last_utm_term)}`,
+          `Conteúdo atual: ${formatAttributionValue(utm?.last_utm_content)}`,
+          `GA Client ID: ${formatAttributionValue(utm?.client_id)}`,
+          ``,
+          `*4. NAVEGAÇÃO*`,
+          `Página de entrada: ${formatAttributionValue(utm?.last_landing_page)}`,
+          `Página atual: ${formatAttributionValue(utm?.last_current_page)}`,
+          `Referência: ${formatAttributionValue(utm?.last_referrer)}`,
+          `Domínio de referência: ${formatAttributionValue(utm?.last_referrer_host)}`,
+        ].join("\n");
 
         const res = await fetch(endpoint, {
           method: "POST",
