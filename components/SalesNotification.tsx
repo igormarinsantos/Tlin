@@ -14,16 +14,16 @@ interface Notification {
 }
 
 const profiles = [
-  { name: "Ricardo M.", avatar: "/lotties/2_peeled.webp" },
-  { name: "Ana Paula", avatar: "/lotties/1_peeled.webp" },
-  { name: "Bruno S.", avatar: "/lotties/3_peeled.webp" },
-  { name: "Carla F.", avatar: "/lotties/6_peeled.webp" },
-  { name: "Lucas G.", avatar: "/lotties/9_peeled.webp" },
-  { name: "Juliana K.", avatar: "/lotties/10_peeled.webp" },
-  { name: "Roberto T.", avatar: "/lotties/5_peeled.webp" },
-  { name: "Mariana L.", avatar: "/lotties/7_peeled.webp" },
-  { name: "Sônia R.", avatar: "/lotties/4_peeled.webp" },
-  { name: "Fernando H.", avatar: "/lotties/8_peeled.webp" }
+  { name: "Ricardo M.", avatar: "/lotties/avatars/2_avatar.webp" },
+  { name: "Ana Paula", avatar: "/lotties/avatars/1_avatar.webp" },
+  { name: "Bruno S.", avatar: "/lotties/avatars/3_avatar.webp" },
+  { name: "Carla F.", avatar: "/lotties/avatars/6_avatar.webp" },
+  { name: "Lucas G.", avatar: "/lotties/avatars/9_avatar.webp" },
+  { name: "Juliana K.", avatar: "/lotties/avatars/10_avatar.webp" },
+  { name: "Roberto T.", avatar: "/lotties/avatars/5_avatar.webp" },
+  { name: "Mariana L.", avatar: "/lotties/avatars/7_avatar.webp" },
+  { name: "Sônia R.", avatar: "/lotties/avatars/4_avatar.webp" },
+  { name: "Fernando H.", avatar: "/lotties/avatars/8_avatar.webp" }
 ];
 
 const values = ["R$ 450,00", "R$ 1.200,00", "R$ 890,00", "R$ 3.500,00", "R$ 670,00", "R$ 2.100,00"];
