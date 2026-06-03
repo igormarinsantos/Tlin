@@ -52,8 +52,8 @@ export function Hero() {
   const isInView = useInView(containerRef, { amount: 0.1, once: true });
   
   const [visibleCount, setVisibleCount] = useState(0);
-  const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("idle");
-  const [isFinished, setIsFinished] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("done");
+  const [isFinished, setIsFinished] = useState(true);
   const [lastInlinePos, setLastInlinePos] = useState({ x: 0, y: 0 });
   const [showDemoNotice, setShowDemoNotice] = useState(false);
   const lastCharRef = useRef<HTMLSpanElement>(null);
@@ -63,7 +63,7 @@ export function Hero() {
   const title = t.hero.title;
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
   
-  const [isDesktop, setIsDesktop] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
@@ -190,10 +190,10 @@ export function Hero() {
 
   // Reset typing animation when title changes (language switch)
   useEffect(() => {
-    setVisibleCount(0);
-    setPhase("idle");
-    setIsFinished(false);
-  }, [title]);
+    setVisibleCount(allChars.length);
+    setPhase("done");
+    setIsFinished(true);
+  }, [title, allChars.length]);
 
   useEffect(() => {
     if (phase !== "typing") return;
@@ -230,6 +230,16 @@ export function Hero() {
     return () => cancelAnimationFrame(frameId);
   }, [phase, allChars.length, isDesktop]);
 
+  useEffect(() => {
+    if (!isFinished || !lastCharRef.current) return;
+
+    const rect = lastCharRef.current.getBoundingClientRect();
+    setLastInlinePos({
+      x: rect.left + rect.width,
+      y: rect.top + rect.height / 2,
+    });
+  }, [isFinished, title]);
+
   const Cursor = () => (
     <span className="relative inline-flex w-0 h-[1em] items-center shrink-0" style={{ visibility: phase === "done" ? "hidden" : "visible" }}>
       <m.span 
@@ -245,6 +255,7 @@ export function Hero() {
 
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [isDemoHovered, setIsDemoHovered] = useState(false);
+  const renderedVisibleCount = isFinished ? allChars.length : visibleCount;
   
   const uiMouseX = useMotionValue(0);
   const uiMouseY = useMotionValue(0);
@@ -275,18 +286,19 @@ export function Hero() {
 
               return (
                 <div key={lineIdx} className="block w-full">
-                  {visibleCount === 0 && lineIdx === 0 && <Cursor />}
+                  {renderedVisibleCount === 0 && lineIdx === 0 && <Cursor />}
                   {groups.map((group, gIdx) => (
                     <span key={gIdx} className="inline">
                       {group.chars.map((c, charInGroupIdx) => {
-                        const isVisible = c.globalIdx < visibleCount;
-                        const isLatest = c.globalIdx === visibleCount - 1;
+                        const isVisible = c.globalIdx < renderedVisibleCount;
+                        const isLatest = c.globalIdx === renderedVisibleCount - 1 && !isFinished;
+                        const isLastChar = c.globalIdx === allChars.length - 1;
                         
                         const totalCharsInGroup = group.chars.length;
                         const positionPercent = (charInGroupIdx / (totalCharsInGroup > 1 ? totalCharsInGroup - 1 : 1)) * 100;
                         
                         return (
-                          <span key={c.globalIdx} className="relative inline" ref={isLatest ? lastCharRef : null}>
+                          <span key={c.globalIdx} className="relative inline" ref={isLatest || (isFinished && isLastChar) ? lastCharRef : null}>
                             <Character 
                               char={c.char}
                               isVisible={isVisible}
@@ -309,9 +321,9 @@ export function Hero() {
           </h1>
 
           <m.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-            transition={{ duration: 0.8 }}
+            initial={false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
             className="text-zinc-500 font-medium text-base md:text-lg max-w-2xl mx-auto text-center mb-10"
           >
             {t.hero.subtitle}
@@ -319,9 +331,9 @@ export function Hero() {
         </div>
 
         <m.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial={false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
           <div className="relative">
