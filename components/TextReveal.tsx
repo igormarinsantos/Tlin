@@ -8,15 +8,53 @@ import { useLanguage } from "@/lib/LanguageContext";
 export function TextReveal() {
   const { t } = useLanguage();
   
-  // Parse text into individual words while preserving highlight state
-  const parts: { text: string; isHighlighted: boolean }[] = [];
+  // Parse text into individual words while preserving highlight group state.
+  const emojiRegex = /(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+  const parts: {
+    text: string;
+    isHighlighted: boolean;
+    highlightGroup: number | null;
+    gradientStart: number;
+    gradientTotal: number;
+    textLength: number;
+  }[] = [];
   let inHighlight = false;
+  let highlightGroup: number | null = null;
+  let nextHighlightGroup = 0;
   const rawWords = t.textReveal.text.split(/(\s+|\[|\])/);
   for (const w of rawWords) {
-    if (w === '[') { inHighlight = true; continue; }
-    if (w === ']') { inHighlight = false; continue; }
+    if (w === '[') {
+      inHighlight = true;
+      highlightGroup = nextHighlightGroup++;
+      continue;
+    }
+    if (w === ']') {
+      inHighlight = false;
+      highlightGroup = null;
+      continue;
+    }
     if (w.trim().length === 0) continue; 
-    parts.push({ text: w, isHighlighted: inHighlight });
+    parts.push({
+      text: w,
+      isHighlighted: inHighlight,
+      highlightGroup,
+      gradientStart: 0,
+      gradientTotal: 0,
+      textLength: w.replace(emojiRegex, "").length,
+    });
+  }
+
+  const groupOffsets = new Map<number, number>();
+  for (const part of parts) {
+    if (part.highlightGroup === null) continue;
+    const offset = groupOffsets.get(part.highlightGroup) || 0;
+    part.gradientStart = offset;
+    groupOffsets.set(part.highlightGroup, offset + part.textLength);
+  }
+
+  for (const part of parts) {
+    if (part.highlightGroup === null) continue;
+    part.gradientTotal = groupOffsets.get(part.highlightGroup) || part.textLength;
   }
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -78,6 +116,9 @@ export function TextReveal() {
                   isRevealed={isFinished || revealed[i]}
                   isActive={!isFinished && activeWord === i}
                   isHighlighted={part.isHighlighted}
+                  gradientStart={part.gradientStart}
+                  gradientTotal={part.gradientTotal}
+                  textLength={part.textLength}
                 >
                   {part.text}
                 </Word>
@@ -95,11 +136,17 @@ function Word({
   isRevealed,
   isActive,
   isHighlighted,
+  gradientStart,
+  gradientTotal,
+  textLength,
 }: {
   children: string;
   isRevealed: boolean;
   isActive: boolean;
   isHighlighted: boolean;
+  gradientStart: number;
+  gradientTotal: number;
+  textLength: number;
 }) {
   // Regex to detect emojis
   const emojiRegex = /(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
@@ -138,6 +185,10 @@ function Word({
               <span 
                 key={idx} 
                 className={isRevealed && isHighlighted ? 'bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : ''}
+                style={isRevealed && isHighlighted && gradientTotal > textLength ? {
+                  backgroundSize: `${(gradientTotal / Math.max(textLength, 1)) * 100}% 100%`,
+                  backgroundPosition: `${(gradientStart / Math.max(gradientTotal - textLength, 1)) * 100}% 0`,
+                } : undefined}
               >
                 {part}
               </span>
