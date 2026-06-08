@@ -71,11 +71,12 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
 
   useEffect(() => {
     let i = 0;
+    const charsPerTick = window.innerWidth < 640 ? 3 : 2;
     const interval = setInterval(() => {
-      setDisplayedText(rawText.slice(0, i + 1));
-      i++;
+      i += charsPerTick;
+      setDisplayedText(rawText.slice(0, i));
       if (i >= rawText.length) clearInterval(interval);
-    }, 25);
+    }, 32);
     return () => clearInterval(interval);
   }, [rawText]);
 
@@ -110,6 +111,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   const isLiveSession = useRef(false);
   const previousLangRef = useRef(lang);
   const pendingAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const scrollFrameRef = useRef<number | null>(null);
   const hasTrackedQualifiedLeadRef = useRef(false);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
@@ -193,7 +196,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
   }, []);
 
   useEffect(() => {
-    return () => clearPendingAdvance();
+    return () => {
+      clearPendingAdvance();
+      clearScrollTimers();
+    };
   }, []);
 
   useEffect(() => {
@@ -250,8 +256,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   // Salva automaticamente o progresso sempre que o usuário avança ou altera os dados
   useEffect(() => {
-    if (mounted) {
-      if (currentStep <= 1 && !isLiveSession.current) return;
+    if (!mounted) return;
+    if (currentStep <= 1 && !isLiveSession.current) return;
+
+    const timeout = setTimeout(() => {
       try {
         localStorage.setItem("tlin_lead_qualify_state", JSON.stringify({
           lang,
@@ -262,7 +270,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       } catch (e) {
         console.error("Erro ao salvar estado no localStorage:", e);
       }
-    }
+    }, 250);
+
+    return () => clearTimeout(timeout);
   }, [lang, currentStep, formData, chatHistory, mounted]);
 
   // Controle de Fechamento Automático em 10 segundos na primeira vez que atinge a tela de sucesso
@@ -304,26 +314,42 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     }
   };
 
+  const clearScrollTimers = () => {
+    scrollTimeoutsRef.current.forEach(clearTimeout);
+    scrollTimeoutsRef.current = [];
+    if (scrollFrameRef.current !== null) {
+      cancelAnimationFrame(scrollFrameRef.current);
+      scrollFrameRef.current = null;
+    }
+  };
+
+  const scheduleScrollToBottom = () => {
+    if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      scrollToBottom();
+    });
+  };
+
   const keepInputVisible = () => {
-    setTimeout(scrollToBottom, 80);
-    setTimeout(scrollToBottom, 280);
+    clearScrollTimers();
+    scrollTimeoutsRef.current = [
+      setTimeout(scheduleScrollToBottom, 80),
+      setTimeout(scheduleScrollToBottom, 240),
+    ];
   };
 
   useEffect(() => {
-    scrollToBottom();
-    const t = setInterval(scrollToBottom, 100);
-    const timeout = setTimeout(() => clearInterval(t), 2000);
-    return () => { clearInterval(t); clearTimeout(timeout); };
+    scheduleScrollToBottom();
+    return clearScrollTimers;
   }, [chatHistory, isTyping, currentStep]);
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
-    const previousBodyPosition = document.body.style.position;
-    const previousBodyWidth = document.body.style.width;
-    const previousBodyTop = document.body.style.top;
+    const previousBodyOverscroll = document.body.style.overscrollBehavior;
+    const previousHtmlOverscroll = document.documentElement.style.overscrollBehavior;
     const lenis = (window as any).lenis;
-    const scrollY = window.scrollY;
 
     const syncViewportHeight = () => {
       const viewport = window.visualViewport;
@@ -336,9 +362,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       syncViewportHeight();
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.top = `-${scrollY}px`;
+      document.body.style.overscrollBehavior = 'contain';
+      document.documentElement.style.overscrollBehavior = 'contain';
       lenis?.stop?.();
       window.visualViewport?.addEventListener("resize", syncViewportHeight);
       window.visualViewport?.addEventListener("scroll", syncViewportHeight);
@@ -346,9 +371,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
     } else {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.position = previousBodyPosition;
-      document.body.style.width = previousBodyWidth;
-      document.body.style.top = previousBodyTop;
+      document.body.style.overscrollBehavior = previousBodyOverscroll;
+      document.documentElement.style.overscrollBehavior = previousHtmlOverscroll;
       document.documentElement.style.removeProperty("--lead-popup-height");
       document.documentElement.style.removeProperty("--lead-popup-offset-top");
       lenis?.start?.();
@@ -360,12 +384,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       window.removeEventListener("resize", syncViewportHeight);
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.position = previousBodyPosition;
-      document.body.style.width = previousBodyWidth;
-      document.body.style.top = previousBodyTop;
+      document.body.style.overscrollBehavior = previousBodyOverscroll;
+      document.documentElement.style.overscrollBehavior = previousHtmlOverscroll;
       document.documentElement.style.removeProperty("--lead-popup-height");
       document.documentElement.style.removeProperty("--lead-popup-offset-top");
-      if (isOpen) window.scrollTo(0, scrollY);
       lenis?.start?.();
     };
   }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
@@ -385,6 +407,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
 
   const closePopup = () => {
     clearPendingAdvance();
+    clearScrollTimers();
     if (currentStep > 1 && currentStep < 8) {
       trackFunnelEvent('lead_form_abandoned', {
         lead_step: currentStep,
@@ -638,17 +661,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           exit={{ opacity: 0 }} 
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.18 }}
           onWheelCapture={(event) => event.stopPropagation()}
           onTouchMoveCapture={(event) => event.stopPropagation()}
-          className="fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/60 backdrop-blur-md overscroll-none"
+          className="fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transition-all duration-700 ${
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative w-full h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300 ${
               currentStep === 8 
                 ? 'border-zinc-200' 
                 : 'border-white/10'
