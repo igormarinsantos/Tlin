@@ -457,34 +457,13 @@
       min-height: 280px;
       border-radius: 28px;
       border: 1px solid var(--z200);
-      background: var(--z50);
+      background:
+        radial-gradient(circle at 50% 46%, rgba(56,227,255,0.22), transparent 8rem),
+        radial-gradient(circle at 50% 58%, rgba(181,151,255,0.2), transparent 11rem),
+        var(--z50);
       position: relative;
       overflow: hidden;
     }
-
-    .mascot-path {
-      position: absolute;
-      inset: 28px;
-      border: 2px dashed rgba(181,151,255,0.35);
-      border-radius: 999px;
-      transform: rotate(-14deg);
-    }
-
-    .mascot-chip {
-      position: absolute;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--black);
-      color: var(--white);
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .mascot-chip.one { left: 24px; top: 24px; }
-    .mascot-chip.two { right: 24px; bottom: 24px; background: var(--gradient); color: var(--black); }
 
     .mascot-icon {
       position: absolute;
@@ -753,25 +732,22 @@
         <div class="section-head">
           <div>
             <h2>Mascote</h2>
-            <p class="desc">O mascote TlinIA e um cursor vivo: acompanha a hero, reage a interacoes e some quando pode competir com a interface.</p>
+            <p class="desc">O mascote TlinIA e usado como sinal de IA ativa: ele guia a atencao sem competir com textos, botoes ou formularios.</p>
           </div>
         </div>
         <div class="grid">
           <div class="mascot-panel">
             <div class="mascot-stage">
-              <div class="mascot-path"></div>
-              <div class="mascot-chip one">idle patrol</div>
               <img class="mascot-icon" src="../public/TlinIA.svg" alt="Mascote TlinIA">
-              <div class="mascot-chip two">hide on CTA</div>
             </div>
             <div class="mascot-copy">
-              <h3>Logica de comportamento</h3>
+              <h3>Logica do mascote</h3>
               <ul class="spec-list">
                 <li>Na hero, nasce como cursor de digitacao e fica preso ao ultimo caractere revelado.</li>
                 <li>No desktop, depois da animacao, acompanha o mouse com spring suave e rotacao direcional.</li>
                 <li>Quando passa por botoes, links ou elementos com `data-mascot-hide`, ele reduz escala/opacidade para nao atrapalhar clique ou leitura.</li>
-                <li>No mobile, o mascote vira uma patrulha leve e curta, sem seguir toque para economizar CPU/GPU.</li>
-                <li>Evitar usar o mascote como decoracao solta: ele deve ter funcao de cursor, guia ou estado de IA.</li>
+                <li>No mobile, o movimento deve ser curto, leve e sem seguir toque para economizar CPU/GPU.</li>
+                <li>Evitar uso decorativo solto: o mascote sempre representa presenca, guia ou estado da IA.</li>
               </ul>
             </div>
           </div>
@@ -782,7 +758,7 @@
         <div class="section-head">
           <div>
             <h2>Chat</h2>
-            <p class="desc">O sistema de conversa da Tlin combina chat claro da Lia com fluxo de qualificacao escuro, sempre com hierarquia simples e leitura rapida.</p>
+            <p class="desc">O chat da Tlin deve parecer leve, direto e inteligente: uma janela clara para conversa com IA, com foco no input e nas respostas.</p>
           </div>
         </div>
         <div class="grid">
@@ -812,24 +788,24 @@
           </div>
 
           <div class="chat-spec">
-            <h3>Anatomia da Lia</h3>
+            <h3>Design do chat da Lia</h3>
             <ul class="spec-list">
-              <li>Container flutuante com borda conic gradient de 2px e raio grande.</li>
-              <li>Header compacto com avatar sem borda/sombra, nome e status em gradiente.</li>
-              <li>Balao da IA branco com borda zinc; balao do usuario em gradiente Tlin.</li>
-              <li>Input grande apenas no estado inicial; depois vira compacto e cresce conforme o texto.</li>
-              <li>Sem sombra nos baloes para manter a superficie leve.</li>
+              <li>A superficie principal e branca, com borda em gradiente e cantos grandes para parecer assistiva, nao tecnica.</li>
+              <li>O header e compacto: avatar limpo, nome da Lia e estado de disponibilidade com pouca interferencia visual.</li>
+              <li>As mensagens da IA usam branco e borda neutra; as mensagens do usuario usam o gradiente Tlin como assinatura.</li>
+              <li>O estado inicial valoriza o input grande e a chamada "Pergunte qualquer coisa"; depois da primeira mensagem, a interface fica mais compacta.</li>
+              <li>Os baloes nao usam sombra. A separacao vem de espacamento, contraste e cor.</li>
             </ul>
           </div>
 
           <div class="chat-spec">
-            <h3>Anatomia da qualificacao</h3>
+            <h3>Design da qualificacao</h3>
             <ul class="spec-list">
-              <li>Fundo escuro `#0c0d0d`, tipografia grande e foco em uma pergunta por vez.</li>
-              <li>Opcoes grandes, clicaveis, com o CTA principal em gradiente.</li>
-              <li>Scroll interno discreto em cinza escuro, sem setas aparentes.</li>
-              <li>Mobile sem blur pesado e com altura baseada no `visualViewport` para teclado.</li>
-              <li>Historico salvo com debounce para permitir retomada sem pesar a navegacao.</li>
+              <li>O fluxo de qualificacao usa fundo escuro para criar foco e diferenciar de uma conversa aberta.</li>
+              <li>A pergunta ocupa o protagonismo, com tipografia grande e poucas opcoes por tela.</li>
+              <li>As opcoes precisam parecer botoes de resposta rapida, com area clicavel generosa.</li>
+              <li>O scroll interno deve ser discreto, escuro e funcional, sem chamar atencao.</li>
+              <li>No mobile, a composicao precisa acompanhar teclado e altura visivel para manter o campo ativo acessivel.</li>
             </ul>
           </div>
         </div>
