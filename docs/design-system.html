@@ -352,89 +352,91 @@
     }
 
     .chat {
-      width: min(420px, 100%);
-      border-radius: 38px;
-      padding: 2px;
-      background: conic-gradient(from 0deg, transparent 0 165deg, var(--purple) 180deg, var(--blue) 195deg, transparent 210deg 360deg);
-    }
-
-    .chat-inner {
-      border-radius: 36px;
-      background: rgba(255,255,255,0.96);
-      padding: 18px;
-      min-height: 260px;
+      grid-column: span 12;
+      border-radius: var(--radius-panel);
+      background: #f4f0ff;
+      min-height: 320px;
+      padding: clamp(24px, 5vw, 52px);
+      position: relative;
       overflow: hidden;
-      position: relative;
     }
 
-    .chat-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
+    .chat-scene {
       position: relative;
-      z-index: 1;
+      min-height: 216px;
+    }
+
+    .chat-message-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      max-width: 760px;
     }
 
     .avatar {
-      width: 40px;
-      height: 40px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
-      background: var(--z100);
+      background: linear-gradient(135deg, #6bf0ff, #b597ff);
       overflow: hidden;
+      flex: 0 0 auto;
+      margin-top: 2px;
     }
 
-    .chat-title {
-      font-weight: 900;
-      font-size: 18px;
-      line-height: 1;
+    .avatar::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 50% 32%, #15211c 0 18%, transparent 19%),
+        radial-gradient(circle at 50% 80%, #1f8a63 0 46%, transparent 47%),
+        radial-gradient(circle at 50% 52%, #f1c49d 0 24%, transparent 25%);
     }
 
-    .chat-status {
-      margin-top: 3px;
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .bubble-row {
-      display: flex;
-      margin: 10px 0;
-    }
-
-    .bubble-row.user {
-      justify-content: flex-end;
-    }
-
-    .bubble {
-      max-width: 82%;
-      border-radius: 18px;
-      padding: 12px 14px;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.5;
-      border: 1px solid var(--z200);
+    .lottie-bubble {
+      width: min(520px, calc(100% - 44px));
+      border-radius: 0 22px 22px 22px;
+      border: 1px solid rgba(9, 10, 12, 0.12);
       background: var(--white);
-      color: var(--z800);
-    }
-
-    .bubble.user {
-      border: 0;
-      background: var(--gradient);
       color: var(--black);
+      padding: 17px 20px;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 800;
+      line-height: 1.55;
     }
 
-    .dark-panel {
-      grid-column: span 12;
-      border-radius: var(--radius-panel);
-      background: var(--black);
-      color: var(--white);
-      padding: 36px;
-      overflow: hidden;
-      min-height: 300px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
+    .chat-reply-line {
+      position: absolute;
+      right: 0;
+      bottom: 12px;
+      display: flex;
       align-items: center;
+      gap: 10px;
+    }
+
+    .typing-pill {
+      width: 82px;
+      height: 46px;
+      border-radius: 999px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .typing-pill span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(9, 10, 12, 0.62);
+    }
+
+    .chat-mascot {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 10px 16px rgba(56,227,255,0.18));
     }
 
     .mascot-panel {
@@ -512,50 +514,11 @@
     }
 
     .chat-spec {
-      grid-column: span 6;
+      grid-column: span 12;
       border-radius: 24px;
       border: 1px solid var(--z200);
       background: var(--z50);
       padding: 24px;
-    }
-
-    .form-question {
-      font-size: clamp(26px, 4vw, 48px);
-      line-height: 1.12;
-      letter-spacing: -0.045em;
-      font-weight: 900;
-    }
-
-    .option-stack {
-      display: grid;
-      gap: 10px;
-    }
-
-    .option-stack button {
-      width: 100%;
-      text-align: left;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
-      background: transparent;
-      color: var(--z400);
-      padding: 15px 18px;
-      font: inherit;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 180ms ease;
-    }
-
-    .option-stack button:first-child {
-      color: var(--black);
-      border-color: transparent;
-      background: var(--gradient);
-    }
-
-    .option-stack button:hover {
-      color: var(--white);
-      border-color: var(--purple);
-      background: rgba(255,255,255,0.05);
     }
 
     .code {
@@ -632,10 +595,6 @@
       .type-row {
         grid-template-columns: 1fr;
         gap: 10px;
-      }
-
-      .dark-panel {
-        grid-template-columns: 1fr;
       }
 
       .mascot-panel {
@@ -758,54 +717,37 @@
         <div class="section-head">
           <div>
             <h2>Chat</h2>
-            <p class="desc">O chat da Tlin deve parecer leve, direto e inteligente: uma janela clara para conversa com IA, com foco no input e nas respostas.</p>
+            <p class="desc">O chat animado usa a mesma logica dos lotties: pergunta humana em destaque, pausa de digitacao e resposta da IA sinalizada pelo mascote.</p>
           </div>
         </div>
         <div class="grid">
-          <div class="card component">
-            <div class="chat">
-              <div class="chat-inner">
-                <div class="chat-head">
-                  <div class="avatar"></div>
-                  <div>
-                    <div class="chat-title">Lia</div>
-                    <div class="chat-status gradient-text">online</div>
-                  </div>
+          <div class="chat">
+            <div class="chat-scene">
+              <div class="chat-message-line">
+                <div class="avatar"></div>
+                <div class="lottie-bubble">Achei o valor um pouco alto para o meu momento agora...</div>
+              </div>
+
+              <div class="chat-reply-line">
+                <div class="typing-pill">
+                  <span></span>
+                  <span></span>
+                  <span></span>
                 </div>
-                <div class="bubble-row"><div class="bubble">Como posso te ajudar hoje?</div></div>
-                <div class="bubble-row user"><div class="bubble user">Quero entender a Tlin.</div></div>
+                <img class="chat-mascot" src="../public/TlinIA.svg" alt="Mascote TlinIA respondendo">
               </div>
             </div>
           </div>
 
-          <div class="dark-panel">
-            <div class="form-question">Qual seu volume mensal de <span class="gradient-text">leads?</span></div>
-            <div class="option-stack">
-              <button>500 a 1.000 leads</button>
-              <button>100 a 500 leads</button>
-              <button>Mais de 1.000 leads</button>
-            </div>
-          </div>
-
           <div class="chat-spec">
-            <h3>Design do chat da Lia</h3>
+            <h3>Como reconstruir</h3>
             <ul class="spec-list">
-              <li>A superficie principal e branca, com borda em gradiente e cantos grandes para parecer assistiva, nao tecnica.</li>
-              <li>O header e compacto: avatar limpo, nome da Lia e estado de disponibilidade com pouca interferencia visual.</li>
-              <li>As mensagens da IA usam branco e borda neutra; as mensagens do usuario usam o gradiente Tlin como assinatura.</li>
-              <li>O estado inicial valoriza o input grande e a chamada "Pergunte qualquer coisa"; depois da primeira mensagem, a interface fica mais compacta.</li>
-              <li>Os baloes nao usam sombra. A separacao vem de espacamento, contraste e cor.</li>
-            </ul>
-          </div>
-
-          <div class="chat-spec">
-            <h3>Design da qualificacao</h3>
-            <ul class="spec-list">
-              <li>O fluxo de qualificacao usa fundo escuro para criar foco e diferenciar de uma conversa aberta.</li>
-              <li>A pergunta ocupa o protagonismo, com tipografia grande e poucas opcoes por tela.</li>
-              <li>As opcoes precisam parecer botoes de resposta rapida, com area clicavel generosa.</li>
-              <li>O scroll interno deve ser discreto, escuro e funcional, sem chamar atencao.</li>
-              <li>No mobile, a composicao precisa acompanhar teclado e altura visivel para manter o campo ativo acessivel.</li>
+              <li>Use fundo lavanda muito claro para separar a cena do restante da pagina sem parecer card pesado.</li>
+              <li>Comece com avatar pequeno a esquerda e balao branco grande, com borda cinza suave e raio arredondado.</li>
+              <li>Deixe a mensagem do cliente com texto preto, peso alto e bastante respiro interno.</li>
+              <li>Depois da pausa, entre com uma pill de digitacao em gradiente Tlin no canto inferior direito.</li>
+              <li>O mascote fica ao lado da digitacao como assinatura da IA, pequeno, brilhante e sem moldura.</li>
+              <li>A animacao ideal e simples: balao entra primeiro, depois os tres pontos pulsam e o mascote aparece com leve bounce.</li>
             </ul>
           </div>
         </div>
