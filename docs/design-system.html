@@ -68,18 +68,13 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
       margin-bottom: 34px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      font-size: 22px;
     }
 
-    .brand-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: var(--gradient);
+    .brand img {
+      display: block;
+      width: 92px;
+      height: auto;
     }
 
     nav {
@@ -356,45 +351,6 @@
       background: var(--z50);
     }
 
-    .nav-demo {
-      display: flex;
-      gap: 8px;
-      color: var(--z600);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .nav-demo span {
-      border-radius: var(--radius-pill);
-      padding: 10px 16px;
-      transition: 160ms ease;
-    }
-
-    .nav-demo span:hover {
-      color: var(--black);
-      background: var(--z100);
-    }
-
-    .badge-demo {
-      position: relative;
-      display: inline-flex;
-      border-radius: var(--radius-pill);
-      padding: 1px;
-      overflow: hidden;
-      background: var(--gradient);
-    }
-
-    .badge-demo span {
-      border-radius: var(--radius-pill);
-      background: var(--white);
-      border: 1px solid rgba(181,151,255,0.2);
-      color: var(--purple);
-      padding: 7px 13px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .04em;
-    }
-
     .chat {
       width: min(420px, 100%);
       border-radius: 38px;
@@ -601,8 +557,7 @@
   <div class="shell">
     <aside>
       <div class="brand">
-        <div class="brand-mark"></div>
-        Tlin DS
+        <img src="../public/Logo%20Horizontal.svg" alt="Tlin">
       </div>
       <nav>
         <a href="#essencia">Essencia</a>
@@ -610,7 +565,6 @@
         <a href="#tipografia">Tipografia</a>
         <a href="#componentes">Componentes</a>
         <a href="#popups">Popups</a>
-        <a href="#motion">Motion</a>
         <a href="#regras">Regras</a>
       </nav>
     </aside>
@@ -618,7 +572,6 @@
     <main>
       <header class="hero" id="essencia">
         <div class="hero-inner">
-          <div class="eyebrow">DESIGN SYSTEM TLIN</div>
           <h1>IA comercial com visual <span class="gradient-text">premium, direto e vivo.</span></h1>
           <p>Um guia visual para manter landing pages, popups, CTAs, materiais comerciais e novas interfaces com a mesma linguagem do site Tlin.</p>
         </div>
@@ -636,7 +589,6 @@
           <div class="card swatch"><div class="swatch-fill" style="background:#ffffff"></div><div><div class="token-name">tlin.white</div><div class="token-value">#ffffff</div></div></div>
           <div class="card swatch"><div class="swatch-fill" style="background:#B597FF"></div><div><div class="token-name">tlin.purple</div><div class="token-value">#B597FF</div></div></div>
           <div class="card swatch"><div class="swatch-fill" style="background:#38E3FF"></div><div><div class="token-name">tlin.blue</div><div class="token-value">#38E3FF</div></div></div>
-          <div class="card swatch"><div class="swatch-fill" style="background:#25D366"></div><div><div class="token-name">whatsapp</div><div class="token-value">#25D366</div></div></div>
           <div class="card swatch"><div class="swatch-fill" style="background:#71717a"></div><div><div class="token-name">zinc.500</div><div class="token-value">#71717a</div></div></div>
           <div class="card swatch"><div class="swatch-fill" style="background:#e4e4e7"></div><div><div class="token-name">zinc.200</div><div class="token-value">#e4e4e7</div></div></div>
           <div class="card swatch"><div class="swatch-fill" style="background:linear-gradient(90deg,#B597FF,#38E3FF)"></div><div><div class="token-name">brand.gradient</div><div class="token-value">#B597FF -> #38E3FF</div></div></div>
@@ -662,27 +614,13 @@
         <div class="section-head">
           <div>
             <h2>Componentes</h2>
-            <p class="desc">Padroes visuais mais usados no site: CTAs, badges, nav e cards.</p>
+            <p class="desc">Padroes visuais mais usados no site: CTAs, cards e superficies de interface.</p>
           </div>
         </div>
         <div class="grid">
           <div class="card component">
-            <div class="badge-demo"><span>ROI TLIN</span></div>
-            <p class="desc">Badge de secao com borda em gradiente e miolo branco.</p>
-          </div>
-
-          <div class="card component">
             <button class="btn-border"><span class="btn-primary-inner">Quero converter leads 24/7</span></button>
             <button class="btn-secondary">Ver demo</button>
-          </div>
-
-          <div class="card component">
-            <div class="nav-demo">
-              <span>Produto</span>
-              <span>Recursos</span>
-              <span>Planos</span>
-            </div>
-            <p class="desc">Nav usa hover em fundo arredondado cinza claro.</p>
           </div>
 
           <div class="card component">
@@ -725,25 +663,6 @@
               <button>100 a 500 leads</button>
               <button>Mais de 1.000 leads</button>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="motion">
-        <div class="section-head">
-          <div>
-            <h2>Motion</h2>
-            <p class="desc">Movimento suave, compositado e sem bloquear navegacao mobile.</p>
-          </div>
-        </div>
-        <div class="grid">
-          <div class="code">
-Hover simples: 0.2s - 0.3s<br>
-Dropdown: 0.15s<br>
-Popup: 0.18s - 0.3s<br>
-Reveal de secao: 0.4s - 0.7s<br>
-Borda girando: 3s - 4s linear infinite<br><br>
-Eases principais: [0.16, 1, 0.3, 1] e [0.23, 1, 0.32, 1]
           </div>
         </div>
       </section>
