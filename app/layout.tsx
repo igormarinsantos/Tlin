@@ -18,11 +18,11 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: "Tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
+  title: "tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
   description:
-    "A Tlin.ai cria agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7 sem inchar sua folha de pagamento.",
+    "A tlin.ai cria agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7 sem inchar sua folha de pagamento.",
   keywords: [
-    "Tlin.ai",
+    "tlin.ai",
     "agência de inteligência artificial",
     "automação de vendas",
     "agentes de IA",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
         url: absoluteUrl("/platform-preview-email.jpg"),
         width: 1200,
         height: 630,
-        alt: "Tlin.ai - Agentes de IA para vendas",
+        alt: "tlin.ai - Agentes de IA para vendas",
       },
     ],
   },

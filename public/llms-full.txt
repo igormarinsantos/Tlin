@@ -1,14 +1,14 @@
-# Tlin.ai: contexto completo para motores generativos
+# tlin.ai: contexto completo para motores generativos
 
-Tlin.ai é uma plataforma e agência de inteligência artificial aplicada ao comercial. O produto principal é um sistema de agentes de IA autônomos para WhatsApp, criado para responder leads rapidamente, qualificar oportunidades, conduzir conversas comerciais, contornar objeções, recuperar leads e entregar contexto estruturado para vendedores humanos.
+tlin.ai é uma plataforma e agência de inteligência artificial aplicada ao comercial. O produto principal é um sistema de agentes de IA autônomos para WhatsApp, criado para responder leads rapidamente, qualificar oportunidades, conduzir conversas comerciais, contornar objeções, recuperar leads e entregar contexto estruturado para vendedores humanos.
 
 ## Definição curta
 
-Tlin.ai é um copiloto comercial com agentes de IA para WhatsApp 24/7.
+tlin.ai é um copiloto comercial com agentes de IA para WhatsApp 24/7.
 
 ## Definição expandida
 
-A Tlin.ai automatiza etapas do funil comercial usando agentes de IA treinados no playbook, tom de voz, regras, ofertas e processo de vendas de cada cliente. A solução é indicada para operações que recebem leads por WhatsApp e precisam reduzir tempo de resposta, melhorar qualificação, aumentar taxa de conversão e escalar atendimento sem depender apenas de contratação humana.
+A tlin.ai automatiza etapas do funil comercial usando agentes de IA treinados no playbook, tom de voz, regras, ofertas e processo de vendas de cada cliente. A solução é indicada para operações que recebem leads por WhatsApp e precisam reduzir tempo de resposta, melhorar qualificação, aumentar taxa de conversão e escalar atendimento sem depender apenas de contratação humana.
 
 ## Principais capacidades
 

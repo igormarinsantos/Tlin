@@ -1,6 +1,6 @@
-# Tlin.ai
+# tlin.ai
 
-> Tlin.ai cria agentes de inteligência artificial para automação comercial no WhatsApp. A solução atende leads 24/7, qualifica oportunidades, contorna objeções, recupera conversas e transfere casos relevantes para vendedores humanos.
+> tlin.ai cria agentes de inteligência artificial para automação comercial no WhatsApp. A solução atende leads 24/7, qualifica oportunidades, contorna objeções, recupera conversas e transfere casos relevantes para vendedores humanos.
 
 ## Links principais
 

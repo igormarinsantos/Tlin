@@ -76,7 +76,7 @@ export const structuredData = [
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "@id": absoluteAppUrl("/#software"),
-    name: "Tlin",
+    name: "tlin.ai",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
     url: absoluteAppUrl("/"),
@@ -113,7 +113,7 @@ export const structuredData = [
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Planos Tlin",
+      name: "Planos tlin.ai",
       itemListElement: [
         {
           "@type": "Offer",
