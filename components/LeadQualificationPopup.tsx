@@ -18,6 +18,7 @@ type LeadQualificationPopupProps = {
   isOpen: boolean;
   onClose: () => void;
   planName: string | null;
+  embedded?: boolean;
 };
 
 // Common Country Codes
@@ -92,7 +93,7 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
   );
 };
 
-export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualificationPopupProps) {
+export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
   const WHATSAPP_NUMBER = "5511916248604";
   
@@ -294,7 +295,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
         });
       }
 
-      if (!hasAutoClosed.current) {
+      if (!embedded && !hasAutoClosed.current) {
         hasAutoClosed.current = true;
         const timer = setTimeout(() => {
           console.log("AUTO-CLOSING success screen after 10s");
@@ -306,7 +307,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       hasAutoClosed.current = false;
       confettiFired.current = false;
     }
-  }, [currentStep, onClose]);
+  }, [currentStep, onClose, embedded]);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -358,7 +359,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
       document.documentElement.style.setProperty("--lead-popup-offset-top", `${viewport?.offsetTop || 0}px`);
     };
 
-    if (isOpen) {
+    if (isOpen && !embedded) {
       syncViewportHeight();
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
@@ -664,14 +665,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
           transition={{ duration: 0.18 }}
           onWheelCapture={(event) => event.stopPropagation()}
           onTouchMoveCapture={(event) => event.stopPropagation()}
-          className="fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"
+          className={embedded
+            ? "fixed inset-0 w-full min-h-screen z-[300] flex flex-col items-center justify-center overflow-hidden bg-[#0c0d0d]"
+            : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl border rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300 ${
+            className={`relative w-full ${embedded ? "h-screen max-w-none" : "h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl"} border overflow-hidden flex flex-col transition-colors duration-300 ${
               currentStep === 8 
                 ? 'border-zinc-200' 
                 : 'border-white/10'
@@ -702,7 +705,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   className="absolute inset-0 z-[400] flex items-center justify-center bg-[#0c0d0d]/95 backdrop-blur-[60px] text-center p-6 sm:p-12"
                 >
                   {/* Botão Fechar no Overlay */}
-                  <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
+                  {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
                     <button
                       onClick={closePopup}
                       className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
@@ -711,7 +714,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                         <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
                       </span>
                     </button>
-                  </div>
+                  </div>}
 
                   <div className="max-w-2xl w-full flex flex-col items-center gap-12">
                     <div className="w-full">
@@ -749,7 +752,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
             </AnimatePresence>
 
             {/* Header / Botão Fechar */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]">
+            {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]">
               <button
                 onClick={closePopup}
                 className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
@@ -762,7 +765,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName }: LeadQualif
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
                 </span>
               </button>
-            </div>
+            </div>}
 
             {currentStep < 8 ? (
               <>

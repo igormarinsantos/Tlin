@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
@@ -151,6 +152,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 }
 
 export function Header() {
+  const pathname = usePathname();
   const { scrollY } = useScroll();
   const { t } = useLanguage();
   const [showFloating, setShowFloating] = useState(false);
@@ -165,6 +167,8 @@ export function Header() {
       setShowFloating(false);
     }
   });
+
+  if (pathname.startsWith("/blog") || pathname.startsWith("/qualificar")) return null;
 
   return (
     <>
