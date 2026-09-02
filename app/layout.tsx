@@ -18,9 +18,10 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+  applicationName: "tlin.ai",
   title: "tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
   description:
-    "A tlin.ai cria agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7 sem inchar sua folha de pagamento.",
+    "A tlin.ai é um software comercial impulsionado por IA para responder leads, qualificar oportunidades e organizar vendas no WhatsApp.",
   keywords: [
     "tlin.ai",
     "agência de inteligência artificial",
@@ -30,6 +31,9 @@ export const metadata: Metadata = {
     "qualificação de leads",
     "SDR com IA",
     "automação comercial",
+    "software comercial com IA",
+    "software de vendas para WhatsApp",
+    "gestão de conversas comerciais",
   ],
   alternates: {
     canonical: absoluteUrl("/"),
@@ -71,6 +75,11 @@ export const metadata: Metadata = {
     },
   },
   category: "technology",
+  creator: "tlin.ai",
+  publisher: "tlin.ai",
+  formatDetection: {
+    telephone: false,
+  },
   other: {
     "geo.region": "BR-SP",
     "geo.placename": "Sao Paulo, Brazil",

@@ -34,6 +34,7 @@ export const structuredData = [
     "@type": "Organization",
     "@id": absoluteUrl("/#organization"),
     name: siteConfig.name,
+    legalName: "tlin.ai",
     url: absoluteUrl("/"),
     logo: absoluteUrl("/favicon.svg"),
     description: siteConfig.description,
@@ -44,8 +45,18 @@ export const structuredData = [
     },
     foundingLocation: {
       "@type": "Place",
-      name: "São Paulo, Brazil",
+      name: "São Paulo, SP, Brazil",
     },
+    areaServed: {
+      "@type": "Country",
+      name: "Brazil",
+    },
+    knowsAbout: [
+      "software comercial com inteligência artificial",
+      "automação de vendas no WhatsApp",
+      "qualificação de leads",
+      "gestão de conversas comerciais",
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
@@ -77,6 +88,9 @@ export const structuredData = [
       "SDR com inteligência artificial",
       "atendimento comercial 24/7",
     ],
+    mainEntity: {
+      "@id": absoluteUrl("/#organization"),
+    },
   },
   {
     "@context": "https://schema.org",
@@ -88,6 +102,13 @@ export const structuredData = [
     url: absoluteAppUrl("/"),
     description:
       "Software comercial impulsionado por inteligência artificial para responder, qualificar e converter leads no WhatsApp 24/7.",
+    featureList: [
+      "Atendimento comercial no WhatsApp",
+      "Qualificação de leads",
+      "Automação de follow-up e recuperação de conversas",
+      "Handoff para vendedores humanos com contexto",
+      "Gestão de conversas e métricas comerciais",
+    ],
     offers: {
       "@type": "AggregateOffer",
       priceCurrency: "BRL",
