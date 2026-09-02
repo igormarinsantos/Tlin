@@ -47,12 +47,12 @@ Starter é voltado para pequenas operações que querem validar atendimento auto
 
 ## Segurança e governança
 
-Os agentes são configurados para operar dentro das regras do cliente. Quando uma resposta não pode ser determinada com segurança, a conversa pode ser transferida para uma pessoa. Dados e conversas devem ser tratados conforme as políticas de privacidade e LGPD descritas em https://tlin.cloud/legal.
+Os agentes são configurados para operar dentro das regras do cliente. Quando uma resposta não pode ser determinada com segurança, a conversa pode ser transferida para uma pessoa. Dados e conversas devem ser tratados conforme as políticas de privacidade e LGPD descritas em https://tlin.ia.br/legal.
 
 ## Links canônicos
 
-- Site: https://tlin.cloud/
-- Sistema: https://app.tlin.cloud/
-- Sitemap: https://tlin.cloud/sitemap.xml
-- Termos, privacidade, cookies e glossário: https://tlin.cloud/legal
-- Contato comercial: contato@tlin.cloud
+- Site: https://tlin.ia.br/
+- Sistema: https://app.tlin.ia.br/
+- Sitemap: https://tlin.ia.br/sitemap.xml
+- Termos, privacidade, cookies e glossário: https://tlin.ia.br/legal
+- Contato comercial: contato@tlin.ia.br

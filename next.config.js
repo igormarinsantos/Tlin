@@ -16,6 +16,26 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  // ── Domain migration ─────────────────────────────────────────────────────
+  // Keep the former public domain attached to this Vercel project so these
+  // permanent redirects preserve paths and query parameters for search engines.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?:www\\.)?tlin\\.cloud" }],
+        destination: "https://tlin.ia.br/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www\\.tlin\\.ia\\.br" }],
+        destination: "https://tlin.ia.br/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   // ── Bundle Optimization ───────────────────────────────────────────────────
   experimental: {
     // Aggressive tree-shaking for popular packages (reduces unused JS)

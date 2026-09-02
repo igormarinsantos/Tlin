@@ -1,7 +1,15 @@
+const LEGACY_SITE_URLS = new Set(["https://tlin.cloud", "https://www.tlin.cloud"]);
+const LEGACY_APP_URLS = new Set(["https://app.tlin.cloud"]);
+
+function configuredUrl(value: string | undefined, fallback: string, legacyUrls: Set<string>) {
+  const normalized = value?.replace(/\/$/, "");
+  return normalized && !legacyUrls.has(normalized) ? normalized : fallback;
+}
+
 export const siteConfig = {
   name: "tlin.ai",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://tlin.cloud",
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || "https://app.tlin.cloud",
+  url: configuredUrl(process.env.NEXT_PUBLIC_SITE_URL, "https://tlin.ia.br", LEGACY_SITE_URLS),
+  appUrl: configuredUrl(process.env.NEXT_PUBLIC_APP_URL, "https://app.tlin.ia.br", LEGACY_APP_URLS),
   locale: "pt_BR",
   title: "tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
   description:

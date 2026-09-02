@@ -22,7 +22,7 @@ export default function BlogLayout({ children }: Readonly<{ children: React.Reac
       <footer className="relative border-t border-zinc-200 bg-white/70 px-5 py-10 md:px-8">
         <div className="mx-auto flex max-w-6xl flex-col justify-between gap-3 text-sm text-zinc-500 md:flex-row">
           <p>© {new Date().getFullYear()} Tlin. Inteligência artificial aplicada a negócios.</p>
-          <a className="font-medium text-zinc-800 hover:underline" href="https://tlin.cloud">tlin.cloud</a>
+          <a className="font-medium text-zinc-800 hover:underline" href="https://tlin.ia.br">tlin.ia.br</a>
         </div>
       </footer>
     </div>

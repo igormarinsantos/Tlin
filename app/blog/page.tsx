@@ -20,7 +20,7 @@ export default function BlogHomePage() {
             <p className="mb-5 text-sm font-bold uppercase tracking-[0.22em] text-zinc-600">Tlin Conteúdo</p>
             <h1 className="max-w-4xl text-balance text-5xl font-semibold tracking-[-0.065em] text-[#0c0d0d] md:text-7xl">IA que faz negócios <span className="abstract-highlight">avançarem.</span></h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-zinc-600">O que muda em inteligência artificial — e como transformar isso em vendas, atendimento e operações melhores.</p>
-            <div className="mt-9 flex flex-wrap gap-3"><a href="#vendas" className="rounded-full bg-[#0c0d0d] px-5 py-3 text-sm font-bold text-white transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF] hover:text-[#0c0d0d]">Explorar conteúdos</a><a href="https://tlin.cloud/#pricing" className="rounded-full border border-zinc-300 bg-white/80 px-5 py-3 text-sm font-bold text-zinc-800 transition hover:border-[#B597FF]">Conhecer a Tlin</a></div>
+            <div className="mt-9 flex flex-wrap gap-3"><a href="#vendas" className="rounded-full bg-[#0c0d0d] px-5 py-3 text-sm font-bold text-white transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF] hover:text-[#0c0d0d]">Explorar conteúdos</a><a href="https://tlin.ia.br/#pricing" className="rounded-full border border-zinc-300 bg-white/80 px-5 py-3 text-sm font-bold text-zinc-800 transition hover:border-[#B597FF]">Conhecer a Tlin</a></div>
           </div>
           <div className="relative mx-auto hidden h-56 w-56 lg:block">
             <div className="absolute inset-5 rounded-[2.5rem] bg-gradient-to-br from-[#B597FF] to-[#38E3FF] opacity-30 blur-2xl" />

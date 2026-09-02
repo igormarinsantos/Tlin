@@ -37,6 +37,11 @@ export const structuredData = [
     url: absoluteUrl("/"),
     logo: absoluteUrl("/favicon.svg"),
     description: siteConfig.description,
+    foundingDate: "2026",
+    founder: {
+      "@type": "Person",
+      name: "Igor Marin",
+    },
     foundingLocation: {
       "@type": "Place",
       name: "São Paulo, Brazil",
@@ -44,7 +49,7 @@ export const structuredData = [
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
-      email: "contato@tlin.cloud",
+      email: "contato@tlin.ia.br",
       telephone: "+55-11-91624-8604",
       areaServed: ["BR"],
       availableLanguage: ["pt-BR", "en", "es"],
@@ -65,6 +70,7 @@ export const structuredData = [
       "@id": absoluteUrl("/#organization"),
     },
     about: [
+      "software comercial impulsionado por inteligência artificial",
       "agentes de IA para vendas",
       "automação comercial no WhatsApp",
       "qualificação de leads",
@@ -81,7 +87,7 @@ export const structuredData = [
     operatingSystem: "Web",
     url: absoluteAppUrl("/"),
     description:
-      "Sistema de agentes de IA comerciais para responder, qualificar e converter leads no WhatsApp 24/7.",
+      "Software comercial impulsionado por inteligência artificial para responder, qualificar e converter leads no WhatsApp 24/7.",
     offers: {
       "@type": "AggregateOffer",
       priceCurrency: "BRL",

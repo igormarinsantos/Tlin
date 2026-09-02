@@ -184,10 +184,10 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      const teamEmail = process.env.NOTIFICATION_EMAIL || "contato@tlin.cloud";
+      const teamEmail = process.env.NOTIFICATION_EMAIL || "contato@tlin.ia.br";
 
       const internalMailOptions = {
-        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.cloud"}>`,
+        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.ia.br"}>`,
         to: teamEmail,
         subject: `Novo lead Tlin - ${name || "Empresa sem nome"} - ${planName || "Sem plano"}`,
         html: getLeadNotificationHtml({
@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
       };
       
       const mailOptions = {
-        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.cloud"}>`,
+        from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.ia.br"}>`,
         to: email || teamEmail,
         subject: `Bem-vindo à Tlin, ${name || "Empreendedor"}! 👋`,
         html: getWelcomeEmailHtml(name || "Empreendedor", planName || "TLIN")
@@ -378,8 +378,8 @@ function getWelcomeEmailHtml(name: string, planName: string) {
           <div style="background-color: #ffffff; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; width: 100%; max-width: 600px; box-sizing: border-box; margin: 0 auto; padding: 40px 24px; border: 1px solid #e4e4e7; border-radius: 24px;">
             <!-- Isotipo Tlin Centralizado Pequeno como Header -->
             <div style="text-align: center; margin-bottom: 24px; line-height: 0;">
-              <a href="https://tlin.cloud" target="_blank" style="display: inline-block;">
-                <img src="https://tlin.cloud/favicon.svg" alt="Tlin" width="24" style="display: block; margin: 0 auto; width: 24px; height: auto;" />
+              <a href="https://tlin.ia.br" target="_blank" style="display: inline-block;">
+                <img src="https://tlin.ia.br/favicon.svg" alt="Tlin" width="24" style="display: block; margin: 0 auto; width: 24px; height: auto;" />
               </a>
             </div>
             
@@ -395,7 +395,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.cloud/tlin-mascote-email.png?v=final12" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.ia.br/tlin-mascote-email.png?v=final12" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
                 <!-- Chat Bubble com Fundo em Degradê da Marca e Texto Escuro de Alto Contraste -->
                 <td valign="top" align="left">
@@ -415,14 +415,14 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component com CTA Sobreposto ao Centro da Thumb -->
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 32px; border-radius: 16px; overflow: hidden; border: 1px solid #e4e4e7;">
               <tr>
-                <td align="center" valign="middle" height="320" background="https://tlin.cloud/platform-preview-email.jpg?v=final12" style="background-image: url('https://tlin.cloud/platform-preview-email.jpg?v=final12'); background-size: cover; background-position: center; height: 320px; text-align: center;">
+                <td align="center" valign="middle" height="320" background="https://tlin.ia.br/platform-preview-email.jpg?v=final12" style="background-image: url('https://tlin.ia.br/platform-preview-email.jpg?v=final12'); background-size: cover; background-position: center; height: 320px; text-align: center;">
                   <!--[if gte mso 9]>
                   <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:320px;">
-                    <v:fill type="frame" src="https://tlin.cloud/platform-preview-email.jpg?v=final12" color="#fafafa" />
+                    <v:fill type="frame" src="https://tlin.ia.br/platform-preview-email.jpg?v=final12" color="#fafafa" />
                     <v:textbox inset="0,0,0,0">
                   <![endif]-->
                   <div>
-                    <a href="https://tlin.cloud#demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0c0d0d; color: #ffffff; padding: 14px 32px; border-radius: 50px; font-weight: 700; font-size: 15px; text-decoration: none; display: inline-block; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.2);">
+                    <a href="https://tlin.ia.br/demo" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0c0d0d; color: #ffffff; padding: 14px 32px; border-radius: 50px; font-weight: 700; font-size: 15px; text-decoration: none; display: inline-block; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.2);">
                       ▶&nbsp;&nbsp;Assistir demo
                     </a>
                   </div>
@@ -448,7 +448,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               </a>
               <!-- Link adicional secundário -->
               <div style="margin-top: 16px;">
-                <a href="https://app.tlin.cloud" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #71717a; font-size: 14px; text-decoration: underline; font-weight: 500;">
+                <a href="https://app.tlin.ia.br" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #71717a; font-size: 14px; text-decoration: underline; font-weight: 500;">
                   Acessar plataforma Tlin →
                 </a>
               </div>
@@ -457,7 +457,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Premium Footer -->
             <div style="border-top: 1px solid #e4e4e7; padding-top: 32px; text-align: center;">
               <div style="margin-bottom: 24px;">
-                <a href="https://tlin.cloud" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #71717a; text-decoration: none; margin: 0 12px; font-weight: 500; display: inline-block;">
+                <a href="https://tlin.ia.br" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #71717a; text-decoration: none; margin: 0 12px; font-weight: 500; display: inline-block;">
                   🌐 Site Oficial
                 </a>
                 <a href="https://instagram.com/tlin.aii" target="_blank" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #71717a; text-decoration: none; margin: 0 12px; font-weight: 500; display: inline-block;">

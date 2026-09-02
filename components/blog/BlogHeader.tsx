@@ -14,7 +14,7 @@ export function BlogHeader() {
           <Link href="/blog#vendas" className="rounded-full px-3 py-2 transition hover:bg-zinc-100 hover:text-zinc-950">Vendas com IA</Link>
           <Link href="/blog#guias" className="rounded-full px-3 py-2 transition hover:bg-zinc-100 hover:text-zinc-950">Guias</Link>
         </nav>
-        <a href="https://tlin.cloud/#pricing" className="shrink-0 whitespace-nowrap rounded-full bg-[#0c0d0d] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF] hover:text-[#0c0d0d] md:text-sm">
+        <a href="https://tlin.ia.br/#pricing" className="shrink-0 whitespace-nowrap rounded-full bg-[#0c0d0d] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF] hover:text-[#0c0d0d] md:text-sm">
           Começar agora
         </a>
       </div>

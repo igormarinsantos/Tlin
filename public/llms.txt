@@ -4,10 +4,10 @@
 
 ## Links principais
 
-- Site: https://tlin.cloud/
-- Sistema: https://app.tlin.cloud/
-- Sitemap: https://tlin.cloud/sitemap.xml
-- Legal e privacidade: https://tlin.cloud/legal
+- Site: https://tlin.ia.br/
+- Sistema: https://app.tlin.ia.br/
+- Sitemap: https://tlin.ia.br/sitemap.xml
+- Legal e privacidade: https://tlin.ia.br/legal
 
 ## Sobre a solução
 
@@ -34,4 +34,4 @@
 
 ## Conteúdo completo para LLMs
 
-- https://tlin.cloud/llms-full.txt
+- https://tlin.ia.br/llms-full.txt
