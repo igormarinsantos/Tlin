@@ -381,8 +381,8 @@ export function Hero() {
             type="button"
             onClick={() => {
               trackFunnelEvent("click_platform_anchor", { cta_source: "hero_secondary" });
-              const lenis = (window as Window & { lenis?: { scrollTo: (target: string, options: { offset: number }) => void } }).lenis;
-              if (lenis) lenis.scrollTo('#features', { offset: -96 });
+              const lenis = (window as unknown as { lenis?: { scrollTo?: (target: string, options: { offset: number }) => void } }).lenis;
+              if (typeof lenis?.scrollTo === "function") lenis.scrollTo('#features', { offset: -96 });
               else document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
             }}
             className="relative cursor-pointer"
