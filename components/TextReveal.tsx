@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 import { useLanguage } from "@/lib/LanguageContext";
@@ -70,7 +70,8 @@ export function TextReveal() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
+    // Reveal during entry while the section stays in the normal page flow.
+    offset: ["start 90%", "center 55%"],
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -96,10 +97,9 @@ export function TextReveal() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-white"
-      style={{ height: "180vh" }}
+      className="relative w-full bg-white py-24 md:py-32"
     >
-      <div className="sticky top-0 h-[100svh] flex items-center justify-center overflow-hidden">
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-12">
           <div 
             className="flex flex-wrap justify-center font-bold tracking-tight text-center gap-x-[0.3em] gap-y-[0.1em]"
