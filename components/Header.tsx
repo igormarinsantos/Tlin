@@ -39,8 +39,7 @@ function LanguageSelector() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors text-sm font-semibold text-zinc-600 focus:outline-none"
       >
-        <CountryFlag country={current.flag} />
-        <span className="hidden sm:inline-block tracking-tight">{lang}</span>
+        <span className="tracking-tight">{lang}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
       </button>
 
