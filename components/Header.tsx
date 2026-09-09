@@ -127,7 +127,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
         <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
           style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
         />
-        <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[12px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>
+        <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[14px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>
           <span className="relative z-10">{t.nav.cta}</span>
           <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
