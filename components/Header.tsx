@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { CountryFlag } from "@/components/CountryFlag";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -24,9 +25,9 @@ function LanguageSelector() {
   }, []);
 
   const languages: { code: Lang; flag: string; name: string }[] = [
-    { code: 'PT', flag: '🇧🇷', name: 'Português' },
-    { code: 'EN', flag: '🇺🇸', name: 'English' },
-    { code: 'ES', flag: '🇪🇸', name: 'Español' },
+    { code: 'PT', flag: 'br', name: 'Português' },
+    { code: 'EN', flag: 'us', name: 'English' },
+    { code: 'ES', flag: 'es', name: 'Español' },
   ];
 
   const current = languages.find(l => l.code === lang) || languages[0];
@@ -38,7 +39,7 @@ function LanguageSelector() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors text-sm font-semibold text-zinc-600 focus:outline-none"
       >
-        <span className="text-base leading-none drop-shadow-sm">{current.flag}</span>
+        <CountryFlag country={current.flag} />
         <span className="hidden sm:inline-block tracking-tight">{lang}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
       </button>
@@ -58,7 +59,7 @@ function LanguageSelector() {
                 onClick={() => { setLang(l.code); setIsOpen(false); }}
                 className="w-full text-left px-3 py-2 rounded-full hover:bg-zinc-100 flex items-center gap-3 transition-all duration-200 ease-out"
               >
-                <span className="text-base leading-none drop-shadow-sm">{l.flag}</span>
+                <CountryFlag country={l.flag} />
                 <span className="text-sm font-semibold text-zinc-600">{l.name}</span>
               </button>
             ))}

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { CountryFlag } from "@/components/CountryFlag";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getDictionary } from "@/lib/dictionaries";
 import { calculateLeadScore, getUtmLeadPayload, trackConversion, trackFunnelEvent } from "@/lib/utm";
@@ -23,15 +24,15 @@ type LeadQualificationPopupProps = {
 
 // Common Country Codes
 const COUNTRIES = [
-  { code: '+55', flag: '🇧🇷', name: 'Brasil' },
-  { code: '+1', flag: '🇺🇸', name: 'EUA' },
-  { code: '+351', flag: '🇵🇹', name: 'Portugal' },
-  { code: '+34', flag: '🇪🇸', name: 'Espanha' },
-  { code: '+44', flag: '🇬🇧', name: 'Reino Unido' },
-  { code: '+54', flag: '🇦🇷', name: 'Argentina' },
-  { code: '+56', flag: '🇨🇱', name: 'Chile' },
-  { code: '+57', flag: '🇨🇴', name: 'Colômbia' },
-  { code: '+52', flag: '🇲🇽', name: 'México' },
+  { code: '+55', flag: 'br', name: 'Brasil' },
+  { code: '+1', flag: 'us', name: 'EUA' },
+  { code: '+351', flag: 'pt', name: 'Portugal' },
+  { code: '+34', flag: 'es', name: 'Espanha' },
+  { code: '+44', flag: 'gb', name: 'Reino Unido' },
+  { code: '+54', flag: 'ar', name: 'Argentina' },
+  { code: '+56', flag: 'cl', name: 'Chile' },
+  { code: '+57', flag: 'co', name: 'Colômbia' },
+  { code: '+52', flag: 'mx', name: 'México' },
 ];
 
 const LANGUAGE_CODES = ["PT", "EN", "ES"] as const;
@@ -1013,7 +1014,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
                                 >
                                   <span className="text-lg sm:text-xl leading-none">
-                                    {COUNTRIES.find(c => c.code === formData.countryCode)?.flag || '🇧🇷'}
+                                    <CountryFlag country={COUNTRIES.find(c => c.code === formData.countryCode)?.flag || 'br'} size={24} />
                                   </span>
                                   <span className="text-base sm:text-lg font-bold text-zinc-400">{formData.countryCode}</span>
                                   <svg className={`w-3 sm:w-4 h-3 sm:h-4 text-zinc-500 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="m6 9 6 6 6-6" strokeWidth="3" /></svg>
@@ -1037,7 +1038,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                           }}
                                           className="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 transition-colors"
                                         >
-                                          <span className="text-xl leading-none">{c.flag}</span>
+                                          <CountryFlag country={c.flag} size={24} />
                                           <div className="flex flex-col">
                                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{c.name}</span>
                                             <span className="text-sm font-bold text-white">{c.code}</span>
