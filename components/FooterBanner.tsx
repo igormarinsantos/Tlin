@@ -1,11 +1,45 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 
 const HOLE_RADIUS = 60; // Base radius in CSS pixels
+
+function RotatingWords({ words }: { words: string[] }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref);
+  const reducedMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  const [count, setCount] = useState(0);
+  const [erasing, setErasing] = useState(false);
+  const word = words[index % words.length];
+
+  useEffect(() => {
+    if (!inView || reducedMotion) return;
+    const complete = count >= word.length;
+    const timer = setTimeout(() => {
+      if (!erasing && complete) setErasing(true);
+      else if (erasing && count === 0) {
+        setIndex(value => (value + 1) % words.length);
+        setErasing(false);
+      } else setCount(value => value + (erasing ? -1 : 1));
+    }, erasing ? 45 : complete ? 1800 : 85);
+    return () => clearTimeout(timer);
+  }, [inView, reducedMotion, count, erasing, word, words.length]);
+
+  return (
+    <span ref={ref} className="grid">
+      <span className="sr-only">{words[0]}</span>
+      {words.map(value => <span key={value} aria-hidden="true" className="invisible col-start-1 row-start-1">{value}</span>)}
+      <span aria-hidden="true" className="col-start-1 row-start-1">
+        {reducedMotion ? words[0] : word.slice(0, count)}
+        {!reducedMotion && <span className="inline-block h-[0.85em] w-[2px] bg-current align-baseline ml-1" />}
+      </span>
+    </span>
+  );
+}
 
 export function FooterBanner() {
   const { t } = useLanguage();
@@ -283,7 +317,7 @@ export function FooterBanner() {
            {isMobile ? (
              <>
                <h2 className="text-4xl font-bold tracking-tight text-white mb-4 leading-tight">
-                 {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
+                 {t.footerBanner.title}<RotatingWords key={t.footerBanner.title} words={t.footerBanner.rotatingWords} />
                </h2>
                <p className="text-base text-white mb-8 max-w-2xl">
                  {t.footerBanner.subtitle}
@@ -297,7 +331,7 @@ export function FooterBanner() {
                   viewport={{ once: true }}
                   className="text-4xl md:text-7xl font-bold tracking-tight text-white mb-4 leading-tight"
                >
-                  {t.footerBanner.title}<br/>{t.footerBanner.titleHighlight}
+                  {t.footerBanner.title}<RotatingWords key={t.footerBanner.title} words={t.footerBanner.rotatingWords} />
                </motion.h2>
 
                <motion.p

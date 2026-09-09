@@ -144,10 +144,11 @@ const ptBR = {
     talkToExperts: "Fale com nossos especialistas"
   },
   footerBanner: {
-    title: "Pronto para escalar",
+    title: "Não perca mais",
+    rotatingWords: ["nenhum comprador.", "nenhum lead.", "nenhuma venda."],
     titleHighlight: "sua operação?",
-    subtitle: "Agende uma demonstração gratuita e descubra como nossos agentes de IA podem automatizar suas vendas no WhatsApp 24/7.",
-    cta1: "Quero meu Agente Tlin",
+    subtitle: "Teste por 14 dias grátis e comprove o resultado na prática. Ao final do teste, você receberá uma proposta, sem cobranças automáticas.",
+    cta1: "Solicitar teste grátis",
     cta2: "Falar com vendas"
   },
   footer: {
@@ -441,10 +442,11 @@ const enUS: TranslationDictionary = {
     talkToExperts: "Talk to our experts"
   },
   footerBanner: {
-    title: "Ready to scale",
+    title: "Don't miss another",
+    rotatingWords: ["buyer.", "lead.", "sale."],
     titleHighlight: "your operation?",
-    subtitle: "Schedule a free demo and discover how our AI agents can automate your sales on WhatsApp 24/7.",
-    cta1: "I Want My Tlin Agent",
+    subtitle: "Try it free for 14 days and see the results in practice. At the end of the trial, you will receive a proposal, with no automatic charges.",
+    cta1: "Request a free trial",
     cta2: "Talk to sales"
   },
   footer: {
@@ -738,10 +740,11 @@ const esES: TranslationDictionary = {
     talkToExperts: "Habla con nuestros expertos"
   },
   footerBanner: {
-    title: "¿Listo para escalar",
+    title: "No pierdas más",
+    rotatingWords: ["ningún comprador.", "ningún lead.", "ninguna venta."],
     titleHighlight: "tu operación?",
-    subtitle: "Agenda una demostración gratuita y descubre cómo nuestros agentes de IA pueden automatizar tus ventas en WhatsApp 24/7.",
-    cta1: "Quiero mi Agente Tlin",
+    subtitle: "Prueba gratis durante 14 días y comprueba los resultados en la práctica. Al finalizar, recibirás una propuesta, sin cobros automáticos.",
+    cta1: "Solicitar prueba gratis",
     cta2: "Hablar con ventas"
   },
   footer: {
