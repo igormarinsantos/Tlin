@@ -3,7 +3,7 @@
 import { m, LazyMotion, domAnimation, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
-import { Play } from "lucide-react";
+import { PanelsTopLeft } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 
@@ -380,10 +380,10 @@ export function Hero() {
           <button
             type="button"
             onClick={() => {
-              trackFunnelEvent("click_demo_anchor", { cta_source: "hero_secondary" });
-              setShowDemoNotice(true);
-              if (demoNoticeTimeout.current) clearTimeout(demoNoticeTimeout.current);
-              demoNoticeTimeout.current = setTimeout(() => setShowDemoNotice(false), 2200);
+              trackFunnelEvent("click_platform_anchor", { cta_source: "hero_secondary" });
+              const lenis = (window as Window & { lenis?: { scrollTo: (target: string, options: { offset: number }) => void } }).lenis;
+              if (lenis) lenis.scrollTo('#features', { offset: -96 });
+              else document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
             }}
             className="relative cursor-pointer"
             onMouseEnter={(e) => {
@@ -400,51 +400,9 @@ export function Hero() {
             }}
           >
             <div className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2 whitespace-nowrap">
-              <Play className="w-3 h-3 fill-current" />
+              <PanelsTopLeft className="w-4 h-4" aria-hidden="true" />
               {t.hero.watchDemo}
             </div>
-            <AnimatePresence>
-              {showDemoNotice && (
-                <m.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="fixed inset-x-0 top-0 z-[250] flex justify-center pointer-events-none px-4 pt-[max(1.25rem,env(safe-area-inset-top))]"
-                >
-                  <m.div
-                    initial={{ y: -80, scale: 0.96 }}
-                    animate={{ y: 0, scale: 1 }}
-                    exit={{ y: -80, scale: 0.96 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    className="whitespace-nowrap rounded-full border border-[#B597FF]/40 bg-[#B597FF] px-6 py-3 text-sm font-black text-white shadow-2xl shadow-[#B597FF]/35"
-                  >
-                    {t.hero.demoSoon}
-                  </m.div>
-                </m.div>
-              )}
-              {isDemoHovered && (
-                <m.div
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  style={{ position: "absolute", left: uiSpringX, top: uiSpringY, x: "-50%", y: "-120%", pointerEvents: "none", zIndex: 110 }}
-                  className="w-[140px] md:w-[160px] aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-white/20 flex flex-col"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="none"
-                    className="w-full h-full object-cover opacity-90"
-                  >
-                    <source src="/RoboCamera.mp4" type="video/mp4" />
-                  </video>
-                </m.div>
-              )}
-            </AnimatePresence>
           </button>
         </m.div>
 
