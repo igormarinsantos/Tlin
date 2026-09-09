@@ -18,9 +18,9 @@ const logos = [
 export function TrustedBy() {
   const { t } = useLanguage();
   return (
-    <section className="w-full py-16 bg-white overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+    <section className="w-full h-[140px] flex items-center bg-white overflow-hidden">
+      <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8">
+        <div className="flex flex-col md:flex-row items-center gap-5 md:gap-16">
           {/* Label */}
           <div className="shrink-0 flex items-center gap-6">
             <p className="text-zinc-400 font-medium text-xs md:text-sm leading-tight text-center md:text-left">
@@ -30,13 +30,13 @@ export function TrustedBy() {
           </div>
 
           {/* Carousel */}
-          <div className="flex-1 relative overflow-hidden">
+          <div className="w-full md:flex-1 min-w-0 relative overflow-hidden">
             {/* Gradients to fade edges */}
             <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
             <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
             
             <motion.div 
-              className="flex items-center gap-16 md:gap-24 w-max"
+              className="flex items-center w-max"
               animate={{ x: ["0%", "-50%"] }}
               transition={{ 
                 duration: 30, 
@@ -47,7 +47,7 @@ export function TrustedBy() {
             >
               {/* Double the logos for seamless loop */}
               {[...logos, ...logos].map((logo, idx) => (
-                <div key={idx} className="shrink-0 flex items-center">
+                <div key={idx} aria-hidden={idx >= logos.length ? true : undefined} className="shrink-0 flex items-center pr-16 md:pr-24">
                   <Image 
                     src={logo.src} 
                     alt={logo.name}

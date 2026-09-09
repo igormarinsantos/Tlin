@@ -18,7 +18,7 @@ const ptBR = {
     subtitle: "Escale sua operação comercial com agentes de IA que atendem, qualificam e vendem de forma autônoma, direto no WhatsApp.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
-    watchDemo: "Conhecer plataforma",
+    watchDemo: "Explorar recursos",
     demoSoon: "Demo em breve"
   },
   trusted: {
@@ -315,7 +315,7 @@ const enUS: TranslationDictionary = {
     subtitle: "Scale your sales op with AI agents that answer, qualify, and sell autonomously, directly on WhatsApp.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",
-    watchDemo: "Explore platform",
+    watchDemo: "Explore features",
     demoSoon: "Demo coming soon"
   },
   trusted: {
@@ -612,7 +612,7 @@ const esES: TranslationDictionary = {
     subtitle: "Escala tu operación comercial con agentes IA que atienden, califican y venden solos en WhatsApp.",
     cta: "Empezar Gratis",
     demoHover: "Demo 100% gratis",
-    watchDemo: "Conocer plataforma",
+    watchDemo: "Explorar funciones",
     demoSoon: "Demo próximamente"
   },
   trusted: {

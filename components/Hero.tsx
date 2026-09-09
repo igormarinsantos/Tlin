@@ -3,7 +3,6 @@
 import { m, LazyMotion, domAnimation, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
-import { PanelsTopLeft } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 
@@ -253,7 +252,7 @@ export function Hero() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <section ref={containerRef} className="relative w-full min-h-[100svh] pt-40 pb-12 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
+      <section ref={containerRef} className="relative w-full min-h-[calc(100svh-140px)] pt-28 md:pt-32 pb-8 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
@@ -400,7 +399,6 @@ export function Hero() {
             }}
           >
             <div className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2 whitespace-nowrap">
-              <PanelsTopLeft className="w-4 h-4" aria-hidden="true" />
               {t.hero.watchDemo}
             </div>
           </button>

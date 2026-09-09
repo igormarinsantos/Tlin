@@ -188,14 +188,14 @@ export function Header() {
 
           <div className="flex items-center gap-2">
              <LanguageSelector />
-             <a 
-               href="https://app.tlin.ia.br"
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="relative hidden md:block px-4 py-2 rounded-full text-sm font-bold text-zinc-600 hover:bg-zinc-100 hover:text-[#0c0d0d] transition-all duration-300 ease-out"
+             <button
+               type="button"
+               disabled
+               title="Temporariamente indisponível"
+               className="relative hidden md:block px-4 py-2 rounded-full text-sm font-bold text-zinc-400 cursor-not-allowed"
              >
                 {t.nav.login}
-             </a>
+             </button>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
