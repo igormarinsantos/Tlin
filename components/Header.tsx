@@ -188,14 +188,6 @@ export function Header() {
 
           <div className="flex items-center gap-2">
              <LanguageSelector />
-             <button
-               type="button"
-               disabled
-               title="Temporariamente indisponível"
-               className="relative hidden md:block px-4 py-2 rounded-full text-sm font-bold text-zinc-400 cursor-not-allowed"
-             >
-                {t.nav.login}
-             </button>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
