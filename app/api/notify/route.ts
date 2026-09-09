@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm } = data;
 
-    const fullPhone = `${countryCode || "+55"}${phone || ""}`.replace(/\D/g, "");
     const supabaseResult = await saveLeadSubmission({
       name,
       phone,
@@ -25,149 +24,7 @@ export async function POST(req: NextRequest) {
       ? (supabaseResult.row[0] as any)?.id || null
       : (supabaseResult.row as any)?.id || null;
 
-    // 1. Evo API (Evolution API) integration para WhatsApp
-    // Dispara mensagem de confirmação
-    const evoApiUrl = process.env.EVO_API_URL || "";
-    const evoApiKey = process.env.EVO_API_KEY || "";
-    const evoInstanceName = process.env.EVO_INSTANCE_NAME || "";
-    const evoGroupId = process.env.EVO_GROUP_ID || "";
-    const hasEvoConfig = !!(evoApiUrl && evoApiKey && evoInstanceName);
-    let whatsappResponse = null;
-    let whatsappError = null;
-    let whatsappDebug = null;
-    let groupResponse = null;
-    let groupError = null;
-
-    if (hasEvoConfig && fullPhone) {
-      // Remove o '+' do início se houver (A Evo API utiliza o formato DDI+DDD+Numero)
-      const cleanPhone = fullPhone.replace("+", "");
-      const companyName = name || "sua empresa";
-      const messagesToSend = [
-        `*Parabéns!* Seja bem-vindo à *Tlin* 🩵`,
-        `Recebemos a solicitação da *${companyName}* com sucesso e agora você avançou para a *próxima etapa* do nosso processo.`,
-        `Um *especialista da Tlin* vai acompanhar seu atendimento e te orientar de forma personalizada.\n\nPara começarmos, qual é hoje o *principal desafio comercial* da *${companyName}*?`
-      ];
-
-      try {
-        const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
-        const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
-        whatsappDebug = getEvoDebugInfo(evoApiUrl, evoInstanceName);
-        
-        const responses = [];
-
-        console.log(`Iniciando envio sequencial via Evo API para: ${cleanPhone}...`);
-
-        for (let i = 0; i < messagesToSend.length; i++) {
-          const text = messagesToSend[i];
-          // Delay aumenta ligeiramente para textos maiores, garantindo naturalidade
-          const calculatedDelay = Math.max(1500, text.length * 40); 
-          
-          const payload = {
-            number: cleanPhone,
-            text: text,
-            delay: calculatedDelay,
-            linkPreview: false
-          };
-
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "apikey": evoApiKey,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload)
-          });
-          
-          const responseText = await res.text();
-          const jsonResponse = responseText ? JSON.parse(responseText) : null;
-
-          if (!res.ok) {
-            throw new Error(`Evo API retornou HTTP ${res.status}: ${responseText}`);
-          }
-
-          responses.push(jsonResponse);
-          
-          // Aguarda o término de um disparo antes do próximo para não encavalar
-          // Embora a Evo API já coloque em fila, o delay aqui no Node previne problemas
-        }
-        
-        whatsappResponse = responses;
-        console.log("Mensagens sequenciais do WhatsApp enviadas com sucesso!");
-      } catch (err: any) {
-        console.error("Erro ao disparar WhatsApp sequencial via Evo API:", err);
-        whatsappError = formatErrorMessage(err);
-      }
-    } else {
-      console.log("Aviso: Variáveis da Evo API não estão configuradas corretamente. Pulando disparo de WhatsApp.");
-      whatsappError = "Variáveis EVO_API_URL, EVO_API_KEY, EVO_INSTANCE_NAME ou telefone ausentes";
-      whatsappDebug = getEvoDebugInfo(evoApiUrl, evoInstanceName);
-    }
-
-    if (hasEvoConfig && evoGroupId) {
-      try {
-        const baseUrl = evoApiUrl.endsWith('/') ? evoApiUrl.slice(0, -1) : evoApiUrl;
-        const endpoint = `${baseUrl}/message/sendText/${evoInstanceName}`;
-        const groupText = [
-          `🚨 *NOVO LEAD TLIN*`,
-          ``,
-          `*1. DADOS DO CLIENTE*`,
-          `Empresa: ${name || "Não informado"}`,
-          `WhatsApp: ${countryCode || "+55"} ${phone || "Não informado"}`,
-          `E-mail: ${email || "Não informado"}`,
-          ``,
-          `*2. QUALIFICAÇÃO COMERCIAL*`,
-          `Plano de interesse: ${planName || "TLIN"}`,
-          `Volume mensal: ${volume || "Não informado"}`,
-          `Tamanho da equipe: ${team || "Não informado"}`,
-          `Score: ${lead_score ? `${lead_score}/100` : "Não informado"}`,
-          `Qualidade: ${lead_quality || "Não informado"}`,
-          ``,
-          `*3. DADOS DE CAMPANHA*`,
-          `Origem atual: ${formatAttributionValue(utm?.last_utm_source)} / ${formatAttributionValue(utm?.last_utm_medium)}`,
-          `Campanha atual: ${formatAttributionValue(utm?.last_utm_campaign)}`,
-          `Termo atual: ${formatAttributionValue(utm?.last_utm_term)}`,
-          `Conteúdo atual: ${formatAttributionValue(utm?.last_utm_content)}`,
-          `GA Client ID: ${formatAttributionValue(utm?.client_id)}`,
-          ``,
-          `*4. NAVEGAÇÃO*`,
-          `Página de entrada: ${formatAttributionValue(utm?.last_landing_page)}`,
-          `Página atual: ${formatAttributionValue(utm?.last_current_page)}`,
-          `Referência: ${formatAttributionValue(utm?.last_referrer)}`,
-          `Domínio de referência: ${formatAttributionValue(utm?.last_referrer_host)}`,
-        ].join("\n");
-
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "apikey": evoApiKey,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            number: evoGroupId,
-            text: groupText,
-            delay: 1200,
-            linkPreview: false,
-          })
-        });
-
-        const responseText = await res.text();
-        groupResponse = responseText ? JSON.parse(responseText) : null;
-
-        if (!res.ok) {
-          throw new Error(`Evo API grupo retornou HTTP ${res.status}: ${responseText}`);
-        }
-
-        console.log(`Grupo Evo notificado com sucesso: ${evoGroupId}`);
-      } catch (err: any) {
-        console.error("Erro ao notificar grupo via Evo API:", err);
-        groupError = formatErrorMessage(err);
-      }
-    } else if (hasEvoConfig && !evoGroupId) {
-      groupError = "Variável EVO_GROUP_ID ausente";
-    }
-
-    // 2. Envio de E-mail via Resend SMTP com credenciais fixadas no código
-    // Desobriga a inserção de variáveis de ambiente no painel da Vercel para funcionar instantaneamente
+    // Notifications are email-only; Evolution delivery has been removed.
     const smtpUser = process.env.SMTP_USER || "";
     const smtpPass = process.env.SMTP_PASS || "";
     let emailSent = false;
@@ -228,13 +85,13 @@ export async function POST(req: NextRequest) {
       emailError = "Variáveis SMTP_USER ou SMTP_PASS ausentes";
     }
 
-    const success = !!whatsappResponse || !!groupResponse || emailSent;
+    const success = emailSent;
     const notificationResult = {
       success,
-      whatsappTriggered: !!whatsappResponse,
-      whatsappError,
-      groupTriggered: !!groupResponse,
-      groupError,
+      whatsappTriggered: false,
+      whatsappError: null,
+      groupTriggered: false,
+      groupError: null,
       emailSent,
       emailError,
     };
@@ -246,13 +103,12 @@ export async function POST(req: NextRequest) {
       supabaseSaved: supabaseResult.saved,
       supabaseError: supabaseResult.error,
       supabaseLeadId,
-      whatsappTriggered: !!whatsappResponse, 
-      whatsappResponse,
-      whatsappError,
-      whatsappDebug,
-      groupTriggered: !!groupResponse,
-      groupResponse,
-      groupError,
+      whatsappTriggered: false, 
+      whatsappResponse: null,
+      whatsappError: null,
+      groupTriggered: false,
+      groupResponse: null,
+      groupError: null,
       emailSent,
       emailError,
     }, { status: success ? 200 : 502 });
@@ -268,28 +124,7 @@ function formatErrorMessage(error: any) {
     .filter(Boolean)
     .map(String);
 
-  return parts.join(" | ") || "Falha ao chamar a Evo API";
-}
-
-function getEvoDebugInfo(evoApiUrl: string, evoInstanceName: string) {
-  try {
-    const url = evoApiUrl ? new URL(evoApiUrl) : null;
-
-    return {
-      evoApiUrlConfigured: !!evoApiUrl,
-      evoApiHost: url?.host || null,
-      evoApiProtocol: url?.protocol || null,
-      evoInstanceConfigured: !!evoInstanceName,
-    };
-  } catch {
-    return {
-      evoApiUrlConfigured: !!evoApiUrl,
-      evoApiHost: null,
-      evoApiProtocol: null,
-      evoInstanceConfigured: !!evoInstanceName,
-      evoApiUrlInvalid: true,
-    };
-  }
+  return parts.join(" | ") || "Falha ao enviar notificação";
 }
 
 function escapeHtml(value: unknown) {
