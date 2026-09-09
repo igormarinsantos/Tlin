@@ -18,7 +18,7 @@ const logos = [
 export function TrustedBy() {
   const { t } = useLanguage();
   return (
-    <section className="w-full h-[140px] flex items-center bg-white overflow-hidden">
+    <section className="w-full py-16 bg-white overflow-hidden">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row items-center gap-5 md:gap-16">
           {/* Label */}

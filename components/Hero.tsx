@@ -252,7 +252,7 @@ export function Hero() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <section ref={containerRef} className="relative w-full min-h-[calc(100svh-140px)] pt-28 md:pt-32 pb-8 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
+      <section ref={containerRef} className="relative w-full min-h-[100svh] pt-28 md:pt-32 pb-8 px-4 flex flex-col items-center justify-center bg-white overflow-hidden">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
