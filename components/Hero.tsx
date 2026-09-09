@@ -483,9 +483,14 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
 
   useEffect(() => {
     const handleGlobalHover = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isOverInteractive = !!target.closest('button') || !!target.closest('a') || !!target.closest('[role="button"]') || !!target.closest('[data-mascot-hide]');
-      setIsAbductedGlobal(isOverInteractive);
+      const target = e.target instanceof Element ? e.target : null;
+      const isOverInteractive = !!target?.closest('button, a, [role="button"], [data-mascot-hide]');
+      // Cover the full horizontal header band, including pointer-events-none gaps.
+      const isOverHeader = Array.from(document.querySelectorAll('[data-mascot-header]')).some(header => {
+        const rect = header.getBoundingClientRect();
+        return rect.height > 0 && rect.bottom > 0 && e.clientY >= Math.max(0, rect.top) && e.clientY <= rect.bottom;
+      });
+      setIsAbductedGlobal(isOverInteractive || isOverHeader);
     };
 
     const handleScroll = () => {
@@ -493,14 +498,14 @@ function MascotFollower({ initialX, initialY, isNearCta, globalMouseX, globalMou
       setIsScrolledPast(window.scrollY > 350);
     };
 
-    window.addEventListener("mouseover", handleGlobalHover);
+    window.addEventListener("mousemove", handleGlobalHover, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
     
     // Check initial scroll
     handleScroll();
 
     return () => {
-      window.removeEventListener("mouseover", handleGlobalHover);
+      window.removeEventListener("mousemove", handleGlobalHover);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);

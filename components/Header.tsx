@@ -173,7 +173,7 @@ export function Header() {
   return (
     <>
       {/* 1. Top Header */}
-      <header 
+      <header data-mascot-header
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
@@ -195,7 +195,7 @@ export function Header() {
       {/* 2. Floating Header */}
       <AnimatePresence>
         {showFloating && (
-          <motion.header
+          <motion.header data-mascot-header
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
