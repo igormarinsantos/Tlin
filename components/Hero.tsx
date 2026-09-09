@@ -60,7 +60,7 @@ export function Hero() {
   const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
-  const title = t.hero.title;
+  const title = t.hero.title.replace(/\s*\{stars\}/g, "");
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
   
   const [isDesktop, setIsDesktop] = useState(true);
