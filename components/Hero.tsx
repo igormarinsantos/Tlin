@@ -256,7 +256,7 @@ export function Hero() {
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-[38px] xs:text-[44px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.1] text-center w-full mb-6 min-h-[4em] md:min-h-[2.5em] [text-wrap:balance]">
+          <h1 className="text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] text-center w-full mb-6 md:min-h-[2.5em] break-words [overflow-wrap:anywhere]">
             {Array.from(new Set(allChars.map(c => c.line))).sort((a,b) => a-b).map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
               const globalLineStart = allChars.findIndex(c => c.line === lineIdx);
