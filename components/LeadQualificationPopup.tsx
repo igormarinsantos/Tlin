@@ -989,39 +989,41 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               const progressPercent = totalDots > 1 ? (Math.max(filledDots - 1, 0) / (totalDots - 1)) * 100 : 0;
               return (
                 <div className="sticky top-0 z-20 shrink-0 bg-white border-b border-zinc-100">
-                  {/* Linha unica com bolinhas sinalizando cada etapa -- degrade fixo de ponta a
-                      ponta da trilha inteira, so a mascara cinza por cima é que encolhe */}
-                  <div className="px-4 sm:px-12 pt-3 sm:pt-4 pb-2">
-                    <div className="relative w-full h-2.5 sm:h-3 flex items-center">
-                      <div className="absolute inset-x-0 h-1 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
+                  <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
+                    <div className="flex items-center gap-2 shrink-0 min-w-0">
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                        <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={36} height={36} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="hidden sm:block min-w-0">
+                        <p className="text-sm font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
+                        <p className={`text-xs font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
+                          {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Linha unica com bolinhas sinalizando cada etapa, centralizada entre a
+                        foto e a logo -- degrade fixo de ponta a ponta da trilha inteira, so a
+                        mascara cinza por cima é que encolhe */}
+                    <div className="relative flex-1 h-1.5 sm:h-2 flex items-center min-w-0">
+                      <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
                       <div
-                        className="absolute right-0 h-1 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
+                        className="absolute right-0 h-0.5 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
                         style={{ width: `${100 - progressPercent}%` }}
                       />
                       <div className="relative w-full flex items-center justify-between">
                         {Array.from({ length: totalDots }).map((_, i) => (
                           <span
                             key={i}
-                            className={`block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ring-2 ring-white transition-colors duration-500 ${
+                            className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500 ${
                               i < filledDots ? "bg-[#38E3FF]" : "bg-zinc-200"
                             }`}
                           />
                         ))}
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3 px-4 sm:px-12 pb-3 sm:pb-4">
-                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
-                      <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                      <p className={`text-xs sm:text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
-                        {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
-                      </p>
-                    </div>
-                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
+                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={56} height={19} className="shrink-0 w-12 sm:w-16 h-auto" />
                   </div>
                 </div>
               );
@@ -1446,6 +1448,19 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       {t?.leadQualify?.back || "Voltar"}
                     </button>
                   </div>
+                )}
+
+                {embedded && (
+                  <p className="mt-3 sm:mt-4 text-[11px] leading-relaxed text-center text-zinc-400">
+                    {t?.leadQualify?.consentPrefix || "Ao continuar, você concorda com a"}{" "}
+                    <a href="/legal?tab=privacidade" target="_blank" rel="noopener noreferrer" className="underline hover:text-zinc-600">
+                      {t?.leadQualify?.consentPrivacy || "Política de Privacidade"}
+                    </a>{" "}
+                    {t?.leadQualify?.consentAnd || "e o"}{" "}
+                    <a href="/legal?tab=termos" target="_blank" rel="noopener noreferrer" className="underline hover:text-zinc-600">
+                      {t?.leadQualify?.consentTerms || "Termo de Consentimento"}
+                    </a>.
+                  </p>
                 )}
             </div>
 

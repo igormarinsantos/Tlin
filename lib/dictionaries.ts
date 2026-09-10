@@ -294,6 +294,10 @@ const ptBR = {
     headerName: "Igor",
     headerStatusOnline: "Online",
     headerStatusTyping: "digitando...",
+    consentPrefix: "Ao continuar, você concorda com a",
+    consentPrivacy: "Política de Privacidade",
+    consentAnd: "e o",
+    consentTerms: "Termo de Consentimento",
     placeholders: {
       name: "Seu nome...",
       phone: "Seu número aqui...",
@@ -617,6 +621,10 @@ const enUS: TranslationDictionary = {
     headerName: "Igor",
     headerStatusOnline: "Online",
     headerStatusTyping: "typing...",
+    consentPrefix: "By continuing, you agree to the",
+    consentPrivacy: "Privacy Policy",
+    consentAnd: "and the",
+    consentTerms: "Consent Terms",
     placeholders: {
       name: "Your name...",
       phone: "Your number here...",
@@ -940,6 +948,10 @@ const esES: TranslationDictionary = {
     headerName: "Igor",
     headerStatusOnline: "En línea",
     headerStatusTyping: "escribiendo...",
+    consentPrefix: "Al continuar, aceptas la",
+    consentPrivacy: "Política de Privacidad",
+    consentAnd: "y el",
+    consentTerms: "Término de Consentimiento",
     placeholders: {
       name: "Tu nombre...",
       phone: "Tu número aquí...",
