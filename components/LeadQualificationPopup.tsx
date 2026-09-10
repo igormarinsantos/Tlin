@@ -182,9 +182,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
-  // Etapa de agendamento da demo. Embedded (pagina /demo) ja comeca direto na
-  // conversa; o popup mostra a tela de "Iniciar" antes da primeira pergunta.
-  const [hasStarted, setHasStarted] = useState(embedded);
+  // Etapa de agendamento da demo. Quando aberto por um CTA da index o usuario
+  // ja tem contexto e cai direto na conversa; embedded (pagina /demo, link
+  // direto de anuncio/formulario) mostra a tela de "Iniciar" antes da
+  // primeira pergunta, ja que quem cai ali pode nao ter visto o site antes.
+  const [hasStarted, setHasStarted] = useState(!embedded);
   const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
@@ -999,15 +1001,21 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                       >
                         {embedded ? (
-                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 mb-1 ${msg.role === 'user' ? 'bg-[#DCF8C6] rounded-br-md' : 'bg-white shadow-sm rounded-bl-md'}`}>
-                            {msg.role === 'bot' && idx === latestBotIdx ? (
-                              <TypewriterQuestion text={msg.text} bubble />
-                            ) : (
-                              <span className="text-sm sm:text-base leading-relaxed text-zinc-900">
-                                {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
-                              </span>
-                            )}
-                          </div>
+                          msg.role === 'user' ? (
+                            <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-md bg-[#DCF8C6] px-4 py-2.5 mb-1">
+                              <span className="text-sm sm:text-base leading-relaxed text-zinc-900">{msg.text}</span>
+                            </div>
+                          ) : (
+                            <div className="max-w-[85%] sm:max-w-[75%] mb-1">
+                              {idx === latestBotIdx ? (
+                                <TypewriterQuestion text={msg.text} bubble />
+                              ) : (
+                                <span className="text-sm sm:text-base leading-relaxed text-zinc-900">
+                                  <HighlightText text={msg.text} />
+                                </span>
+                              )}
+                            </div>
+                          )
                         ) : (
                           <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
                             {msg.role === 'bot' && idx === latestBotIdx ? (
