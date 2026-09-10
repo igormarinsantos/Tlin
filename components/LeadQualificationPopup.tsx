@@ -118,7 +118,7 @@ const HighlightText = ({ text }: { text: string }) => {
 };
 
 // Typewriter component with Mascot Cursor
-const TypewriterQuestion = ({ text, light = false }: { text: string; light?: boolean }) => {
+const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: string; light?: boolean; bubble?: boolean }) => {
   const [displayedText, setDisplayedText] = useState("");
   const rawText = text.replace(/\[|\]/g, "");
 
@@ -136,11 +136,15 @@ const TypewriterQuestion = ({ text, light = false }: { text: string; light?: boo
   const isDone = displayedText === rawText;
 
   return (
-    <div className={`relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
+    <div className={bubble
+      ? "relative inline-block text-sm sm:text-base font-normal leading-relaxed text-zinc-900"
+      : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
-      <span className="inline-block ml-2 w-5 h-5 sm:w-7 sm:h-7 align-middle shrink-0">
-        <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
-      </span>
+      {!bubble && (
+        <span className="inline-block ml-2 w-5 h-5 sm:w-7 sm:h-7 align-middle shrink-0">
+          <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
+        </span>
+      )}
     </div>
   );
 };
@@ -962,8 +966,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                  <p className="text-xs sm:text-sm text-emerald-600 font-medium flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  <p className="text-xs sm:text-sm text-emerald-600 font-medium">
                     {isTyping ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
                   </p>
                 </div>
@@ -995,15 +998,27 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                       >
-                        <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
-                          {msg.role === 'bot' && idx === latestBotIdx ? (
-                            <TypewriterQuestion text={msg.text} light={isLight} />
-                          ) : (
-                            <div className={`text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${isLight ? "text-zinc-950" : "text-white"}`}>
-                              {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
-                            </div>
-                          )}
-                        </div>
+                        {embedded ? (
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 mb-1 ${msg.role === 'user' ? 'bg-[#DCF8C6] rounded-br-md' : 'bg-white shadow-sm rounded-bl-md'}`}>
+                            {msg.role === 'bot' && idx === latestBotIdx ? (
+                              <TypewriterQuestion text={msg.text} bubble />
+                            ) : (
+                              <span className="text-sm sm:text-base leading-relaxed text-zinc-900">
+                                {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
+                            {msg.role === 'bot' && idx === latestBotIdx ? (
+                              <TypewriterQuestion text={msg.text} light={isLight} />
+                            ) : (
+                              <div className={`text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${isLight ? "text-zinc-950" : "text-white"}`}>
+                                {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         {msg.role === 'bot' && idx === latestBotIdx && !isTyping && isLastMessageBot && (
                           <motion.div 
