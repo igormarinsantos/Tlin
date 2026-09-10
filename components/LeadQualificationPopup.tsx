@@ -982,33 +982,49 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               </button>
             </div>}
 
-            {/* Header estilo WhatsApp (só no form embutido da LP, durante a conversa) */}
-            {embedded && currentStep < SUCCESS_STEP && (
-              <div className="shrink-0 flex items-center gap-3 px-4 sm:px-12 pt-6 pb-4 border-b border-zinc-100 z-20 bg-white">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
-                  <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                  <p className="text-xs sm:text-sm text-emerald-600 font-medium">
-                    {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
-                  </p>
-                </div>
-                <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
-              </div>
-            )}
+            {/* Header estilo WhatsApp + linha do tempo (so no form embutido), fixos no topo */}
+            {embedded && currentStep < SUCCESS_STEP && (() => {
+              const totalDots = SUCCESS_STEP - 1;
+              const filledDots = hasStarted ? currentStep : 0;
+              const progressPercent = totalDots > 1 ? (Math.max(filledDots - 1, 0) / (totalDots - 1)) * 100 : 0;
+              return (
+                <div className="sticky top-0 z-20 shrink-0 bg-white">
+                  <div className="flex items-center gap-3 px-4 sm:px-12 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-zinc-100">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                      <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
+                      <p className="text-xs sm:text-sm text-emerald-600 font-medium">
+                        {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                      </p>
+                    </div>
+                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
+                  </div>
 
-            {/* Linha do tempo com a etapa atual (só no form embutido) */}
-            {embedded && currentStep < SUCCESS_STEP && (
-              <div className="shrink-0 flex items-center gap-1 px-4 sm:px-12 pt-3 pb-2 border-b border-zinc-100 bg-white">
-                {Array.from({ length: SUCCESS_STEP - 1 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i < (hasStarted ? currentStep : 0) ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" : "bg-zinc-100"}`}
-                  />
-                ))}
-              </div>
-            )}
+                  {/* Linha unica com bolinhas sinalizando cada etapa */}
+                  <div className="px-4 sm:px-12 py-3 sm:py-4 border-b border-zinc-100">
+                    <div className="relative w-full h-2.5 sm:h-3 flex items-center">
+                      <div className="absolute inset-x-0 h-1 rounded-full bg-zinc-100" />
+                      <div
+                        className="absolute left-0 h-1 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] transition-[width] duration-500 ease-out"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                      <div className="relative w-full flex items-center justify-between">
+                        {Array.from({ length: totalDots }).map((_, i) => (
+                          <span
+                            key={i}
+                            className={`block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ring-2 ring-white transition-colors duration-500 ${
+                              i < filledDots ? "bg-[#38E3FF]" : "bg-zinc-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {!hasStarted ? (
               embedded ? (
