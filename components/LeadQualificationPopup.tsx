@@ -424,9 +424,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
   useEffect(() => {
     if (t?.leadQualify && chatHistory.length === 0) {
-      setChatHistory([{ role: 'bot', text: initialMsg }]);
+      // No embutido, a mensagem de boas-vindas (mostrada antes do "Vamos comecar")
+      // continua no chat como a primeira mensagem, em vez de sumir ao iniciar --
+      // a pergunta do nome (initialMsg) so entra depois que a pessoa clica em
+      // "Vamos comecar" (ver onClick do botao), como resposta a essa "mensagem".
+      setChatHistory(
+        embedded && t?.leadQualify?.welcomeTitle
+          ? [{ role: 'bot', text: t.leadQualify.welcomeTitle }]
+          : [{ role: 'bot', text: initialMsg }],
+      );
     }
-  }, [t, chatHistory.length, initialMsg]);
+  }, [t, chatHistory.length, initialMsg, embedded]);
 
   useEffect(() => {
     if (!mounted || !t?.leadQualify || currentStep !== 1 || isLiveSession.current) return;
@@ -582,7 +590,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       document.documentElement.style.setProperty("--lead-popup-offset-top", `${viewport?.offsetTop || 0}px`);
     };
 
-    if (isOpen && !embedded) {
+    if (isOpen) {
       syncViewportHeight();
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
@@ -623,7 +631,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     hasAutoClosed.current = false;
     setCurrentStep(1);
     setFormData(FALLBACK_FORM_DATA);
-    setChatHistory([{ role: 'bot', text: initialMsg }]);
+    if (embedded) {
+      setHasStarted(false);
+      setWelcomeTyping(true);
+    }
+    setChatHistory(
+      embedded && t?.leadQualify?.welcomeTitle
+        ? [{ role: 'bot', text: t.leadQualify.welcomeTitle }]
+        : [{ role: 'bot', text: initialMsg }],
+    );
     setSelectedDay(null);
     setSelectedSlot(null);
     setAvailabilityDays(null);
@@ -991,7 +1007,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
           onWheelCapture={(event) => event.stopPropagation()}
           onTouchMoveCapture={(event) => event.stopPropagation()}
           className={embedded
-            ? "fixed inset-0 w-full min-h-screen z-[300] flex flex-col items-center justify-center overflow-hidden bg-white"
+            ? "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden bg-white overscroll-none"
             : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
         >
           <motion.div
@@ -999,7 +1015,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${embedded ? "h-screen max-w-none" : "h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl"} border overflow-hidden flex flex-col transition-colors duration-300 ${
+            className={`relative w-full ${embedded ? "h-[var(--lead-popup-height,100dvh)] max-w-none" : "h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl"} border overflow-hidden flex flex-col transition-colors duration-300 ${
               isLight
                 ? 'border-zinc-200'
                 : 'border-white/10'
@@ -1116,9 +1132,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       </div>
                       <div className="min-w-0">
                         <p className="text-base sm:text-lg font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                        <p className={`text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
-                          {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
-                        </p>
+                        <span className={`grid text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
+                          {/* Reserva a largura do texto mais longo pra "Online"/"digitando..." nao
+                              empurrar o resto do header ao alternar (largura ficava variavel). */}
+                          <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusOnline || "Online"}</span>
+                          <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusTyping || "digitando..."}</span>
+                          <span className="col-start-1 row-start-1">
+                            {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                          </span>
+                        </span>
                       </div>
                     </div>
 
@@ -1183,7 +1205,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       <motion.button
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        onClick={() => setHasStarted(true)}
+                        onClick={() => {
+                          setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);
+                          setHasStarted(true);
+                          setIsTyping(true);
+                          pendingAdvanceTimeoutRef.current = setTimeout(() => {
+                            pendingAdvanceTimeoutRef.current = null;
+                            setIsTyping(false);
+                            setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
+                          }, 1200);
+                        }}
                         className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
                       >
                         {t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar"}
@@ -1395,8 +1426,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               </div>
             </div>
 
-            {/* Input & Footer Area - Fixed at the bottom */}
-            <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
+            {/* Input & Footer Area - Fixed at the bottom. min-h evita que a area
+                colapse (e "suma") durante o intervalo de "digitando" entre uma
+                pergunta e outra -- fica reservado o espaco, sem pulo de layout. */}
+            <div className="shrink-0 min-h-[76px] sm:min-h-[92px] px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
                 <AnimatePresence mode="wait">
                   {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
                     <>
