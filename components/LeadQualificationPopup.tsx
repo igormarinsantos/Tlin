@@ -289,12 +289,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
-  // Embedded (pagina /demo, /comece) comeca com a boas-vindas dentro do proprio
-  // chat + "Vamos comecar"; o popup da index mantem a tela de "Iniciar" separada
-  // de sempre, sem mexer nessa parte.
-  const [hasStarted, setHasStarted] = useState(!embedded);
-  // Simula o "Igor digitando..." antes da mensagem de boas-vindas aparecer no chat (embedded).
-  const [welcomeTyping, setWelcomeTyping] = useState(embedded);
+  // Tanto o embedded (/demo, /comece) quanto o popup da index comecam com a
+  // mesma boas-vindas dentro do proprio chat + "Vamos comecar".
+  const [hasStarted, setHasStarted] = useState(false);
+  // Simula o "Igor digitando..." antes da mensagem de boas-vindas aparecer no chat.
+  const [welcomeTyping, setWelcomeTyping] = useState(true);
   const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
@@ -391,10 +390,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   }, []);
 
   useEffect(() => {
-    if (!embedded || hasStarted) return;
+    if (hasStarted) return;
     const timer = setTimeout(() => setWelcomeTyping(false), 1400);
     return () => clearTimeout(timer);
-  }, [embedded, hasStarted]);
+  }, [hasStarted]);
 
   useEffect(() => {
     if (!mounted || hasInitializedCountryCodeRef.current) return;
@@ -449,12 +448,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       // a pergunta do nome (initialMsg) so entra depois que a pessoa clica em
       // "Vamos comecar" (ver onClick do botao), como resposta a essa "mensagem".
       setChatHistory(
-        embedded && t?.leadQualify?.welcomeTitle
+        t?.leadQualify?.welcomeTitle
           ? [{ role: 'bot', text: t.leadQualify.welcomeTitle }]
           : [{ role: 'bot', text: initialMsg }],
       );
     }
-  }, [t, chatHistory.length, initialMsg, embedded]);
+  }, [t, chatHistory.length, initialMsg]);
 
   useEffect(() => {
     if (!mounted || !t?.leadQualify || currentStep !== 1 || isLiveSession.current) return;
@@ -651,12 +650,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     hasAutoClosed.current = false;
     setCurrentStep(1);
     setFormData(FALLBACK_FORM_DATA);
-    if (embedded) {
-      setHasStarted(false);
-      setWelcomeTyping(true);
-    }
+    setHasStarted(false);
+    setWelcomeTyping(true);
     setChatHistory(
-      embedded && t?.leadQualify?.welcomeTitle
+      t?.leadQualify?.welcomeTitle
         ? [{ role: 'bot', text: t.leadQualify.welcomeTitle }]
         : [{ role: 'bot', text: initialMsg }],
     );
@@ -1145,20 +1142,20 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 const g = Math.round(151 + (227 - 151) * t);
                 return `rgb(${r}, ${g}, 255)`;
               };
-              const progressBar = (
+              const renderProgressBar = (fullWidth: boolean, lightDots: boolean) => (
                 <div className="flex-1 flex justify-center min-w-0 px-1">
-                  <div className="relative w-full max-w-[130px] sm:max-w-[190px] h-1.5 sm:h-2 flex items-center">
+                  <div className={`relative w-full h-1.5 sm:h-2 flex items-center ${fullWidth ? "" : "max-w-[130px] sm:max-w-[190px]"}`}>
                     <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
                     <div
-                      className={`absolute right-0 h-0.5 rounded-r-full transition-[width] duration-500 ease-out ${isLight ? "bg-zinc-100" : "bg-white/10"}`}
+                      className={`absolute right-0 h-0.5 rounded-r-full transition-[width] duration-500 ease-out ${lightDots ? "bg-zinc-100" : "bg-white/10"}`}
                       style={{ width: `${100 - progressPercent}%` }}
                     />
                     <div className="relative w-full flex items-center justify-between">
                       {Array.from({ length: totalDots }).map((_, i) => (
                         <span
                           key={i}
-                          className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors duration-500 ${isLight ? "ring-2 ring-white" : "ring-2 ring-[#0c0d0d]"}`}
-                          style={{ backgroundColor: i < filledDots ? dotColor(i) : (isLight ? "#e4e4e7" : "#3f3f46") }}
+                          className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors duration-500 ${lightDots ? "ring-2 ring-white" : "ring-2 ring-[#0c0d0d]"}`}
+                          style={{ backgroundColor: i < filledDots ? dotColor(i) : (lightDots ? "#e4e4e7" : "#3f3f46") }}
                         />
                       ))}
                     </div>
@@ -1168,9 +1165,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
               // No popup da index (nao embedded) fica so a linha do tempo, sem
               // foto/nome/status do Igor nem logo -- so o /demo tem o header
-              // estilo WhatsApp completo.
+              // estilo WhatsApp completo. A trilha do index e sempre larga/clara,
+              // mesmo com o resto do popup no tema escuro, e sem a linha divisoria
+              // embaixo do header (so o /demo, com o header completo, mantem ela).
               return (
-                <div className={`sticky top-0 z-20 shrink-0 border-b transition-colors duration-300 ${isLight ? "bg-white border-zinc-100" : "bg-[#0c0d0d] border-white/10"}`}>
+                <div className={`sticky top-0 z-20 shrink-0 transition-colors duration-300 ${embedded ? `border-b ${isLight ? "border-zinc-100" : "border-white/10"}` : ""} ${isLight ? "bg-white" : "bg-[#0c0d0d]"}`}>
                   {embedded ? (
                     <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
                       <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
@@ -1191,13 +1190,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         </div>
                       </div>
 
-                      {progressBar}
+                      {renderProgressBar(false, isLight)}
 
                       <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={56} height={19} className="shrink-0 w-12 sm:w-16 h-auto" />
                     </div>
                   ) : (
                     <div className="flex items-center px-4 sm:px-12 py-3 sm:py-4">
-                      {progressBar}
+                      {renderProgressBar(true, true)}
                     </div>
                   )}
                 </div>
