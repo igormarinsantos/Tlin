@@ -11,9 +11,9 @@ export const siteConfig = {
   url: configuredUrl(process.env.NEXT_PUBLIC_SITE_URL, "https://tlin.ia.br", LEGACY_SITE_URLS),
   appUrl: configuredUrl(process.env.NEXT_PUBLIC_APP_URL, "https://app.tlin.ia.br", LEGACY_APP_URLS),
   locale: "pt_BR",
-  title: "tlin.ai | Agência de Inteligência Artificial e Automação de Vendas",
+  title: "tlin.ai | IA Comercial com CRM, Follow-up e Agendamento",
   description:
-    "A tlin.ai cria agentes de IA autônomos treinados para converter leads, qualificar clientes e escalar seu comercial 24/7.",
+    "IA comercial que atende, qualifica e vende no WhatsApp — com CRM, follow-up automático e agendamento nativos, prontos pra escalar seu comercial 24/7.",
 };
 
 export function absoluteUrl(path = "/") {

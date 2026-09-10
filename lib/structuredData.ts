@@ -9,12 +9,12 @@ const faqItems = [
   {
     question: "A Tlin substitui um CRM?",
     answer:
-      "A Tlin pode operar integrada ao CRM existente ou atuar como uma camada de qualificação e atendimento no WhatsApp, enviando leads qualificados e contexto comercial para o time humano.",
+      "A Tlin já vem com CRM próprio integrado nativamente, onde os agentes de IA organizam leads, conversas e o funil comercial. Ela também pode receber leads de ferramentas externas (como HubSpot ou RD Station) via webhook ou formulário, sem precisar substituir o que a empresa já usa.",
   },
   {
     question: "O que a Tlin automatiza no comercial?",
     answer:
-      "A Tlin automatiza resposta a leads, qualificação, contorno de objeções, recuperação de conversas, handoff para vendedores e acompanhamento de métricas comerciais.",
+      "A Tlin automatiza resposta a leads, qualificação, contorno de objeções, follow-up e recuperação de conversas paradas, agendamento de reuniões, handoff para vendedores e acompanhamento de métricas comerciais, tudo dentro do próprio CRM.",
   },
   {
     question: "Em quanto tempo uma operação pode começar?",
@@ -25,6 +25,16 @@ const faqItems = [
     question: "A solução funciona no WhatsApp?",
     answer:
       "Sim. A proposta central da Tlin é operar agentes de IA comerciais no WhatsApp 24/7, com linguagem natural e transferência para atendimento humano quando necessário.",
+  },
+  {
+    question: "A Tlin faz follow-up automático com leads que não respondem?",
+    answer:
+      "Sim. Quando um lead esfria ou para de responder, a IA retoma a conversa automaticamente em intervalos definidos no playbook, sem depender de um vendedor lembrar de voltar a fazer contato.",
+  },
+  {
+    question: "A Tlin agenda reuniões e demonstrações automaticamente?",
+    answer:
+      "Sim. Quando um lead está pronto, a IA consulta a agenda disponível e marca a reunião ou demonstração direto no CRM, já notificando o time comercial responsável.",
   },
 ];
 
@@ -52,7 +62,11 @@ export const structuredData = [
       name: "Brazil",
     },
     knowsAbout: [
-      "software comercial com inteligência artificial",
+      "IA comercial",
+      "CRM nativo com inteligência artificial",
+      "automação de follow-up",
+      "agendamento automático de reuniões",
+      "automação via webhook",
       "automação de vendas no WhatsApp",
       "qualificação de leads",
       "gestão de conversas comerciais",
@@ -81,8 +95,10 @@ export const structuredData = [
       "@id": absoluteUrl("/#organization"),
     },
     about: [
-      "software comercial impulsionado por inteligência artificial",
+      "IA comercial com CRM nativo",
       "agentes de IA para vendas",
+      "automação de follow-up",
+      "agendamento automático de reuniões",
       "automação comercial no WhatsApp",
       "qualificação de leads",
       "SDR com inteligência artificial",
@@ -101,11 +117,14 @@ export const structuredData = [
     operatingSystem: "Web",
     url: absoluteAppUrl("/"),
     description:
-      "Software comercial impulsionado por inteligência artificial para responder, qualificar e converter leads no WhatsApp 24/7.",
+      "IA comercial com CRM nativo para responder, qualificar, agendar e converter leads no WhatsApp 24/7.",
     featureList: [
       "Atendimento comercial no WhatsApp",
+      "CRM nativo para gestão de leads e funil",
       "Qualificação de leads",
       "Automação de follow-up e recuperação de conversas",
+      "Agendamento automático de reuniões e demonstrações",
+      "Integração com ferramentas externas via webhook e formulário",
       "Handoff para vendedores humanos com contexto",
       "Gestão de conversas e métricas comerciais",
     ],
@@ -124,7 +143,7 @@ export const structuredData = [
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": absoluteUrl("/#service"),
-    name: "Agentes de IA para automação de vendas no WhatsApp",
+    name: "IA comercial com CRM para WhatsApp",
     provider: {
       "@id": absoluteUrl("/#organization"),
     },
@@ -132,7 +151,7 @@ export const structuredData = [
       "@type": "Country",
       name: "Brazil",
     },
-    serviceType: "Automação comercial com inteligência artificial",
+    serviceType: "IA comercial com CRM, follow-up e agendamento nativos",
     audience: {
       "@type": "BusinessAudience",
       audienceType:
@@ -156,7 +175,7 @@ export const structuredData = [
           price: "997",
           priceCurrency: "BRL",
           description:
-            "Plano para operações em tração com múltiplos agentes, CRM, consultoria e recuperação de leads.",
+            "Plano para operações em tração com múltiplos agentes, CRM nativo nas conversas, consultoria e recuperação de leads.",
         },
         {
           "@type": "Offer",

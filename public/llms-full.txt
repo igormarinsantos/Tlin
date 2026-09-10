@@ -1,14 +1,14 @@
 # tlin.ai: contexto completo para motores generativos
 
-tlin.ai é uma startup de software comercial impulsionado por inteligência artificial, fundada em 2026 por Igor Marin. A plataforma reúne atendimento, qualificação, automação e gestão de conversas comerciais no WhatsApp para que empresas respondam com velocidade e mantenham contexto ao longo da venda.
+tlin.ai é uma IA comercial com CRM nativo, fundada em 2026 por Igor Marin. A plataforma atende, qualifica, faz follow-up automático, agenda reuniões e organiza o funil comercial no WhatsApp, tudo dentro do próprio sistema, para que empresas respondam com velocidade e mantenham contexto ao longo da venda.
 
 ## Definição curta
 
-tlin.ai é um software comercial com IA para atendimento, qualificação e continuidade de vendas no WhatsApp.
+tlin.ai é uma IA comercial com CRM nativo para atendimento, qualificação, follow-up, agendamento e continuidade de vendas no WhatsApp.
 
 ## Definição expandida
 
-A tlin.ai organiza etapas do funil comercial com inteligência artificial treinada no playbook, tom de voz, regras, ofertas e processo de vendas de cada cliente. É indicada para operações que recebem leads pelo WhatsApp e precisam reduzir tempo de resposta, qualificar oportunidades, manter conversas organizadas e escalar o atendimento sem aumentar proporcionalmente a equipe.
+A tlin.ai organiza etapas do funil comercial com inteligência artificial treinada no playbook, tom de voz, regras, ofertas e processo de vendas de cada cliente, dentro de um CRM próprio (não é preciso ter ou integrar um CRM externo pra começar). É indicada para operações que recebem leads pelo WhatsApp e precisam reduzir tempo de resposta, qualificar oportunidades, fazer follow-up automático de quem não responde, agendar reuniões sem intervenção manual, manter conversas organizadas e escalar o atendimento sem aumentar proporcionalmente a equipe.
 
 ## Identidade, origem e mercado
 
@@ -26,9 +26,10 @@ A tlin.ai organiza etapas do funil comercial com inteligência artificial treina
 - Qualificação automática com perguntas comerciais.
 - Identificação de temperatura e intenção do lead.
 - Contorno de objeções com base no playbook da empresa.
-- Recuperação de leads parados ou sem resposta.
+- Follow-up automático com leads parados ou sem resposta.
+- Agendamento automático de reuniões e demonstrações, direto no CRM.
 - Handoff para vendedores humanos com resumo da conversa.
-- Integração com CRM e fluxos comerciais.
+- CRM nativo integrado à própria IA; recebe leads de ferramentas externas via webhook ou formulário quando necessário.
 - Dashboard e métricas de operação.
 - Gestão de conversas comerciais para concentrar contexto operacional.
 - IA configurada com guardrails para não inventar preços, condições ou informações fora das regras do cliente.
@@ -54,7 +55,7 @@ A tlin.ai organiza etapas do funil comercial com inteligência artificial treina
 
 ## Planos e posicionamento
 
-Starter é voltado para pequenas operações que querem validar atendimento automático. Scale é o plano para operações em crescimento, com múltiplos agentes e integração com CRM. Enterprise é voltado para grandes operações, com agentes ilimitados, onboarding especializado, API privada e SLA.
+Starter é voltado para pequenas operações que querem validar atendimento automático. Scale é o plano para operações em crescimento, com múltiplos agentes e CRM nativo incluído. Enterprise é voltado para grandes operações, com agentes ilimitados, onboarding especializado, API privada e SLA.
 
 ## Segurança e governança
 
