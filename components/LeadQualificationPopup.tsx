@@ -137,7 +137,7 @@ const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: str
 
   return (
     <div className={bubble
-      ? "relative inline-block text-base sm:text-lg font-semibold leading-relaxed text-zinc-900"
+      ? "relative inline-block text-lg sm:text-xl font-semibold leading-relaxed text-zinc-900"
       : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
       <span className={`inline-block ml-2 align-middle shrink-0 ${bubble ? "w-4 h-4" : "w-5 h-5 sm:w-7 sm:h-7"}`}>
@@ -182,6 +182,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   // direto de anuncio/formulario) mostra a tela de "Iniciar" antes da
   // primeira pergunta, ja que quem cai ali pode nao ter visto o site antes.
   const [hasStarted, setHasStarted] = useState(!embedded);
+  // Simula o "Igor digitando..." antes da mensagem de boas-vindas aparecer
+  // no proprio chat embutido, em vez de uma tela separada.
+  const [welcomeTyping, setWelcomeTyping] = useState(embedded);
   const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
@@ -276,6 +279,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     // Carrega o histórico salvo localmente se existir para continuar exatamente de onde parou
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!embedded || hasStarted) return;
+    const timer = setTimeout(() => setWelcomeTyping(false), 1400);
+    return () => clearTimeout(timer);
+  }, [embedded, hasStarted]);
 
   useEffect(() => {
     if (!mounted || hasInitializedCountryCodeRef.current) return;
@@ -560,18 +569,21 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const isHighVolume = volumeIdx >= 3; // "500 a 1.5k" ou "Mais de 5k"
     const isLowVolume = volumeIdx === 0; // "Até 40"
     const isTightTeam = teamIdx === 0 && isHighVolume; // equipe pequena pra um volume grande
+    const isBigTeam = teamIdx === teamOptions.length - 1; // "Mais de 50"
 
     switch(step) {
       case 1: return initialMsg;
       case 2: return t?.leadQualify?.step2?.replace("{name}", companyName) || "";
       case 3: return t?.leadQualify?.step3?.replace("{name}", companyName).replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
       case 4: return t?.leadQualify?.step4?.replace("{name}", companyName) || "";
-      case 5:
-        if (isHighVolume) return t?.leadQualify?.step5High || t?.leadQualify?.step5 || "";
-        if (isLowVolume) return t?.leadQualify?.step5Low || t?.leadQualify?.step5 || "";
-        return t?.leadQualify?.step5 || "";
-      case 6:
-        return (isTightTeam ? t?.leadQualify?.step6Tight : "") || t?.leadQualify?.step6 || "";
+      case 5: {
+        const s5 = isHighVolume ? t?.leadQualify?.step5High : isLowVolume ? t?.leadQualify?.step5Low : t?.leadQualify?.step5;
+        return s5?.replace("{name}", companyName) || t?.leadQualify?.step5?.replace("{name}", companyName) || "";
+      }
+      case 6: {
+        const s6 = isTightTeam ? t?.leadQualify?.step6Tight : isBigTeam ? t?.leadQualify?.step6Scale : t?.leadQualify?.step6;
+        return s6?.replace("{name}", companyName) || t?.leadQualify?.step6?.replace("{name}", companyName) || "";
+      }
       case 7: return t?.leadQualify?.step7?.replace("{name}", companyName) || "";
       case 8: return t?.leadQualify?.step8?.replace("{name}", companyName) || "";
       case 9:
@@ -971,7 +983,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             </div>}
 
             {/* Header estilo WhatsApp (só no form embutido da LP, durante a conversa) */}
-            {embedded && currentStep < SUCCESS_STEP && !!hasStarted && (
+            {embedded && currentStep < SUCCESS_STEP && (
               <div className="shrink-0 flex items-center gap-3 px-4 sm:px-12 pt-6 pb-4 border-b border-zinc-100 z-20 bg-white">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100 flex items-center justify-center">
                   <Image src="/TlinIA.svg" alt={t?.leadQualify?.headerName || "Igor"} width={28} height={28} className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
@@ -979,7 +991,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 <div className="min-w-0">
                   <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
                   <p className="text-xs sm:text-sm text-emerald-600 font-medium">
-                    {isTyping ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                    {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
                   </p>
                 </div>
                 <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
@@ -987,27 +999,69 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             )}
 
             {/* Linha do tempo com a etapa atual (só no form embutido) */}
-            {embedded && currentStep < SUCCESS_STEP && !!hasStarted && (
+            {embedded && currentStep < SUCCESS_STEP && (
               <div className="shrink-0 flex items-center gap-1 px-4 sm:px-12 pt-3 pb-2 border-b border-zinc-100 bg-white">
                 {Array.from({ length: SUCCESS_STEP - 1 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i < currentStep ? "bg-[#38E3FF]" : "bg-zinc-100"}`}
+                    className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i < (hasStarted ? currentStep : 0) ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" : "bg-zinc-100"}`}
                   />
                 ))}
               </div>
             )}
 
             {!hasStarted ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-10 px-6 sm:px-12 text-center">
-                <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} />
-                <button
-                  onClick={() => setHasStarted(true)}
-                  className="relative px-10 py-4 rounded-full font-bold text-base sm:text-lg bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 transition-all active:scale-[0.98] hover:opacity-90 shadow-xl"
-                >
-                  {t?.leadQualify?.start || "Iniciar"}
-                </button>
-              </div>
+              embedded ? (
+                <>
+                  {/* Boas-vindas dentro do proprio chat (Igor "digitando" antes da mensagem) */}
+                  <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y ml-0 mr-1 sm:mr-2 px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 lead-popup-scrollbar">
+                    <div className="w-full flex flex-col justify-start min-h-full">
+                      {welcomeTyping ? (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                          <motion.div
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                            className="w-5 h-5 sm:w-7 sm:h-7"
+                          >
+                            <Image src="/TlinIA.svg" alt="Thinking" width={32} height={32} className="w-full h-full object-contain" />
+                          </motion.div>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          className="max-w-[85%] sm:max-w-[75%] mb-1"
+                        >
+                          <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} bubble />
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
+                    {!welcomeTyping && (
+                      <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        onClick={() => setHasStarted(true)}
+                        className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
+                      >
+                        {t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar"}
+                      </motion.button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center gap-10 px-6 sm:px-12 text-center">
+                  <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} />
+                  <button
+                    onClick={() => setHasStarted(true)}
+                    className="relative px-10 py-4 rounded-full font-bold text-base sm:text-lg bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 transition-all active:scale-[0.98] hover:opacity-90 shadow-xl"
+                  >
+                    {t?.leadQualify?.start || "Iniciar"}
+                  </button>
+                </div>
+              )
             ) : currentStep < SUCCESS_STEP ? (
               <>
             {/* Scrollable Message Area */}
@@ -1033,7 +1087,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                               {idx === latestBotIdx ? (
                                 <TypewriterQuestion text={msg.text} bubble />
                               ) : (
-                                <span className="text-base sm:text-lg font-semibold leading-relaxed text-zinc-900">
+                                <span className="text-lg sm:text-xl font-semibold leading-relaxed text-zinc-900">
                                   <HighlightText text={msg.text} />
                                 </span>
                               )}
