@@ -1144,15 +1144,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 const g = Math.round(151 + (227 - 151) * t);
                 return `rgb(${r}, ${g}, 255)`;
               };
-              // translucentUnfilled e so pro popup modal (fundo escuro) -- o /demo
-              // (embedded, fundo branco) continua com a bolinha solida de sempre,
-              // porque branco translucido em cima de branco fica invisivel.
-              const renderProgressBar = (fullWidth: boolean, lightDots: boolean, translucentUnfilled = false) => (
+              // whiteUnfilled e so pro popup modal (fundo escuro) -- o resto da
+              // trilha fica branco solido ate a etapa ser concluida, so entao
+              // vira o degrade. O /demo (embedded, fundo branco) continua com o
+              // cinza claro de sempre, sem mudar.
+              const renderProgressBar = (fullWidth: boolean, lightDots: boolean, whiteUnfilled = false) => (
                 <div className="flex-1 flex justify-center min-w-0 px-1">
                   <div className={`relative w-full h-1.5 sm:h-2 flex items-center ${fullWidth ? "" : "max-w-[130px] sm:max-w-[190px]"}`}>
                     <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
                     <div
-                      className={`absolute right-0 h-0.5 rounded-r-full transition-[width] duration-500 ease-out ${lightDots ? "bg-zinc-100" : "bg-white/10"}`}
+                      className={`absolute right-0 h-0.5 rounded-r-full transition-[width] duration-500 ease-out ${whiteUnfilled ? "bg-white" : (lightDots ? "bg-zinc-100" : "bg-white/10")}`}
                       style={{ width: `${100 - progressPercent}%` }}
                     />
                     <div className="relative w-full flex items-center justify-between">
@@ -1160,7 +1161,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         <span
                           key={i}
                           className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors duration-500 ${lightDots ? "ring-2 ring-white" : "ring-2 ring-[#0c0d0d]"}`}
-                          style={{ backgroundColor: i < filledDots ? dotColor(i) : translucentUnfilled ? "rgba(255, 255, 255, 0.35)" : (lightDots ? "#e4e4e7" : "#3f3f46") }}
+                          style={{ backgroundColor: i < filledDots ? dotColor(i) : whiteUnfilled ? "#ffffff" : (lightDots ? "#e4e4e7" : "#3f3f46") }}
                         />
                       ))}
                     </div>
@@ -1200,7 +1201,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={56} height={19} className="shrink-0 w-12 sm:w-16 h-auto" />
                     </div>
                   ) : (
-                    <div className="flex items-center px-4 sm:px-12 py-3 sm:py-4">
+                    <div className="flex items-center pl-4 sm:pl-12 pr-16 sm:pr-20 py-3 sm:py-4">
                       {renderProgressBar(true, true, true)}
                     </div>
                   )}
@@ -1230,7 +1231,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         className="max-w-[85%] sm:max-w-[75%] mb-1"
                       >
-                        <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} bubble />
+                        <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} bubble={embedded} />
                       </motion.div>
                     )}
                   </div>
@@ -1250,7 +1251,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
                         }, 1200);
                       }}
-                      className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
+                      className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-xl sm:text-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
                     >
                       {t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar"}
                     </motion.button>
