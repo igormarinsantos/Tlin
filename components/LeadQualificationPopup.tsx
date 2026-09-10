@@ -987,16 +987,24 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               const totalDots = SUCCESS_STEP - 1;
               const filledDots = hasStarted ? currentStep : 0;
               const progressPercent = totalDots > 1 ? (Math.max(filledDots - 1, 0) / (totalDots - 1)) * 100 : 0;
+              // Interpola a mesma cor do degrade da trilha (roxo -> ciano) pra cada
+              // bolinha, na posicao dela, em vez de um azul solido igual pra todas.
+              const dotColor = (i: number) => {
+                const t = totalDots > 1 ? i / (totalDots - 1) : 0;
+                const r = Math.round(181 + (56 - 181) * t);
+                const g = Math.round(151 + (227 - 151) * t);
+                return `rgb(${r}, ${g}, 255)`;
+              };
               return (
                 <div className="sticky top-0 z-20 shrink-0 bg-white border-b border-zinc-100">
                   <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
-                    <div className="flex items-center gap-2 shrink-0 min-w-0">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden shrink-0 bg-zinc-100">
-                        <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={36} height={36} className="w-full h-full object-cover" />
+                    <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                        <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={48} height={48} className="w-full h-full object-cover" />
                       </div>
-                      <div className="hidden sm:block min-w-0">
-                        <p className="text-sm font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                        <p className={`text-xs font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
+                      <div className="min-w-0">
+                        <p className="text-base sm:text-lg font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
+                        <p className={`text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
                           {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
                         </p>
                       </div>
@@ -1015,9 +1023,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         {Array.from({ length: totalDots }).map((_, i) => (
                           <span
                             key={i}
-                            className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500 ${
-                              i < filledDots ? "bg-[#38E3FF]" : "bg-zinc-200"
-                            }`}
+                            className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500"
+                            style={{ backgroundColor: i < filledDots ? dotColor(i) : "#e4e4e7" }}
                           />
                         ))}
                       </div>
@@ -1099,7 +1106,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         {embedded ? (
                           msg.role === 'user' ? (
                             <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-md bg-[#38E3FF]/25 px-4 py-2.5 mb-1">
-                              <span className="text-sm sm:text-base leading-relaxed text-zinc-900">{msg.text}</span>
+                              <span className="text-base sm:text-lg leading-relaxed text-zinc-900">{msg.text}</span>
                             </div>
                           ) : (
                             <div className="max-w-[85%] sm:max-w-[75%] mb-1">
