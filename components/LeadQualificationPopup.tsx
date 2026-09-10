@@ -230,7 +230,7 @@ function AvailabilityCalendar({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
+      <div className="grid grid-cols-7 gap-1">
         {gridDays.map((day) => {
           const key = formatDate(day, "yyyy-MM-dd");
           if (!isSameMonth(day, activeMonth)) return <div key={key} />;
@@ -242,7 +242,7 @@ function AvailabilityCalendar({
                 key={key}
                 type="button"
                 onClick={() => onSelectDay(available)}
-                className="aspect-square rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-base font-bold border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-zinc-950 hover:border-transparent hover:from-[#B597FF] hover:to-[#38E3FF] transition-all active:scale-95"
+                className="h-8 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-bold border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-zinc-950 hover:bg-none hover:bg-[#38E3FF]/20 hover:border-[#38E3FF] transition-all active:scale-95"
               >
                 {formatDate(day, "d")}
               </button>
@@ -251,7 +251,7 @@ function AvailabilityCalendar({
           return (
             <div
               key={key}
-              className={`aspect-square flex items-center justify-center text-sm sm:text-base ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
+              className={`h-8 sm:h-10 flex items-center justify-center text-xs sm:text-sm ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
             >
               {formatDate(day, "d")}
             </div>
@@ -1250,7 +1250,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="mt-4 sm:mt-8 flex flex-col gap-2 sm:gap-3 w-full max-w-md"
+                            className={`mt-4 sm:mt-8 flex flex-col gap-2 sm:gap-3 w-full ${currentStep === 7 || currentStep === 9 ? "" : "max-w-md"}`}
                           >
                             {currentStep === 9 && (
                               <div className={`mb-4 sm:mb-6 p-3 sm:p-5 rounded-2xl sm:rounded-3xl border space-y-2 sm:space-y-3 text-left ${isLight ? "bg-zinc-50 border-zinc-200" : "bg-white/5 border-white/10"}`}>
