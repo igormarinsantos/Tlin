@@ -246,12 +246,12 @@ export function Features() {
           {featuresList.map((feature, idx) => (
             <div key={idx}>
               {idx === 0 && (
-                <h2 id="agentes" className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 text-center mb-8 md:mb-12">
+                <h2 id="agentes" className="sr-only">
                   {t.features.agentesTitle}
                 </h2>
               )}
               {idx === 1 && (
-                <h2 id="crm" className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 text-center mb-8 md:mb-12">
+                <h2 id="crm" className="sr-only">
                   {t.features.crmTitle}
                 </h2>
               )}

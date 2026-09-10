@@ -19,7 +19,7 @@ const ptBR = {
   },
   hero: {
     title: "Comercial rodando 24/7.\nCom IA de verdade.",
-    subtitle: "Escale sua operação comercial com agentes de IA que atendem, qualificam e vendem de forma autônoma, direto no WhatsApp.",
+    subtitle: "Sistema de vendas com IA no WhatsApp e CRM para escalar sua operação comercial 24/7, com agentes que atendem, qualificam e vendem sozinhos.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
     watchDemo: "Explorar recursos",
@@ -336,7 +336,7 @@ const enUS: TranslationDictionary = {
   },
   hero: {
     title: "Sales running 24/7.\nWith real AI.",
-    subtitle: "Scale your sales op with AI agents that answer, qualify, and sell autonomously, directly on WhatsApp.",
+    subtitle: "An AI-powered sales system on WhatsApp and CRM to run your sales operation 24/7, with agents that answer, qualify, and sell on their own.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",
     watchDemo: "Explore features",
@@ -653,7 +653,7 @@ const esES: TranslationDictionary = {
   },
   hero: {
     title: "Comercial funcionando 24/7.\nCon IA de verdad.",
-    subtitle: "Escala tu operación comercial con agentes IA que atienden, califican y venden solos en WhatsApp.",
+    subtitle: "Sistema de ventas con IA en WhatsApp y CRM para escalar tu operación comercial 24/7, con agentes que atienden, califican y venden solos.",
     cta: "Empezar Gratis",
     demoHover: "Demo 100% gratis",
     watchDemo: "Explorar funciones",
