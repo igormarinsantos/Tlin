@@ -50,13 +50,13 @@ function LanguageSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full right-0 mt-4 w-36 bg-white border border-zinc-200 rounded-2xl overflow-hidden py-1 px-1 z-50"
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-36 bg-white border border-zinc-200 rounded-2xl overflow-hidden py-1 px-1 z-50"
           >
             {languages.map((l) => (
               <button
                 key={l.code}
                 onClick={() => { setLang(l.code); setIsOpen(false); }}
-                className="w-full text-left px-3 py-2 rounded-full hover:bg-zinc-100 flex items-center gap-3 transition-all duration-200 ease-out"
+                className="w-full text-left px-3 py-2 rounded-xl hover:bg-zinc-100 flex items-center gap-3 transition-all duration-200 ease-out"
               >
                 <CountryFlag country={l.flag} />
                 <span className="text-sm font-semibold text-zinc-600">{l.name}</span>
