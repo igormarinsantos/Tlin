@@ -33,7 +33,7 @@ export function RoiCalculator() {
             <p className="text-zinc-500 mt-3">Arraste para simular suas oportunidades comerciais mensais.</p>
           </div>
 
-          <div className="rounded-3xl bg-gradient-to-br from-[#B597FF] to-[#38E3FF] p-6 md:p-8 text-zinc-900 -mx-4 md:-mx-10">
+          <div className="rounded-3xl bg-gradient-to-br from-[#B597FF] to-[#38E3FF] p-6 md:p-8 text-zinc-900 -mx-4 md:-mx-10 -mb-4 md:-mb-10">
             <div className="flex items-end justify-between gap-4 mb-5">
               <span className="text-sm md:text-base font-bold text-zinc-800">Oportunidades por mês</span>
               <span className="text-3xl md:text-5xl font-black text-zinc-950">{opportunities.toLocaleString("pt-BR")}</span>
