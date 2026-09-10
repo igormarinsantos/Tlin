@@ -4,6 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import {
+  eachMonthOfInterval,
+  eachDayOfInterval,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  isSameMonth,
+  format as formatDate,
+  type Locale,
+} from "date-fns";
+import { ptBR, enUS, es } from "date-fns/locale";
 import { CountryFlag } from "@/components/CountryFlag";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getDictionary } from "@/lib/dictionaries";
@@ -137,7 +150,7 @@ const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: str
 
   return (
     <div className={bubble
-      ? "relative inline-block text-lg sm:text-xl font-semibold leading-relaxed text-zinc-900"
+      ? "relative inline-block text-xl sm:text-2xl font-semibold leading-relaxed text-zinc-900"
       : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
       <span className={`inline-block ml-2 align-middle shrink-0 ${bubble ? "w-4 h-4" : "w-5 h-5 sm:w-7 sm:h-7"}`}>
@@ -149,6 +162,105 @@ const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: str
 
 type DemoDay = { date: string; label: string; slots: DemoSlot[] };
 type DemoSlot = { startsAt: string; endsAt: string; when: string };
+
+const DATE_LOCALE_BY_LANG: Record<string, Locale> = { PT: ptBR, EN: enUS, ES: es };
+
+// Calendario de verdade (grade de mes) em vez de uma lista de dias em botoes --
+// dias com vaga ficam clicaveis, os demais aparecem so como referencia visual.
+function AvailabilityCalendar({
+  days,
+  onSelectDay,
+  lang,
+  isLight,
+}: {
+  days: DemoDay[];
+  onSelectDay: (day: DemoDay) => void;
+  lang: string;
+  isLight: boolean;
+}) {
+  const locale = DATE_LOCALE_BY_LANG[lang] || ptBR;
+  const [monthIdx, setMonthIdx] = useState(0);
+
+  const byDate = new Map(days.map((d) => [d.date, d]));
+  const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
+  const first = sorted[0] ? new Date(`${sorted[0].date}T00:00:00`) : new Date();
+  const last = sorted[sorted.length - 1] ? new Date(`${sorted[sorted.length - 1].date}T00:00:00`) : first;
+
+  const months = eachMonthOfInterval({ start: startOfMonth(first), end: startOfMonth(last) });
+  const activeMonth = months[Math.min(monthIdx, months.length - 1)] || first;
+
+  const gridStart = startOfWeek(startOfMonth(activeMonth), { weekStartsOn: 0 });
+  const gridEnd = endOfWeek(endOfMonth(activeMonth), { weekStartsOn: 0 });
+  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
+  const weekdayLabels = eachDayOfInterval({ start: gridStart, end: addDays(gridStart, 6) }).map((d) =>
+    formatDate(d, "EEEEE", { locale }),
+  );
+
+  return (
+    <div className="w-full">
+      {months.length > 1 && (
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <button
+            type="button"
+            onClick={() => setMonthIdx((i) => Math.max(0, i - 1))}
+            disabled={monthIdx === 0}
+            className={`p-1.5 rounded-lg disabled:opacity-20 transition-colors ${isLight ? "hover:bg-zinc-100 text-zinc-600" : "hover:bg-white/10 text-zinc-400"}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <span className={`text-sm font-bold capitalize ${isLight ? "text-zinc-950" : "text-white"}`}>
+            {formatDate(activeMonth, "MMMM yyyy", { locale })}
+          </span>
+          <button
+            type="button"
+            onClick={() => setMonthIdx((i) => Math.min(months.length - 1, i + 1))}
+            disabled={monthIdx === months.length - 1}
+            className={`p-1.5 rounded-lg disabled:opacity-20 transition-colors ${isLight ? "hover:bg-zinc-100 text-zinc-600" : "hover:bg-white/10 text-zinc-400"}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6" /></svg>
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-7 gap-1 mb-1">
+        {weekdayLabels.map((w, i) => (
+          <div key={i} className={`text-center text-[10px] sm:text-xs font-bold uppercase ${isLight ? "text-zinc-400" : "text-zinc-600"}`}>
+            {w}
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
+        {gridDays.map((day) => {
+          const key = formatDate(day, "yyyy-MM-dd");
+          if (!isSameMonth(day, activeMonth)) return <div key={key} />;
+
+          const available = byDate.get(key);
+          if (available) {
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onSelectDay(available)}
+                className="aspect-square rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-base font-bold border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-zinc-950 hover:border-transparent hover:from-[#B597FF] hover:to-[#38E3FF] transition-all active:scale-95"
+              >
+                {formatDate(day, "d")}
+              </button>
+            );
+          }
+          return (
+            <div
+              key={key}
+              className={`aspect-square flex items-center justify-center text-sm sm:text-base ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
+            >
+              {formatDate(day, "d")}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
@@ -1013,20 +1125,22 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                     {/* Linha unica com bolinhas sinalizando cada etapa, centralizada entre a
                         foto e a logo -- degrade fixo de ponta a ponta da trilha inteira, so a
                         mascara cinza por cima é que encolhe */}
-                    <div className="relative flex-1 h-1.5 sm:h-2 flex items-center min-w-0">
-                      <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
-                      <div
-                        className="absolute right-0 h-0.5 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
-                        style={{ width: `${100 - progressPercent}%` }}
-                      />
-                      <div className="relative w-full flex items-center justify-between">
-                        {Array.from({ length: totalDots }).map((_, i) => (
-                          <span
-                            key={i}
-                            className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500"
-                            style={{ backgroundColor: i < filledDots ? dotColor(i) : "#e4e4e7" }}
-                          />
-                        ))}
+                    <div className="flex-1 flex justify-center min-w-0 px-1">
+                      <div className="relative w-full max-w-[130px] sm:max-w-[190px] h-1.5 sm:h-2 flex items-center">
+                        <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
+                        <div
+                          className="absolute right-0 h-0.5 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
+                          style={{ width: `${100 - progressPercent}%` }}
+                        />
+                        <div className="relative w-full flex items-center justify-between">
+                          {Array.from({ length: totalDots }).map((_, i) => (
+                            <span
+                              key={i}
+                              className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500"
+                              style={{ backgroundColor: i < filledDots ? dotColor(i) : "#e4e4e7" }}
+                            />
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -1113,7 +1227,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                               {idx === latestBotIdx ? (
                                 <TypewriterQuestion text={msg.text} bubble />
                               ) : (
-                                <span className="text-lg sm:text-xl font-semibold leading-relaxed text-zinc-900">
+                                <span className="text-xl sm:text-2xl font-semibold leading-relaxed text-zinc-900">
                                   <HighlightText text={msg.text} />
                                 </span>
                               )}
@@ -1208,19 +1322,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                 {!availabilityLoading && !availabilityError && availabilityDays?.length === 0 && (
                                   <p className="text-sm text-zinc-500">{t?.leadQualify?.noSlotsAvailable || ""}</p>
                                 )}
-                                {!availabilityLoading && availabilityDays?.map((day) => (
-                                  <button
-                                    key={day.date}
-                                    onClick={() => handleSelectDay(day)}
-                                    className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border text-base sm:text-lg font-bold transition-all active:scale-[0.98] ${
-                                      isLight
-                                        ? "border-zinc-200 text-zinc-600 hover:border-[#B597FF] hover:text-zinc-950 hover:bg-zinc-50"
-                                        : "border-white/10 text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
-                                    }`}
-                                  >
-                                    {day.label}
-                                  </button>
-                                ))}
+                                {!availabilityLoading && availabilityDays && availabilityDays.length > 0 && (
+                                  <AvailabilityCalendar
+                                    days={availabilityDays}
+                                    onSelectDay={handleSelectDay}
+                                    lang={lang}
+                                    isLight={isLight}
+                                  />
+                                )}
                               </div>
                             )}
 
@@ -1457,7 +1566,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   </div>
                 )}
 
-                {embedded && (
+                {embedded && currentStep === 1 && (
                   <p className="mt-3 sm:mt-4 text-[11px] leading-relaxed text-center text-zinc-400">
                     {t?.leadQualify?.consentPrefix || "Ao continuar, você concorda com a"}{" "}
                     <a href="/legal?tab=privacidade" target="_blank" rel="noopener noreferrer" className="underline hover:text-zinc-600">
