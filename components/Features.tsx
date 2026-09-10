@@ -3,7 +3,6 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useInView } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -66,15 +65,6 @@ function FeatureCard({
         <div className="h-[300px] md:h-auto md:flex-1 p-8 md:p-12 flex flex-col justify-center shrink-0">
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-6 md:gap-8">
             <h3 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.2] md:leading-[1.1]">
-              <div className="relative inline-block w-8 h-8 md:w-16 md:h-16 mr-2 md:mr-6 align-middle -mt-1">
-                <Image 
-                  src={feature.asset} 
-                  alt="" 
-                  fill
-                  sizes="(max-width: 768px) 32px, 64px"
-                  className="object-contain"
-                />
-              </div>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
                 {feature.title}
               </span>

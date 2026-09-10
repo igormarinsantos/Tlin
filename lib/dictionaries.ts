@@ -14,7 +14,7 @@ const ptBR = {
     ask: "Pergunte para a Lia"
   },
   hero: {
-    title: "Seu Copiloto IA {stars} Comercial\nno WhatsApp 24/7",
+    title: "Seu comercial rodando 24/7\ncom IA",
     subtitle: "Escale sua operação comercial com agentes de IA que atendem, qualificam e vendem de forma autônoma, direto no WhatsApp.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
@@ -325,7 +325,7 @@ const enUS: TranslationDictionary = {
     ask: "Ask Lia right now"
   },
   hero: {
-    title: "Your Sales AI Copilot {stars}\non WhatsApp 24/7",
+    title: "Your sales running 24/7\nwith AI",
     subtitle: "Scale your sales op with AI agents that answer, qualify, and sell autonomously, directly on WhatsApp.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",
@@ -636,7 +636,7 @@ const esES: TranslationDictionary = {
     ask: "Pregúntale a Lia"
   },
   hero: {
-    title: "Tu Copiloto IA {stars} Comercial\nen WhatsApp 24/7",
+    title: "Tu comercial funcionando 24/7\ncon IA",
     subtitle: "Escala tu operación comercial con agentes IA que atienden, califican y venden solos en WhatsApp.",
     cta: "Empezar Gratis",
     demoHover: "Demo 100% gratis",
