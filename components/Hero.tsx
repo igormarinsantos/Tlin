@@ -379,10 +379,11 @@ export function Hero() {
           <button
             type="button"
             onClick={() => {
-              trackFunnelEvent("click_platform_anchor", { cta_source: "hero_secondary" });
-              const lenis = (window as unknown as { lenis?: { scrollTo?: (target: string, options: { offset: number }) => void } }).lenis;
-              if (typeof lenis?.scrollTo === "function") lenis.scrollTo('#como-funciona', { offset: -96 });
-              else document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' });
+              trackFunnelEvent("click_pricing_cta", {
+                cta_source: "hero_secondary",
+                plan_name: "TLIN",
+              });
+              window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_secondary" } }));
             }}
             className="relative cursor-pointer"
             onMouseEnter={(e) => {

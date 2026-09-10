@@ -22,7 +22,7 @@ const ptBR = {
     subtitle: "Sistema de vendas com IA no WhatsApp e CRM para escalar sua operação comercial 24/7, com agentes que atendem, qualificam e vendem sozinhos.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
-    watchDemo: "Explorar recursos",
+    watchDemo: "Agendar demo",
     demoSoon: "Demo em breve"
   },
   trusted: {
@@ -339,7 +339,7 @@ const enUS: TranslationDictionary = {
     subtitle: "An AI-powered sales system on WhatsApp and CRM to run your sales operation 24/7, with agents that answer, qualify, and sell on their own.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",
-    watchDemo: "Explore features",
+    watchDemo: "Book a demo",
     demoSoon: "Demo coming soon"
   },
   trusted: {
@@ -656,7 +656,7 @@ const esES: TranslationDictionary = {
     subtitle: "Sistema de ventas con IA en WhatsApp y CRM para escalar tu operación comercial 24/7, con agentes que atienden, califican y venden solos.",
     cta: "Empezar Gratis",
     demoHover: "Demo 100% gratis",
-    watchDemo: "Explorar funciones",
+    watchDemo: "Agendar demo",
     demoSoon: "Demo próximamente"
   },
   trusted: {
