@@ -255,10 +255,10 @@ const ptBR = {
     saleCompleted: "Venda concluída"
   },
   leadQualify: {
-    initialMsg: "Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o nome da [sua empresa]?",
+    initialMsg: "Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o [seu nome]?",
     step2: "[Ótimo], {name}! Qual o [WhatsApp] para contato?",
     step3: "Combinado, {name}! O número [{phone}] está correto?",
-    step4: "[Ótimo]! Qual o [Volume mensal] de atendimentos da {name}?",
+    step4: "[Ótimo]! Qual o [Volume mensal] de atendimentos de {name}?",
     step5: "[Entendido], {name}. Qual o tamanho da [equipe atual]?",
     step5Low: "[Perfeito], {name}! Começando com o pé direito. Qual o tamanho da [equipe atual]?",
     step5High: "Uau, volume alto! Isso já é [operação de peso] pra {name}. Qual o tamanho da [equipe atual] hoje?",
@@ -268,8 +268,8 @@ const ptBR = {
     step7: "Perfeito, {name}! Quando podemos te [mostrar a Tlin] funcionando? Escolha um dia:",
     step8: "[Show]! Agora escolha um [horário disponível] pra {name}:",
     step9: "Então, {name}, deixa eu ver se [eu entendi tudo] certinho:",
-    step9High: "Com esse volume, dá pra ver que a {name} já opera [em outro nível]. Deixa eu confirmar os dados antes de marcarmos sua demo:",
-    step10: "[Solicitação enviada com sucesso]! Nossa equipe de especialistas já está analisando o perfil da [{name}] e entrará em contato em breve via [WhatsApp].",
+    step9High: "Com esse volume, dá pra ver que {name} já opera [em outro nível]. Deixa eu confirmar os dados antes de marcarmos sua demo:",
+    step10: "[Solicitação enviada com sucesso]! Nossa equipe de especialistas já está analisando o perfil de [{name}] e entrará em contato em breve via [WhatsApp].",
     start: "Iniciar",
     startChat: "Vamos começar",
     welcomeTitle: "Olá! Vamos [conhecer a Tlin]?",
@@ -295,26 +295,26 @@ const ptBR = {
     headerStatusOnline: "Online",
     headerStatusTyping: "digitando...",
     placeholders: {
-      name: "Nome da empresa...",
+      name: "Seu nome...",
       phone: "Seu número aqui...",
       email: "nome@empresa.com.br..."
     },
     fields: {
-      company: "Empresa",
+      company: "Nome",
       whatsapp: "WhatsApp",
       volume: "Volume",
       team: "Equipe",
       email: "E-mail"
     },
     editTitles: {
-      name: "Editar Empresa",
+      name: "Editar Nome",
       phone: "Editar WhatsApp",
       volume: "Editar Volume Mensal",
       team: "Editar Tamanho da Equipe",
       email: "Editar E-mail"
     },
     successTitle: "Solicitação enviada com sucesso!",
-    successMessage: "Nossa equipe de especialistas já está analisando o perfil da {name} e entrará em contato em breve via WhatsApp.",
+    successMessage: "Nossa equipe de especialistas já está analisando o perfil de {name} e entrará em contato em breve via WhatsApp.",
     talkToTeam: "Falar com a equipe",
     saveChange: "Salvar alteração",
     sendError: "Não consegui enviar sua solicitação agora. Tente confirmar novamente em alguns instantes.",
@@ -578,7 +578,7 @@ const enUS: TranslationDictionary = {
     saleCompleted: "Sale completed"
   },
   leadQualify: {
-    initialMsg: "Let's [scale your revenue] with AI right now! To begin, what is your [company name]?",
+    initialMsg: "Let's [scale your revenue] with AI right now! To begin, what is [your name]?",
     step2: "[Great], {name}! What is the best [WhatsApp number] for contact?",
     step3: "Great, {name}! Is the number [{phone}] correct?",
     step4: "[Awesome]! What is {name}'s [monthly lead volume]?",
@@ -618,19 +618,19 @@ const enUS: TranslationDictionary = {
     headerStatusOnline: "Online",
     headerStatusTyping: "typing...",
     placeholders: {
-      name: "Company name...",
+      name: "Your name...",
       phone: "Your number here...",
       email: "name@company.com..."
     },
     fields: {
-      company: "Company",
+      company: "Name",
       whatsapp: "WhatsApp",
       volume: "Volume",
       team: "Team",
       email: "E-mail"
     },
     editTitles: {
-      name: "Edit Company",
+      name: "Edit Name",
       phone: "Edit WhatsApp",
       volume: "Edit Monthly Volume",
       team: "Edit Team Size",
@@ -901,7 +901,7 @@ const esES: TranslationDictionary = {
     saleCompleted: "Venta completada"
   },
   leadQualify: {
-    initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es el nombre de [tu empresa]?",
+    initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es [tu nombre]?",
     step2: "¡[Genial], {name}! ¿Cuál es el [WhatsApp] de contacto?",
     step3: "¡Genial, {name}! ¿El número [{phone}] es correcto?",
     step4: "¡[Perfecto]! ¿Cuál es el [volumen mensual] de atención de {name}?",
@@ -941,19 +941,19 @@ const esES: TranslationDictionary = {
     headerStatusOnline: "En línea",
     headerStatusTyping: "escribiendo...",
     placeholders: {
-      name: "Nombre de la empresa...",
+      name: "Tu nombre...",
       phone: "Tu número aquí...",
       email: "nombre@empresa.com..."
     },
     fields: {
-      company: "Empresa",
+      company: "Nombre",
       whatsapp: "WhatsApp",
       volume: "Volumen",
       team: "Equipo",
       email: "Correo"
     },
     editTitles: {
-      name: "Editar Empresa",
+      name: "Editar Nombre",
       phone: "Editar WhatsApp",
       volume: "Editar Volumen Mensual",
       team: "Editar Tamaño del Equipo",

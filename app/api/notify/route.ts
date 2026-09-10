@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       const internalMailOptions = {
         from: `"Tlin" <${process.env.SMTP_FROM || "nao-responda@tlin.ia.br"}>`,
         to: teamEmail,
-        subject: `Novo lead Tlin - ${name || "Empresa sem nome"} - ${planName || "Sem plano"}`,
+        subject: `Novo lead Tlin - ${name || "Sem nome"} - ${planName || "Sem plano"}`,
         html: getLeadNotificationHtml({
           name,
           phone,
@@ -240,7 +240,7 @@ function getLeadNotificationHtml(lead: Record<string, any>) {
   const whatsappUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "https://wa.me/5511916248604";
 
   const rows = [
-    ["Empresa", lead.name],
+    ["Nome", lead.name],
     ["WhatsApp", fullPhone],
     ["E-mail", lead.email],
     ["Plano", lead.planName],

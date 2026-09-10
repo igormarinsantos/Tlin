@@ -559,7 +559,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   };
 
   const getQuestion = (step: number, data: typeof formData) => {
-    const companyName = data.name || t?.leadQualify?.fields?.company || "";
+    const personName = data.name || t?.leadQualify?.fields?.company || "";
     const volumeOptions = t?.leadQualify?.volumeOptions || [];
     const teamOptions = t?.leadQualify?.teamOptions || [];
     const volumeIdx = volumeOptions.indexOf(data.volume);
@@ -573,22 +573,22 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
     switch(step) {
       case 1: return initialMsg;
-      case 2: return t?.leadQualify?.step2?.replace("{name}", companyName) || "";
-      case 3: return t?.leadQualify?.step3?.replace("{name}", companyName).replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
-      case 4: return t?.leadQualify?.step4?.replace("{name}", companyName) || "";
+      case 2: return t?.leadQualify?.step2?.replace("{name}", personName) || "";
+      case 3: return t?.leadQualify?.step3?.replace("{name}", personName).replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
+      case 4: return t?.leadQualify?.step4?.replace("{name}", personName) || "";
       case 5: {
         const s5 = isHighVolume ? t?.leadQualify?.step5High : isLowVolume ? t?.leadQualify?.step5Low : t?.leadQualify?.step5;
-        return s5?.replace("{name}", companyName) || t?.leadQualify?.step5?.replace("{name}", companyName) || "";
+        return s5?.replace("{name}", personName) || t?.leadQualify?.step5?.replace("{name}", personName) || "";
       }
       case 6: {
         const s6 = isTightTeam ? t?.leadQualify?.step6Tight : isBigTeam ? t?.leadQualify?.step6Scale : t?.leadQualify?.step6;
-        return s6?.replace("{name}", companyName) || t?.leadQualify?.step6?.replace("{name}", companyName) || "";
+        return s6?.replace("{name}", personName) || t?.leadQualify?.step6?.replace("{name}", personName) || "";
       }
-      case 7: return t?.leadQualify?.step7?.replace("{name}", companyName) || "";
-      case 8: return t?.leadQualify?.step8?.replace("{name}", companyName) || "";
+      case 7: return t?.leadQualify?.step7?.replace("{name}", personName) || "";
+      case 8: return t?.leadQualify?.step8?.replace("{name}", personName) || "";
       case 9:
-        if (isHighVolume) return t?.leadQualify?.step9High?.replace("{name}", companyName) || t?.leadQualify?.step9?.replace("{name}", companyName) || "";
-        return t?.leadQualify?.step9?.replace("{name}", companyName) || "";
+        if (isHighVolume) return t?.leadQualify?.step9High?.replace("{name}", personName) || t?.leadQualify?.step9?.replace("{name}", personName) || "";
+        return t?.leadQualify?.step9?.replace("{name}", personName) || "";
       case 10: return t?.leadQualify?.step10?.replace("{name}", data.name) || "";
       default: return "";
     }
@@ -1567,7 +1567,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 
                 <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-6 leading-relaxed">
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[0]}
-                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || "company"}</span>
+                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || ""}</span>
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[1]}
                 </p>
 
