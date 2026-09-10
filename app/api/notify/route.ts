@@ -1,11 +1,93 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
+import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/lib/deskcomm-mcp";
+
+const DESKCOMM_WEBHOOK_URL = process.env.DESKCOMM_WEBHOOK_URL || "";
+const DESKCOMM_DEMO_EVENT_TYPE_SLUG = process.env.DESKCOMM_DEMO_EVENT_TYPE_SLUG || "reuniao";
+
+type DemoBookingOutcome = {
+  attempted: boolean;
+  booked: boolean;
+  pendingConfirmation?: boolean;
+  error?: string;
+};
+
+/** Envia o lead pro webhook de captacao ja configurado no Deskcomm (cria/atualiza contato + lead). */
+async function sendToDeskcommWebhook(input: { name?: string; fullPhone: string; email?: string }) {
+  if (!DESKCOMM_WEBHOOK_URL) return;
+  try {
+    await fetch(DESKCOMM_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: input.name || undefined,
+        telefone: input.fullPhone,
+        email: input.email || undefined,
+      }),
+    });
+  } catch (err) {
+    console.error("Erro ao enviar lead para o webhook do Deskcomm:", err);
+  }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Busca o contato recem-criado pelo webhook, com retry: o webhook responde assim que
+ * o contato e gravado, mas `crm_search_contacts` observou um pequeno atraso de leitura
+ * logo em seguida (contato inexistente na primeira busca, encontrado segundos depois).
+ */
+async function findContactWithRetry(fullPhone: string, attempts = 4, delayMs = 700) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const result = await searchContactByPhone(fullPhone);
+    if (result.ok === false) return result;
+    if (result.data.contacts.length > 0) return result;
+    if (attempt < attempts) await sleep(delayMs);
+  }
+  return { ok: true as const, data: { contacts: [] as DeskcommContact[] } };
+}
+
+/** Resolve o contato no Deskcomm e cria o agendamento da demo (data/hora ja escolhidos na LP). */
+async function bookDemoInDeskcomm(input: {
+  fullPhone: string;
+  startsAt: string;
+  name?: string;
+}): Promise<DemoBookingOutcome> {
+  const contactResult = await findContactWithRetry(input.fullPhone);
+  if (contactResult.ok === false) {
+    return { attempted: true, booked: false, error: contactResult.error };
+  }
+  if (contactResult.data.contacts.length === 0) {
+    return {
+      attempted: true,
+      booked: false,
+      error: "Contato nao encontrado no Deskcomm apos o webhook de captacao.",
+    };
+  }
+
+  const contactId = contactResult.data.contacts[0].id;
+  const bookResult = await bookAppointment({
+    eventTypeSlug: DESKCOMM_DEMO_EVENT_TYPE_SLUG,
+    startsAt: input.startsAt,
+    contactId,
+    title: input.name ? `Demo Tlin - ${input.name}` : "Demo Tlin",
+  });
+
+  if (bookResult.ok === false) {
+    return { attempted: true, booked: false, error: bookResult.error };
+  }
+  if (!bookResult.data.marcado) {
+    return { attempted: true, booked: false, error: bookResult.data.mensagem || bookResult.data.motivo };
+  }
+
+  return { attempted: true, booked: true };
+}
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm } = data;
+    const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm, demoSlot } = data;
 
     const supabaseResult = await saveLeadSubmission({
       name,
@@ -23,6 +105,14 @@ export async function POST(req: NextRequest) {
     const supabaseLeadId = Array.isArray(supabaseResult.row)
       ? (supabaseResult.row[0] as any)?.id || null
       : (supabaseResult.row as any)?.id || null;
+
+    const fullPhone = `+${String(countryCode || "+55").replace(/\D/g, "")}${String(phone || "").replace(/\D/g, "")}`;
+
+    let demoBooking: DemoBookingOutcome = { attempted: false, booked: false };
+    if (demoSlot?.starts_at) {
+      await sendToDeskcommWebhook({ name, fullPhone, email });
+      demoBooking = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
+    }
 
     // Notifications are email-only; Evolution delivery has been removed.
     const smtpUser = process.env.SMTP_USER || "";
@@ -94,16 +184,17 @@ export async function POST(req: NextRequest) {
       groupError: null,
       emailSent,
       emailError,
+      demoBooking,
     };
 
     await updateLeadSubmissionNotification(supabaseLeadId, notificationResult);
 
-    return NextResponse.json({ 
-      success, 
+    return NextResponse.json({
+      success,
       supabaseSaved: supabaseResult.saved,
       supabaseError: supabaseResult.error,
       supabaseLeadId,
-      whatsappTriggered: false, 
+      whatsappTriggered: false,
       whatsappResponse: null,
       whatsappError: null,
       groupTriggered: false,
@@ -111,6 +202,7 @@ export async function POST(req: NextRequest) {
       groupError: null,
       emailSent,
       emailError,
+      demoBooking,
     }, { status: success ? 200 : 502 });
 
   } catch (error: any) {

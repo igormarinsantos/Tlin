@@ -118,7 +118,7 @@ const HighlightText = ({ text }: { text: string }) => {
 };
 
 // Typewriter component with Mascot Cursor
-const TypewriterQuestion = ({ text }: { text: string }) => {
+const TypewriterQuestion = ({ text, light = false }: { text: string; light?: boolean }) => {
   const [displayedText, setDisplayedText] = useState("");
   const rawText = text.replace(/\[|\]/g, "");
 
@@ -136,7 +136,7 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
   const isDone = displayedText === rawText;
 
   return (
-    <div className="relative inline-block text-xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:pretty]">
+    <div className={`relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
       <span className="inline-block ml-2 w-5 h-5 sm:w-7 sm:h-7 align-middle shrink-0">
         <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
@@ -144,6 +144,9 @@ const TypewriterQuestion = ({ text }: { text: string }) => {
     </div>
   );
 };
+
+type DemoDay = { date: string; label: string; slots: DemoSlot[] };
+type DemoSlot = { startsAt: string; endsAt: string; when: string };
 
 export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
@@ -175,6 +178,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
+  // Etapa de agendamento da demo. Embedded (pagina /demo) ja comeca direto na
+  // conversa; o popup mostra a tela de "Iniciar" antes da primeira pergunta.
+  const [hasStarted, setHasStarted] = useState(embedded);
+  const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<DemoSlot | null>(null);
+  const [demoPendingConfirmation, setDemoPendingConfirmation] = useState(false);
+  const SUCCESS_STEP = 10;
+
   const clearPendingAdvance = () => {
     if (pendingAdvanceTimeoutRef.current) {
       clearTimeout(pendingAdvanceTimeoutRef.current);
@@ -204,7 +218,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     team: translateOptionValue(data?.team || '', 'teamOptions', fromLang),
   });
 
-  const buildLocalizedHistory = (step: number, data: typeof FALLBACK_FORM_DATA) => {
+  const buildLocalizedHistory = (
+    step: number,
+    data: typeof FALLBACK_FORM_DATA,
+    day: DemoDay | null = selectedDay,
+    slot: DemoSlot | null = selectedSlot,
+  ) => {
     const history: Message[] = [{ role: 'bot', text: getQuestion(1, data) }];
 
     if (step >= 2 && data.name) {
@@ -231,6 +250,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     if (step >= 7 && data.email) {
       history.push({ role: 'user', text: data.email });
       history.push({ role: 'bot', text: getQuestion(7, data) });
+    }
+    if (step >= 8 && day) {
+      history.push({ role: 'user', text: day.label });
+      history.push({ role: 'bot', text: getQuestion(8, data) });
+    }
+    if (step >= 9 && slot) {
+      history.push({ role: 'user', text: slot.when });
+      history.push({ role: 'bot', text: getQuestion(9, data) });
     }
 
     return history;
@@ -287,12 +314,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       if (!saved) return;
 
       const parsed = JSON.parse(saved);
-      if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < 8) {
+      if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < SUCCESS_STEP) {
         const localizedData = localizeFormData(parsed.formData || FALLBACK_FORM_DATA, parsed.lang || lang);
+        if (parsed.selectedDay) setSelectedDay(parsed.selectedDay);
+        if (parsed.selectedSlot) setSelectedSlot(parsed.selectedSlot);
         setSavedState({
           ...parsed,
           formData: localizedData,
-          chatHistory: buildLocalizedHistory(parsed.currentStep, localizedData),
+          chatHistory: buildLocalizedHistory(parsed.currentStep, localizedData, parsed.selectedDay ?? null, parsed.selectedSlot ?? null),
           lang,
         });
         setShowResumeOverlay(true);
@@ -336,7 +365,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
           lang,
           currentStep,
           formData,
-          chatHistory
+          chatHistory,
+          selectedDay,
+          selectedSlot,
         }));
       } catch (e) {
         console.error("Erro ao salvar estado no localStorage:", e);
@@ -344,12 +375,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     }, 250);
 
     return () => clearTimeout(timeout);
-  }, [lang, currentStep, formData, chatHistory, mounted]);
+  }, [lang, currentStep, formData, chatHistory, mounted, selectedDay, selectedSlot]);
 
   // Controle de Fechamento Automático em 10 segundos na primeira vez que atinge a tela de sucesso
   const confettiFired = useRef(false);
   useEffect(() => {
-    if (currentStep === 8) {
+    if (currentStep === SUCCESS_STEP) {
       if (!confettiFired.current) {
         confettiFired.current = true;
         console.log("SUCCESS SCREEN REACHED - Triggering Confetti and Timer");
@@ -471,6 +502,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     setCurrentStep(1);
     setFormData(FALLBACK_FORM_DATA);
     setChatHistory([{ role: 'bot', text: initialMsg }]);
+    setSelectedDay(null);
+    setSelectedSlot(null);
+    setAvailabilityDays(null);
+    setAvailabilityError(null);
+    setDemoPendingConfirmation(false);
     try {
       localStorage.removeItem("tlin_lead_qualify_state");
     } catch (e) {}
@@ -479,7 +515,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const closePopup = () => {
     clearPendingAdvance();
     clearScrollTimers();
-    if (currentStep > 1 && currentStep < 8) {
+    if (currentStep > 1 && currentStep < SUCCESS_STEP) {
       trackFunnelEvent('lead_form_abandoned', {
         lead_step: currentStep,
         plan_name: planName || 'not_selected',
@@ -523,7 +559,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       case 5: return t?.leadQualify?.step5 || "";
       case 6: return t?.leadQualify?.step6 || "";
       case 7: return t?.leadQualify?.step7 || "";
-      case 8: return t?.leadQualify?.step8?.replace("{name}", data.name) || "";
+      case 8: return t?.leadQualify?.step8 || "";
+      case 9: return t?.leadQualify?.step9 || "";
+      case 10: return t?.leadQualify?.step10?.replace("{name}", data.name) || "";
       default: return "";
     }
   };
@@ -534,8 +572,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       case 3: return [t?.leadQualify?.yesCorrect || "", t?.leadQualify?.noCorrect || ""];
       case 4: return t?.leadQualify?.volumeOptions || [];
       case 5: return t?.leadQualify?.teamOptions || [];
-      case 7: return [t?.leadQualify?.confirm || ""];
-      case 8: return [t?.leadQualify?.newRequest || ""];
+      case 9: return [t?.leadQualify?.confirm || ""];
+      case 10: return [t?.leadQualify?.newRequest || ""];
       default: return null;
     }
   };
@@ -555,7 +593,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       return;
     }
 
-    if (currentStep === 8 && userValue === t?.leadQualify?.newRequest) {
+    if (currentStep === SUCCESS_STEP && userValue === t?.leadQualify?.newRequest) {
       resetForm();
       return;
     }
@@ -575,13 +613,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const displayText = field === 'phone' ? `${formData.countryCode} ${userValue}` : userValue;
     setChatHistory(prev => [...prev, { role: 'user', text: displayText }]);
     
-    if (currentStep < 8) {
+    if (currentStep < SUCCESS_STEP) {
       setIsTyping(true);
       pendingAdvanceTimeoutRef.current = setTimeout(async () => {
         pendingAdvanceTimeoutRef.current = null;
         setIsTyping(false);
         const nextQ = getQuestion(currentStep + 1, updatedData);
-        const isConfirming = currentStep === 7 && userValue === t?.leadQualify?.confirm;
+        const isConfirming = currentStep === 9 && userValue === t?.leadQualify?.confirm;
 
         if (isConfirming) {
           const score = calculateLeadScore({
@@ -610,13 +648,29 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 planName,
                 ...score,
                 utm: getUtmLeadPayload(),
+                demoSlot: selectedSlot ? { starts_at: selectedSlot.startsAt } : undefined,
               })
             });
             const notifyResult = await response.json();
 
-            if (!response.ok || !notifyResult?.success) {
+            if (selectedSlot && notifyResult?.demoBooking?.attempted && !notifyResult.demoBooking?.booked) {
+              // O horario escolhido nao pode mais ser confirmado (provavelmente foi ocupado
+              // entre a consulta e a confirmacao) — manda a pessoa escolher outro em vez de
+              // seguir para a tela de sucesso com uma demo que nao foi de fato marcada.
+              console.error("Falha ao marcar a demo no Deskcomm:", notifyResult.demoBooking?.error);
+              setSelectedSlot(null);
+              setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.slotUnavailable || "" }]);
+              setCurrentStep(8);
+              return;
+            }
+
+            // Com demo já marcada de fato, uma falha à parte (ex.: e-mail interno) não deve
+            // esconder da pessoa que a reunião foi confirmada — o compromisso já existe.
+            const demoAlreadyBooked = Boolean(selectedSlot && notifyResult?.demoBooking?.booked);
+            if ((!response.ok || !notifyResult?.success) && !demoAlreadyBooked) {
               throw new Error(notifyResult?.whatsappError || notifyResult?.emailError || "Falha ao notificar API");
             }
+            setDemoPendingConfirmation(Boolean(notifyResult.demoBooking?.pendingConfirmation));
 
             console.log("Status do envio:", notifyResult);
           } catch (err) {
@@ -633,15 +687,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   };
 
   const handleBack = () => {
-    if (currentStep > 1 && !isTyping && currentStep < 8) {
+    if (currentStep > 1 && !isTyping && currentStep < SUCCESS_STEP) {
       clearPendingAdvance();
       // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
       const isAsking = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
       if (isAsking) return;
 
       const targetStep = currentStep - 1;
+      if (currentStep === 8) setSelectedDay(null);
+      if (currentStep === 9) setSelectedSlot(null);
       setCurrentStep(targetStep);
-      
+
       const rebuiltHistory: Message[] = [{ role: 'bot', text: initialMsg }];
       
       if (targetStep >= 2) {
@@ -669,6 +725,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
         rebuiltHistory.push({ role: 'user', text: formData.email });
         rebuiltHistory.push({ role: 'bot', text: getQuestion(7, formData) });
       }
+      if (targetStep >= 8 && selectedDay) {
+        rebuiltHistory.push({ role: 'user', text: selectedDay.label });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(8, formData) });
+      }
+      if (targetStep >= 9 && selectedSlot) {
+        rebuiltHistory.push({ role: 'user', text: selectedSlot.when });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(9, formData) });
+      }
 
       setChatHistory(rebuiltHistory);
     }
@@ -689,6 +753,53 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const nums = formData.phone.replace(/\D/g, "");
     if (formData.countryCode === '+55') return nums.length >= 10 && nums.length <= 11;
     return nums.length >= 8;
+  };
+
+  // Busca os dias/horarios reais do Deskcomm assim que a etapa de agendamento é alcançada.
+  useEffect(() => {
+    if (currentStep !== 7 || availabilityDays || availabilityLoading) return;
+
+    setAvailabilityLoading(true);
+    setAvailabilityError(null);
+    fetch(`/api/public/demo/availability?diasAFrente=21&lang=${lang}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data?.success) throw new Error(data?.error || "Falha ao consultar horarios");
+        setAvailabilityDays(data.days || []);
+      })
+      .catch((err) => {
+        console.error("Erro ao consultar disponibilidade da demo:", err);
+        setAvailabilityError(t?.leadQualify?.noSlotsAvailable || "");
+      })
+      .finally(() => setAvailabilityLoading(false));
+  }, [currentStep, availabilityDays, availabilityLoading, lang, t]);
+
+  const handleSelectDay = (day: DemoDay) => {
+    if (isTyping) return;
+    setSelectedDay(day);
+    setChatHistory(prev => [...prev, { role: 'user', text: day.label }]);
+    trackFunnelEvent('lead_step_completed', { lead_step: 7, field_name: 'demo_day', plan_name: planName || 'not_selected' });
+    setIsTyping(true);
+    pendingAdvanceTimeoutRef.current = setTimeout(() => {
+      pendingAdvanceTimeoutRef.current = null;
+      setIsTyping(false);
+      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(8, formData) }]);
+      setCurrentStep(8);
+    }, 900);
+  };
+
+  const handleSelectSlot = (slot: DemoSlot) => {
+    if (isTyping) return;
+    setSelectedSlot(slot);
+    setChatHistory(prev => [...prev, { role: 'user', text: slot.when }]);
+    trackFunnelEvent('lead_step_completed', { lead_step: 8, field_name: 'demo_slot', plan_name: planName || 'not_selected' });
+    setIsTyping(true);
+    pendingAdvanceTimeoutRef.current = setTimeout(() => {
+      pendingAdvanceTimeoutRef.current = null;
+      setIsTyping(false);
+      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(9, formData) }]);
+      setCurrentStep(9);
+    }, 900);
   };
 
   useEffect(() => {
@@ -714,9 +825,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
   if (!mounted) return null;
 
+  // Embedded (pagina /demo) usa fundo claro estilo WhatsApp Web durante toda a
+  // conversa; o popup so vira claro na tela de sucesso, como já era.
+  const isLight = embedded || currentStep === SUCCESS_STEP;
+
   const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
   const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
-  
+
   let latestBotIdx = -1;
   for (let i = chatHistory.length - 1; i >= 0; i--) {
     if (chatHistory[i].role === 'bot') {
@@ -728,15 +843,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
-          exit={{ opacity: 0 }} 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
           onWheelCapture={(event) => event.stopPropagation()}
           onTouchMoveCapture={(event) => event.stopPropagation()}
           className={embedded
-            ? "fixed inset-0 w-full min-h-screen z-[300] flex flex-col items-center justify-center overflow-hidden bg-[#0c0d0d]"
+            ? "fixed inset-0 w-full min-h-screen z-[300] flex flex-col items-center justify-center overflow-hidden bg-white"
             : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
         >
           <motion.div
@@ -745,15 +860,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={`relative w-full ${embedded ? "h-screen max-w-none" : "h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl"} border overflow-hidden flex flex-col transition-colors duration-300 ${
-              currentStep === 8 
-                ? 'border-zinc-200' 
+              isLight
+                ? 'border-zinc-200'
                 : 'border-white/10'
             }`}
-            style={{ backgroundColor: currentStep === 8 ? '#ffffff' : '#0c0d0d' }}
+            style={{ backgroundColor: isLight ? '#ffffff' : '#0c0d0d' }}
           >
             {/* Elementos Visuais Animados (Estilo Lia) para o Sucesso */}
             <AnimatePresence>
-              {currentStep === 8 && (
+              {currentStep === SUCCESS_STEP && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -772,7 +887,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-[400] flex items-center justify-center bg-[#0c0d0d]/95 backdrop-blur-[60px] text-center p-6 sm:p-12"
+                  className={`absolute inset-0 z-[400] flex items-center justify-center backdrop-blur-[60px] text-center p-6 sm:p-12 ${isLight ? "bg-white/95" : "bg-[#0c0d0d]/95"}`}
                 >
                   {/* Botão Fechar no Overlay */}
                   {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
@@ -788,7 +903,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
                   <div className="max-w-2xl w-full flex flex-col items-center gap-12">
                     <div className="w-full">
-                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || ""} />
+                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || ""} light={isLight} />
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
@@ -798,6 +913,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                             setCurrentStep(savedState.currentStep);
                             setFormData(savedState.formData);
                             setChatHistory(savedState.chatHistory);
+                            if (savedState.selectedDay) setSelectedDay(savedState.selectedDay);
+                            if (savedState.selectedSlot) setSelectedSlot(savedState.selectedSlot);
                           }
                           setShowResumeOverlay(false);
                           isLiveSession.current = true;
@@ -811,7 +928,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           resetForm();
                           setShowResumeOverlay(false);
                         }}
-                        className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 font-bold text-lg sm:text-xl transition-all hover:text-white hover:bg-white/10 active:scale-[0.98]"
+                        className={`flex-1 py-4 sm:py-5 px-8 rounded-2xl border font-bold text-lg sm:text-xl transition-all active:scale-[0.98] ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"}`}
                       >
                         {t?.leadQualify?.resumeRestart || "Recomeçar"}
                       </button>
@@ -822,12 +939,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             </AnimatePresence>
 
             {/* Header / Botão Fechar */}
-            {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]">
+            {!embedded && <div className={`absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full ${isLight ? "bg-white/75 shadow-[0_0_22px_20px_rgba(255,255,255,0.9)]" : "bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]"}`}>
               <button
                 onClick={closePopup}
                 className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
-                  currentStep === 8 
-                  ? "text-zinc-900 hover:text-black" 
+                  isLight
+                  ? "text-zinc-900 hover:text-black"
                   : "text-zinc-400 hover:text-white"
                 }`}
               >
@@ -837,7 +954,33 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               </button>
             </div>}
 
-            {currentStep < 8 ? (
+            {/* Header estilo WhatsApp (só no form embutido da LP, durante a conversa) */}
+            {embedded && currentStep < SUCCESS_STEP && !!hasStarted && (
+              <div className="shrink-0 flex items-center gap-3 px-4 sm:px-12 pt-6 pb-4 border-b border-zinc-100 z-20 bg-white">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100 flex items-center justify-center">
+                  <Image src="/TlinIA.svg" alt={t?.leadQualify?.headerName || "Igor"} width={28} height={28} className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
+                  <p className="text-xs sm:text-sm text-emerald-600 font-medium flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                    {isTyping ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!hasStarted ? (
+              <div className="flex-1 flex flex-col items-center justify-center gap-10 px-6 sm:px-12 text-center">
+                <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} />
+                <button
+                  onClick={() => setHasStarted(true)}
+                  className="relative px-10 py-4 rounded-full font-bold text-base sm:text-lg bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 transition-all active:scale-[0.98] hover:opacity-90 shadow-xl"
+                >
+                  {t?.leadQualify?.start || "Iniciar"}
+                </button>
+              </div>
+            ) : currentStep < SUCCESS_STEP ? (
               <>
             {/* Scrollable Message Area */}
             <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y ml-0 mr-1 sm:mr-2 px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 lead-popup-scrollbar">
@@ -854,9 +997,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       >
                         <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
                           {msg.role === 'bot' && idx === latestBotIdx ? (
-                            <TypewriterQuestion text={msg.text} />
+                            <TypewriterQuestion text={msg.text} light={isLight} />
                           ) : (
-                            <div className="text-xl sm:text-4xl font-black text-white tracking-tight leading-[1.2] [text-wrap:pretty]">
+                            <div className={`text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${isLight ? "text-zinc-950" : "text-white"}`}>
                               {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
                             </div>
                           )}
@@ -869,56 +1012,115 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                             transition={{ delay: 0.5 }}
                             className="mt-4 sm:mt-8 flex flex-col gap-2 sm:gap-3 w-full max-w-md"
                           >
-                            {currentStep === 7 && (
-                              <div className="mb-4 sm:mb-6 p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 space-y-2 sm:space-y-3 text-left">
-                                <button 
+                            {currentStep === 9 && (
+                              <div className={`mb-4 sm:mb-6 p-3 sm:p-5 rounded-2xl sm:rounded-3xl border space-y-2 sm:space-y-3 text-left ${isLight ? "bg-zinc-50 border-zinc-200" : "bg-white/5 border-white/10"}`}>
+                                <button
                                   onClick={() => setEditingField('name')}
-                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                  className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.company || "Empresa"}:</span>
-                                  <span className="font-bold text-white flex items-center gap-2">
+                                  <span className={`font-bold flex items-center gap-2 ${isLight ? "text-zinc-950" : "text-white"}`}>
                                     {formData.name} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => setEditingField('phone')}
-                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                  className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.whatsapp || "WhatsApp"}:</span>
-                                  <span className="font-bold text-white flex items-center gap-2">
+                                  <span className={`font-bold flex items-center gap-2 ${isLight ? "text-zinc-950" : "text-white"}`}>
                                     {formData.countryCode} {formData.phone} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => setEditingField('volume')}
-                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                  className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.volume || "Volume"}:</span>
-                                  <span className="font-bold text-white flex items-center gap-2">
+                                  <span className={`font-bold flex items-center gap-2 ${isLight ? "text-zinc-950" : "text-white"}`}>
                                     {formData.volume} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => setEditingField('team')}
-                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                  className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.team || "Equipe"}:</span>
-                                  <span className="font-bold text-white flex items-center gap-2">
+                                  <span className={`font-bold flex items-center gap-2 ${isLight ? "text-zinc-950" : "text-white"}`}>
                                     {formData.team} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => setEditingField('email')}
-                                  className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl hover:bg-white/10 transition-colors group/edit"
+                                  className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.email || "E-mail"}:</span>
                                   <span className="font-bold text-[#38E3FF] flex items-center gap-2">
                                     {formData.email} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
-                                <div className="text-[10px] text-zinc-500 text-center font-medium pt-2 border-t border-white/5">
+                                {selectedSlot && (
+                                  <div className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl ${isLight ? "" : ""}`}>
+                                    <span className="text-zinc-500">{t?.leadQualify?.demoScheduledFor || "Demo"}:</span>
+                                    <span className={`font-bold ${isLight ? "text-zinc-950" : "text-white"}`}>{selectedDay?.label} · {selectedSlot.when}</span>
+                                  </div>
+                                )}
+                                <div className={`text-[10px] text-zinc-500 text-center font-medium pt-2 border-t ${isLight ? "border-zinc-200" : "border-white/5"}`}>
                                   {t?.leadQualify?.clickToEdit || "Clique para editar"}
                                 </div>
+                              </div>
+                            )}
+
+                            {currentStep === 7 && (
+                              <div className="flex flex-col gap-2 sm:gap-3 w-full">
+                                {availabilityLoading && (
+                                  <p className="text-sm text-zinc-500">{t?.leadQualify?.loadingSlots || ""}</p>
+                                )}
+                                {!availabilityLoading && availabilityError && (
+                                  <p className="text-sm text-zinc-500">{availabilityError}</p>
+                                )}
+                                {!availabilityLoading && !availabilityError && availabilityDays?.length === 0 && (
+                                  <p className="text-sm text-zinc-500">{t?.leadQualify?.noSlotsAvailable || ""}</p>
+                                )}
+                                {!availabilityLoading && availabilityDays?.map((day) => (
+                                  <button
+                                    key={day.date}
+                                    onClick={() => handleSelectDay(day)}
+                                    className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border text-base sm:text-lg font-bold transition-all active:scale-[0.98] ${
+                                      isLight
+                                        ? "border-zinc-200 text-zinc-600 hover:border-[#B597FF] hover:text-zinc-950 hover:bg-zinc-50"
+                                        : "border-white/10 text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                    }`}
+                                  >
+                                    {day.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+
+                            {currentStep === 8 && selectedDay && (
+                              <div className="flex flex-col gap-2 sm:gap-3 w-full">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                                  {selectedDay.slots.map((slot) => (
+                                    <button
+                                      key={slot.startsAt}
+                                      onClick={() => handleSelectSlot(slot)}
+                                      className={`px-3 sm:px-4 py-3 rounded-2xl border text-sm sm:text-base font-bold transition-all active:scale-[0.98] ${
+                                        isLight
+                                          ? "border-zinc-200 text-zinc-600 hover:border-[#B597FF] hover:text-zinc-950 hover:bg-zinc-50"
+                                          : "border-white/10 text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                      }`}
+                                    >
+                                      {slot.when.split(" às ")[1] || slot.when}
+                                    </button>
+                                  ))}
+                                </div>
+                                <button
+                                  onClick={() => { setSelectedDay(null); setCurrentStep(7); }}
+                                  className="self-start text-xs font-bold text-zinc-500 hover:text-[#B597FF] transition-colors mt-2"
+                                >
+                                  {t?.leadQualify?.chooseAnotherDay || ""}
+                                </button>
                               </div>
                             )}
 
@@ -926,11 +1128,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                               <button
                                 key={opt}
                                 onClick={() => advanceChat(opt, currentStep === 4 ? 'volume' : currentStep === 5 ? 'team' : undefined)}
-                                className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10 text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
+                                className={`w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border text-base sm:text-xl font-bold transition-all active:scale-[0.98] ${
                                   opt === t?.leadQualify?.confirm || opt === t?.leadQualify?.yesCorrect || opt === t?.leadQualify?.newRequest
                                   ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border-transparent hover:opacity-90"
-                                  : "text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
-                                }}`}
+                                  : isLight
+                                    ? "border-zinc-200 text-zinc-500 hover:border-[#B597FF] hover:text-zinc-950 hover:bg-zinc-50"
+                                    : "border-white/10 text-zinc-400 hover:border-[#B597FF] hover:text-white hover:bg-white/5"
+                                }`}
                               >
                                 {opt}
                               </button>
@@ -969,7 +1173,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.name.trim()) advanceChat(formData.name, 'name'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
+                            <div className={`flex items-center gap-2 sm:gap-4 border-b-2 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4 ${isLight ? "border-zinc-200" : "border-white/10"}`}>
                               <input 
                                 autoFocus 
                                 type="text" 
@@ -983,13 +1187,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   }
                                 }}
                                 placeholder={t?.leadQualify?.placeholders?.name || "Empresa..."} 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
+                                className={`flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none w-full min-w-0 ${isLight ? "text-zinc-950 placeholder:text-zinc-300" : "text-white placeholder:text-zinc-800"}`}
                               />
                               <button type="submit" disabled={!formData.name.trim()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.name.trim() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.name.trim() ? 'bg-[#B597FF] text-white' : isLight ? 'bg-zinc-100 text-zinc-300' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                                 </div>
                               </button>
@@ -1006,12 +1210,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(isPhoneValid()) advanceChat(formData.phone, 'phone'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
+                            <div className={`flex items-center gap-2 sm:gap-4 border-b-2 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4 ${isLight ? "border-zinc-200" : "border-white/10"}`}>
                               <div className="relative shrink-0" ref={countryRef}>
-                                <button 
+                                <button
                                   type="button"
                                   onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-xl transition-colors border ${isLight ? "bg-zinc-100 hover:bg-zinc-200 border-zinc-200" : "bg-white/5 hover:bg-white/10 border-white/5"}`}
                                 >
                                   <span className="text-lg sm:text-xl leading-none">
                                     <CountryFlag country={COUNTRIES.find(c => c.code === formData.countryCode)?.flag || 'br'} size={24} />
@@ -1026,7 +1230,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                       initial={{ opacity: 0, y: -10 }}
                                       animate={{ opacity: 1, y: 0 }}
                                       exit={{ opacity: 0, y: -10 }}
-                                      className="absolute bottom-full left-0 mb-4 w-48 bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden py-1.5 shadow-2xl z-50 max-h-[250px] overflow-y-auto custom-scrollbar"
+                                      className={`absolute bottom-full left-0 mb-4 w-48 border rounded-2xl overflow-hidden py-1.5 shadow-2xl z-50 max-h-[250px] overflow-y-auto custom-scrollbar ${isLight ? "bg-white border-zinc-200" : "bg-zinc-900 border-white/10"}`}
                                     >
                                       {COUNTRIES.map((c) => (
                                         <button
@@ -1036,12 +1240,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                             setFormData(prev => ({ ...prev, countryCode: c.code, phone: '' }));
                                             setIsCountryDropdownOpen(false);
                                           }}
-                                          className="w-full text-left px-4 py-2.5 hover:bg-white/5 flex items-center gap-3 transition-colors"
+                                          className={`w-full text-left px-4 py-2.5 flex items-center gap-3 transition-colors ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/5"}`}
                                         >
                                           <CountryFlag country={c.flag} size={24} />
                                           <div className="flex flex-col">
                                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{c.name}</span>
-                                            <span className="text-sm font-bold text-white">{c.code}</span>
+                                            <span className={`text-sm font-bold ${isLight ? "text-zinc-950" : "text-white"}`}>{c.code}</span>
                                           </div>
                                         </button>
                                       ))}
@@ -1063,13 +1267,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   }
                                 }}
                                 placeholder={t?.leadQualify?.placeholders?.phone || "WhatsApp..."} 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
+                                className={`flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none w-full min-w-0 ${isLight ? "text-zinc-950 placeholder:text-zinc-300" : "text-white placeholder:text-zinc-800"}`}
                               />
                               <button type="submit" disabled={!isPhoneValid()} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${isPhoneValid() ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPhoneValid() ? 'bg-[#B597FF] text-white' : isLight ? 'bg-zinc-100 text-zinc-300' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                                 </div>
                               </button>
@@ -1086,7 +1290,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           exit={{ opacity: 0, y: -10 }}
                         >
                           <form onSubmit={(e) => { e.preventDefault(); if(formData.email.trim().includes('@')) advanceChat(formData.email, 'email'); }} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-2 sm:gap-4 border-b-2 border-white/10 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4">
+                            <div className={`flex items-center gap-2 sm:gap-4 border-b-2 focus-within:border-[#B597FF] transition-all pb-3 sm:pb-4 ${isLight ? "border-zinc-200" : "border-white/10"}`}>
                               <input 
                                 autoFocus 
                                 type="email" 
@@ -1100,13 +1304,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   }
                                 }}
                                 placeholder={t?.leadQualify?.placeholders?.email || "E-mail..."} 
-                                className="flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none placeholder:text-zinc-800 w-full min-w-0 text-white" 
+                                className={`flex-1 bg-transparent text-xl sm:text-2xl font-bold outline-none w-full min-w-0 ${isLight ? "text-zinc-950 placeholder:text-zinc-300" : "text-white placeholder:text-zinc-800"}`}
                               />
                               <button type="submit" disabled={!formData.email.trim().includes('@')} className="flex items-center gap-3 group/submit shrink-0">
                                 <span className={`hidden sm:inline text-[11px] font-medium transition-all duration-300 ${formData.email.trim().includes('@') ? 'text-[#B597FF] opacity-60' : 'text-zinc-700 opacity-0'}`}>
                                   {t?.leadQualify?.pressEnter || "ENTER"}
                                 </span>
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : 'bg-white/5 text-zinc-700'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${formData.email.trim().includes('@') ? 'bg-[#B597FF] text-white' : isLight ? 'bg-zinc-100 text-zinc-300' : 'bg-white/5 text-zinc-700'}`}>
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                                 </div>
                               </button>
@@ -1118,7 +1322,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   )}
                 </AnimatePresence>
 
-                {currentStep > 1 && currentStep < 8 && (
+                {currentStep > 1 && currentStep < SUCCESS_STEP && (
                   <div className="mt-2 sm:mt-4 flex items-center justify-between text-[10px] font-black text-zinc-600 uppercase pt-2 sm:pt-4">
                     <button onClick={handleBack} className="hover:text-zinc-400 flex items-center gap-2 transition-colors">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="m15 18-6-6 6-6"/></svg>
@@ -1135,33 +1339,33 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-4 sm:p-6 bg-[#0c0d0d]/95 backdrop-blur-md text-center"
+                  className={`absolute inset-0 z-[200] flex flex-col items-center justify-center p-4 sm:p-6 backdrop-blur-md text-center ${isLight ? "bg-white/95" : "bg-[#0c0d0d]/95"}`}
                 >
                   <motion.div
                     initial={{ scale: 0.9, y: 10 }}
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.9, y: 10 }}
-                    className="max-w-md w-full bg-zinc-900 border border-white/10 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col gap-4 text-left"
+                    className={`max-w-md w-full border p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col gap-4 text-left ${isLight ? "bg-white border-zinc-200" : "bg-zinc-900 border-white/10"}`}
                   >
-                    <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                    <div className={`flex justify-between items-center border-b pb-3 ${isLight ? "border-zinc-200" : "border-white/10"}`}>
                       <span className="text-xs font-black text-[#B597FF] uppercase tracking-wider">
                         {(t?.leadQualify?.editTitles as Record<string, string> | undefined)?.[editingField] || editingField}
                       </span>
-                      <button onClick={() => setEditingField(null)} className="text-zinc-500 hover:text-white text-xs font-bold transition-colors">
+                      <button onClick={() => setEditingField(null)} className={`text-zinc-500 text-xs font-bold transition-colors ${isLight ? "hover:text-zinc-950" : "hover:text-white"}`}>
                         {t?.leadQualify?.cancel || "Cancelar"}
                       </button>
                     </div>
 
                     {editingField === 'name' && (
                       <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
-                        <input 
-                          autoFocus 
-                          type="text" 
+                        <input
+                          autoFocus
+                          type="text"
                           onFocus={keepInputVisible}
-                          value={formData.name} 
+                          value={formData.name}
                           onChange={e => setFormData({...formData, name: e.target.value})}
                           placeholder={t?.leadQualify?.placeholders?.name || "Empresa..."}
-                          className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
+                          className={`border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
                         />
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
                           {t?.leadQualify?.saveChange || "Salvar"}
@@ -1172,23 +1376,23 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                     {editingField === 'phone' && (
                       <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
                         <div className="flex gap-2">
-                          <select 
-                            value={formData.countryCode} 
+                          <select
+                            value={formData.countryCode}
                             onChange={e => setFormData({...formData, countryCode: e.target.value})}
-                            className="bg-black/50 border border-white/10 rounded-xl px-3 py-3 text-white font-bold outline-none"
+                            className={`border rounded-xl px-3 py-3 font-bold outline-none ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
                           >
                             {COUNTRIES.map(c => (
                               <option key={c.code} value={c.code} className="bg-zinc-900 text-white">{c.code} ({c.name})</option>
                             ))}
                           </select>
-                          <input 
-                            autoFocus 
-                            type="text" 
+                          <input
+                            autoFocus
+                            type="text"
                             onFocus={keepInputVisible}
-                            value={formData.phone} 
+                            value={formData.phone}
                             onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})}
                             placeholder={t?.leadQualify?.placeholders?.phone || "WhatsApp..."}
-                            className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all w-full"
+                            className={`flex-1 border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all w-full ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
                           />
                         </div>
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
@@ -1203,7 +1407,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           <button
                             key={opt}
                             onClick={() => { setFormData({...formData, volume: opt}); setEditingField(null); }}
-                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.volume === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-white' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
+                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.volume === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-zinc-950' : isLight ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
                           >
                             {opt}
                           </button>
@@ -1217,7 +1421,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           <button
                             key={opt}
                             onClick={() => { setFormData({...formData, team: opt}); setEditingField(null); }}
-                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.team === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-white' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
+                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.team === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-zinc-950' : isLight ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
                           >
                             {opt}
                           </button>
@@ -1227,14 +1431,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
                     {editingField === 'email' && (
                       <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
-                        <input 
-                          autoFocus 
-                          type="email" 
+                        <input
+                          autoFocus
+                          type="email"
                           onFocus={keepInputVisible}
-                          value={formData.email} 
+                          value={formData.email}
                           onChange={e => setFormData({...formData, email: e.target.value})}
                           placeholder={t?.leadQualify?.placeholders?.email || "E-mail..."}
-                          className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#B597FF] transition-all"
+                          className={`border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
                         />
                         <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
                           {t?.leadQualify?.saveChange || "Salvar"}
@@ -1261,11 +1465,18 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   {t?.leadQualify?.successTitle || ""}
                 </h2>
                 
-                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-10 leading-relaxed">
+                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-6 leading-relaxed">
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[0]}
                   <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || "company"}</span>
                   {(t?.leadQualify?.successMessage || "{name}").split("{name}")[1]}
                 </p>
+
+                {selectedSlot && (
+                  <p className="text-base sm:text-lg font-semibold text-zinc-600 max-w-2xl mb-10">
+                    {t?.leadQualify?.demoScheduledFor || "Demo"}: <span className="text-zinc-950">{selectedDay?.label} · {selectedSlot.when}</span>
+                    {demoPendingConfirmation && <span className="block text-sm text-zinc-400 mt-1">{t?.leadQualify?.demoPendingConfirmation || ""}</span>}
+                  </p>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
                   {/* Botão Preto com Borda Animada estilo Hero */}

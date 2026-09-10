@@ -49,6 +49,10 @@ reintroduzir esse direcionamento; não assuma que ele ainda é válido.
   `.md` na raiz (`lia_system_prompt_v3_tlin.md`, `lead_qualification_prompt.md`).
 - **Leads**: `lib/supabase-leads.ts` (REST, sem SDK) grava leads; notificação
   por e-mail via `nodemailer` em `app/api/notify/route.ts`.
+- **CRM (Deskcomm)**: `lib/deskcomm-mcp.ts` fala com o servidor MCP do
+  Deskcomm (`DESKCOMM_MCP_URL`, protocolo MCP/JSON-RPC via Bearer token em
+  `DESKCOMM_API_TOKEN`) para consultar horários livres (`crm_find_free_slots`)
+  e marcar a demo (`crm_book_appointment`). Ver "Agendamento de demo" abaixo.
 - **Build/scripts**: `npm run dev|build|start|lint` (ver `package.json`).
   Sem `.nvmrc`; Node >=18 é o mínimo compatível conhecido.
 - **Deploy**: Vercel, com deploy automático a partir de push em `main`
@@ -85,6 +89,36 @@ oferta (`lib/useOfferTimer.ts`), badges de desconto por plano, e usa o bloco
 `t.pricing.*` de `lib/dictionaries.ts` (Starter/Scale/Enterprise). Diferente
 de outras seções, aqui o `t.pricing` **é** usado ativamente — não remover
 essas chaves do dicionário sem checar este componente primeiro.
+
+### Agendamento de demo (`components/LeadQualificationPopup.tsx`)
+
+O wizard de qualificação (popup e `/demo` embedded) tem 10 steps: nome, telefone,
+confirmação, volume, equipe, e-mail, **escolher dia** (7), **escolher horário** (8),
+revisão (9), sucesso (`SUCCESS_STEP = 10`). Os steps 7/8 consultam
+`GET /api/public/demo/availability` (que chama o Deskcomm via
+`lib/deskcomm-mcp.ts` e agrupa por dia civil no fuso da agenda usando `Intl`
+nativo — nunca uma lib de timezone). A confirmação final (`POST /api/notify`)
+also dispara o webhook de captação já existente do Deskcomm e
+`crm_book_appointment` via MCP.
+
+**Achado importante**: o parâmetro `dia` da tool `crm_find_free_slots` não
+filtra como a documentação descreve nesta instância do Deskcomm (devolve
+sempre o espalhamento de vários dias) — por isso `findFreeSlots()` só usa
+`dias_a_frente`, e o agrupamento por dia é feito neste repo, não pedido ao
+Deskcomm. Reveja isso se um dia a tool for corrigida upstream.
+
+**Quirk de TypeScript observado neste projeto**: `if (!result.ok)` não
+restringe (narrow) unions discriminadas como `{ok:true,data}|{ok:false,error}`
+neste ambiente (TS 5.9.3 local) — use `if (result.ok === false)` em vez de
+`!result.ok`. Reproduzido em um arquivo isolado, não é específico deste
+componente.
+
+- `embedded=true` (`/demo`): fundo branco, sem gate de "Iniciar", com header
+  estilo WhatsApp (foto/nome "Igor"/status online-digitando).
+- `embedded=false` (popup): fundo escuro, com tela de "Iniciar" antes da
+  primeira pergunta.
+- Variáveis novas em `.env.local`: `DESKCOMM_MCP_URL`, `DESKCOMM_API_TOKEN`,
+  `DESKCOMM_WEBHOOK_URL`, `DESKCOMM_DEMO_EVENT_TYPE_SLUG` (hoje `reuniao`).
 
 ## Convenções
 
