@@ -420,6 +420,28 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     };
   }, []);
 
+  // Nas paginas de "comece agora" (embedded), chama a pessoa de volta pelo
+  // titulo da aba quando ela sai — personalizado com o nome se ja foi digitado.
+  useEffect(() => {
+    if (!embedded) return;
+    const originalTitle = document.title;
+    const handleVisibility = () => {
+      if (document.hidden) {
+        const name = formData.name?.trim();
+        document.title = name
+          ? t?.leadQualify?.tabAwayNamed?.replace("{name}", name) || originalTitle
+          : t?.leadQualify?.tabAwayGeneric || originalTitle;
+      } else {
+        document.title = originalTitle;
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      document.title = originalTitle;
+    };
+  }, [embedded, formData.name, t]);
+
   useEffect(() => {
     if (t?.leadQualify && chatHistory.length === 0) {
       // No embutido, a mensagem de boas-vindas (mostrada antes do "Vamos comecar")
