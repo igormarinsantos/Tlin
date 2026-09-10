@@ -269,9 +269,6 @@ export function Pricing() {
                const isOtherHovered = hoveredIndex !== null && !isHovered;
                const showHoverBorder = (plan.name === t.pricing.starterName || plan.name === t.pricing.enterpriseName) && isHovered;
 
-               // Calculate discount percent
-               const discountPercent = plan.priceStandard ? Math.round((1 - priceToShow! / plan.priceStandard) * 100) : 0;
-
                return (
                  <motion.div 
                     key={plan.name}
@@ -295,13 +292,6 @@ export function Pricing() {
                     )}
 
                     <div className={`flex flex-col flex-1 p-9 rounded-[2.4rem] transition-colors duration-500 overflow-hidden relative z-10 ${plan.highlight ? 'bg-[#0c0d0d] text-white' : 'bg-white text-[#0c0d0d]'}`}>
-                       
-                       {/* Discount Badge in Top Right */}
-                       {!plan.isCustom && discountPercent > 0 && (
-                          <div className={`absolute top-6 right-6 px-3 py-1 rounded-full text-[10px] font-black tracking-tighter ${plan.highlight ? 'bg-[#38E3FF] text-[#0c0d0d]' : 'bg-[#B597FF] text-white'}`}>
-                             -{discountPercent}%
-                          </div>
-                       )}
 
                        <div className="flex justify-between items-start mb-6">
                           <div>
