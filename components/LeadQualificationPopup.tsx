@@ -137,14 +137,12 @@ const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: str
 
   return (
     <div className={bubble
-      ? "relative inline-block text-sm sm:text-base font-normal leading-relaxed text-zinc-900"
+      ? "relative inline-block text-base sm:text-lg font-semibold leading-relaxed text-zinc-900"
       : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
-      {!bubble && (
-        <span className="inline-block ml-2 w-5 h-5 sm:w-7 sm:h-7 align-middle shrink-0">
-          <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
-        </span>
-      )}
+      <span className={`inline-block ml-2 align-middle shrink-0 ${bubble ? "w-4 h-4" : "w-5 h-5 sm:w-7 sm:h-7"}`}>
+        <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
+      </span>
     </div>
   );
 };
@@ -158,9 +156,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
-  
-  const AFFIRMATIONS = ["Ótimo", "Perfeito", "Entendido", "Legal", "Show", "Excelente"];
-  
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const initialMsg = t?.leadQualify?.initialMsg || "";
   const [isTyping, setIsTyping] = useState(false);
@@ -555,18 +550,33 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   };
 
   const getQuestion = (step: number, data: typeof formData) => {
-    const aff = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
-    
+    const companyName = data.name || t?.leadQualify?.fields?.company || "";
+    const volumeOptions = t?.leadQualify?.volumeOptions || [];
+    const teamOptions = t?.leadQualify?.teamOptions || [];
+    const volumeIdx = volumeOptions.indexOf(data.volume);
+    const teamIdx = teamOptions.indexOf(data.team);
+    // "if" de personalizacao: referencia o que a pessoa acabou de responder
+    // pra soar como conversa de verdade, nao um formulario generico.
+    const isHighVolume = volumeIdx >= 3; // "500 a 1.5k" ou "Mais de 5k"
+    const isLowVolume = volumeIdx === 0; // "Até 40"
+    const isTightTeam = teamIdx === 0 && isHighVolume; // equipe pequena pra um volume grande
+
     switch(step) {
       case 1: return initialMsg;
-      case 2: return t?.leadQualify?.step2 || "";
-      case 3: return t?.leadQualify?.step3?.replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
-      case 4: return t?.leadQualify?.step4 || "";
-      case 5: return t?.leadQualify?.step5 || "";
-      case 6: return t?.leadQualify?.step6 || "";
-      case 7: return t?.leadQualify?.step7 || "";
-      case 8: return t?.leadQualify?.step8 || "";
-      case 9: return t?.leadQualify?.step9 || "";
+      case 2: return t?.leadQualify?.step2?.replace("{name}", companyName) || "";
+      case 3: return t?.leadQualify?.step3?.replace("{name}", companyName).replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
+      case 4: return t?.leadQualify?.step4?.replace("{name}", companyName) || "";
+      case 5:
+        if (isHighVolume) return t?.leadQualify?.step5High || t?.leadQualify?.step5 || "";
+        if (isLowVolume) return t?.leadQualify?.step5Low || t?.leadQualify?.step5 || "";
+        return t?.leadQualify?.step5 || "";
+      case 6:
+        return (isTightTeam ? t?.leadQualify?.step6Tight : "") || t?.leadQualify?.step6 || "";
+      case 7: return t?.leadQualify?.step7?.replace("{name}", companyName) || "";
+      case 8: return t?.leadQualify?.step8?.replace("{name}", companyName) || "";
+      case 9:
+        if (isHighVolume) return t?.leadQualify?.step9High?.replace("{name}", companyName) || t?.leadQualify?.step9?.replace("{name}", companyName) || "";
+        return t?.leadQualify?.step9?.replace("{name}", companyName) || "";
       case 10: return t?.leadQualify?.step10?.replace("{name}", data.name) || "";
       default: return "";
     }
@@ -972,6 +982,19 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                     {isTyping ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
                   </p>
                 </div>
+                <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
+              </div>
+            )}
+
+            {/* Linha do tempo com a etapa atual (só no form embutido) */}
+            {embedded && currentStep < SUCCESS_STEP && !!hasStarted && (
+              <div className="shrink-0 flex items-center gap-1 px-4 sm:px-12 pt-3 pb-2 border-b border-zinc-100 bg-white">
+                {Array.from({ length: SUCCESS_STEP - 1 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i < currentStep ? "bg-[#38E3FF]" : "bg-zinc-100"}`}
+                  />
+                ))}
               </div>
             )}
 
@@ -1002,7 +1025,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       >
                         {embedded ? (
                           msg.role === 'user' ? (
-                            <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-md bg-[#DCF8C6] px-4 py-2.5 mb-1">
+                            <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-md bg-[#38E3FF]/25 px-4 py-2.5 mb-1">
                               <span className="text-sm sm:text-base leading-relaxed text-zinc-900">{msg.text}</span>
                             </div>
                           ) : (
@@ -1010,7 +1033,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                               {idx === latestBotIdx ? (
                                 <TypewriterQuestion text={msg.text} bubble />
                               ) : (
-                                <span className="text-sm sm:text-base leading-relaxed text-zinc-900">
+                                <span className="text-base sm:text-lg font-semibold leading-relaxed text-zinc-900">
                                   <HighlightText text={msg.text} />
                                 </span>
                               )}
