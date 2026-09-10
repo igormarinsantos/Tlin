@@ -46,10 +46,12 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
   );
 };
 
-export function Hero() {
+export type HeroVariant = "iaWhatsapp" | "recuperacaoDeLeads" | "crmComIa" | "infoprodutores" | "agentesDeIa";
+
+export function Hero({ variant }: { variant?: HeroVariant } = {}) {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.1, once: true });
-  
+
   const [visibleCount, setVisibleCount] = useState(0);
   const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("idle");
   const [isFinished, setIsFinished] = useState(false);
@@ -59,8 +61,10 @@ export function Hero() {
   const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
-  const title = t.hero.title.replace(/\s*\{stars\}/g, "");
-  const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
+  const heroCopy = variant ? t.campaigns[variant] : t.hero;
+  const title = heroCopy.title.replace(/\s*\{stars\}/g, "");
+  const subtitle = heroCopy.subtitle;
+  const highlightWords = variant ? t.campaigns[variant].highlightWords : ['Copiloto', 'IA', 'Copilot', 'AI'];
   
   const [isDesktop, setIsDesktop] = useState(true);
   useEffect(() => {
@@ -313,7 +317,7 @@ export function Hero() {
             transition={{ duration: 0.8 }}
             className="text-zinc-500 font-medium text-base md:text-lg max-w-2xl mx-auto text-center mb-10"
           >
-            {t.hero.subtitle}
+            {subtitle}
           </m.p>
         </div>
 

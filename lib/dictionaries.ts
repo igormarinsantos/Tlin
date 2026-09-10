@@ -25,6 +25,33 @@ const ptBR = {
     watchDemo: "Agendar demo",
     demoSoon: "Demo em breve"
   },
+  campaigns: {
+    iaWhatsapp: {
+      title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
+      subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos — sem plantão, sem lead esperando resposta.",
+      highlightWords: ["WhatsApp"]
+    },
+    recuperacaoDeLeads: {
+      title: "Lead esfriou? A IA\nretoma a conversa sozinha.",
+      subtitle: "Follow-up automático pra quem parou de responder, direto no WhatsApp — sem depender de vendedor lembrar de chamar de novo.",
+      highlightWords: ["IA"]
+    },
+    crmComIa: {
+      title: "O CRM que sua equipe\nusa sem duplicar trabalho.",
+      subtitle: "CRM nativo com IA que organiza leads, conversas e funil automaticamente — sem precisar integrar nada pra começar.",
+      highlightWords: ["CRM"]
+    },
+    infoprodutores: {
+      title: "Do anúncio ao aluno matriculado,\ncom IA no WhatsApp.",
+      subtitle: "Responda pico de lançamento, qualifique quem tem fit com o curso e recupere quem sumiu no carrinho — tudo automático, 24/7.",
+      highlightWords: ["IA"]
+    },
+    agentesDeIa: {
+      title: "Agentes de IA que vendem\ncomo seu melhor closer.",
+      subtitle: "Treinados no seu playbook, script e objeções — os agentes da Tlin atendem, qualificam e escalam sua operação sem inchar a equipe.",
+      highlightWords: ["IA"]
+    }
+  },
   trusted: {
     title: "Confiança para",
     subtitle: "escalar sua operação"
@@ -174,6 +201,12 @@ const ptBR = {
     link2_2: "Blog",
     link2_3: "Carreiras",
     link2_4: "Contato",
+    solutionsTitle: "Soluções",
+    solutionsLink1: "IA para WhatsApp",
+    solutionsLink2: "Recuperação de leads",
+    solutionsLink3: "CRM com IA",
+    solutionsLink4: "Para infoprodutores",
+    solutionsLink5: "Agentes de IA",
     terms: "Termos",
     privacy: "Privacidade",
     cookies: "Cookies",
@@ -356,6 +389,33 @@ const enUS: TranslationDictionary = {
     watchDemo: "Book a demo",
     demoSoon: "Demo coming soon"
   },
+  campaigns: {
+    iaWhatsapp: {
+      title: "WhatsApp support\nrunning 24/7 with real AI.",
+      subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds — no shifts, no lead left waiting.",
+      highlightWords: ["WhatsApp"]
+    },
+    recuperacaoDeLeads: {
+      title: "Lead gone cold? The AI\npicks the conversation back up.",
+      subtitle: "Automatic follow-up for leads who stopped replying, right on WhatsApp — no rep needs to remember to reach out again.",
+      highlightWords: ["AI"]
+    },
+    crmComIa: {
+      title: "The CRM your team\nuses without duplicating work.",
+      subtitle: "A native AI-powered CRM that organizes leads, conversations, and pipeline automatically — nothing to integrate to get started.",
+      highlightWords: ["CRM"]
+    },
+    infoprodutores: {
+      title: "From ad click to enrolled student,\nwith AI on WhatsApp.",
+      subtitle: "Handle launch spikes, qualify who's a fit for your course, and recover abandoned checkouts — all automatic, 24/7.",
+      highlightWords: ["AI"]
+    },
+    agentesDeIa: {
+      title: "AI agents that sell\nlike your best closer.",
+      subtitle: "Trained on your playbook, scripts and objections — Tlin's agents answer, qualify, and scale your operation without bloating the team.",
+      highlightWords: ["AI"]
+    }
+  },
   trusted: {
     title: "Trust to scale",
     subtitle: "your operation"
@@ -505,6 +565,12 @@ const enUS: TranslationDictionary = {
     link2_2: "Blog",
     link2_3: "Careers",
     link2_4: "Contact",
+    solutionsTitle: "Solutions",
+    solutionsLink1: "AI for WhatsApp",
+    solutionsLink2: "Lead recovery",
+    solutionsLink3: "CRM with AI",
+    solutionsLink4: "For course creators",
+    solutionsLink5: "AI agents",
     terms: "Terms",
     privacy: "Privacy",
     cookies: "Cookies",
@@ -687,6 +753,33 @@ const esES: TranslationDictionary = {
     watchDemo: "Agendar demo",
     demoSoon: "Demo próximamente"
   },
+  campaigns: {
+    iaWhatsapp: {
+      title: "Atención en WhatsApp\nfuncionando 24/7 con IA de verdad.",
+      subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos — sin turnos, sin lead esperando respuesta.",
+      highlightWords: ["WhatsApp"]
+    },
+    recuperacaoDeLeads: {
+      title: "¿El lead se enfrió? La IA\nretoma la conversación sola.",
+      subtitle: "Seguimiento automático para quien dejó de responder, directo en WhatsApp — sin depender de que un vendedor recuerde volver a escribir.",
+      highlightWords: ["IA"]
+    },
+    crmComIa: {
+      title: "El CRM que tu equipo\nusa sin duplicar trabajo.",
+      subtitle: "CRM nativo con IA que organiza leads, conversaciones y embudo automáticamente — sin necesidad de integrar nada para empezar.",
+      highlightWords: ["CRM"]
+    },
+    infoprodutores: {
+      title: "Del anuncio al alumno inscrito,\ncon IA en WhatsApp.",
+      subtitle: "Atiende picos de lanzamiento, califica a quien tiene fit con tu curso y recupera a quien abandonó el carrito — todo automático, 24/7.",
+      highlightWords: ["IA"]
+    },
+    agentesDeIa: {
+      title: "Agentes de IA que venden\ncomo tu mejor closer.",
+      subtitle: "Entrenados en tu playbook, guiones y objeciones — los agentes de Tlin atienden, califican y escalan tu operación sin inflar el equipo.",
+      highlightWords: ["IA"]
+    }
+  },
   trusted: {
     title: "Confianza para",
     subtitle: "escalar tu operación"
@@ -836,6 +929,12 @@ const esES: TranslationDictionary = {
     link2_2: "Blog",
     link2_3: "Carreras",
     link2_4: "Contacto",
+    solutionsTitle: "Soluciones",
+    solutionsLink1: "IA para WhatsApp",
+    solutionsLink2: "Recuperación de leads",
+    solutionsLink3: "CRM con IA",
+    solutionsLink4: "Para infoproductores",
+    solutionsLink5: "Agentes de IA",
     terms: "Términos",
     privacy: "Privacidad",
     cookies: "Cookies",

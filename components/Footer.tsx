@@ -17,7 +17,14 @@ export function Footer() {
             <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
           </div>
 
-
+          <div className="flex flex-col gap-3">
+            <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-wide">{t.footer.solutionsTitle}</h4>
+            <Link href="/ia-whatsapp" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink1}</Link>
+            <Link href="/recuperacao-de-leads" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink2}</Link>
+            <Link href="/crm-com-ia" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink3}</Link>
+            <Link href="/infoprodutores" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink4}</Link>
+            <Link href="/agentes-de-ia" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink5}</Link>
+          </div>
         </div>
 
         {/* Huge Brand Text */}
