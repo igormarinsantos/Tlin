@@ -150,7 +150,7 @@ const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: str
 
   return (
     <div className={bubble
-      ? "relative inline-block text-xl sm:text-2xl font-semibold leading-relaxed text-zinc-900"
+      ? `relative inline-block text-xl sm:text-2xl font-semibold leading-relaxed ${light ? "text-zinc-900" : "text-white"}`
       : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
       {isDone ? <HighlightText text={text} /> : displayedText}
       <span className={`inline-block ml-2 align-middle shrink-0 ${bubble ? "w-4 h-4" : "w-5 h-5 sm:w-7 sm:h-7"}`}>
@@ -289,13 +289,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
-  // Etapa de agendamento da demo. Quando aberto por um CTA da index o usuario
-  // ja tem contexto e cai direto na conversa; embedded (pagina /demo, link
-  // direto de anuncio/formulario) mostra a tela de "Iniciar" antes da
-  // primeira pergunta, ja que quem cai ali pode nao ter visto o site antes.
+  // Embedded (pagina /demo, /comece) comeca com a boas-vindas dentro do proprio
+  // chat + "Vamos comecar"; o popup da index mantem a tela de "Iniciar" separada
+  // de sempre, sem mexer nessa parte.
   const [hasStarted, setHasStarted] = useState(!embedded);
-  // Simula o "Igor digitando..." antes da mensagem de boas-vindas aparecer
-  // no proprio chat embutido, em vez de uma tela separada.
+  // Simula o "Igor digitando..." antes da mensagem de boas-vindas aparecer no chat (embedded).
   const [welcomeTyping, setWelcomeTyping] = useState(embedded);
   const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
@@ -982,7 +980,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   if (!mounted) return null;
 
   // Embedded (pagina /demo) usa fundo claro estilo WhatsApp Web durante toda a
-  // conversa; o popup so vira claro na tela de sucesso, como já era.
+  // conversa; o popup da index mantem o tema escuro, so vira claro na tela de
+  // sucesso -- a estrutura da conversa (header, baloes, calendario) e a mesma
+  // nos dois, so o tema de cor muda.
   const isLight = embedded || currentStep === SUCCESS_STEP;
 
   const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
@@ -1111,7 +1111,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             </div>}
 
             {/* Header estilo WhatsApp + linha do tempo (so no form embutido), fixos no topo */}
-            {embedded && currentStep < SUCCESS_STEP && (() => {
+            {currentStep < SUCCESS_STEP && (() => {
               const totalDots = SUCCESS_STEP - 1;
               const filledDots = hasStarted ? currentStep : 0;
               const progressPercent = totalDots > 1 ? (Math.max(filledDots - 1, 0) / (totalDots - 1)) * 100 : 0;
@@ -1123,116 +1123,114 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 const g = Math.round(151 + (227 - 151) * t);
                 return `rgb(${r}, ${g}, 255)`;
               };
-              return (
-                <div className="sticky top-0 z-20 shrink-0 bg-white border-b border-zinc-100">
-                  <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
-                    <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 bg-zinc-100">
-                        <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={48} height={48} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-base sm:text-lg font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                        <span className={`grid text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
-                          {/* Reserva a largura do texto mais longo pra "Online"/"digitando..." nao
-                              empurrar o resto do header ao alternar (largura ficava variavel). */}
-                          <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusOnline || "Online"}</span>
-                          <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusTyping || "digitando..."}</span>
-                          <span className="col-start-1 row-start-1">
-                            {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Linha unica com bolinhas sinalizando cada etapa, centralizada entre a
-                        foto e a logo -- degrade fixo de ponta a ponta da trilha inteira, so a
-                        mascara cinza por cima é que encolhe */}
-                    <div className="flex-1 flex justify-center min-w-0 px-1">
-                      <div className="relative w-full max-w-[130px] sm:max-w-[190px] h-1.5 sm:h-2 flex items-center">
-                        <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
-                        <div
-                          className="absolute right-0 h-0.5 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
-                          style={{ width: `${100 - progressPercent}%` }}
+              const progressBar = (
+                <div className="flex-1 flex justify-center min-w-0 px-1">
+                  <div className="relative w-full max-w-[130px] sm:max-w-[190px] h-1.5 sm:h-2 flex items-center">
+                    <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
+                    <div
+                      className={`absolute right-0 h-0.5 rounded-r-full transition-[width] duration-500 ease-out ${isLight ? "bg-zinc-100" : "bg-white/10"}`}
+                      style={{ width: `${100 - progressPercent}%` }}
+                    />
+                    <div className="relative w-full flex items-center justify-between">
+                      {Array.from({ length: totalDots }).map((_, i) => (
+                        <span
+                          key={i}
+                          className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors duration-500 ${isLight ? "ring-2 ring-white" : "ring-2 ring-[#0c0d0d]"}`}
+                          style={{ backgroundColor: i < filledDots ? dotColor(i) : (isLight ? "#e4e4e7" : "#3f3f46") }}
                         />
-                        <div className="relative w-full flex items-center justify-between">
-                          {Array.from({ length: totalDots }).map((_, i) => (
-                            <span
-                              key={i}
-                              className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-2 ring-white transition-colors duration-500"
-                              style={{ backgroundColor: i < filledDots ? dotColor(i) : "#e4e4e7" }}
-                            />
-                          ))}
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+
+              // No popup da index (nao embedded) fica so a linha do tempo, sem
+              // foto/nome/status do Igor nem logo -- so o /demo tem o header
+              // estilo WhatsApp completo.
+              return (
+                <div className={`sticky top-0 z-20 shrink-0 border-b transition-colors duration-300 ${isLight ? "bg-white border-zinc-100" : "bg-[#0c0d0d] border-white/10"}`}>
+                  {embedded ? (
+                    <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
+                      <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 ${isLight ? "bg-zinc-100" : "bg-white/10"}`}>
+                          <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={48} height={48} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`text-base sm:text-lg font-bold truncate ${isLight ? "text-zinc-950" : "text-white"}`}>{t?.leadQualify?.headerName || "Igor"}</p>
+                          <span className={`grid text-sm font-medium ${(isTyping || welcomeTyping) ? (isLight ? "text-zinc-400" : "text-zinc-500") : "text-emerald-600"}`}>
+                            {/* Reserva a largura do texto mais longo pra "Online"/"digitando..." nao
+                                empurrar o resto do header ao alternar (largura ficava variavel). */}
+                            <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusOnline || "Online"}</span>
+                            <span className="invisible col-start-1 row-start-1">{t?.leadQualify?.headerStatusTyping || "digitando..."}</span>
+                            <span className="col-start-1 row-start-1">
+                              {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                            </span>
+                          </span>
                         </div>
                       </div>
-                    </div>
 
-                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={56} height={19} className="shrink-0 w-12 sm:w-16 h-auto" />
-                  </div>
+                      {progressBar}
+
+                      <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={56} height={19} className="shrink-0 w-12 sm:w-16 h-auto" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center px-4 sm:px-12 py-3 sm:py-4">
+                      {progressBar}
+                    </div>
+                  )}
                 </div>
               );
             })()}
 
             {!hasStarted ? (
-              embedded ? (
-                <>
-                  {/* Boas-vindas dentro do proprio chat (Igor "digitando" antes da mensagem) */}
-                  <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y ml-0 mr-1 sm:mr-2 px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 lead-popup-scrollbar">
-                    <div className="w-full flex flex-col justify-start min-h-full">
-                      {welcomeTyping ? (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                          <motion.div
-                            animate={{ opacity: [0.4, 1, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                            className="w-5 h-5 sm:w-7 sm:h-7"
-                          >
-                            <Image src="/TlinIA.svg" alt="Thinking" width={32} height={32} className="w-full h-full object-contain" />
-                          </motion.div>
-                        </motion.div>
-                      ) : (
+              <>
+                {/* Boas-vindas dentro do proprio chat (Igor "digitando" antes da mensagem) */}
+                <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y ml-0 mr-1 sm:mr-2 px-4 sm:px-12 pt-12 sm:pt-16 pb-4 z-10 lead-popup-scrollbar">
+                  <div className="w-full flex flex-col justify-start min-h-full">
+                    {welcomeTyping ? (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                         <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, ease: "easeOut" }}
-                          className="max-w-[85%] sm:max-w-[75%] mb-1"
+                          animate={{ opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                          className="w-5 h-5 sm:w-7 sm:h-7"
                         >
-                          <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} bubble />
+                          <Image src="/TlinIA.svg" alt="Thinking" width={32} height={32} className="w-full h-full object-contain" />
                         </motion.div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
-                    {!welcomeTyping && (
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        onClick={() => {
-                          setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);
-                          setHasStarted(true);
-                          setIsTyping(true);
-                          pendingAdvanceTimeoutRef.current = setTimeout(() => {
-                            pendingAdvanceTimeoutRef.current = null;
-                            setIsTyping(false);
-                            setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
-                          }, 1200);
-                        }}
-                        className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="max-w-[85%] sm:max-w-[75%] mb-1"
                       >
-                        {t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar"}
-                      </motion.button>
+                        <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} bubble />
+                      </motion.div>
                     )}
                   </div>
-                </>
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center gap-10 px-6 sm:px-12 text-center">
-                  <TypewriterQuestion text={t?.leadQualify?.welcomeTitle || ""} light={isLight} />
-                  <button
-                    onClick={() => setHasStarted(true)}
-                    className="relative px-10 py-4 rounded-full font-bold text-base sm:text-lg bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 transition-all active:scale-[0.98] hover:opacity-90 shadow-xl"
-                  >
-                    {t?.leadQualify?.start || "Iniciar"}
-                  </button>
                 </div>
-              )
+                <div className="shrink-0 px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
+                  {!welcomeTyping && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={() => {
+                        setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);
+                        setHasStarted(true);
+                        setIsTyping(true);
+                        pendingAdvanceTimeoutRef.current = setTimeout(() => {
+                          pendingAdvanceTimeoutRef.current = null;
+                          setIsTyping(false);
+                          setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
+                        }, 1200);
+                      }}
+                      className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 border border-transparent transition-all active:scale-[0.98] hover:opacity-90"
+                    >
+                      {t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar"}
+                    </motion.button>
+                  )}
+                </div>
+              </>
             ) : currentStep < SUCCESS_STEP ? (
               <>
             {/* Scrollable Message Area */}
@@ -1256,7 +1254,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           ) : (
                             <div className="max-w-[85%] sm:max-w-[75%] mb-1">
                               {idx === latestBotIdx ? (
-                                <TypewriterQuestion text={msg.text} bubble />
+                                <TypewriterQuestion text={msg.text} light={isLight} bubble />
                               ) : (
                                 <span className="text-xl sm:text-2xl font-semibold leading-relaxed text-zinc-900">
                                   <HighlightText text={msg.text} />
@@ -1264,13 +1262,20 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                               )}
                             </div>
                           )
+                        ) : msg.role === 'user' ? (
+                          // So a mensagem do usuario ganha balao aqui; a da IA continua no
+                          // texto grande de sempre (o popup da index nao ganhou o header
+                          // nem o chat inteiro em balao, so isso e a copy/agenda).
+                          <div className={`inline-block max-w-[85%] rounded-3xl rounded-br-md px-5 py-3 sm:px-6 sm:py-4 mb-4 ${isLight ? "bg-[#38E3FF]/25" : "bg-white/10 border border-white/10"}`}>
+                            <span className={`text-lg sm:text-2xl font-medium ${isLight ? "text-zinc-900" : "text-white"}`}>{msg.text}</span>
+                          </div>
                         ) : (
-                          <div className={`max-w-full ${msg.role === 'user' ? 'text-lg sm:text-2xl text-zinc-500 font-medium mb-4' : ''}`}>
-                            {msg.role === 'bot' && idx === latestBotIdx ? (
+                          <div className="max-w-full">
+                            {idx === latestBotIdx ? (
                               <TypewriterQuestion text={msg.text} light={isLight} />
                             ) : (
                               <div className={`text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${isLight ? "text-zinc-950" : "text-white"}`}>
-                                {msg.role === 'bot' ? <HighlightText text={msg.text} /> : msg.text}
+                                <HighlightText text={msg.text} />
                               </div>
                             )}
                           </div>
