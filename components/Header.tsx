@@ -75,15 +75,18 @@ function NavLinks() {
   const linkClass = "relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200";
 
   return (
-    <nav className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <a href="#" className={linkClass}>
-        {t.nav.product}
+    <nav aria-label="Navegação principal" className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
+      <a href="#como-funciona" className={linkClass}>
+        {t.nav.comoFunciona}
       </a>
-      <a href="#features" className={linkClass}>
-        {t.nav.resources}
+      <a href="#agentes" className={linkClass}>
+        {t.nav.agentes}
       </a>
-      <a href="#pricing" className={linkClass}>
-        {t.nav.pricing}
+      <a href="#crm" className={linkClass}>
+        {t.nav.crm}
+      </a>
+      <a href="#planos" className={linkClass}>
+        {t.nav.planos}
       </a>
     </nav>
   );

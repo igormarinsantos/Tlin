@@ -7,7 +7,11 @@ const ptBR = {
     pricing: "Preços",
     login: "Entrar",
     cta: "Começar agora",
-    demo: "Demo 100% grátis"
+    demo: "Demo 100% grátis",
+    comoFunciona: "Como funciona",
+    agentes: "Agentes",
+    crm: "CRM",
+    planos: "Planos"
   },
   topBanner: {
     question: "Tem alguma dúvida sobre a Tlin?",
@@ -41,7 +45,9 @@ const ptBR = {
     f2_cta: "Filtrar meus leads agora",
     f3_cta: "Escalar meu atendimento",
     f4_cta: "Ver métricas em tempo real",
-    cta: "Potencializar com IA"
+    cta: "Potencializar com IA",
+    agentesTitle: "Agentes de IA em ação",
+    crmTitle: "CRM organizado pela IA"
   },
   roi: {
     badge: "✨ Simulador de Lucratividade",
@@ -318,7 +324,11 @@ const enUS: TranslationDictionary = {
     pricing: "Pricing",
     login: "Sign In",
     cta: "Get Started",
-    demo: "100% Free Demo"
+    demo: "100% Free Demo",
+    comoFunciona: "How it works",
+    agentes: "Agents",
+    crm: "CRM",
+    planos: "Plans"
   },
   topBanner: {
     question: "Do you have questions about Tlin?",
@@ -352,7 +362,9 @@ const enUS: TranslationDictionary = {
     f2_cta: "Filter my leads now",
     f3_cta: "Scale my support",
     f4_cta: "See real-time metrics",
-    cta: "Empower with AI"
+    cta: "Empower with AI",
+    agentesTitle: "AI agents in action",
+    crmTitle: "CRM organized by AI"
   },
   roi: {
     badge: "✨ Profitability Simulator",
@@ -629,7 +641,11 @@ const esES: TranslationDictionary = {
     pricing: "Precios",
     login: "Ingresar",
     cta: "Empezar ahora",
-    demo: "Demo 100% gratis"
+    demo: "Demo 100% gratis",
+    comoFunciona: "Cómo funciona",
+    agentes: "Agentes",
+    crm: "CRM",
+    planos: "Planes"
   },
   topBanner: {
     question: "¿Tienes alguna duda sobre Tlin?",
@@ -663,7 +679,9 @@ const esES: TranslationDictionary = {
     f2_cta: "Filtrar mis leads ahora",
     f3_cta: "Escalar mi atención",
     f4_cta: "Ver métricas en tiempo real",
-    cta: "Potenciar con IA"
+    cta: "Potenciar con IA",
+    agentesTitle: "Agentes de IA en acción",
+    crmTitle: "CRM organizado por la IA"
   },
   roi: {
     badge: "✨ Simulador de Rentabilidad",

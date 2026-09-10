@@ -174,6 +174,19 @@ export const structuredData = [
   },
   {
     "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    "@id": absoluteUrl("/#sitenav"),
+    name: ["Como funciona", "Agentes", "CRM", "Planos", "Perguntas frequentes"],
+    url: [
+      absoluteUrl("/#como-funciona"),
+      absoluteUrl("/#agentes"),
+      absoluteUrl("/#crm"),
+      absoluteUrl("/#planos"),
+      absoluteUrl("/#faq"),
+    ],
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": absoluteUrl("/#faq"),
     mainEntity: faqItems.map((item) => ({

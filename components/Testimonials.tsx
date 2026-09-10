@@ -100,7 +100,7 @@ export function Testimonials() {
   const testimonials = [...baseTestimonials, ...baseTestimonials];
 
   return (
-    <section className="w-full py-32 overflow-hidden relative bg-white">
+    <section id="testimonials" className="w-full py-32 overflow-hidden relative bg-white">
       {/* Dynamic Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-[#B597FF]/5 blur-[120px] rounded-full -z-10" />
 

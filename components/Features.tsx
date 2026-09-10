@@ -79,8 +79,8 @@ function FeatureCard({
               <button
                 onClick={() => {
                   const lenis = (window as any).lenis;
-                  if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
-                  else document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' });
+                  if (lenis) lenis.scrollTo('#planos', { offset: -40 });
+                  else document.querySelector('#planos')?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 onMouseEnter={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
@@ -134,8 +134,8 @@ function FeatureCard({
            <button
              onClick={() => {
                const lenis = (window as any).lenis;
-               if (lenis) lenis.scrollTo('#pricing', { offset: -40 });
-               else document.querySelector('#pricing')?.scrollIntoView({ behavior: 'smooth' });
+               if (lenis) lenis.scrollTo('#planos', { offset: -40 });
+               else document.querySelector('#planos')?.scrollIntoView({ behavior: 'smooth' });
              }}
              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
            >
@@ -213,7 +213,7 @@ export function Features() {
   ];
 
   return (
-    <section className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
+    <section id="como-funciona" className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="max-w-3xl mb-32 text-center mx-auto">
@@ -244,11 +244,19 @@ export function Features() {
         {/* Standard Flow Layout */}
         <div className="relative w-full flex flex-col gap-y-24 md:gap-y-32">
           {featuresList.map((feature, idx) => (
-            <FeatureCard
-              key={idx}
-              feature={feature}
-              idx={idx}
-            />
+            <div key={idx}>
+              {idx === 0 && (
+                <h2 id="agentes" className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 text-center mb-8 md:mb-12">
+                  {t.features.agentesTitle}
+                </h2>
+              )}
+              {idx === 1 && (
+                <h2 id="crm" className="text-2xl md:text-3xl font-black tracking-tight text-zinc-900 text-center mb-8 md:mb-12">
+                  {t.features.crmTitle}
+                </h2>
+              )}
+              <FeatureCard feature={feature} idx={idx} />
+            </div>
           ))}
         </div>
 

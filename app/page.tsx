@@ -10,13 +10,19 @@ import { GlobalBackground } from "@/components/GlobalBackground";
 import { trackFunnelEvent } from "@/lib/utm";
 
 const TextReveal = dynamic(() => import("@/components/TextReveal").then(mod => mod.TextReveal), { ssr: false });
-const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features), { ssr: false });
+// SSR ligado (sem ssr:false) pra essas seções: precisam existir no HTML inicial
+// pro Google indexar sem depender de JS (âncoras #como-funciona/#agentes/#crm/#planos/#faq).
+const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
 const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(mod => mod.RoiCalculator), { ssr: false });
-const Pricing = dynamic(() => import("@/components/Pricing").then(mod => mod.Pricing), { ssr: false });
-const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials), { ssr: false });
-const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq), { ssr: false });
+const Pricing = dynamic(() => import("@/components/Pricing").then(mod => mod.Pricing));
+const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials));
+const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
+// FooterBanner fica ssr:false: usa isMobile derivado de matchMedia no estado
+// inicial, o que diverge entre server/client e quebra a hidratação. Não faz
+// parte do conjunto que precisa de anchors indexáveis (como-funciona/agentes/
+// crm/planos/faq), então manter client-only é seguro aqui.
 const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(mod => mod.FooterBanner), { ssr: false });
-const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer), { ssr: false });
+const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer));
 const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(mod => mod.LiaPopup), { ssr: false });
 const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificationPopup").then(mod => mod.LeadQualificationPopup), { ssr: false });
 
@@ -119,13 +125,14 @@ export default function Home() {
           <TextReveal />
         </DeferredSection>
 
-        {/* CORE CAPABILITIES */}
-        <DeferredSection id="features" className="" minHeight="min-h-[900px]">
+        {/* CORE CAPABILITIES — renderizado direto (sem DeferredSection) pra existir
+            no HTML inicial: #como-funciona/#agentes/#crm ficam indexáveis sem JS. */}
+        <div className="section-to-blur">
           <Features />
-        </DeferredSection>
+        </div>
 
         {/* WHITE CURVED GRADIENT SECTION (Above ROI) */}
-        <div 
+        <div
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
@@ -136,36 +143,36 @@ export default function Home() {
         </DeferredSection>
 
         {/* WHITE CURVED GRADIENT SECTION (Below ROI) */}
-        <div 
+        <div
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
 
         {/* PRICING / ACTION */}
-        <DeferredSection className="no-blur transition-all duration-700 relative z-50" minHeight="min-h-[960px]">
+        <div className="no-blur transition-all duration-700 relative z-50">
           <Pricing />
-        </DeferredSection>
+        </div>
 
         {/* TRUST / SOCIAL PROOF (The New Carousel) */}
-        <DeferredSection id="testimonials" className="section-to-blur" minHeight="min-h-[520px]">
+        <div className="section-to-blur">
           <Testimonials />
-        </DeferredSection>
+        </div>
 
         {/* OBJECTIONS */}
-        <DeferredSection id="faq" className="section-to-blur" minHeight="min-h-[720px]">
+        <div className="section-to-blur">
           <Faq />
-        </DeferredSection>
+        </div>
 
         {/* FINAL CTA (The Flashlight Effect) */}
-        <DeferredSection className="section-to-blur" minHeight="min-h-[620px]">
+        <DeferredSection className="section-to-blur" minHeight="min-h-[600px] md:min-h-[750px]">
           <FooterBanner />
         </DeferredSection>
 
         {/* FOOTER */}
-        <DeferredSection className="section-to-blur" minHeight="min-h-[220px]">
+        <div className="section-to-blur">
           <Footer />
-        </DeferredSection>
-        
+        </div>
+
         {/* IA Assistant Popup */}
         <DeferredSection minHeight="min-h-0" idleDelay={1800}>
           <LiaPopup />

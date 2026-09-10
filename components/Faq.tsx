@@ -33,7 +33,8 @@ export function Faq() {
   };
 
   return (
-    <motion.section 
+    <motion.section
+      id="faq"
       onViewportEnter={handleEntrance}
       viewport={{ once: true, margin: "-100px" }}
       className="w-full py-24 md:py-32 bg-white"

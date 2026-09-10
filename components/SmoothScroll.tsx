@@ -38,8 +38,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
             lenis.scrollTo(0);
           } else {
             // Scroll to the element with the matching ID
-            // Aplicamos um offset negativo ajustado de -40px no #pricing para exibir os cards inteiros centralizados na tela
-            const offset = href === "#pricing" ? -40 : 0;
+            // Aplicamos um offset negativo ajustado de -40px no #planos para exibir os cards inteiros centralizados na tela
+            const offset = href === "#planos" ? -40 : 0;
             lenis.scrollTo(href, { offset });
           }
         }

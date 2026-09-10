@@ -262,7 +262,7 @@ export function Pricing() {
 
           {/* Offer Bar moved to LiaPopup globally */}
 
-          <div id="pricing" className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4 scroll-mt-[40px]">
+          <div id="planos" className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4 scroll-mt-[40px]">
              {plans.map((plan, idx) => {
                const priceToShow = isAnnual ? plan.priceAnnual : plan.priceMonthly;
                const isHovered = hoveredIndex === idx;
