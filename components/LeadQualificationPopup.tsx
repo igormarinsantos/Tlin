@@ -1068,11 +1068,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
                     <button
                       onClick={closePopup}
-                      className="relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none text-zinc-400 hover:text-white"
+                      aria-label={t?.liaPopup?.close || "Fechar"}
+                      className="flex items-center justify-center w-9 h-9 rounded-full transition-all active:scale-95 text-zinc-400 hover:text-white hover:bg-white/10"
                     >
-                      <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
-                        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
-                      </span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M6 6l12 12M6 18L18 6" />
+                      </svg>
                     </button>
                   </div>}
 
@@ -1117,15 +1118,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             {!embedded && <div className={`absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full ${isLight ? "bg-white/75 shadow-[0_0_22px_20px_rgba(255,255,255,0.9)]" : "bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]"}`}>
               <button
                 onClick={closePopup}
-                className={`relative py-2 px-2 transition-all active:scale-95 text-xs sm:text-sm font-bold group/close bg-transparent border-none ${
+                aria-label={t?.liaPopup?.close || "Fechar"}
+                className={`flex items-center justify-center w-9 h-9 rounded-full transition-all active:scale-95 ${
                   isLight
-                  ? "text-zinc-900 hover:text-black"
-                  : "text-zinc-400 hover:text-white"
+                  ? "text-zinc-900 hover:bg-zinc-100"
+                  : "text-zinc-400 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <span className="relative inline-block pb-0.5">{t?.liaPopup?.close || "Fechar"}
-                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-current origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/close:scale-x-100" />
-                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M6 6l12 12M6 18L18 6" />
+                </svg>
               </button>
             </div>}
 
@@ -1142,7 +1144,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 const g = Math.round(151 + (227 - 151) * t);
                 return `rgb(${r}, ${g}, 255)`;
               };
-              const renderProgressBar = (fullWidth: boolean, lightDots: boolean) => (
+              // translucentUnfilled e so pro popup modal (fundo escuro) -- o /demo
+              // (embedded, fundo branco) continua com a bolinha solida de sempre,
+              // porque branco translucido em cima de branco fica invisivel.
+              const renderProgressBar = (fullWidth: boolean, lightDots: boolean, translucentUnfilled = false) => (
                 <div className="flex-1 flex justify-center min-w-0 px-1">
                   <div className={`relative w-full h-1.5 sm:h-2 flex items-center ${fullWidth ? "" : "max-w-[130px] sm:max-w-[190px]"}`}>
                     <div className="absolute inset-x-0 h-0.5 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
@@ -1155,7 +1160,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         <span
                           key={i}
                           className={`block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors duration-500 ${lightDots ? "ring-2 ring-white" : "ring-2 ring-[#0c0d0d]"}`}
-                          style={{ backgroundColor: i < filledDots ? dotColor(i) : (lightDots ? "#e4e4e7" : "#3f3f46") }}
+                          style={{ backgroundColor: i < filledDots ? dotColor(i) : translucentUnfilled ? "rgba(255, 255, 255, 0.35)" : (lightDots ? "#e4e4e7" : "#3f3f46") }}
                         />
                       ))}
                     </div>
@@ -1196,7 +1201,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                     </div>
                   ) : (
                     <div className="flex items-center px-4 sm:px-12 py-3 sm:py-4">
-                      {renderProgressBar(true, true)}
+                      {renderProgressBar(true, true, true)}
                     </div>
                   )}
                 </div>
