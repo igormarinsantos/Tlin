@@ -988,27 +988,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               const filledDots = hasStarted ? currentStep : 0;
               const progressPercent = totalDots > 1 ? (Math.max(filledDots - 1, 0) / (totalDots - 1)) * 100 : 0;
               return (
-                <div className="sticky top-0 z-20 shrink-0 bg-white">
-                  <div className="flex items-center gap-3 px-4 sm:px-12 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-zinc-100">
-                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
-                      <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
-                      <p className="text-xs sm:text-sm text-emerald-600 font-medium">
-                        {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
-                      </p>
-                    </div>
-                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
-                  </div>
-
-                  {/* Linha unica com bolinhas sinalizando cada etapa */}
-                  <div className="px-4 sm:px-12 py-3 sm:py-4 border-b border-zinc-100">
+                <div className="sticky top-0 z-20 shrink-0 bg-white border-b border-zinc-100">
+                  {/* Linha unica com bolinhas sinalizando cada etapa -- degrade fixo de ponta a
+                      ponta da trilha inteira, so a mascara cinza por cima é que encolhe */}
+                  <div className="px-4 sm:px-12 pt-3 sm:pt-4 pb-2">
                     <div className="relative w-full h-2.5 sm:h-3 flex items-center">
-                      <div className="absolute inset-x-0 h-1 rounded-full bg-zinc-100" />
+                      <div className="absolute inset-x-0 h-1 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
                       <div
-                        className="absolute left-0 h-1 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] transition-[width] duration-500 ease-out"
-                        style={{ width: `${progressPercent}%` }}
+                        className="absolute right-0 h-1 rounded-r-full bg-zinc-100 transition-[width] duration-500 ease-out"
+                        style={{ width: `${100 - progressPercent}%` }}
                       />
                       <div className="relative w-full flex items-center justify-between">
                         {Array.from({ length: totalDots }).map((_, i) => (
@@ -1021,6 +1009,19 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                         ))}
                       </div>
                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 px-4 sm:px-12 pb-3 sm:pb-4">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                      <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>
+                      <p className={`text-xs sm:text-sm font-medium ${(isTyping || welcomeTyping) ? "text-zinc-400" : "text-emerald-600"}`}>
+                        {(isTyping || welcomeTyping) ? (t?.leadQualify?.headerStatusTyping || "digitando...") : (t?.leadQualify?.headerStatusOnline || "Online")}
+                      </p>
+                    </div>
+                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={64} height={22} className="ml-auto shrink-0" />
                   </div>
                 </div>
               );
