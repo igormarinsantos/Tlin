@@ -322,7 +322,7 @@ function getWelcomeEmailHtml(name: string, planName: string) {
               <tr>
                 <!-- Tlin IA Mascote PNG Fundo Transparente Sem Moldura -->
                 <td width="32" valign="top" style="padding-right: 10px; padding-top: 2px;">
-                  <img src="https://tlin.ia.br/tlin-mascote-email.png?v=final12" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
+                  <img src="https://tlin.ia.br/email/tlin-mascote-email.png?v=final12" alt="Tlin" width="28" style="display: block; width: 28px; height: auto; background: transparent;" />
                 </td>
                 <!-- Chat Bubble com Fundo em Degradê da Marca e Texto Escuro de Alto Contraste -->
                 <td valign="top" align="left">
@@ -342,10 +342,10 @@ function getWelcomeEmailHtml(name: string, planName: string) {
             <!-- Video Player Component com CTA Sobreposto ao Centro da Thumb -->
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 32px; border-radius: 16px; overflow: hidden; border: 1px solid #e4e4e7;">
               <tr>
-                <td align="center" valign="middle" height="320" background="https://tlin.ia.br/platform-preview-email.jpg?v=final12" style="background-image: url('https://tlin.ia.br/platform-preview-email.jpg?v=final12'); background-size: cover; background-position: center; height: 320px; text-align: center;">
+                <td align="center" valign="middle" height="320" background="https://tlin.ia.br/og/platform-preview-email.jpg?v=final12" style="background-image: url('https://tlin.ia.br/og/platform-preview-email.jpg?v=final12'); background-size: cover; background-position: center; height: 320px; text-align: center;">
                   <!--[if gte mso 9]>
                   <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:320px;">
-                    <v:fill type="frame" src="https://tlin.ia.br/platform-preview-email.jpg?v=final12" color="#fafafa" />
+                    <v:fill type="frame" src="https://tlin.ia.br/og/platform-preview-email.jpg?v=final12" color="#fafafa" />
                     <v:textbox inset="0,0,0,0">
                   <![endif]-->
                   <div>

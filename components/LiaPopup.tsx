@@ -336,7 +336,7 @@ export function LiaPopup() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-zinc-100 overflow-hidden shrink-0">
                     <img 
-                      src="/LIA PERFIL.webp" 
+                      src="/team/LIA PERFIL.webp" 
                       alt="Lia" 
                       className="w-full h-full object-cover"
                     />
@@ -428,7 +428,7 @@ export function LiaPopup() {
                               {isFirstInBlock && (
                                 <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden mt-1">
                                   <img 
-                                    src="/LIA PERFIL.webp" 
+                                    src="/team/LIA PERFIL.webp" 
                                     alt="Lia" 
                                     className="w-full h-full object-cover"
                                   />
@@ -455,7 +455,7 @@ export function LiaPopup() {
                       <div className="flex items-start gap-2">
                          <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden shrink-0 mt-1">
                            <img 
-                             src="/LIA PERFIL.webp" 
+                             src="/team/LIA PERFIL.webp" 
                              alt="Lia" 
                              className="w-full h-full object-cover"
                            />

@@ -117,7 +117,7 @@ export function WhatsAppQualifyAnimation() {
           >
             <div className="bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(181,151,255,0.3)] border border-[#B597FF]/20 flex flex-col items-center gap-4 min-w-[280px]">
               <div className="w-20 h-20 -mb-2">
-                <img src="/Check.webp" alt="Check" className="w-full h-full object-contain" />
+                <img src="/icons/Check.webp" alt="Check" className="w-full h-full object-contain" />
               </div>
               <div className="text-center">
                 <h4 className="text-xl font-black text-zinc-800">{f.qualified}</h4>

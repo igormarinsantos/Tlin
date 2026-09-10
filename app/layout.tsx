@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: absoluteUrl("/platform-preview-email.jpg"),
+        url: absoluteUrl("/og/platform-preview-email.jpg"),
         width: 1200,
         height: 630,
         alt: "tlin.ai - Agentes de IA para vendas",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [absoluteUrl("/platform-preview-email.jpg")],
+    images: [absoluteUrl("/og/platform-preview-email.jpg")],
   },
   robots: {
     index: true,

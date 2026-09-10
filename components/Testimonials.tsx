@@ -69,28 +69,28 @@ export function Testimonials() {
     {
       name: "Eduardo Silva",
       role: t.testimonials.t1_role,
-      image: "/EDUARDO.webp",
+      image: "/team/EDUARDO.webp",
       text: t.testimonials.t1_text,
       company: "Scale Digital"
     },
     {
       name: "Luana Santos",
       role: t.testimonials.t2_role,
-      image: "/LUANA.webp",
+      image: "/team/LUANA.webp",
       text: t.testimonials.t2_text,
       company: "Glow Media"
     },
     {
       name: "Miriam Souza",
       role: t.testimonials.t3_role,
-      image: "/MIRIAM.webp",
+      image: "/team/MIRIAM.webp",
       text: t.testimonials.t3_text,
       company: "Horizon Tech"
     },
     {
       name: "Luiz Ferreira",
       role: t.testimonials.t4_role,
-      image: "/LUIZ.webp",
+      image: "/team/LUIZ.webp",
       text: t.testimonials.t4_text,
       company: "Zapier"
     }

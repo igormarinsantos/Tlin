@@ -985,8 +985,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             {/* Header estilo WhatsApp (só no form embutido da LP, durante a conversa) */}
             {embedded && currentStep < SUCCESS_STEP && (
               <div className="shrink-0 flex items-center gap-3 px-4 sm:px-12 pt-6 pb-4 border-b border-zinc-100 z-20 bg-white">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100 flex items-center justify-center">
-                  <Image src="/TlinIA.svg" alt={t?.leadQualify?.headerName || "Igor"} width={28} height={28} className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 bg-zinc-100">
+                  <Image src="/team/igor-avatar.png" alt={t?.leadQualify?.headerName || "Igor"} width={44} height={44} className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm sm:text-base font-bold text-zinc-950 truncate">{t?.leadQualify?.headerName || "Igor"}</p>

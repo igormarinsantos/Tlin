@@ -338,7 +338,14 @@ Logo:
 
 - horizontal: `/Logo%20Horizontal.svg`
 - mascote/cursor: `/TlinIA.svg`
-- Lia perfil: `/LIA PERFIL.webp`
+- Lia perfil: `/team/LIA PERFIL.webp`
+- Igor perfil (header do /demo): `/team/igor-avatar.png`
+
+Assets ficam organizados em `public/`: `team/` (fotos de pessoas/personas),
+`icons/` (icones de UI como Check/3STARS), `email/` e `og/` (imagens usadas
+em e-mail e Open Graph), `video/` (videos), `lotties/` (avatares animados
+do funil). `_unused/` guarda arquivos sem nenhuma referencia no codigo —
+nao apagar sem confirmar antes.
 
 Avatares pequenos:
 
