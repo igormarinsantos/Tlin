@@ -31,7 +31,7 @@ function HowItWorksCard({
       whileHover={{ y: -4 }}
       className="rounded-3xl bg-[#F7F7FB] p-3 md:p-4 flex flex-col gap-5 border border-transparent hover:border-[#B597FF]/20 hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-colors duration-300"
     >
-      <div className="relative w-full h-36 rounded-2xl bg-white border border-zinc-100 overflow-hidden">
+      <div className="relative w-full h-44 rounded-2xl bg-white border border-zinc-100 overflow-hidden">
         <motion.div
           className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[50px] rounded-full pointer-events-none"
           animate={{ opacity: isHovered ? 1 : 0.6 }}
