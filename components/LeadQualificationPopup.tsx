@@ -841,6 +841,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                   setChatHistory(savedState.chatHistory);
                   if (savedState.selectedDay) setSelectedDay(savedState.selectedDay);
                   if (savedState.selectedSlot) setSelectedSlot(savedState.selectedSlot);
+                  // A sessao so e oferecida pra retomar quando currentStep > 1, ou seja,
+                  // a pessoa ja passou da tela de boas-vindas -- reativa isso, senao
+                  // WelcomeScreen volta a aparecer por cima do estado ja restaurado.
+                  setHasStarted(true);
                 }
                 setShowResumeOverlay(false);
                 isLiveSession.current = true;
