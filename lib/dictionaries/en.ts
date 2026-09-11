@@ -27,7 +27,8 @@ export const enUS: TranslationDictionary = {
   },
   campaigns: {
     howItWorksEyebrow: "Meet Tlin",
-    howItWorksTitle: "How it works, step by step",
+    howItWorksTitle: "How it works, [step by step]",
+    howItWorksCtaTitle: "Ready to put this to work in your operation?",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",

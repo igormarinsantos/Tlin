@@ -34,7 +34,7 @@ function CursorArrow({ className }: { className?: string }) {
 
 function Tag({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center bg-white border border-zinc-100 shadow-sm rounded-full px-3 py-1 text-[10px] font-bold text-zinc-500 whitespace-nowrap">
+    <span className="inline-flex items-center bg-white border border-zinc-100 rounded-full px-3 py-1 text-[10px] font-bold text-zinc-500 whitespace-nowrap">
       {label}
     </span>
   );
@@ -42,7 +42,7 @@ function Tag({ label }: { label: string }) {
 
 function BrowserBar() {
   return (
-    <div className="absolute top-4 left-4 right-4 h-7 rounded-t-lg bg-white border border-zinc-100 shadow-sm flex items-center gap-1.5 px-3 z-0">
+    <div className="absolute top-4 left-4 right-4 h-7 rounded-t-lg bg-white border border-zinc-100 flex items-center gap-1.5 px-3 z-0">
       <span className="w-2 h-2 rounded-full bg-red-300" />
       <span className="w-2 h-2 rounded-full bg-yellow-300" />
       <span className="w-2 h-2 rounded-full bg-green-300" />
@@ -51,47 +51,36 @@ function BrowserBar() {
   );
 }
 
-// Capturar/qualificar: cena composta -- 2 visitantes sendo "selecionados"
-// por um cursor, bolha de qualificacao aparecendo, e o lead roteado pro
-// WhatsApp (avatar com bolinha verde de online).
+// Capturar/qualificar: varios leads espalhados, cada um sendo "clicado"
+// (cursor + bounce) e sumindo em sequencia -- simbolico, sem texto de
+// chat, so a ideia de captura acontecendo uma a uma.
+const CAPTURE_LEADS = [
+  { src: "/lotties/avatars/1_avatar.webp", size: 40, className: "left-4 top-4" },
+  { src: "/lotties/avatars/2_avatar.webp", size: 36, className: "left-24 top-2" },
+  { src: "/lotties/avatars/9_avatar.webp", size: 34, className: "left-2 bottom-10" },
+  { src: "/lotties/avatars/6_avatar.webp", size: 38, className: "left-24 bottom-6" },
+  { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8" },
+];
+
 export function CaptureMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0">
-      <motion.div
-        className="absolute left-6 top-5"
-        animate={isActive ? { scale: [1, 0.85, 1] } : { scale: 1 }}
-        transition={{ duration: 0.4, repeat: loop(isActive), repeatDelay: 1.6 }}
-      >
-        <CursorArrow className="absolute -left-2 -top-2 z-10" />
-        <Avatar src="/lotties/avatars/1_avatar.webp" size={46} />
-      </motion.div>
-
-      <motion.div
-        className="absolute left-20 top-2"
-        animate={isActive ? { scale: [1, 0.85, 1] } : { scale: 1 }}
-        transition={{ duration: 0.4, delay: 0.5, repeat: loop(isActive), repeatDelay: 1.5 }}
-      >
-        <CursorArrow className="absolute -left-2 -top-2 z-10" />
-        <Avatar src="/lotties/avatars/2_avatar.webp" size={40} />
-      </motion.div>
-
-      <motion.div
-        className="absolute left-3 bottom-4 bg-white border border-zinc-100 shadow-sm rounded-xl rounded-bl-sm px-3.5 py-2.5 max-w-[150px]"
-        initial={false}
-        animate={isActive ? { opacity: [0, 1], y: [6, 0] } : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 1, repeat: loop(isActive), repeatDelay: 1.5 }}
-      >
-        <p className="text-[11px] leading-tight text-zinc-600 font-medium">Quer saber qual plano é ideal? 👋</p>
-      </motion.div>
-
-      <div className="absolute right-5 bottom-5">
-        <Avatar src="/lotties/avatars/3_avatar.webp" size={40} />
-        <motion.span
-          className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#25D366] border-2 border-white"
-          animate={isActive ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-          transition={{ duration: 0.8, repeat: loop(isActive), repeatDelay: 0.4 }}
-        />
-      </div>
+      {CAPTURE_LEADS.map((lead, i) => (
+        <motion.div
+          key={i}
+          className={`absolute ${lead.className}`}
+          animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2, ease: "easeIn" }}
+        >
+          <motion.div
+            animate={isActive ? { opacity: [0, 0, 1, 0] } : { opacity: 0 }}
+            transition={{ duration: 0.6, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2 }}
+          >
+            <CursorArrow className="absolute -left-2 -top-2 z-10" />
+          </motion.div>
+          <Avatar src={lead.src} size={lead.size} />
+        </motion.div>
+      ))}
     </div>
   );
 }
@@ -104,7 +93,7 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
       <BrowserBar />
 
       <motion.div
-        className="absolute top-14 left-5 bg-white border border-zinc-100 shadow-sm rounded-xl rounded-bl-sm px-3 py-2.5"
+        className="absolute top-14 left-5 bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2.5"
         animate={isActive ? { opacity: [0, 0, 1, 1] } : { opacity: 0 }}
         transition={{ duration: 1.8, times: [0, 0.35, 0.5, 1], repeat: loop(isActive), repeatDelay: 0.3 }}
       >
@@ -121,11 +110,11 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
         transition={{ duration: 0.4, repeat: loop(isActive), repeatDelay: 1.9 }}
       >
         <CursorArrow className="absolute -left-2.5 -top-2.5 z-10" />
-        <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
           <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="" className="w-7 h-7" />
         </div>
         <motion.svg
-          width="20" height="20" viewBox="0 0 24 24" fill="none" className="absolute -top-1.5 -left-1.5 bg-white rounded-full p-0.5 shadow-sm"
+          width="20" height="20" viewBox="0 0 24 24" fill="none" className="absolute -top-1.5 -left-1.5 bg-white rounded-full p-0.5"
           animate={isActive ? { opacity: [0, 0, 0, 1] } : { opacity: 0 }}
           transition={{ duration: 1.8, times: [0, 0.5, 0.6, 1], repeat: loop(isActive), repeatDelay: 0.3 }}
         >
@@ -206,7 +195,7 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
       {rows.map((row, i) => (
-        <div key={i} className="flex items-center gap-2 bg-white border border-zinc-100 shadow-sm rounded-full pl-1.5 pr-3.5 py-1.5 w-[128px]">
+        <div key={i} className="flex items-center gap-2 bg-white border border-zinc-100 rounded-full pl-1.5 pr-3.5 py-1.5 w-[128px]">
           <Avatar src={row.src} size={24} />
           <span className="h-2 flex-1 rounded-full bg-zinc-100" />
           {row.check && (
@@ -245,11 +234,11 @@ export function FunnelMotion({ isActive }: { isActive: boolean }) {
         ))}
       </div>
       <div className="flex flex-col gap-2">
-        <div className="bg-white border border-zinc-100 shadow-sm rounded-lg px-3 py-1.5">
+        <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
           <p className="text-base font-black text-[#0c0d0d] leading-none">45,3%</p>
           <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wide">conversão</p>
         </div>
-        <div className="bg-white border border-zinc-100 shadow-sm rounded-lg px-3 py-1.5">
+        <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
           <p className="text-base font-black text-[#0c0d0d] leading-none">710</p>
           <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wide">leads/mês</p>
         </div>
@@ -297,7 +286,7 @@ export function CartMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
       <motion.div
-        className="flex items-center gap-2 bg-white border border-zinc-100 shadow-sm rounded-full pl-1.5 pr-3.5 py-1.5"
+        className="flex items-center gap-2 bg-white border border-zinc-100 rounded-full pl-1.5 pr-3.5 py-1.5"
         animate={isActive ? { opacity: [1, 1, 0.5] } : { opacity: 1 }}
         transition={{ duration: 1.3, repeat: loop(isActive), repeatDelay: 0.6 }}
       >

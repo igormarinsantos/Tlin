@@ -25,7 +25,8 @@ export const ptBR = {
   },
   campaigns: {
     howItWorksEyebrow: "Conheça a Tlin",
-    howItWorksTitle: "Como funciona, passo a passo",
+    howItWorksTitle: "Como funciona, [passo a passo]",
+    howItWorksCtaTitle: "Pronto pra colocar isso pra rodar na sua operação?",
     iaWhatsapp: {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
