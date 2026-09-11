@@ -75,64 +75,45 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Atender no site ou WhatsApp: foco na tela de conversa -- o texto real
-// aparece sendo escrito no input embaixo, depois "sobe" (FLIP animation
-// via layoutId compartilhado) e vira a bolha enviada na conversa.
+// Atender no site ou WhatsApp: foco na tela de conversa -- o mesmo
+// elemento de texto "viaja" do input ate a posicao da bolha (top/left em
+// %, sem depender de FLIP entre dois elementos separados), mudando de
+// cor no caminho ate virar a bolha enviada.
+const WHATSAPP_CYCLE = 2.6;
 const WHATSAPP_REPLY = "Sim! Vou te ajudar 😊";
 
 export function WhatsappMotion({ isActive }: { isActive: boolean }) {
-  const [sent, setSent] = useState(false);
-
-  useEffect(() => {
-    if (!isActive) {
-      setSent(false);
-      return;
-    }
-    const id = setInterval(() => setSent((s) => !s), 1300);
-    return () => clearInterval(id);
-  }, [isActive]);
-
   return (
     <div className="absolute inset-0">
-      <div className="absolute top-5 left-3 right-3 flex flex-col gap-1.5">
-        <div className="self-start bg-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[75%]">
+      <div className="absolute top-5 left-3 right-3">
+        <div className="bg-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[75%] inline-block">
           <p className="text-[9px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
         </div>
-
-        <AnimatePresence>
-          {sent && (
-            <motion.div
-              layoutId="wa-reply"
-              className="self-end bg-[#25D366] rounded-xl rounded-br-sm px-2.5 py-1.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <p className="text-[9px] text-white font-medium leading-tight whitespace-nowrap">{WHATSAPP_REPLY}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3 gap-2 overflow-hidden">
-        <AnimatePresence>
-          {!sent && (
-            <motion.p
-              layoutId="wa-reply"
-              className="flex-1 text-[9px] text-zinc-500 font-medium whitespace-nowrap overflow-hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {WHATSAPP_REPLY}
-            </motion.p>
-          )}
-        </AnimatePresence>
-        {sent && <span className="flex-1" />}
+      <motion.div
+        className="absolute z-10 rounded-xl px-2.5 py-1.5 whitespace-nowrap text-[9px] font-medium"
+        animate={
+          isActive
+            ? {
+                top: ["79%", "79%", "30%", "30%", "79%"],
+                left: ["9%", "9%", "42%", "42%", "9%"],
+                backgroundColor: ["rgba(37,211,102,0)", "rgba(37,211,102,0)", "#25D366", "#25D366", "rgba(37,211,102,0)"],
+                color: ["#71717a", "#71717a", "#ffffff", "#ffffff", "#71717a"],
+              }
+            : { top: "79%", left: "9%", backgroundColor: "rgba(37,211,102,0)", color: "#71717a" }
+        }
+        transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.35, 0.5, 0.9, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
+      >
+        {WHATSAPP_REPLY}
+      </motion.div>
+
+      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3">
+        <span className="flex-1" />
         <motion.div
           className="w-5 h-5 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
-          animate={{ scale: sent ? 1.2 : 1 }}
-          transition={{ duration: 0.25 }}
+          animate={isActive ? { scale: [1, 1, 1.3, 1, 1] } : { scale: 1 }}
+          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.33, 0.4, 0.47, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
         >
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
             <path d="M5 12h13M13 6l6 6-6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -168,7 +149,7 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <motion.div layout className="flex items-start gap-2.5 px-3">
-        <motion.img layout src="/TlinIA.svg" alt="Tlin" className="w-8 h-8 shrink-0" />
+        <motion.img layout src="/TlinIA.svg" alt="Tlin" className="w-6 h-6 shrink-0" />
 
         <motion.div layout className="flex flex-col gap-1.5 max-w-[150px]">
           <AnimatePresence initial={false}>
@@ -236,7 +217,7 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
             >
               <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={30} />
               <span className="text-[10px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
-              <span className="text-[7px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-1.5 py-1 whitespace-nowrap shrink-0">IA qualificando</span>
+              <span className="text-[7px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-1.5 py-1 whitespace-nowrap shrink-0">IA</span>
             </motion.div>
           );
         })}
