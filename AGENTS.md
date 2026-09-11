@@ -50,7 +50,11 @@ de código morto confirmado (rota `/api/qualify`, 6 componentes órfãos,
 `@google/generative-ai`, chaves de dicionário sem uso), `lib/dictionaries.ts`
 dividido por idioma, `LeadQualificationPopup.tsx` quebrado em subcomponentes,
 templates de e-mail extraídos pra `lib/emailTemplates.ts`. Zero mudança de
-comportamento nessa limpeza — só reorganização.
+comportamento nessa limpeza — só reorganização. Corrigido também um bug
+preexistente achado durante a verificação: o "Continuar" do
+`ResumeSessionOverlay` restaurava `currentStep`/`formData`/`chatHistory` mas
+não reativava `hasStarted`, fazendo a tela de boas-vindas voltar a aparecer
+por cima do estado já restaurado.
 
 ## Stack
 
@@ -135,13 +139,6 @@ periféricas viraram subcomponentes em `components/lead-qualification/`:
 trilha de progresso), `WelcomeScreen`, `ResumeSessionOverlay`,
 `FieldEditOverlay`, `SuccessStep`. Mudança puramente estrutural — nenhum
 comportamento novo.
-
-**Bug preexistente encontrado nessa limpeza (não corrigido, fora de escopo)**:
-o botão "Continuar" do `ResumeSessionOverlay` restaura `currentStep`/
-`formData`/`chatHistory` do localStorage corretamente, mas nunca reativa
-`hasStarted` — a tela de boas-vindas (`WelcomeScreen`) volta a aparecer por
-cima do estado já restaurado. Reproduzível: avançar até o step 2+, recarregar
-a página, clicar "Continuar" no overlay de retomada.
 
 O wizard de qualificação (popup e `/demo` embedded) tem 10 steps: nome, telefone,
 confirmação, volume, equipe, e-mail, **escolher dia** (7), **escolher horário** (8),
