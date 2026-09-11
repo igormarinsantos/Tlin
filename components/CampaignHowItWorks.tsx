@@ -30,7 +30,7 @@ function HowItWorksCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ y: -4 }}
-      className="rounded-3xl bg-[#F7F7FB] p-6 md:p-7 flex flex-col gap-6 border border-transparent hover:border-[#B597FF]/20 hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-colors duration-300"
+      className="rounded-3xl bg-[#F7F7FB] p-3 md:p-4 flex flex-col gap-5 border border-transparent hover:border-[#B597FF]/20 hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-colors duration-300"
     >
       <div className="relative w-full h-36 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center overflow-hidden">
         <motion.div
@@ -48,7 +48,7 @@ function HowItWorksCard({
         </div>
       </div>
 
-      <div>
+      <div className="px-2 pb-2 md:px-3 md:pb-3">
         <h3 className="text-lg font-bold text-[#0c0d0d] mb-2">{title}</h3>
         <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
       </div>
