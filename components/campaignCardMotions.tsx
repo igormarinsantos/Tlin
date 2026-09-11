@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // 8 motions pequenos e leves (so opacity/scale/x/y em loop, sem maquina de
 // estado) pro quadro h-36 dos cards "Conheca a Tlin". Cada um e uma cena
@@ -40,17 +41,6 @@ function Tag({ label }: { label: string }) {
   );
 }
 
-function BrowserBar() {
-  return (
-    <div className="absolute top-4 left-4 right-4 h-7 rounded-t-lg bg-white border border-zinc-100 flex items-center gap-1.5 px-3 z-0">
-      <span className="w-2 h-2 rounded-full bg-red-300" />
-      <span className="w-2 h-2 rounded-full bg-yellow-300" />
-      <span className="w-2 h-2 rounded-full bg-green-300" />
-      <span className="ml-2 h-2.5 w-20 rounded-full bg-zinc-100" />
-    </div>
-  );
-}
-
 // Capturar/qualificar: varios leads espalhados, cada um sendo "clicado"
 // (cursor + bounce) e sumindo em sequencia -- simbolico, sem texto de
 // chat, so a ideia de captura acontecendo uma a uma.
@@ -85,69 +75,105 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Atender no site ou WhatsApp: janela de navegador com cursor clicando no
-// balao verde do WhatsApp, que abre a conversa (digitando -> check duplo)
+// Atender no site ou WhatsApp: foco na tela de conversa (mensagem
+// recebida + resposta sendo digitada e enviada pelo input embaixo, como
+// o WhatsApp Web de verdade) -- sem moldura de navegador, so a conversa.
+const WHATSAPP_CYCLE = 2.6;
+
 export function WhatsappMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0">
-      <BrowserBar />
-
-      <motion.div
-        className="absolute top-14 left-5 bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2.5"
-        animate={isActive ? { opacity: [0, 0, 1, 1] } : { opacity: 0 }}
-        transition={{ duration: 1.8, times: [0, 0.35, 0.5, 1], repeat: loop(isActive), repeatDelay: 0.3 }}
-      >
-        <div className="flex gap-1.5 items-center">
-          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+      <div className="absolute top-5 left-3 right-3 flex flex-col gap-1.5">
+        <div className="self-start bg-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[75%]">
+          <p className="text-[9px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
         </div>
-      </motion.div>
 
-      <motion.div
-        className="absolute right-5 bottom-4"
-        animate={isActive ? { scale: [1, 0.85, 1] } : { scale: 1 }}
-        transition={{ duration: 0.4, repeat: loop(isActive), repeatDelay: 1.9 }}
-      >
-        <CursorArrow className="absolute -left-2.5 -top-2.5 z-10" />
-        <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="" className="w-7 h-7" />
-        </div>
-        <motion.svg
-          width="20" height="20" viewBox="0 0 24 24" fill="none" className="absolute -top-1.5 -left-1.5 bg-white rounded-full p-0.5"
-          animate={isActive ? { opacity: [0, 0, 0, 1] } : { opacity: 0 }}
-          transition={{ duration: 1.8, times: [0, 0.5, 0.6, 1], repeat: loop(isActive), repeatDelay: 0.3 }}
+        <motion.div
+          className="self-end grid bg-[#25D366] rounded-xl rounded-br-sm px-2.5 py-1.5"
+          animate={isActive ? { opacity: [0, 1, 1, 1, 0] } : { opacity: 1 }}
+          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.06, 0.4, 0.9, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
         >
-          <path d="M2 12l5 5L14 8" stroke="#25D366" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M9 12l5 5L21 8" stroke="#25D366" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-        </motion.svg>
-      </motion.div>
+          <motion.div
+            className="[grid-area:1/1] flex gap-1 items-center h-3"
+            animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 0 }}
+            transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.32, 0.4, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
+          </motion.div>
+          <motion.p
+            className="[grid-area:1/1] text-[9px] text-white font-medium leading-tight whitespace-nowrap"
+            animate={isActive ? { opacity: [0, 0, 1, 1] } : { opacity: 1 }}
+            transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.36, 0.42, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
+          >
+            Sim! Vou te ajudar 😊
+          </motion.p>
+        </motion.div>
+      </div>
+
+      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3 gap-2">
+        <span className="flex-1 h-1.5 rounded-full bg-zinc-100" />
+        <motion.div
+          className="w-4 h-4 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
+          animate={isActive ? { scale: [1, 1, 1.35, 1] } : { scale: 1 }}
+          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.34, 0.42, 0.5], repeat: loop(isActive), repeatDelay: 0.4 }}
+        >
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
+            <path d="M3 11l18-8-8 18-2-8-8-2z" fill="white" />
+          </svg>
+        </motion.div>
+      </div>
     </div>
   );
 }
 
-// Usar agentes de IA: o proprio mascote da Tlin (TlinIA.svg) pulsando, com
-// particulas orbitando, falando com o lead numa bolha de chat ao lado.
-export function AgentMotion({ isActive }: { isActive: boolean }) {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center gap-3 px-3">
-      <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-        <motion.img
-          src="/TlinIA.svg"
-          alt="Tlin"
-          className="relative w-11 h-11"
-          animate={isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
-          transition={{ duration: 1.2, repeat: loop(isActive), ease: "easeInOut" }}
-        />
-      </div>
+// Usar agentes de IA: o mascote da Tlin como "foto de perfil" ao lado da
+// ultima mensagem -- conforme novas bolhas sao adicionadas de verdade
+// (monta/desmonta, nao so opacidade), o grupo inteiro sobe e se
+// recentraliza no meio do quadro via layout animation.
+const AGENT_MESSAGES = ["Olá! 👋", "Como posso te ajudar?", "Vou te conectar com um especialista"];
 
-      <motion.div
-        className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2.5 max-w-[140px]"
-        initial={false}
-        animate={isActive ? { opacity: [0, 1], y: [6, 0] } : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.4, repeat: loop(isActive), repeatDelay: 1.8 }}
-      >
-        <p className="text-[11px] leading-tight text-zinc-600 font-medium">Olá! Como posso te ajudar? 👋</p>
+export function AgentMotion({ isActive }: { isActive: boolean }) {
+  const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    if (!isActive) {
+      setCount(1);
+      return;
+    }
+    let i = 1;
+    const id = setInterval(() => {
+      i = i >= AGENT_MESSAGES.length ? 1 : i + 1;
+      setCount(i);
+    }, 900);
+    return () => clearInterval(id);
+  }, [isActive]);
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <motion.div layout className="flex items-end gap-3 px-3">
+        <motion.div layout className="w-9 h-9 rounded-full bg-white border border-zinc-100 shrink-0 flex items-center justify-center">
+          <img src="/TlinIA.svg" alt="Tlin" className="w-6 h-6" />
+        </motion.div>
+
+        <motion.div layout className="flex flex-col gap-1.5 max-w-[150px]">
+          <AnimatePresence initial={false}>
+            {AGENT_MESSAGES.slice(0, count).map((msg, i) => (
+              <motion.div
+                key={i}
+                layout
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5"
+              >
+                <p className="text-[10px] leading-tight text-zinc-600 font-medium">{msg}</p>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </motion.div>
     </div>
   );
@@ -259,18 +285,44 @@ const FUNNEL_STAGES = [
   { top: 38, bottom: 22 },
 ];
 
+// Gera um path SVG de poligono com os cantos de verdade arredondados
+// (nao so o traco -- o stroke-linejoin round sozinho nao arredonda o
+// preenchimento, so a linha).
+function roundedPolygonPath(points: [number, number][], radius: number): string {
+  const n = points.length;
+  const d: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const [cx, cy] = points[i];
+    const [px, py] = points[(i - 1 + n) % n];
+    const [nx, ny] = points[(i + 1) % n];
+    const distPrev = Math.hypot(cx - px, cy - py);
+    const distNext = Math.hypot(cx - nx, cy - ny);
+    const r = Math.min(radius, distPrev / 2, distNext / 2);
+    const p1x = cx + ((px - cx) / distPrev) * r;
+    const p1y = cy + ((py - cy) / distPrev) * r;
+    const p2x = cx + ((nx - cx) / distNext) * r;
+    const p2y = cy + ((ny - cy) / distNext) * r;
+    d.push(i === 0 ? `M ${p1x} ${p1y}` : `L ${p1x} ${p1y}`);
+    d.push(`Q ${cx} ${cy} ${p2x} ${p2y}`);
+  }
+  d.push("Z");
+  return d.join(" ");
+}
+
 function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
   const inset = (top - bottom) / 2;
+  const path = roundedPolygonPath(
+    [
+      [0, 0],
+      [top, 0],
+      [top - inset, FUNNEL_HEIGHT],
+      [inset, FUNNEL_HEIGHT],
+    ],
+    4
+  );
   return (
     <svg width={top} height={FUNNEL_HEIGHT} viewBox={`0 0 ${top} ${FUNNEL_HEIGHT}`}>
-      <polygon
-        points={`0,0 ${top},0 ${top - inset},${FUNNEL_HEIGHT} ${inset},${FUNNEL_HEIGHT}`}
-        fill="#B597FF"
-        fillOpacity="0.2"
-        stroke="#B597FF"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
+      <path d={path} fill="#B597FF" fillOpacity="0.2" stroke="#B597FF" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 }
