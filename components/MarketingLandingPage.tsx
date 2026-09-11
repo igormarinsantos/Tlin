@@ -160,7 +160,7 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
 
         {/* OBJECTIONS */}
         <div className="section-to-blur">
-          <Faq />
+          <Faq priorityKeys={heroVariant === "recuperacaoDeLeads" ? ["q7", "q8"] : undefined} />
         </div>
 
         {/* FINAL CTA (The Flashlight Effect) */}

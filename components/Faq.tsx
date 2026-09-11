@@ -4,21 +4,26 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 
-export function Faq() {
+const FAQ_KEYS = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"] as const;
+type FaqKey = (typeof FAQ_KEYS)[number];
+
+export function Faq({ priorityKeys }: { priorityKeys?: FaqKey[] } = {}) {
   const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasPlayedEntrance, setHasPlayedEntrance] = useState(false);
 
-  const faqs = [
-    { q: t.faq.q1, a: t.faq.a1 },
-    { q: t.faq.q2, a: t.faq.a2 },
-    { q: t.faq.q3, a: t.faq.a3 },
-    { q: t.faq.q4, a: t.faq.a4 },
-    { q: t.faq.q5, a: t.faq.a5 },
-    { q: t.faq.q6, a: t.faq.a6 },
-    { q: t.faq.q7, a: t.faq.a7 },
-    { q: t.faq.q8, a: t.faq.a8 }
-  ];
+  // Ordem padrao e a mesma sempre; paginas de campanha podem subir 1-2
+  // perguntas mais relevantes pro topo via priorityKeys, sem duplicar
+  // conteudo nem mudar a ordem pra quem visita a home.
+  const orderedKeys = priorityKeys?.length
+    ? [...priorityKeys, ...FAQ_KEYS.filter((k) => !priorityKeys.includes(k))]
+    : FAQ_KEYS;
+
+  const faqDict = t.faq as unknown as Record<string, string>;
+  const faqs = orderedKeys.map((key) => ({
+    q: faqDict[key],
+    a: faqDict[`a${key.slice(1)}`],
+  }));
 
   const handleEntrance = () => {
     if (!hasPlayedEntrance) {
