@@ -29,7 +29,7 @@ export const ptBR = {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos — sem plantão, sem lead esperando resposta.",
       highlightWords: ["WhatsApp"],
-      painHeadline: "Responder na 1ª hora torna a venda até 7x mais provável.",
+      painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
       painBody: "Depois de 24h sem resposta, a chance de qualificar esse lead despenca. Cada mensagem que espera é uma venda que esfria.",
       painDisclaimer: "Dado de mercado (estudo Oldroyd/Harvard Business Review sobre tempo de resposta a leads), não específico da Tlin. Resultados variam conforme sua operação."
     },
@@ -37,7 +37,7 @@ export const ptBR = {
       title: "Lead esfriou? A IA\nretoma a conversa sozinha.",
       subtitle: "Follow-up automático pra quem parou de responder, direto no WhatsApp — sem depender de vendedor lembrar de chamar de novo.",
       highlightWords: ["IA"],
-      painHeadline: "80% das vendas exigem pelo menos 5 follow-ups — mas 44% dos vendedores desistem depois do 1º.",
+      painHeadline: "[80% das vendas] exigem pelo menos 5 follow-ups — mas 44% dos vendedores desistem depois do 1º.",
       painBody: "O lead não disse não. Só parou de responder — e sem alguém pra retomar no momento certo, essa venda nunca mais aparece.",
       painDisclaimer: "Dado de mercado amplamente citado em treinamentos de vendas (National Sales Executive Association), não específico da Tlin."
     },
@@ -45,7 +45,7 @@ export const ptBR = {
       title: "O CRM que sua equipe\nusa sem duplicar trabalho.",
       subtitle: "CRM nativo com IA que organiza leads, conversas e funil automaticamente — sem precisar integrar nada pra começar.",
       highlightWords: ["CRM"],
-      painHeadline: "Empresas que usam CRM de forma consistente reportam até 29% mais vendas.",
+      painHeadline: "Empresas que usam CRM de forma consistente reportam [até 29% mais vendas].",
       painBody: "Planilha, grupo de WhatsApp e CRM que ninguém atualiza são 3 lugares diferentes pra um lead se perder.",
       painDisclaimer: "Dado de mercado (Salesforce, State of Sales), não específico da Tlin. Resultados variam conforme o segmento."
     },
@@ -53,7 +53,7 @@ export const ptBR = {
       title: "Do anúncio ao aluno matriculado,\ncom IA no WhatsApp.",
       subtitle: "Responda pico de lançamento, qualifique quem tem fit com o curso e recupere quem sumiu no carrinho — tudo automático, 24/7.",
       highlightWords: ["IA"],
-      painHeadline: "O abandono de carrinho no e-commerce chega a 70% — falta de resposta rápida é um dos motivos.",
+      painHeadline: "O abandono de carrinho no e-commerce chega a [70%] — falta de resposta rápida é um dos motivos.",
       painBody: "No dia do lançamento, cada mensagem que demora a ser respondida é uma venda que pode esfriar antes do carrinho fechar.",
       painDisclaimer: "Dado de mercado (Baymard Institute, média de abandono de carrinho), não específico de infoprodutos nem da Tlin."
     },
@@ -61,7 +61,7 @@ export const ptBR = {
       title: "Agentes de IA que vendem\ncomo seu melhor closer.",
       subtitle: "Treinados no seu playbook, script e objeções — os agentes da Tlin atendem, qualificam e escalam sua operação sem inchar a equipe.",
       highlightWords: ["IA"],
-      painHeadline: "Responder na 1ª hora torna a venda até 7x mais provável.",
+      painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
       painBody: "Um agente de IA responde nessa velocidade 24/7 — sem folga, sem precisar contratar e treinar mais gente pra dar conta do volume.",
       painDisclaimer: "Dado de mercado (estudo Oldroyd/Harvard Business Review sobre tempo de resposta a leads), não específico da Tlin. Resultados variam conforme sua operação."
     }
