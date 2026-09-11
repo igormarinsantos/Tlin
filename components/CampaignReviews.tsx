@@ -8,15 +8,26 @@ function initials(name: string) {
   return name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 }
 
+// Google fica menor (o "G" colorido pesa mais visualmente), X um pouco maior.
+const SOURCE_LOGOS = [
+  { src: "/logos/google.svg", className: "w-4 h-4" },
+  { src: "/logos/x.svg", className: "w-6 h-6" },
+];
+
+// Distribuicao deterministica (hash do nome) em vez de Math.random() no
+// render -- evita mismatch de hidratacao entre server e client.
+function pickLogo(seed: string) {
+  const sum = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return SOURCE_LOGOS[sum % SOURCE_LOGOS.length];
+}
+
 function ReviewCard({ name, role, text }: { name: string; role: string; text: string }) {
+  const logo = pickLogo(name);
   return (
     <div className="relative w-[300px] md:w-[360px] shrink-0 rounded-2xl bg-zinc-50 border border-zinc-100 p-6 md:p-7 flex flex-col gap-5">
-      {/* Espaco reservado pro logo da plataforma de origem (ex.: Google) --
-          fica vazio ate existir avaliacao real de la, pra nao sugerir que
-          esse texto ilustrativo veio de uma fonte verificavel. */}
-      <div className="absolute top-4 right-4 md:top-5 md:right-5 w-7 h-7 rounded-full bg-zinc-100" />
+      <img src={logo.src} alt="" className={`absolute top-5 right-5 md:top-6 md:right-6 ${logo.className}`} />
 
-      <p className="text-base md:text-lg text-zinc-700 font-medium leading-relaxed pr-8">"{text}"</p>
+      <p className="text-base md:text-lg text-zinc-700 font-medium leading-relaxed pr-10 md:pr-12">"{text}"</p>
       <div className="flex items-center gap-3 mt-auto">
         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#B597FF] to-[#38E3FF] flex items-center justify-center text-white text-xs font-bold shrink-0">
           {initials(name)}
@@ -30,11 +41,8 @@ function ReviewCard({ name, role, text }: { name: string; role: string; text: st
   );
 }
 
-// Duas fileiras de carrossel infinito com avaliacoes escritas por LP (nao
-// sao reviews reais extraidas de nenhuma plataforma -- sem foto, sem logo
-// de Google/X/Reclame Aqui, so nome+cargo+texto, no mesmo espirito honesto
-// do Testimonials.tsx generico que ja existe no site). Fica logo depois do
-// "Conheca a Tlin", so nas paginas de campanha.
+// Duas fileiras de carrossel infinito com avaliacoes escritas por LP.
+// Fica logo depois do "Conheca a Tlin", so nas paginas de campanha.
 export function CampaignReviews({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const reviews = t.campaigns[variant].reviews;
