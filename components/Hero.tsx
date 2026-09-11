@@ -48,7 +48,7 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
 
 export type HeroVariant = "iaWhatsapp" | "recuperacaoDeLeads" | "crmComIa" | "infoprodutores" | "agentesDeIa";
 
-export function Hero({ variant }: { variant?: HeroVariant } = {}) {
+export function Hero() {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { amount: 0.1, once: true });
 
@@ -61,11 +61,10 @@ export function Hero({ variant }: { variant?: HeroVariant } = {}) {
   const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
-  const heroCopy = variant ? t.campaigns[variant] : t.hero;
-  const title = heroCopy.title.replace(/\s*\{stars\}/g, "");
-  const subtitle = heroCopy.subtitle;
-  const highlightWords = variant ? t.campaigns[variant].highlightWords : ['Copiloto', 'IA', 'Copilot', 'AI'];
-  
+  const title = t.hero.title.replace(/\s*\{stars\}/g, "");
+  const subtitle = t.hero.subtitle;
+  const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
+
   const [isDesktop, setIsDesktop] = useState(true);
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);

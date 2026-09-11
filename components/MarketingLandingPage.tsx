@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Hero, type HeroVariant } from "@/components/Hero";
+import { CampaignHero } from "@/components/CampaignHero";
 import { PainSection } from "@/components/PainSection";
 import { TrustedBy } from "@/components/TrustedBy";
 import { ScrollBgWrapper } from "@/components/ScrollBgWrapper";
@@ -118,7 +119,9 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
       <GlobalBackground />
       <ScrollBgWrapper>
         {/* ATTENTION - Hero is priority */}
-        <div className="section-to-blur"><Hero variant={heroVariant} /></div>
+        <div className="section-to-blur">
+          {heroVariant ? <CampaignHero variant={heroVariant} /> : <Hero />}
+        </div>
 
         {/* Dor com dado de mercado -- so nas paginas de campanha */}
         {heroVariant && <div className="section-to-blur"><PainSection variant={heroVariant} /></div>}
