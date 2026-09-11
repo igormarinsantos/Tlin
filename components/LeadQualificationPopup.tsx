@@ -4,29 +4,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import {
-  eachMonthOfInterval,
-  eachDayOfInterval,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  addDays,
-  isSameMonth,
-  format as formatDate,
-  type Locale,
-} from "date-fns";
-import { ptBR, enUS, es } from "date-fns/locale";
 import { CountryFlag } from "@/components/CountryFlag";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getDictionary } from "@/lib/dictionaries";
 import { calculateLeadScore, getUtmLeadPayload, trackConversion, trackFunnelEvent } from "@/lib/utm";
+import {
+  type Message,
+  type DemoDay,
+  type DemoSlot,
+  SUCCESS_STEP,
+  WHATSAPP_NUMBER,
+  COUNTRIES,
+  LANGUAGE_CODES,
+  FALLBACK_FORM_DATA,
+  getInitialCountryCode,
+} from "@/components/lead-qualification/constants";
+import { HighlightText } from "@/components/lead-qualification/HighlightText";
+import { TypewriterQuestion } from "@/components/lead-qualification/TypewriterQuestion";
+import { AvailabilityCalendar } from "@/components/lead-qualification/AvailabilityCalendar";
 // confetti is dynamically imported
-
-type Message = {
-  role: 'bot' | 'user';
-  text: string;
-};
 
 type LeadQualificationPopupProps = {
   isOpen: boolean;
@@ -35,237 +31,9 @@ type LeadQualificationPopupProps = {
   embedded?: boolean;
 };
 
-// Common Country Codes
-const COUNTRIES = [
-  { code: '+55', flag: 'br', name: 'Brasil' },
-  { code: '+1', flag: 'us', name: 'EUA' },
-  { code: '+351', flag: 'pt', name: 'Portugal' },
-  { code: '+34', flag: 'es', name: 'Espanha' },
-  { code: '+44', flag: 'gb', name: 'Reino Unido' },
-  { code: '+54', flag: 'ar', name: 'Argentina' },
-  { code: '+56', flag: 'cl', name: 'Chile' },
-  { code: '+57', flag: 'co', name: 'Colômbia' },
-  { code: '+52', flag: 'mx', name: 'México' },
-];
-
-const LANGUAGE_CODES = ["PT", "EN", "ES"] as const;
-const FALLBACK_FORM_DATA = {
-  name: '',
-  phone: '',
-  countryCode: '+55',
-  volume: '',
-  team: '',
-  email: ''
-};
-
-const COUNTRY_CODE_BY_TIMEZONE: Record<string, string> = {
-  "America/Argentina/Buenos_Aires": "+54",
-  "America/Argentina/Catamarca": "+54",
-  "America/Argentina/Cordoba": "+54",
-  "America/Argentina/Jujuy": "+54",
-  "America/Argentina/La_Rioja": "+54",
-  "America/Argentina/Mendoza": "+54",
-  "America/Argentina/Rio_Gallegos": "+54",
-  "America/Argentina/Salta": "+54",
-  "America/Argentina/San_Juan": "+54",
-  "America/Argentina/San_Luis": "+54",
-  "America/Argentina/Tucuman": "+54",
-  "America/Argentina/Ushuaia": "+54",
-  "America/Bogota": "+57",
-  "America/Chicago": "+1",
-  "America/Denver": "+1",
-  "America/Los_Angeles": "+1",
-  "America/Mazatlan": "+52",
-  "America/Mexico_City": "+52",
-  "America/New_York": "+1",
-  "America/Santiago": "+56",
-  "America/Sao_Paulo": "+55",
-  "America/Recife": "+55",
-  "America/Fortaleza": "+55",
-  "America/Manaus": "+55",
-  "America/Belem": "+55",
-  "America/Campo_Grande": "+55",
-  "America/Cuiaba": "+55",
-  "America/Porto_Velho": "+55",
-  "America/Rio_Branco": "+55",
-  "Atlantic/Azores": "+351",
-  "Atlantic/Madeira": "+351",
-  "Europe/Lisbon": "+351",
-  "Europe/London": "+44",
-  "Europe/Madrid": "+34",
-};
-
-function getInitialCountryCode(language: string): string {
-  try {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const timezoneCountryCode = COUNTRY_CODE_BY_TIMEZONE[timezone];
-    if (timezoneCountryCode) return timezoneCountryCode;
-  } catch {
-    // Falls back to the selected site language when the browser does not expose a timezone.
-  }
-
-  if (language === "EN") return "+1";
-  if (language === "ES") return "+34";
-  return "+55";
-}
-
-
-
-// Helper to render text with gradient highlights
-const HighlightText = ({ text }: { text: string }) => {
-  const parts = text.split(/(\[.*?\])/);
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (part.startsWith('[') && part.endsWith(']')) {
-          return (
-            <span key={i} className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">
-              {part.slice(1, -1)}
-            </span>
-          );
-        }
-        return part;
-      })}
-    </>
-  );
-};
-
-// Typewriter component with Mascot Cursor
-const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: string; light?: boolean; bubble?: boolean }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const rawText = text.replace(/\[|\]/g, "");
-
-  useEffect(() => {
-    let i = 0;
-    const charsPerTick = window.innerWidth < 640 ? 3 : 2;
-    const interval = setInterval(() => {
-      i += charsPerTick;
-      setDisplayedText(rawText.slice(0, i));
-      if (i >= rawText.length) clearInterval(interval);
-    }, 32);
-    return () => clearInterval(interval);
-  }, [rawText]);
-
-  const isDone = displayedText === rawText;
-
-  return (
-    <div className={bubble
-      ? `relative inline-block text-xl sm:text-2xl font-semibold leading-relaxed ${light ? "text-zinc-900" : "text-white"}`
-      : `relative inline-block text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${light ? "text-zinc-950" : "text-white"}`}>
-      {isDone ? <HighlightText text={text} /> : displayedText}
-      <span className={`inline-block ml-2 align-middle shrink-0 ${bubble ? "w-4 h-4" : "w-5 h-5 sm:w-7 sm:h-7"}`}>
-        <Image src="/TlinIA.svg" alt="Mascot" width={32} height={32} className="w-full h-full object-contain" />
-      </span>
-    </div>
-  );
-};
-
-type DemoDay = { date: string; label: string; slots: DemoSlot[] };
-type DemoSlot = { startsAt: string; endsAt: string; when: string };
-
-const DATE_LOCALE_BY_LANG: Record<string, Locale> = { PT: ptBR, EN: enUS, ES: es };
-
-// Calendario de verdade (grade de mes) em vez de uma lista de dias em botoes --
-// dias com vaga ficam clicaveis, os demais aparecem so como referencia visual.
-function AvailabilityCalendar({
-  days,
-  onSelectDay,
-  lang,
-  isLight,
-}: {
-  days: DemoDay[];
-  onSelectDay: (day: DemoDay) => void;
-  lang: string;
-  isLight: boolean;
-}) {
-  const locale = DATE_LOCALE_BY_LANG[lang] || ptBR;
-  const [monthIdx, setMonthIdx] = useState(0);
-
-  const byDate = new Map(days.map((d) => [d.date, d]));
-  const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
-  const first = sorted[0] ? new Date(`${sorted[0].date}T00:00:00`) : new Date();
-  const last = sorted[sorted.length - 1] ? new Date(`${sorted[sorted.length - 1].date}T00:00:00`) : first;
-
-  const months = eachMonthOfInterval({ start: startOfMonth(first), end: startOfMonth(last) });
-  const activeMonth = months[Math.min(monthIdx, months.length - 1)] || first;
-
-  const gridStart = startOfWeek(startOfMonth(activeMonth), { weekStartsOn: 0 });
-  const gridEnd = endOfWeek(endOfMonth(activeMonth), { weekStartsOn: 0 });
-  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
-  const weekdayLabels = eachDayOfInterval({ start: gridStart, end: addDays(gridStart, 6) }).map((d) =>
-    formatDate(d, "EEEEE", { locale }),
-  );
-
-  return (
-    <div className="w-full">
-      {months.length > 1 && (
-        <div className="flex items-center justify-between mb-2 sm:mb-3">
-          <button
-            type="button"
-            onClick={() => setMonthIdx((i) => Math.max(0, i - 1))}
-            disabled={monthIdx === 0}
-            className={`p-1.5 rounded-lg disabled:opacity-20 transition-colors ${isLight ? "hover:bg-zinc-100 text-zinc-600" : "hover:bg-white/10 text-zinc-400"}`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6" /></svg>
-          </button>
-          <span className={`text-sm font-bold capitalize ${isLight ? "text-zinc-950" : "text-white"}`}>
-            {formatDate(activeMonth, "MMMM yyyy", { locale })}
-          </span>
-          <button
-            type="button"
-            onClick={() => setMonthIdx((i) => Math.min(months.length - 1, i + 1))}
-            disabled={monthIdx === months.length - 1}
-            className={`p-1.5 rounded-lg disabled:opacity-20 transition-colors ${isLight ? "hover:bg-zinc-100 text-zinc-600" : "hover:bg-white/10 text-zinc-400"}`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6" /></svg>
-          </button>
-        </div>
-      )}
-
-      <div className="grid grid-cols-7 gap-1 mb-1">
-        {weekdayLabels.map((w, i) => (
-          <div key={i} className={`text-center text-[10px] sm:text-xs font-bold uppercase ${isLight ? "text-zinc-400" : "text-zinc-600"}`}>
-            {w}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-1">
-        {gridDays.map((day) => {
-          const key = formatDate(day, "yyyy-MM-dd");
-          if (!isSameMonth(day, activeMonth)) return <div key={key} />;
-
-          const available = byDate.get(key);
-          if (available) {
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onSelectDay(available)}
-                className="h-8 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-bold border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-zinc-950 hover:bg-none hover:bg-[#38E3FF]/20 hover:border-[#38E3FF] transition-all active:scale-95"
-              >
-                {formatDate(day, "d")}
-              </button>
-            );
-          }
-          return (
-            <div
-              key={key}
-              className={`h-8 sm:h-10 flex items-center justify-center text-xs sm:text-sm ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
-            >
-              {formatDate(day, "d")}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
-  const WHATSAPP_NUMBER = "5511916248604";
-  
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
@@ -300,7 +68,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<DemoSlot | null>(null);
   const [demoPendingConfirmation, setDemoPendingConfirmation] = useState(false);
-  const SUCCESS_STEP = 10;
 
   const clearPendingAdvance = () => {
     if (pendingAdvanceTimeoutRef.current) {
