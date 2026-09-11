@@ -169,7 +169,7 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
       <div className="relative w-[176px] h-[150px] rounded-t-2xl bg-white border border-zinc-100 border-b-0 px-3 pt-3 flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold text-[#0c0d0d]">Qualificando</span>
-          <div className="relative w-3.5 h-4">
+          <div className="relative w-6 h-6 rounded-full bg-[#8B6CFF]/10">
             {CRM_LEADS.map((_, i) => {
               const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
               return (
@@ -252,24 +252,40 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
 
 // Acompanhar funil/metricas: funil de verdade com 3 estagios (containers
 // de largura decrescente) enchendo em sequencia, com numeros reais do lado.
+const FUNNEL_HEIGHT = 22;
 const FUNNEL_STAGES = [
-  { label: "Leads", width: 76 },
-  { label: "Oportunidades", width: 56 },
-  { label: "Vendas", width: 36 },
+  { top: 78, bottom: 58 },
+  { top: 58, bottom: 38 },
+  { top: 38, bottom: 22 },
 ];
+
+function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
+  const inset = (top - bottom) / 2;
+  return (
+    <svg width={top} height={FUNNEL_HEIGHT} viewBox={`0 0 ${top} ${FUNNEL_HEIGHT}`}>
+      <polygon
+        points={`0,0 ${top},0 ${top - inset},${FUNNEL_HEIGHT} ${inset},${FUNNEL_HEIGHT}`}
+        fill="#B597FF"
+        fillOpacity="0.2"
+        stroke="#B597FF"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
 
 export function FunnelMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center gap-6">
-      <div className="flex flex-col items-center gap-1.5">
+      <div className="flex flex-col items-center gap-1">
         {FUNNEL_STAGES.map((stage, i) => (
           <motion.div
             key={i}
-            className="h-6 rounded-md"
-            style={{ width: stage.width, background: GRADIENT, opacity: 0.55 + i * 0.22 }}
             animate={isActive ? { scaleX: [0, 1] } : { scaleX: 1 }}
             transition={{ duration: 0.5, delay: i * 0.3, repeat: loop(isActive), repeatType: "reverse", repeatDelay: 0.6, ease: "easeOut" }}
-          />
+          >
+            <FunnelTrapezoid top={stage.top} bottom={stage.bottom} />
+          </motion.div>
         ))}
       </div>
       <div className="flex flex-col gap-2">
