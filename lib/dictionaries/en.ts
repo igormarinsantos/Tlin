@@ -39,8 +39,8 @@ export const enUS: TranslationDictionary = {
       title: "Lead gone cold? The AI\npicks the conversation back up.",
       subtitle: "Automatic follow-up for leads who stopped replying, right on WhatsApp — no rep needs to remember to reach out again.",
       highlightWords: ["AI"],
-      painHeadline: "[80% of sales] require at least 5 follow-ups — but 44% of reps give up after the 1st.",
-      painBody: "The lead didn't say no. They just stopped replying — and without someone to re-engage at the right moment, that sale never comes back.",
+      painHeadline: "[80% of sales] require at least 5 follow-ups.",
+      painBody: "44% of reps give up after the 1st. The lead didn't say no, they just stopped replying — and without someone to re-engage at the right moment, that sale never comes back.",
       painDisclaimer: "Widely cited sales-training data (National Sales Executive Association), not specific to Tlin."
     },
     crmComIa: {

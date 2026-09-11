@@ -39,8 +39,8 @@ export const esES: TranslationDictionary = {
       title: "¿El lead se enfrió? La IA\nretoma la conversación sola.",
       subtitle: "Seguimiento automático para quien dejó de responder, directo en WhatsApp — sin depender de que un vendedor recuerde volver a escribir.",
       highlightWords: ["IA"],
-      painHeadline: "[El 80% de las ventas] exige al menos 5 seguimientos — pero el 44% de los vendedores desiste después del 1º.",
-      painBody: "El lead no dijo que no. Solo dejó de responder — y sin alguien que retome el contacto en el momento justo, esa venta nunca vuelve a aparecer.",
+      painHeadline: "[El 80% de las ventas] exige al menos 5 seguimientos.",
+      painBody: "El 44% de los vendedores desiste después del 1º. El lead no dijo que no, solo dejó de responder — y sin alguien que retome el contacto en el momento justo, esa venta nunca vuelve a aparecer.",
       painDisclaimer: "Dato de mercado ampliamente citado en capacitaciones de ventas (National Sales Executive Association), no específico de Tlin."
     },
     crmComIa: {

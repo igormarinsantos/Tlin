@@ -37,8 +37,8 @@ export const ptBR = {
       title: "Lead esfriou? A IA\nretoma a conversa sozinha.",
       subtitle: "Follow-up automático pra quem parou de responder, direto no WhatsApp — sem depender de vendedor lembrar de chamar de novo.",
       highlightWords: ["IA"],
-      painHeadline: "[80% das vendas] exigem pelo menos 5 follow-ups — mas 44% dos vendedores desistem depois do 1º.",
-      painBody: "O lead não disse não. Só parou de responder — e sem alguém pra retomar no momento certo, essa venda nunca mais aparece.",
+      painHeadline: "[80% das vendas] exigem pelo menos 5 follow-ups.",
+      painBody: "44% dos vendedores desistem depois do 1º. O lead não disse não, só parou de responder — e sem alguém pra retomar no momento certo, essa venda nunca mais aparece.",
       painDisclaimer: "Dado de mercado amplamente citado em treinamentos de vendas (National Sales Executive Association), não específico da Tlin."
     },
     crmComIa: {

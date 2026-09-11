@@ -123,10 +123,10 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           {heroVariant ? <CampaignHero variant={heroVariant} /> : <Hero />}
         </div>
 
+        <div className="section-to-blur"><TrustedBy /></div>
+
         {/* Dor com dado de mercado -- so nas paginas de campanha */}
         {heroVariant && <div className="section-to-blur"><PainSection variant={heroVariant} /></div>}
-
-        <div className="section-to-blur"><TrustedBy /></div>
 
         <DeferredSection minHeight="min-h-[420px]">
           <TextReveal />
