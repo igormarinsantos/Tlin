@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
-import { CARD_ICON, CARD_ICON_HOVER, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
+import { CARD_MOTION, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
 function HowItWorksCard({
   icon,
@@ -12,13 +12,12 @@ function HowItWorksCard({
   desc,
   index,
 }: {
-  icon: keyof typeof CARD_ICON;
+  icon: keyof typeof CARD_MOTION;
   title: string;
   desc: string;
   index: number;
 }) {
-  const Icon = CARD_ICON[icon];
-  const iconHover = CARD_ICON_HOVER[icon];
+  const Motion = CARD_MOTION[icon];
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -38,13 +37,8 @@ function HowItWorksCard({
           animate={{ opacity: isHovered ? 1 : 0.6 }}
           transition={{ duration: 0.3 }}
         />
-        <div className="relative w-14 h-14 rounded-2xl bg-white shadow-sm border border-zinc-100 flex items-center justify-center">
-          <motion.div
-            animate={isHovered ? iconHover.animate : { y: 0, x: 0, rotate: 0, scale: 1 }}
-            transition={iconHover.transition}
-          >
-            <Icon className="w-7 h-7 text-[#8B6CFF]" strokeWidth={1.8} />
-          </motion.div>
+        <div className="relative flex items-center justify-center">
+          <Motion isActive={isHovered} />
         </div>
       </div>
 
@@ -57,9 +51,9 @@ function HowItWorksCard({
 }
 
 // Substitui o TextReveal so nas paginas de campanha: eyebrow "Conheca a
-// Tlin" + grid de 6 mini-cards (3 em cima, 3 embaixo no desktop; 1 coluna
-// no mobile), cada um com um icone/mockup leve e estatico -- sem motion
-// pesado, pra ficar rapido e nao competir com a Hero/Dor.
+// Tlin" + titulo + grid de 6 mini-cards (3 em cima, 3 embaixo no desktop;
+// 1 coluna no mobile), cada um com um motion leve proprio (campaignCardMotions.tsx)
+// que toca em loop enquanto o card estiver em hover.
 export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const campaign = t.campaigns[variant];
