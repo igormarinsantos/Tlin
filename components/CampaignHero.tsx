@@ -53,6 +53,10 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
 
   return (
     <section className="relative w-full min-h-[80svh] md:min-h-[85svh] pt-28 md:pt-32 pb-12 md:pb-16 px-4 md:px-8 flex items-center bg-white overflow-hidden">
+      {/* Fundo azul bem fraco que vai desvanecendo pra transparente na base --
+          em vez de a secao cortar seca pra branco na dobra, ela se mistura
+          suavemente com o resto da pagina. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#38E3FF]/[0.08] via-[#38E3FF]/[0.03] to-transparent -z-20" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
       <div className="max-w-[1300px] w-full mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
