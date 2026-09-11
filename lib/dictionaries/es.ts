@@ -26,40 +26,81 @@ export const esES: TranslationDictionary = {
     demoSoon: "Demo próximamente"
   },
   campaigns: {
+    howItWorksEyebrow: "Conoce a Tlin",
     iaWhatsapp: {
       title: "Atención en WhatsApp\nfuncionando 24/7 con IA de verdad.",
       subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos, sin turnos, sin lead esperando respuesta.",
       highlightWords: ["WhatsApp"],
       painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Toda demora enfría una venta."
+      painBody: "Toda demora enfría una venta.",
+      howItWorksCards: [
+        { title: "Captura y califica", desc: "Toda visita o mensaje ya llega calificada por la IA, sin esperar que un humano responda." },
+        { title: "Atiende en WhatsApp", desc: "Responde a cada lead en segundos, 24 horas al día, directo en WhatsApp." },
+        { title: "Usa agentes de IA", desc: "Agentes entrenados en tu guion conducen la conversación hasta la venta." },
+        { title: "Organiza en el CRM nativo", desc: "Cada conversación se vuelve una tarjeta organizada automáticamente, sin trabajo manual." },
+        { title: "Agenda reuniones calificadas", desc: "La IA agenda la reunión directo en el calendario de quien puede cerrar." },
+        { title: "Sigue el embudo y las métricas", desc: "Mira en tiempo real cuántos leads se vuelven venta cada mes." }
+      ]
     },
     recuperacaoDeLeads: {
       title: "¿El lead se enfrió? La IA\nretoma la conversación sola.",
       subtitle: "Seguimiento automático para quien dejó de responder, directo en WhatsApp, sin depender de que un vendedor recuerde volver a escribir.",
       highlightWords: ["IA"],
       painHeadline: "[El 80% de las ventas] exige al menos 5 seguimientos.",
-      painBody: "44% desiste en el 1er seguimiento."
+      painBody: "44% desiste en el 1er seguimiento.",
+      howItWorksCards: [
+        { title: "Retoma a quien dejó de responder", desc: "La IA reactiva la conversación automáticamente en los intervalos justos, sin que el vendedor lo recuerde." },
+        { title: "Atiende en WhatsApp", desc: "Cuando el lead vuelve a responder, la IA retoma la atención al instante." },
+        { title: "Usa agentes de IA", desc: "El seguimiento sigue tu guion: mismo tono, mismo enfoque." },
+        { title: "Organiza en el CRM nativo", desc: "Todo lead reactivado aparece organizado, sin planilla que actualizar." },
+        { title: "Agenda reuniones calificadas", desc: "Quien responde al seguimiento ya sale con una reunión agendada." },
+        { title: "Sigue el embudo y las métricas", desc: "Mira cuántas ventas volvieron a suceder gracias al seguimiento automático." }
+      ]
     },
     crmComIa: {
       title: "El CRM que tu equipo\nusa sin duplicar trabajo.",
       subtitle: "CRM nativo con IA que organiza leads, conversaciones y embudo automáticamente, sin necesidad de integrar nada para empezar.",
       highlightWords: ["CRM"],
       painHeadline: "Las empresas que usan CRM de forma consistente reportan [hasta 29% más ventas].",
-      painBody: "Tres lugares, un lead perdido."
+      painBody: "Tres lugares, un lead perdido.",
+      howItWorksCards: [
+        { title: "Captura y califica", desc: "Todo lead nuevo entra calificado directo a tu CRM, sin escribir nada a mano." },
+        { title: "Atiende en WhatsApp", desc: "Atiende en el mismo lugar donde organizas: todo dentro del CRM de Tlin." },
+        { title: "Usa agentes de IA", desc: "Los agentes de IA llevan la conversación mientras el CRM guarda el historial." },
+        { title: "Organiza en el CRM nativo", desc: "Embudo, conversaciones y datos del lead en un solo lugar, sin integrar nada." },
+        { title: "Agenda reuniones calificadas", desc: "La reunión entra directo al calendario del vendedor correcto." },
+        { title: "Sigue el embudo y las métricas", desc: "Mira todo tu embudo actualizado automáticamente, sin planilla." }
+      ]
     },
     infoprodutores: {
       title: "Del anuncio al alumno inscrito,\ncon IA en WhatsApp.",
       subtitle: "Atiende picos de lanzamiento, califica a quien tiene fit con tu curso y recupera a quien abandonó el carrito, todo automático, 24/7.",
       highlightWords: ["IA"],
       painHeadline: "El abandono de carrito en e-commerce llega al [70%]. La falta de respuesta rápida es uno de los motivos.",
-      painBody: "Demora es carrito abandonado."
+      painBody: "Demora es carrito abandonado.",
+      howItWorksCards: [
+        { title: "Captura y califica", desc: "Todo lead del anuncio ya llega calificado por la IA, incluso en el pico del lanzamiento." },
+        { title: "Atiende en WhatsApp", desc: "Atiende a todos durante el lanzamiento sin fila de espera." },
+        { title: "Usa agentes de IA", desc: "Agentes entrenados en tu curso resuelven dudas y ayudan a cerrar la matrícula." },
+        { title: "Organiza en el CRM nativo", desc: "Cada alumno potencial queda organizado por etapa, sin que nadie se pierda." },
+        { title: "Recupera el carrito abandonado", desc: "La IA vuelve a contactar a quien abandonó el carrito antes de cerrar la compra." },
+        { title: "Sigue el embudo y las métricas", desc: "Mira cuántas matrículas vinieron de cada campaña en tiempo real." }
+      ]
     },
     agentesDeIa: {
       title: "Agentes de IA que venden\ncomo tu mejor closer.",
       subtitle: "Entrenados en tu playbook, guiones y objeciones, los agentes de Tlin atienden, califican y escalan tu operación sin inflar el equipo.",
       highlightWords: ["IA"],
       painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Un agente de IA nunca descansa."
+      painBody: "Un agente de IA nunca descansa.",
+      howItWorksCards: [
+        { title: "Captura y califica", desc: "El agente de IA califica automáticamente a quien llega, sin intervención humana." },
+        { title: "Atiende en WhatsApp", desc: "Tu agente responde 24/7 con la misma calidad que tu mejor vendedor." },
+        { title: "Usa agentes de IA", desc: "Entrenado en tu guion, script y objeciones: un agente hecho a la medida de tu negocio." },
+        { title: "Organiza en el CRM nativo", desc: "El agente organiza automáticamente cada lead en el CRM." },
+        { title: "Agenda reuniones calificadas", desc: "El agente agenda reuniones solo con quien ya está listo para comprar." },
+        { title: "Sigue el embudo y las métricas", desc: "Sigue el desempeño del agente en tiempo real." }
+      ]
     }
   },
   trusted: {

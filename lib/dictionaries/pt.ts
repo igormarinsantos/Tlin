@@ -24,40 +24,81 @@ export const ptBR = {
     demoSoon: "Demo em breve"
   },
   campaigns: {
+    howItWorksEyebrow: "Conheça a Tlin",
     iaWhatsapp: {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
       highlightWords: ["WhatsApp"],
       painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
-      painBody: "Toda demora esfria uma venda."
+      painBody: "Toda demora esfria uma venda.",
+      howItWorksCards: [
+        { title: "Capture e qualifique", desc: "Toda visita ou mensagem já entra qualificada pela IA, sem esperar um humano responder." },
+        { title: "Atenda no WhatsApp", desc: "Responda cada lead em segundos, 24 horas por dia, direto no WhatsApp." },
+        { title: "Use agentes de IA", desc: "Agentes treinados no seu script conduzem a conversa até a venda." },
+        { title: "Organize no CRM nativo", desc: "Cada conversa vira um card organizado automaticamente, sem trabalho manual." },
+        { title: "Agende reuniões qualificadas", desc: "A IA marca a reunião direto na agenda de quem pode fechar." },
+        { title: "Acompanhe funil e métricas", desc: "Veja em tempo real quantos leads viram venda todo mês." }
+      ]
     },
     recuperacaoDeLeads: {
       title: "Lead esfriou? A IA\nretoma a conversa sozinha.",
       subtitle: "Follow-up automático pra quem parou de responder, direto no WhatsApp, sem depender de vendedor lembrar de chamar de novo.",
       highlightWords: ["IA"],
       painHeadline: "[80% das vendas] exigem pelo menos 5 follow-ups.",
-      painBody: "44% desistem no 1º follow-up."
+      painBody: "44% desistem no 1º follow-up.",
+      howItWorksCards: [
+        { title: "Retome quem parou de responder", desc: "A IA reativa a conversa automaticamente nos intervalos certos, sem vendedor lembrar." },
+        { title: "Atenda no WhatsApp", desc: "Quando o lead volta a responder, a IA já retoma o atendimento na hora." },
+        { title: "Use agentes de IA", desc: "O follow-up segue o seu playbook: mesmo tom, mesma abordagem." },
+        { title: "Organize no CRM nativo", desc: "Todo lead reativado aparece organizado, sem planilha pra atualizar." },
+        { title: "Agende reuniões qualificadas", desc: "Quem responde ao follow-up já sai com reunião marcada." },
+        { title: "Acompanhe funil e métricas", desc: "Veja quantas vendas voltaram a acontecer com o follow-up automático." }
+      ]
     },
     crmComIa: {
       title: "O CRM que sua equipe\nusa sem duplicar trabalho.",
       subtitle: "CRM nativo com IA que organiza leads, conversas e funil automaticamente, sem precisar integrar nada pra começar.",
       highlightWords: ["CRM"],
       painHeadline: "Empresas que usam CRM de forma consistente reportam [até 29% mais vendas].",
-      painBody: "Três lugares, um lead perdido."
+      painBody: "Três lugares, um lead perdido.",
+      howItWorksCards: [
+        { title: "Capture e qualifique", desc: "Todo novo lead entra qualificado direto no seu CRM, sem digitação manual." },
+        { title: "Atenda no WhatsApp", desc: "Atenda no mesmo lugar onde organiza: tudo dentro do CRM da Tlin." },
+        { title: "Use agentes de IA", desc: "Agentes de IA cuidam da conversa enquanto o CRM cuida do histórico." },
+        { title: "Organize no CRM nativo", desc: "Funil, conversas e dados do lead num só lugar, sem integrar nada." },
+        { title: "Agende reuniões qualificadas", desc: "A reunião entra direto na agenda do vendedor certo." },
+        { title: "Acompanhe funil e métricas", desc: "Veja o funil inteiro atualizado automaticamente, sem planilha." }
+      ]
     },
     infoprodutores: {
       title: "Do anúncio ao aluno matriculado,\ncom IA no WhatsApp.",
       subtitle: "Responda pico de lançamento, qualifique quem tem fit com o curso e recupere quem sumiu no carrinho, tudo automático, 24/7.",
       highlightWords: ["IA"],
       painHeadline: "O abandono de carrinho no e-commerce chega a [70%]. Falta de resposta rápida é um dos motivos.",
-      painBody: "Demora vira carrinho abandonado."
+      painBody: "Demora vira carrinho abandonado.",
+      howItWorksCards: [
+        { title: "Capture e qualifique", desc: "Todo lead do anúncio já chega qualificado pela IA, mesmo no pico do lançamento." },
+        { title: "Atenda no WhatsApp", desc: "Responda todo mundo no lançamento sem fila de espera." },
+        { title: "Use agentes de IA", desc: "Agentes treinados no seu curso tiram dúvida e ajudam a fechar matrícula." },
+        { title: "Organize no CRM nativo", desc: "Cada aluno em potencial fica organizado por etapa, sem perder ninguém." },
+        { title: "Recupere carrinho abandonado", desc: "A IA volta a chamar quem abandonou o carrinho antes de fechar." },
+        { title: "Acompanhe funil e métricas", desc: "Veja quantas matrículas vieram de cada campanha em tempo real." }
+      ]
     },
     agentesDeIa: {
       title: "Agentes de IA que vendem\ncomo seu melhor closer.",
       subtitle: "Treinados no seu playbook, script e objeções, os agentes da Tlin atendem, qualificam e escalam sua operação sem inchar a equipe.",
       highlightWords: ["IA"],
       painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
-      painBody: "Um agente de IA nunca tira folga."
+      painBody: "Um agente de IA nunca tira folga.",
+      howItWorksCards: [
+        { title: "Capture e qualifique", desc: "O agente de IA qualifica automaticamente quem chega, sem intervenção humana." },
+        { title: "Atenda no WhatsApp", desc: "Seu agente responde 24/7 com a mesma qualidade do seu melhor vendedor." },
+        { title: "Use agentes de IA", desc: "Treinado no seu playbook, script e objeções: um agente sob medida pro seu negócio." },
+        { title: "Organize no CRM nativo", desc: "O agente organiza automaticamente cada lead no CRM." },
+        { title: "Agende reuniões qualificadas", desc: "O agente marca a reunião só com quem está pronto pra comprar." },
+        { title: "Acompanhe funil e métricas", desc: "Acompanhe o desempenho do agente em tempo real." }
+      ]
     }
   },
   trusted: {

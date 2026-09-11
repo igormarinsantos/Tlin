@@ -26,40 +26,81 @@ export const enUS: TranslationDictionary = {
     demoSoon: "Demo coming soon"
   },
   campaigns: {
+    howItWorksEyebrow: "Meet Tlin",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",
       highlightWords: ["WhatsApp"],
       painHeadline: "Responding within the first hour makes a sale [up to 7x more likely].",
-      painBody: "Every delay cools a sale."
+      painBody: "Every delay cools a sale.",
+      howItWorksCards: [
+        { title: "Capture and qualify", desc: "Every visit or message is already qualified by AI, no human needed to reply." },
+        { title: "Answer on WhatsApp", desc: "Reply to every lead in seconds, 24 hours a day, right on WhatsApp." },
+        { title: "Use AI agents", desc: "Agents trained on your script carry the conversation through to the sale." },
+        { title: "Organize in the native CRM", desc: "Every conversation becomes an organized card automatically, no manual work." },
+        { title: "Book qualified meetings", desc: "The AI books the meeting straight into the calendar of whoever can close it." },
+        { title: "Track funnel and metrics", desc: "See in real time how many leads turn into sales every month." }
+      ]
     },
     recuperacaoDeLeads: {
       title: "Lead gone cold? The AI\npicks the conversation back up.",
       subtitle: "Automatic follow-up for leads who stopped replying, right on WhatsApp, no rep needs to remember to reach out again.",
       highlightWords: ["AI"],
       painHeadline: "[80% of sales] require at least 5 follow-ups.",
-      painBody: "44% quit after the 1st follow-up."
+      painBody: "44% quit after the 1st follow-up.",
+      howItWorksCards: [
+        { title: "Re-engage who stopped replying", desc: "The AI reactivates the conversation automatically at the right intervals, no rep needs to remember." },
+        { title: "Answer on WhatsApp", desc: "When the lead replies again, the AI picks the conversation right back up." },
+        { title: "Use AI agents", desc: "The follow-up follows your playbook: same tone, same approach." },
+        { title: "Organize in the native CRM", desc: "Every re-engaged lead shows up organized, no spreadsheet to update." },
+        { title: "Book qualified meetings", desc: "Whoever replies to the follow-up already walks away with a meeting booked." },
+        { title: "Track funnel and metrics", desc: "See how many sales came back thanks to automatic follow-up." }
+      ]
     },
     crmComIa: {
       title: "The CRM your team\nuses without duplicating work.",
       subtitle: "A native AI-powered CRM that organizes leads, conversations, and pipeline automatically, nothing to integrate to get started.",
       highlightWords: ["CRM"],
       painHeadline: "Companies that use a CRM consistently report [up to 29% more sales].",
-      painBody: "Three places, one lost lead."
+      painBody: "Three places, one lost lead.",
+      howItWorksCards: [
+        { title: "Capture and qualify", desc: "Every new lead comes in qualified straight into your CRM, no manual typing." },
+        { title: "Answer on WhatsApp", desc: "Answer in the same place you organize: everything inside Tlin's CRM." },
+        { title: "Use AI agents", desc: "AI agents handle the conversation while the CRM handles the history." },
+        { title: "Organize in the native CRM", desc: "Funnel, conversations, and lead data in one place, nothing to integrate." },
+        { title: "Book qualified meetings", desc: "The meeting goes straight into the right rep's calendar." },
+        { title: "Track funnel and metrics", desc: "See your whole funnel updated automatically, no spreadsheet." }
+      ]
     },
     infoprodutores: {
       title: "From ad click to enrolled student,\nwith AI on WhatsApp.",
       subtitle: "Handle launch spikes, qualify who's a fit for your course, and recover abandoned checkouts, all automatic, 24/7.",
       highlightWords: ["AI"],
       painHeadline: "Cart abandonment in e-commerce reaches [70%]. Slow response is one of the reasons.",
-      painBody: "Slow replies mean abandoned carts."
+      painBody: "Slow replies mean abandoned carts.",
+      howItWorksCards: [
+        { title: "Capture and qualify", desc: "Every lead from the ad already arrives qualified by AI, even at launch peak." },
+        { title: "Answer on WhatsApp", desc: "Answer everyone during launch with no waiting line." },
+        { title: "Use AI agents", desc: "Agents trained on your course answer questions and help close enrollment." },
+        { title: "Organize in the native CRM", desc: "Every potential student stays organized by stage, nobody falls through." },
+        { title: "Recover abandoned carts", desc: "The AI reaches back out to whoever abandoned their cart before checkout." },
+        { title: "Track funnel and metrics", desc: "See how many enrollments came from each campaign in real time." }
+      ]
     },
     agentesDeIa: {
       title: "AI agents that sell\nlike your best closer.",
       subtitle: "Trained on your playbook, scripts and objections, Tlin's agents answer, qualify, and scale your operation without bloating the team.",
       highlightWords: ["AI"],
       painHeadline: "Responding within the first hour makes a sale [up to 7x more likely].",
-      painBody: "An AI agent never takes a day off."
+      painBody: "An AI agent never takes a day off.",
+      howItWorksCards: [
+        { title: "Capture and qualify", desc: "The AI agent automatically qualifies whoever comes in, no human needed." },
+        { title: "Answer on WhatsApp", desc: "Your agent replies 24/7 with the same quality as your best salesperson." },
+        { title: "Use AI agents", desc: "Trained on your playbook, scripts and objections: an agent built for your business." },
+        { title: "Organize in the native CRM", desc: "The agent automatically organizes every lead in the CRM." },
+        { title: "Book qualified meetings", desc: "The agent books meetings only with whoever is ready to buy." },
+        { title: "Track funnel and metrics", desc: "Track the agent's performance in real time." }
+      ]
     }
   },
   trusted: {
