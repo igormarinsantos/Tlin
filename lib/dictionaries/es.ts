@@ -27,6 +27,7 @@ export const esES: TranslationDictionary = {
   },
   campaigns: {
     howItWorksEyebrow: "Conoce a Tlin",
+    howItWorksTitle: "Cómo funciona, paso a paso",
     iaWhatsapp: {
       title: "Atención en WhatsApp\nfuncionando 24/7 con IA de verdad.",
       subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos, sin turnos, sin lead esperando respuesta.",
@@ -40,6 +41,14 @@ export const esES: TranslationDictionary = {
         { title: "Organiza en el CRM nativo", desc: "Cada conversación se vuelve una tarjeta organizada automáticamente, sin trabajo manual." },
         { title: "Agenda reuniones calificadas", desc: "La IA agenda la reunión directo en el calendario de quien puede cerrar." },
         { title: "Sigue el embudo y las métricas", desc: "Mira en tiempo real cuántos leads se vuelven venta cada mes." }
+      ],
+      reviews: [
+        { name: "Marina Duarte", role: "Gerente comercial", text: "Ahora respondo a cada cliente al instante, ni parece un robot." },
+        { name: "Thiago Ramos", role: "Dueño de tienda", text: "La IA califica antes de que yo abra el WhatsApp." },
+        { name: "Camila Nogueira", role: "Coordinadora de ventas", text: "Ningún lead se queda esperando respuesta nunca más." },
+        { name: "Bruno Castro", role: "Socio", text: "La atención por fin quedó tan rápida como siempre quise." },
+        { name: "Renata Alves", role: "Gerente de atención", text: "El equipo por fin no pierde más mensajes de madrugada." },
+        { name: "Diego Farias", role: "Emprendedor", text: "Impresionante la velocidad con la que responde la IA." }
       ]
     },
     recuperacaoDeLeads: {
@@ -55,6 +64,14 @@ export const esES: TranslationDictionary = {
         { title: "Organiza en el CRM nativo", desc: "Todo lead reactivado aparece organizado, sin planilla que actualizar." },
         { title: "Agenda reuniones calificadas", desc: "Quien responde al seguimiento ya sale con una reunión agendada." },
         { title: "Sigue el embudo y las métricas", desc: "Mira cuántas ventas volvieron a suceder gracias al seguimiento automático." }
+      ],
+      reviews: [
+        { name: "Patrícia Lemos", role: "Vendedora", text: "Un lead que ya había olvidado volvió a comprar." },
+        { name: "Rodrigo Vieira", role: "Gerente comercial", text: "El seguimiento automático recuperó ventas que ya daba por perdidas." },
+        { name: "Juliana Prado", role: "Socia", text: "Nunca más se me olvida retomar el contacto." },
+        { name: "Felipe Moraes", role: "Dueño de negocio", text: "La IA recuerda a cada lead que dejó de responder." },
+        { name: "Aline Barbosa", role: "Coordinadora de ventas", text: "Recuperé clientes que ya habían desaparecido hacía semanas." },
+        { name: "Marcelo Teixeira", role: "Empresario", text: "El sistema hace lo que yo no tenía tiempo de hacer." }
       ]
     },
     crmComIa: {
@@ -70,6 +87,14 @@ export const esES: TranslationDictionary = {
         { title: "Organiza en el CRM nativo", desc: "Embudo, conversaciones y datos del lead en un solo lugar, sin integrar nada." },
         { title: "Agenda reuniones calificadas", desc: "La reunión entra directo al calendario del vendedor correcto." },
         { title: "Sigue el embudo y las métricas", desc: "Mira todo tu embudo actualizado automáticamente, sin planilla." }
+      ],
+      reviews: [
+        { name: "Fernanda Rocha", role: "Gerente comercial", text: "Dejé de usar planillas, ahora todo es automático en el CRM." },
+        { name: "Gustavo Pires", role: "Dueño de tienda", text: "Cada lead ya entra organizado, sin que yo escriba nada." },
+        { name: "Larissa Cunha", role: "Coordinadora", text: "El embudo por fin tiene sentido para mi equipo." },
+        { name: "André Bezerra", role: "Socio", text: "Ya no pierdo ningún lead en el camino." },
+        { name: "Camila Freitas", role: "Gerente de operaciones", text: "Veo todo en un solo lugar, sin depender de que un vendedor lo recuerde." },
+        { name: "Rafael Monteiro", role: "Empresario", text: "Reemplazó 3 herramientas distintas que usaba antes." }
       ]
     },
     infoprodutores: {
@@ -85,6 +110,14 @@ export const esES: TranslationDictionary = {
         { title: "Organiza en el CRM nativo", desc: "Cada alumno potencial queda organizado por etapa, sin que nadie se pierda." },
         { title: "Recupera el carrito abandonado", desc: "La IA vuelve a contactar a quien abandonó el carrito antes de cerrar la compra." },
         { title: "Sigue el embudo y las métricas", desc: "Mira cuántas matrículas vinieron de cada campaña en tiempo real." }
+      ],
+      reviews: [
+        { name: "Bianca Correia", role: "Productora digital", text: "En el lanzamiento, la IA se encargó de todo sola." },
+        { name: "Vinícius Andrade", role: "Creador de curso", text: "Recuperé carritos abandonados sin contratar más gente." },
+        { name: "Tatiane Souza", role: "Gestora de lanzamiento", text: "Cada alumno potencial fue atendido al instante, incluso en el pico." },
+        { name: "Leonardo Dias", role: "Creador de curso", text: "La IA resolvió dudas de matrícula las 24 horas." },
+        { name: "Priscila Nunes", role: "Productora", text: "No perdí ninguna venta por demora en este lanzamiento." },
+        { name: "Eduardo Martins", role: "Creador de curso", text: "Por fin una forma de escalar la atención el día del lanzamiento." }
       ]
     },
     agentesDeIa: {
@@ -100,6 +133,14 @@ export const esES: TranslationDictionary = {
         { title: "Organiza en el CRM nativo", desc: "El agente organiza automáticamente cada lead en el CRM." },
         { title: "Agenda reuniones calificadas", desc: "El agente agenda reuniones solo con quien ya está listo para comprar." },
         { title: "Sigue el embudo y las métricas", desc: "Sigue el desempeño del agente en tiempo real." }
+      ],
+      reviews: [
+        { name: "Sabrina Lopes", role: "Socia", text: "El agente de IA vende igual que mi mejor vendedor." },
+        { name: "Henrique Ribeiro", role: "Gerente comercial", text: "Entrené al agente con mi propio guion y aprendió rápido." },
+        { name: "Débora Fontes", role: "Empresaria", text: "No tuve que contratar a nadie más para manejar el volumen." },
+        { name: "Otávio Cardoso", role: "Dueño de negocio", text: "El agente maneja objeciones mejor de lo que esperaba." },
+        { name: "Vanessa Melo", role: "Coordinadora de ventas", text: "Es como tener un vendedor que nunca descansa." },
+        { name: "Caio Ferreira", role: "Cofundador", text: "El agente cierra ventas solo en la mayoría de los casos." }
       ]
     }
   },
@@ -152,13 +193,10 @@ export const esES: TranslationDictionary = {
     footerNote: "* simulación conservadora basada en casos reales de Tlin.ai"
   },
   caseStudy: {
-    eyebrow: "🎥 Caso real",
     headline: "Cómo Embarpet puso un agente de IA en su equipo comercial",
     name: "Daiane Sarmento",
     role: "CEO, Embarpet",
-    quote: "Testimonio en producción. Resultado real en cuanto Daiane confirme los números.",
-    comingSoonBadge: "Video muy pronto",
-    disclaimer: "Caso real de cliente Tlin, no es actor ni testimonio genérico."
+    quote: "Testimonio en producción. Resultado real en cuanto Daiane confirme los números."
   },
   pricing: {
     badge: "Plan de Inversión",

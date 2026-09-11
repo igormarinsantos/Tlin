@@ -15,6 +15,7 @@ const TextReveal = dynamic(() => import("@/components/TextReveal").then(mod => m
 // SSR ligado (sem ssr:false): e conteudo textual relevante pra SEO/GEO das
 // paginas de campanha, igual Features/Pricing/Testimonials/Faq abaixo.
 const CampaignHowItWorks = dynamic(() => import("@/components/CampaignHowItWorks").then(mod => mod.CampaignHowItWorks));
+const CampaignReviews = dynamic(() => import("@/components/CampaignReviews").then(mod => mod.CampaignReviews));
 // SSR ligado (sem ssr:false) pra essas seções: precisam existir no HTML inicial
 // pro Google indexar sem depender de JS (âncoras #como-funciona/#agentes/#crm/#planos/#faq).
 const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
@@ -135,6 +136,13 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         <DeferredSection minHeight="min-h-[420px]">
           {heroVariant ? <CampaignHowItWorks variant={heroVariant} /> : <TextReveal />}
         </DeferredSection>
+
+        {/* Avaliacoes em 2 fileiras de carrossel infinito -- so nas LPs de campanha */}
+        {heroVariant && (
+          <div className="section-to-blur">
+            <CampaignReviews variant={heroVariant} />
+          </div>
+        )}
 
         {/* CORE CAPABILITIES — renderizado direto (sem DeferredSection) pra existir
             no HTML inicial: #como-funciona/#agentes/#crm ficam indexáveis sem JS. */}

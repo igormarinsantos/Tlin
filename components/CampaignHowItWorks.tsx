@@ -68,12 +68,12 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
   return (
     <section className="w-full bg-white py-20 md:py-28 px-4 md:px-8">
       <div className="max-w-[1100px] mx-auto">
-        <div className="flex justify-center mb-12 md:mb-16">
+        <div className="flex flex-col items-center text-center mb-12 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            className="relative p-[1px] rounded-full overflow-hidden inline-flex"
+            className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-5"
           >
             <div
               className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
@@ -83,6 +83,16 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
               {t.campaigns.howItWorksEyebrow}
             </div>
           </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-3xl md:text-5xl font-black tracking-tight text-[#0c0d0d]"
+          >
+            {t.campaigns.howItWorksTitle}
+          </motion.h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">

@@ -27,6 +27,7 @@ export const enUS: TranslationDictionary = {
   },
   campaigns: {
     howItWorksEyebrow: "Meet Tlin",
+    howItWorksTitle: "How it works, step by step",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",
@@ -40,6 +41,14 @@ export const enUS: TranslationDictionary = {
         { title: "Organize in the native CRM", desc: "Every conversation becomes an organized card automatically, no manual work." },
         { title: "Book qualified meetings", desc: "The AI books the meeting straight into the calendar of whoever can close it." },
         { title: "Track funnel and metrics", desc: "See in real time how many leads turn into sales every month." }
+      ],
+      reviews: [
+        { name: "Marina Duarte", role: "Sales manager", text: "I reply to every customer instantly now, doesn't even feel like a bot." },
+        { name: "Thiago Ramos", role: "Shop owner", text: "The AI qualifies before I even open WhatsApp." },
+        { name: "Camila Nogueira", role: "Sales coordinator", text: "No lead is ever left waiting for a reply anymore." },
+        { name: "Bruno Castro", role: "Partner", text: "Support finally got as fast as I always wanted." },
+        { name: "Renata Alves", role: "Support manager", text: "The team finally doesn't miss overnight messages anymore." },
+        { name: "Diego Farias", role: "Entrepreneur", text: "The speed the AI replies at is impressive." }
       ]
     },
     recuperacaoDeLeads: {
@@ -55,6 +64,14 @@ export const enUS: TranslationDictionary = {
         { title: "Organize in the native CRM", desc: "Every re-engaged lead shows up organized, no spreadsheet to update." },
         { title: "Book qualified meetings", desc: "Whoever replies to the follow-up already walks away with a meeting booked." },
         { title: "Track funnel and metrics", desc: "See how many sales came back thanks to automatic follow-up." }
+      ],
+      reviews: [
+        { name: "Patrícia Lemos", role: "Sales rep", text: "A lead I had forgotten about came back and bought." },
+        { name: "Rodrigo Vieira", role: "Sales manager", text: "Automatic follow-up recovered sales I had already written off." },
+        { name: "Juliana Prado", role: "Partner", text: "I never forget to reach back out anymore." },
+        { name: "Felipe Moraes", role: "Business owner", text: "The AI remembers every lead who stopped replying." },
+        { name: "Aline Barbosa", role: "Sales coordinator", text: "I recovered customers who had gone quiet weeks ago." },
+        { name: "Marcelo Teixeira", role: "Business owner", text: "The system does what I never had time to do." }
       ]
     },
     crmComIa: {
@@ -70,6 +87,14 @@ export const enUS: TranslationDictionary = {
         { title: "Organize in the native CRM", desc: "Funnel, conversations, and lead data in one place, nothing to integrate." },
         { title: "Book qualified meetings", desc: "The meeting goes straight into the right rep's calendar." },
         { title: "Track funnel and metrics", desc: "See your whole funnel updated automatically, no spreadsheet." }
+      ],
+      reviews: [
+        { name: "Fernanda Rocha", role: "Sales manager", text: "I stopped using spreadsheets, now it's all automatic in the CRM." },
+        { name: "Gustavo Pires", role: "Shop owner", text: "Every lead comes in already organized, no typing needed." },
+        { name: "Larissa Cunha", role: "Coordinator", text: "The funnel finally makes sense for my team." },
+        { name: "André Bezerra", role: "Partner", text: "I don't lose leads along the way anymore." },
+        { name: "Camila Freitas", role: "Operations manager", text: "I can see everything in one place, no rep needs to remember." },
+        { name: "Rafael Monteiro", role: "Business owner", text: "It replaced 3 different tools I used to juggle." }
       ]
     },
     infoprodutores: {
@@ -85,6 +110,14 @@ export const enUS: TranslationDictionary = {
         { title: "Organize in the native CRM", desc: "Every potential student stays organized by stage, nobody falls through." },
         { title: "Recover abandoned carts", desc: "The AI reaches back out to whoever abandoned their cart before checkout." },
         { title: "Track funnel and metrics", desc: "See how many enrollments came from each campaign in real time." }
+      ],
+      reviews: [
+        { name: "Bianca Correia", role: "Digital producer", text: "During launch, the AI handled everything on its own." },
+        { name: "Vinícius Andrade", role: "Course creator", text: "I recovered abandoned carts without hiring more people." },
+        { name: "Tatiane Souza", role: "Launch manager", text: "Every potential student got answered instantly, even at peak." },
+        { name: "Leonardo Dias", role: "Course creator", text: "The AI answered enrollment questions around the clock." },
+        { name: "Priscila Nunes", role: "Producer", text: "I didn't lose a single sale to slow replies this launch." },
+        { name: "Eduardo Martins", role: "Course creator", text: "Finally a way to scale support on launch day." }
       ]
     },
     agentesDeIa: {
@@ -100,6 +133,14 @@ export const enUS: TranslationDictionary = {
         { title: "Organize in the native CRM", desc: "The agent automatically organizes every lead in the CRM." },
         { title: "Book qualified meetings", desc: "The agent books meetings only with whoever is ready to buy." },
         { title: "Track funnel and metrics", desc: "Track the agent's performance in real time." }
+      ],
+      reviews: [
+        { name: "Sabrina Lopes", role: "Partner", text: "The AI agent sells just like my best salesperson." },
+        { name: "Henrique Ribeiro", role: "Sales manager", text: "I trained the agent on my own script and it picked it up fast." },
+        { name: "Débora Fontes", role: "Business owner", text: "I didn't need to hire anyone else to handle the volume." },
+        { name: "Otávio Cardoso", role: "Business owner", text: "The agent handles objections better than I expected." },
+        { name: "Vanessa Melo", role: "Sales coordinator", text: "It's like having a salesperson who never takes a day off." },
+        { name: "Caio Ferreira", role: "Co-founder", text: "The agent closes sales on its own in most cases." }
       ]
     }
   },
@@ -152,13 +193,10 @@ export const enUS: TranslationDictionary = {
     footerNote: "* conservative simulation based on real Tlin.ai cases"
   },
   caseStudy: {
-    eyebrow: "🎥 Real case",
     headline: "How Embarpet put an AI agent on their sales team",
     name: "Daiane Sarmento",
     role: "CEO, Embarpet",
-    quote: "Testimonial in progress. Real results as soon as Daiane confirms the numbers.",
-    comingSoonBadge: "Video coming soon",
-    disclaimer: "Real Tlin customer case, not an actor or generic testimonial."
+    quote: "Testimonial in progress. Real results as soon as Daiane confirms the numbers."
   },
   pricing: {
     badge: "Investment Plan",

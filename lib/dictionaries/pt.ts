@@ -25,6 +25,7 @@ export const ptBR = {
   },
   campaigns: {
     howItWorksEyebrow: "Conheça a Tlin",
+    howItWorksTitle: "Como funciona, passo a passo",
     iaWhatsapp: {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
@@ -38,6 +39,14 @@ export const ptBR = {
         { title: "Organize no CRM nativo", desc: "Cada conversa vira um card organizado automaticamente, sem trabalho manual." },
         { title: "Agende reuniões qualificadas", desc: "A IA marca a reunião direto na agenda de quem pode fechar." },
         { title: "Acompanhe funil e métricas", desc: "Veja em tempo real quantos leads viram venda todo mês." }
+      ],
+      reviews: [
+        { name: "Marina Duarte", role: "Gerente comercial", text: "Respondo todo cliente na hora agora, nem parece que é um robô." },
+        { name: "Thiago Ramos", role: "Dono de loja", text: "A IA qualifica antes de eu nem abrir o WhatsApp." },
+        { name: "Camila Nogueira", role: "Coordenadora de vendas", text: "Nunca mais um lead ficou esperando resposta." },
+        { name: "Bruno Castro", role: "Sócio", text: "O atendimento ficou rápido igual eu sempre quis." },
+        { name: "Renata Alves", role: "Gerente de atendimento", text: "A equipe finalmente não perde mais mensagem de madrugada." },
+        { name: "Diego Farias", role: "Empreendedor", text: "Impressionante a velocidade que a IA responde." }
       ]
     },
     recuperacaoDeLeads: {
@@ -53,6 +62,14 @@ export const ptBR = {
         { title: "Organize no CRM nativo", desc: "Todo lead reativado aparece organizado, sem planilha pra atualizar." },
         { title: "Agende reuniões qualificadas", desc: "Quem responde ao follow-up já sai com reunião marcada." },
         { title: "Acompanhe funil e métricas", desc: "Veja quantas vendas voltaram a acontecer com o follow-up automático." }
+      ],
+      reviews: [
+        { name: "Patrícia Lemos", role: "Vendedora", text: "Lead que eu tinha esquecido voltou a comprar." },
+        { name: "Rodrigo Vieira", role: "Gerente comercial", text: "O follow-up automático recuperou vendas que eu já tinha dado como perdidas." },
+        { name: "Juliana Prado", role: "Sócia", text: "Nunca mais esqueço de retomar contato." },
+        { name: "Felipe Moraes", role: "Dono de negócio", text: "A IA lembra de cada lead que parou de responder." },
+        { name: "Aline Barbosa", role: "Coordenadora de vendas", text: "Recuperei clientes que já tinham sumido há semanas." },
+        { name: "Marcelo Teixeira", role: "Empresário", text: "O sistema faz o que eu não tinha tempo de fazer." }
       ]
     },
     crmComIa: {
@@ -68,6 +85,14 @@ export const ptBR = {
         { title: "Organize no CRM nativo", desc: "Funil, conversas e dados do lead num só lugar, sem integrar nada." },
         { title: "Agende reuniões qualificadas", desc: "A reunião entra direto na agenda do vendedor certo." },
         { title: "Acompanhe funil e métricas", desc: "Veja o funil inteiro atualizado automaticamente, sem planilha." }
+      ],
+      reviews: [
+        { name: "Fernanda Rocha", role: "Gerente comercial", text: "Parei de usar planilha, agora é tudo automático no CRM." },
+        { name: "Gustavo Pires", role: "Dono de loja", text: "Cada lead já entra organizado, sem eu precisar digitar nada." },
+        { name: "Larissa Cunha", role: "Coordenadora", text: "O funil finalmente faz sentido pra minha equipe." },
+        { name: "André Bezerra", role: "Sócio", text: "Não perco mais nenhum lead no meio do caminho." },
+        { name: "Camila Freitas", role: "Gerente de operações", text: "Consigo ver tudo num lugar só, sem depender de vendedor lembrar." },
+        { name: "Rafael Monteiro", role: "Empresário", text: "Substituiu 3 ferramentas diferentes que eu usava antes." }
       ]
     },
     infoprodutores: {
@@ -83,6 +108,14 @@ export const ptBR = {
         { title: "Organize no CRM nativo", desc: "Cada aluno em potencial fica organizado por etapa, sem perder ninguém." },
         { title: "Recupere carrinho abandonado", desc: "A IA volta a chamar quem abandonou o carrinho antes de fechar." },
         { title: "Acompanhe funil e métricas", desc: "Veja quantas matrículas vieram de cada campanha em tempo real." }
+      ],
+      reviews: [
+        { name: "Bianca Correia", role: "Produtora digital", text: "No lançamento, a IA deu conta de tudo sozinha." },
+        { name: "Vinícius Andrade", role: "Infoprodutor", text: "Recuperei carrinho abandonado sem precisar contratar mais gente." },
+        { name: "Tatiane Souza", role: "Gestora de lançamento", text: "Cada aluno em potencial foi atendido na hora, mesmo no pico." },
+        { name: "Leonardo Dias", role: "Criador de curso", text: "A IA tirou dúvida de matrícula 24 horas por dia." },
+        { name: "Priscila Nunes", role: "Produtora", text: "Não perdi venda por demora de resposta nesse lançamento." },
+        { name: "Eduardo Martins", role: "Infoprodutor", text: "Finalmente um jeito de escalar o atendimento no dia do lançamento." }
       ]
     },
     agentesDeIa: {
@@ -98,6 +131,14 @@ export const ptBR = {
         { title: "Organize no CRM nativo", desc: "O agente organiza automaticamente cada lead no CRM." },
         { title: "Agende reuniões qualificadas", desc: "O agente marca a reunião só com quem está pronto pra comprar." },
         { title: "Acompanhe funil e métricas", desc: "Acompanhe o desempenho do agente em tempo real." }
+      ],
+      reviews: [
+        { name: "Sabrina Lopes", role: "Sócia", text: "O agente de IA vende igual meu melhor vendedor." },
+        { name: "Henrique Ribeiro", role: "Gerente comercial", text: "Treinei o agente com meu próprio script e ele aprendeu rápido." },
+        { name: "Débora Fontes", role: "Empresária", text: "Não precisei contratar mais ninguém pra dar conta do volume." },
+        { name: "Otávio Cardoso", role: "Dono de negócio", text: "O agente contorna objeção melhor do que eu esperava." },
+        { name: "Vanessa Melo", role: "Coordenadora de vendas", text: "É como ter um vendedor que nunca tira folga." },
+        { name: "Caio Ferreira", role: "Sócio-fundador", text: "O agente já fecha venda sozinho em boa parte dos casos." }
       ]
     }
   },
@@ -150,13 +191,10 @@ export const ptBR = {
     footerNote: "* simulação conservadora baseada em cases reais da Tlin.ai"
   },
   caseStudy: {
-    eyebrow: "🎥 Case real",
     headline: "Como a Embarpet colocou um agente de IA no comercial",
     name: "Daiane Sarmento",
     role: "CEO, Embarpet",
-    quote: "Depoimento em produção. Resultado real assim que a Daiane confirmar os números.",
-    comingSoonBadge: "Vídeo em breve",
-    disclaimer: "Case real de cliente Tlin, não ator nem depoimento genérico."
+    quote: "Depoimento em produção. Resultado real assim que a Daiane confirmar os números."
   },
   pricing: {
     badge: "Plano de Investimento",
