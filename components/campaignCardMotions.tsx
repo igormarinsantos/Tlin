@@ -126,92 +126,98 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Usar agentes de IA: o proprio mascote da Tlin (TlinIA.svg) pulsando,
-// com particulas orbitando -- a IA de verdade, nao um icone generico.
+// Usar agentes de IA: o proprio mascote da Tlin (TlinIA.svg) pulsando, com
+// particulas orbitando, falando com o lead numa bolha de chat ao lado.
 export function AgentMotion({ isActive }: { isActive: boolean }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="relative w-24 h-24 flex items-center justify-center">
-        <motion.div
-          className="absolute w-20 h-20 rounded-full blur-md"
-          style={{ background: GRADIENT, opacity: 0.35 }}
-          animate={isActive ? { scale: [1, 1.25, 1] } : { scale: 1 }}
-          transition={{ duration: 1.2, repeat: loop(isActive), ease: "easeInOut" }}
-        />
+    <div className="absolute inset-0 flex items-center justify-center gap-3 px-3">
+      <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
         <motion.img
           src="/TlinIA.svg"
           alt="Tlin"
-          className="relative w-14 h-14"
+          className="relative w-11 h-11"
           animate={isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
           transition={{ duration: 1.2, repeat: loop(isActive), ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute inset-0"
-          animate={isActive ? { rotate: 360 } : { rotate: 0 }}
-          transition={{ duration: 3, repeat: loop(isActive), ease: "linear" }}
-        >
-          <span className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-[#B597FF]" />
-          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-[#38E3FF]" />
-        </motion.div>
       </div>
-    </div>
-  );
-}
 
-// Organizar no CRM: leads com etiqueta de status arrumados num mini-kanban,
-// um deles desliza de "Novo" pra "Qualificado"
-export function CrmMotion({ isActive }: { isActive: boolean }) {
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-      <div className="flex items-center gap-3">
-        <Avatar src="/lotties/avatars/9_avatar.webp" size={28} />
-        <Tag label="Lead novo" />
-      </div>
       <motion.div
-        className="flex items-center gap-3"
-        animate={isActive ? { x: [-2, 36, 36] } : { x: 0 }}
-        transition={{ duration: 1, times: [0, 0.6, 1], repeat: loop(isActive), repeatDelay: 0.6, ease: "easeInOut" }}
+        className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2.5 max-w-[140px]"
+        initial={false}
+        animate={isActive ? { opacity: [0, 1], y: [6, 0] } : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4, repeat: loop(isActive), repeatDelay: 1.8 }}
       >
-        <Avatar src="/lotties/avatars/5_avatar.webp" size={28} ring />
-        <motion.span
-          animate={isActive ? { opacity: [0, 0, 1] } : { opacity: 0 }}
-          transition={{ duration: 1, times: [0, 0.6, 1], repeat: loop(isActive), repeatDelay: 0.6 }}
-        >
-          <Tag label="Qualificado" />
-        </motion.span>
+        <p className="text-[11px] leading-tight text-zinc-600 font-medium">Olá! Como posso te ajudar? 👋</p>
       </motion.div>
     </div>
   );
 }
 
-// Agendar reunioes: 3 avatares em fila, cada um "reservando" um horario --
-// so a fileira do meio confirma com check
+// Organizar no CRM: um unico funil onde os leads vao se empilhando, um a
+// um, ate o funil ficar cheio e reiniciar.
+const CRM_CYCLE = 3.6;
+const CRM_LEADS = ["9_avatar", "5_avatar", "3_avatar"];
+
+export function CrmMotion({ isActive }: { isActive: boolean }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-[150px] rounded-xl bg-white border border-zinc-100 p-2.5 flex flex-col gap-1.5">
+        <span className="text-[7px] font-bold text-zinc-400 uppercase tracking-wide">Funil de vendas</span>
+        {CRM_LEADS.map((avatar, i) => {
+          const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
+          return (
+            <motion.div
+              key={i}
+              className="flex items-center gap-1.5 bg-zinc-50 rounded-full pl-1 pr-2 py-1"
+              animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
+              transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4, ease: "easeOut" }}
+            >
+              <Avatar src={`/lotties/avatars/${avatar}.webp`} size={18} />
+              <span className="w-8 h-1.5 rounded-full" style={{ background: GRADIENT }} />
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Agendar reunioes: 3 avatares em fila (com nome real, mesmo pool de
+// nomes do SalesNotification.tsx). Uma a uma, cada reuniao e "confirmada"
+// (check azul da marca) e some -- ciclo se repete com as 3.
+const SCHEDULE_CYCLE = 4.4;
+
 export function ScheduleMotion({ isActive }: { isActive: boolean }) {
   const rows = [
-    { src: "/lotties/avatars/6_avatar.webp", check: false },
-    { src: "/lotties/avatars/7_avatar.webp", check: true },
-    { src: "/lotties/avatars/8_avatar.webp", check: false },
+    { src: "/lotties/avatars/6_avatar.webp", name: "Carla F." },
+    { src: "/lotties/avatars/7_avatar.webp", name: "Mariana L." },
+    { src: "/lotties/avatars/8_avatar.webp", name: "Fernando H." },
   ];
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
-      {rows.map((row, i) => (
-        <div key={i} className="flex items-center gap-2 bg-white border border-zinc-100 rounded-full pl-1.5 pr-3.5 py-1.5 w-[128px]">
-          <Avatar src={row.src} size={24} />
-          <span className="h-2 flex-1 rounded-full bg-zinc-100" />
-          {row.check && (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+      {rows.map((row, i) => {
+        const slot = i * 1.2;
+        return (
+          <motion.div
+            key={i}
+            className="flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[168px]"
+            animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 1 }}
+            transition={{ duration: 0.5, delay: slot + 0.35, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.5 - slot - 0.35, ease: "easeIn" }}
+          >
+            <Avatar src={row.src} size={32} />
+            <span className="text-[11px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
             <motion.div
-              className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: GRADIENT }}
-              animate={isActive ? { scale: [0, 1.2, 1] } : { scale: 0 }}
-              transition={{ duration: 0.4, delay: 0.4, repeat: loop(isActive), repeatDelay: 1.1 }}
+              className="w-6 h-6 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0"
+              animate={isActive ? { scale: [0, 1.3, 1] } : { scale: 0 }}
+              transition={{ duration: 0.35, delay: slot, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.35 - slot }}
             >
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
                 <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </motion.div>
-          )}
-        </div>
-      ))}
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
