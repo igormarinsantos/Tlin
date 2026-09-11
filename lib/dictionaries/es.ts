@@ -151,6 +151,15 @@ export const esES: TranslationDictionary = {
     annualProj: "Proyección anual adicional",
     footerNote: "* simulación conservadora basada en casos reales de Tlin.ai"
   },
+  caseStudy: {
+    eyebrow: "🎥 Caso real",
+    headline: "Cómo Embarpet puso un agente de IA en su equipo comercial",
+    name: "Daiane Sarmento",
+    role: "CEO, Embarpet",
+    quote: "Testimonio en producción. Resultado real en cuanto Daiane confirme los números.",
+    comingSoonBadge: "Video muy pronto",
+    disclaimer: "Caso real de cliente Tlin, no es actor ni testimonio genérico."
+  },
   pricing: {
     badge: "Plan de Inversión",
     title: "Expande tu operación con IA",

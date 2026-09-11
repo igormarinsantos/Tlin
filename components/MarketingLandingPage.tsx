@@ -19,6 +19,7 @@ const CampaignHowItWorks = dynamic(() => import("@/components/CampaignHowItWorks
 // pro Google indexar sem depender de JS (âncoras #como-funciona/#agentes/#crm/#planos/#faq).
 const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
 const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(mod => mod.RoiCalculator), { ssr: false });
+const CaseStudy = dynamic(() => import("@/components/CaseStudy").then(mod => mod.CaseStudy));
 const Pricing = dynamic(() => import("@/components/Pricing").then(mod => mod.Pricing));
 const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials));
 const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
@@ -157,6 +158,11 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
+
+        {/* CASE REAL -- reforca confianca logo antes da oferta */}
+        <div className="section-to-blur">
+          <CaseStudy />
+        </div>
 
         {/* PRICING / ACTION */}
         <div className="no-blur transition-all duration-700 relative z-50">

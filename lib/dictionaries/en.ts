@@ -151,6 +151,15 @@ export const enUS: TranslationDictionary = {
     annualProj: "Additional annual projection",
     footerNote: "* conservative simulation based on real Tlin.ai cases"
   },
+  caseStudy: {
+    eyebrow: "🎥 Real case",
+    headline: "How Embarpet put an AI agent on their sales team",
+    name: "Daiane Sarmento",
+    role: "CEO, Embarpet",
+    quote: "Testimonial in progress. Real results as soon as Daiane confirms the numbers.",
+    comingSoonBadge: "Video coming soon",
+    disclaimer: "Real Tlin customer case, not an actor or generic testimonial."
+  },
   pricing: {
     badge: "Investment Plan",
     title: "Expand your operation with AI",

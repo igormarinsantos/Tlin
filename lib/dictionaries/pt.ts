@@ -149,6 +149,15 @@ export const ptBR = {
     annualProj: "Projeção anual adicional",
     footerNote: "* simulação conservadora baseada em cases reais da Tlin.ai"
   },
+  caseStudy: {
+    eyebrow: "🎥 Case real",
+    headline: "Como a Embarpet colocou um agente de IA no comercial",
+    name: "Daiane Sarmento",
+    role: "CEO, Embarpet",
+    quote: "Depoimento em produção. Resultado real assim que a Daiane confirmar os números.",
+    comingSoonBadge: "Vídeo em breve",
+    disclaimer: "Case real de cliente Tlin, não ator nem depoimento genérico."
+  },
   pricing: {
     badge: "Plano de Investimento",
     title: "Expanda sua operação com IA",
