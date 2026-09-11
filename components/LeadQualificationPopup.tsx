@@ -25,6 +25,8 @@ import { AvailabilityCalendar } from "@/components/lead-qualification/Availabili
 import { ProgressHeader } from "@/components/lead-qualification/ProgressHeader";
 import { WelcomeScreen } from "@/components/lead-qualification/WelcomeScreen";
 import { ResumeSessionOverlay } from "@/components/lead-qualification/ResumeSessionOverlay";
+import { FieldEditOverlay } from "@/components/lead-qualification/FieldEditOverlay";
+import { SuccessStep } from "@/components/lead-qualification/SuccessStep";
 // confetti is dynamically imported
 
 type LeadQualificationPopupProps = {
@@ -1280,181 +1282,27 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 )}
             </div>
 
-            {/* Overlay de Edição Direta de Campo */}
-            <AnimatePresence>
-              {editingField && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`absolute inset-0 z-[200] flex flex-col items-center justify-center p-4 sm:p-6 backdrop-blur-md text-center ${isLight ? "bg-white/95" : "bg-[#0c0d0d]/95"}`}
-                >
-                  <motion.div
-                    initial={{ scale: 0.9, y: 10 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.9, y: 10 }}
-                    className={`max-w-md w-full border p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col gap-4 text-left ${isLight ? "bg-white border-zinc-200" : "bg-zinc-900 border-white/10"}`}
-                  >
-                    <div className={`flex justify-between items-center border-b pb-3 ${isLight ? "border-zinc-200" : "border-white/10"}`}>
-                      <span className="text-xs font-black text-[#B597FF] uppercase tracking-wider">
-                        {(t?.leadQualify?.editTitles as Record<string, string> | undefined)?.[editingField] || editingField}
-                      </span>
-                      <button onClick={() => setEditingField(null)} className={`text-zinc-500 text-xs font-bold transition-colors ${isLight ? "hover:text-zinc-950" : "hover:text-white"}`}>
-                        {t?.leadQualify?.cancel || "Cancelar"}
-                      </button>
-                    </div>
-
-                    {editingField === 'name' && (
-                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
-                        <input
-                          autoFocus
-                          type="text"
-                          onFocus={keepInputVisible}
-                          value={formData.name}
-                          onChange={e => setFormData({...formData, name: e.target.value})}
-                          placeholder={t?.leadQualify?.placeholders?.name || "Empresa..."}
-                          className={`border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
-                        />
-                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          {t?.leadQualify?.saveChange || "Salvar"}
-                        </button>
-                      </form>
-                    )}
-
-                    {editingField === 'phone' && (
-                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
-                        <div className="flex gap-2">
-                          <select
-                            value={formData.countryCode}
-                            onChange={e => setFormData({...formData, countryCode: e.target.value})}
-                            className={`border rounded-xl px-3 py-3 font-bold outline-none ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
-                          >
-                            {COUNTRIES.map(c => (
-                              <option key={c.code} value={c.code} className="bg-zinc-900 text-white">{c.code} ({c.name})</option>
-                            ))}
-                          </select>
-                          <input
-                            autoFocus
-                            type="text"
-                            onFocus={keepInputVisible}
-                            value={formData.phone}
-                            onChange={e => setFormData({...formData, phone: formatPhone(e.target.value)})}
-                            placeholder={t?.leadQualify?.placeholders?.phone || "WhatsApp..."}
-                            className={`flex-1 border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all w-full ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
-                          />
-                        </div>
-                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          {t?.leadQualify?.saveChange || "Salvar"}
-                        </button>
-                      </form>
-                    )}
-
-                    {editingField === 'volume' && (
-                      <div className="flex flex-col gap-2">
-                        {(t?.leadQualify?.volumeOptions || []).map(opt => (
-                          <button
-                            key={opt}
-                            onClick={() => { setFormData({...formData, volume: opt}); setEditingField(null); }}
-                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.volume === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-zinc-950' : isLight ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {editingField === 'team' && (
-                      <div className="flex flex-col gap-2">
-                        {(t?.leadQualify?.teamOptions || []).map(opt => (
-                          <button
-                            key={opt}
-                            onClick={() => { setFormData({...formData, team: opt}); setEditingField(null); }}
-                            className={`p-3 rounded-xl border text-left font-bold transition-all ${formData.team === opt ? 'border-[#B597FF] bg-[#B597FF]/10 text-zinc-950' : isLight ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50' : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/5'}`}
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {editingField === 'email' && (
-                      <form onSubmit={(e) => { e.preventDefault(); setEditingField(null); }} className="flex flex-col gap-4">
-                        <input
-                          autoFocus
-                          type="email"
-                          onFocus={keepInputVisible}
-                          value={formData.email}
-                          onChange={e => setFormData({...formData, email: e.target.value})}
-                          placeholder={t?.leadQualify?.placeholders?.email || "E-mail..."}
-                          className={`border rounded-xl px-4 py-3 font-bold outline-none focus:border-[#B597FF] transition-all ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-950" : "bg-black/50 border-white/10 text-white"}`}
-                        />
-                        <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-bold transition-opacity hover:opacity-90">
-                          {t?.leadQualify?.saveChange || "Salvar"}
-                        </button>
-                      </form>
-                    )}
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <FieldEditOverlay
+              editingField={editingField}
+              formData={formData}
+              isLight={isLight}
+              t={t?.leadQualify}
+              onChangeFormData={setFormData}
+              onClose={() => setEditingField(null)}
+              keepInputVisible={keepInputVisible}
+              formatPhone={formatPhone}
+            />
               </>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center z-50 my-auto"
-              >
-                <div className="mb-8 opacity-90">
-                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={120} height={42} priority />
-                </div>
-
-                <h2 className="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight leading-tight mb-4 max-w-4xl w-full whitespace-nowrap overflow-visible">
-                  {t?.leadQualify?.successTitle || ""}
-                </h2>
-                
-                <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-6 leading-relaxed">
-                  {(t?.leadQualify?.successMessage || "{name}").split("{name}")[0]}
-                  <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{formData.name || t?.leadQualify?.fields?.company || ""}</span>
-                  {(t?.leadQualify?.successMessage || "{name}").split("{name}")[1]}
-                </p>
-
-                {selectedSlot && (
-                  <p className="text-base sm:text-lg font-semibold text-zinc-600 max-w-2xl mb-10">
-                    {t?.leadQualify?.demoScheduledFor || "Demo"}: <span className="text-zinc-950">{selectedDay?.label} · {selectedSlot.when}</span>
-                    {demoPendingConfirmation && <span className="block text-sm text-zinc-400 mt-1">{t?.leadQualify?.demoPendingConfirmation || ""}</span>}
-                  </p>
-                )}
-
-                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
-                  {/* Botão Preto com Borda Animada estilo Hero */}
-                  <div className="relative flex-1">
-                    <button
-                      onClick={() => handleWhatsAppRedirect(formData)}
-                      className="relative p-[1.5px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
-                    >
-                      <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
-                      />
-                      <div className="relative px-6 py-4 rounded-full bg-[#0c0d0d] text-white font-extrabold text-base sm:text-lg transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center shadow-xl">
-                        <span className="relative z-10 whitespace-nowrap">{t?.leadQualify?.talkToTeam || ""}</span>
-                        <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
-                      </div>
-                    </button>
-                  </div>
-
-                  {/* Botão Branco */}
-                  <div className="relative flex-1">
-                    <button
-                      onClick={resetForm}
-                      className="flex items-center justify-center px-6 py-4 rounded-full bg-white text-zinc-950 font-bold text-base sm:text-lg hover:bg-zinc-50 transition-all active:scale-95 cursor-pointer w-full border border-zinc-200 whitespace-nowrap"
-                    >
-                      {t?.leadQualify?.newRequest || ""}
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
+              <SuccessStep
+                name={formData.name}
+                t={t?.leadQualify}
+                selectedDay={selectedDay}
+                selectedSlot={selectedSlot}
+                demoPendingConfirmation={demoPendingConfirmation}
+                onWhatsAppRedirect={() => handleWhatsAppRedirect(formData)}
+                onNewRequest={resetForm}
+              />
             )}
           </motion.div>
         </motion.div>
