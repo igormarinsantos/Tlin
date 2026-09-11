@@ -39,6 +39,7 @@ export function Footer() {
             <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
             <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
             <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>
+            <span className="text-sm font-medium text-zinc-400">CNPJ 66.798.512/0001-53</span>
             <span className="text-sm font-medium text-zinc-400">{t.footer.country}</span>
           </div>
         </div>
