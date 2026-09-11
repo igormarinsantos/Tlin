@@ -24,6 +24,7 @@ import { TypewriterQuestion } from "@/components/lead-qualification/TypewriterQu
 import { AvailabilityCalendar } from "@/components/lead-qualification/AvailabilityCalendar";
 import { ProgressHeader } from "@/components/lead-qualification/ProgressHeader";
 import { WelcomeScreen } from "@/components/lead-qualification/WelcomeScreen";
+import { ResumeSessionOverlay } from "@/components/lead-qualification/ResumeSessionOverlay";
 // confetti is dynamically imported
 
 type LeadQualificationPopupProps = {
@@ -824,64 +825,29 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 </motion.div>
               )}
             </AnimatePresence>
-            {/* Overlay de Retomada de Sessão */}
-            <AnimatePresence>
-              {showResumeOverlay && savedState && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`absolute inset-0 z-[400] flex items-center justify-center backdrop-blur-[60px] text-center p-6 sm:p-12 ${isLight ? "bg-white/95" : "bg-[#0c0d0d]/95"}`}
-                >
-                  {/* Botão Fechar no Overlay */}
-                  {!embedded && <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-[410]">
-                    <button
-                      onClick={closePopup}
-                      aria-label={t?.liaPopup?.close || "Fechar"}
-                      className="flex items-center justify-center w-9 h-9 rounded-full transition-all active:scale-95 text-zinc-400 hover:text-white hover:bg-white/10"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                        <path d="M6 6l12 12M6 18L18 6" />
-                      </svg>
-                    </button>
-                  </div>}
-
-                  <div className="max-w-2xl w-full flex flex-col items-center gap-12">
-                    <div className="w-full">
-                      <TypewriterQuestion text={t?.leadQualify?.resumeTitle || ""} light={isLight} />
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                      <button
-                        onClick={() => {
-                          if (savedState) {
-                            setCurrentStep(savedState.currentStep);
-                            setFormData(savedState.formData);
-                            setChatHistory(savedState.chatHistory);
-                            if (savedState.selectedDay) setSelectedDay(savedState.selectedDay);
-                            if (savedState.selectedSlot) setSelectedSlot(savedState.selectedSlot);
-                          }
-                          setShowResumeOverlay(false);
-                          isLiveSession.current = true;
-                        }}
-                        className="flex-1 py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 font-black text-lg sm:text-xl shadow-2xl shadow-purple-500/20 transition-all active:scale-[0.98] hover:opacity-90"
-                      >
-                        {t?.leadQualify?.resumeContinue || "Continuar"}
-                      </button>
-                      <button
-                        onClick={() => {
-                          resetForm();
-                          setShowResumeOverlay(false);
-                        }}
-                        className={`flex-1 py-4 sm:py-5 px-8 rounded-2xl border font-bold text-lg sm:text-xl transition-all active:scale-[0.98] ${isLight ? "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100" : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"}`}
-                      >
-                        {t?.leadQualify?.resumeRestart || "Recomeçar"}
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <ResumeSessionOverlay
+              show={showResumeOverlay && !!savedState}
+              isLight={isLight}
+              embedded={embedded}
+              t={t?.leadQualify}
+              closeLabel={t?.liaPopup?.close || "Fechar"}
+              onClose={closePopup}
+              onContinue={() => {
+                if (savedState) {
+                  setCurrentStep(savedState.currentStep);
+                  setFormData(savedState.formData);
+                  setChatHistory(savedState.chatHistory);
+                  if (savedState.selectedDay) setSelectedDay(savedState.selectedDay);
+                  if (savedState.selectedSlot) setSelectedSlot(savedState.selectedSlot);
+                }
+                setShowResumeOverlay(false);
+                isLiveSession.current = true;
+              }}
+              onRestart={() => {
+                resetForm();
+                setShowResumeOverlay(false);
+              }}
+            />
 
             {/* Header / Botão Fechar */}
             {!embedded && <div className={`absolute top-4 sm:top-6 right-4 sm:right-6 z-[100] rounded-full ${isLight ? "bg-white/75 shadow-[0_0_22px_20px_rgba(255,255,255,0.9)]" : "bg-[#0c0d0d]/75 shadow-[0_0_22px_20px_rgba(12,13,13,0.9)]"}`}>
