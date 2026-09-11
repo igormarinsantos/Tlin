@@ -142,27 +142,24 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           <Features />
         </div>
 
-        {/* WHITE CURVED GRADIENT SECTION (Above ROI) */}
+        {/* WHITE CURVED GRADIENT SECTION (Above ROI/Case) */}
         <div
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
 
-        {/* IMPACT / URGENCY (The New ROI Simulator) */}
+        {/* IMPACT / URGENCY -- na home e a calculadora de ROI; nas LPs de
+            campanha, o case real (Daiane/Embarpet) entra no lugar dela,
+            no mesmo fundo preto */}
         <DeferredSection id="roi" className="section-to-blur" minHeight="min-h-[760px]">
-          <RoiCalculator />
+          {heroVariant ? <CaseStudy /> : <RoiCalculator />}
         </DeferredSection>
 
-        {/* WHITE CURVED GRADIENT SECTION (Below ROI) */}
+        {/* WHITE CURVED GRADIENT SECTION (Below ROI/Case) */}
         <div
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
-
-        {/* CASE REAL -- reforca confianca logo antes da oferta */}
-        <div className="section-to-blur">
-          <CaseStudy />
-        </div>
 
         {/* PRICING / ACTION */}
         <div className="no-blur transition-all duration-700 relative z-50">
