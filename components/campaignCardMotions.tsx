@@ -75,12 +75,23 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Atender no site ou WhatsApp: foco na tela de conversa (mensagem
-// recebida + resposta sendo digitada e enviada pelo input embaixo, como
-// o WhatsApp Web de verdade) -- sem moldura de navegador, so a conversa.
-const WHATSAPP_CYCLE = 2.6;
+// Atender no site ou WhatsApp: foco na tela de conversa -- o texto real
+// aparece sendo escrito no input embaixo, depois "sobe" (FLIP animation
+// via layoutId compartilhado) e vira a bolha enviada na conversa.
+const WHATSAPP_REPLY = "Sim! Vou te ajudar 😊";
 
 export function WhatsappMotion({ isActive }: { isActive: boolean }) {
+  const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (!isActive) {
+      setSent(false);
+      return;
+    }
+    const id = setInterval(() => setSent((s) => !s), 1300);
+    return () => clearInterval(id);
+  }, [isActive]);
+
   return (
     <div className="absolute inset-0">
       <div className="absolute top-5 left-3 right-3 flex flex-col gap-1.5">
@@ -88,39 +99,43 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
           <p className="text-[9px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
         </div>
 
-        <motion.div
-          className="self-end grid bg-[#25D366] rounded-xl rounded-br-sm px-2.5 py-1.5"
-          animate={isActive ? { opacity: [0, 1, 1, 1, 0] } : { opacity: 1 }}
-          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.06, 0.4, 0.9, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
-        >
-          <motion.div
-            className="[grid-area:1/1] flex gap-1 items-center h-3"
-            animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 0 }}
-            transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.32, 0.4, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-          </motion.div>
-          <motion.p
-            className="[grid-area:1/1] text-[9px] text-white font-medium leading-tight whitespace-nowrap"
-            animate={isActive ? { opacity: [0, 0, 1, 1] } : { opacity: 1 }}
-            transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.36, 0.42, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
-          >
-            Sim! Vou te ajudar 😊
-          </motion.p>
-        </motion.div>
+        <AnimatePresence>
+          {sent && (
+            <motion.div
+              layoutId="wa-reply"
+              className="self-end bg-[#25D366] rounded-xl rounded-br-sm px-2.5 py-1.5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <p className="text-[9px] text-white font-medium leading-tight whitespace-nowrap">{WHATSAPP_REPLY}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3 gap-2">
-        <span className="flex-1 h-1.5 rounded-full bg-zinc-100" />
+      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3 gap-2 overflow-hidden">
+        <AnimatePresence>
+          {!sent && (
+            <motion.p
+              layoutId="wa-reply"
+              className="flex-1 text-[9px] text-zinc-500 font-medium whitespace-nowrap overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {WHATSAPP_REPLY}
+            </motion.p>
+          )}
+        </AnimatePresence>
+        {sent && <span className="flex-1" />}
         <motion.div
-          className="w-4 h-4 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
-          animate={isActive ? { scale: [1, 1, 1.35, 1] } : { scale: 1 }}
-          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.34, 0.42, 0.5], repeat: loop(isActive), repeatDelay: 0.4 }}
+          className="w-5 h-5 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
+          animate={{ scale: sent ? 1.2 : 1 }}
+          transition={{ duration: 0.25 }}
         >
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
-            <path d="M3 11l18-8-8 18-2-8-8-2z" fill="white" />
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h13M13 6l6 6-6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
       </div>
@@ -152,10 +167,8 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      <motion.div layout className="flex items-end gap-3 px-3">
-        <motion.div layout className="w-9 h-9 rounded-full bg-white border border-zinc-100 shrink-0 flex items-center justify-center">
-          <img src="/TlinIA.svg" alt="Tlin" className="w-6 h-6" />
-        </motion.div>
+      <motion.div layout className="flex items-start gap-2.5 px-3">
+        <motion.img layout src="/TlinIA.svg" alt="Tlin" className="w-8 h-8 shrink-0" />
 
         <motion.div layout className="flex flex-col gap-1.5 max-w-[150px]">
           <AnimatePresence initial={false}>
