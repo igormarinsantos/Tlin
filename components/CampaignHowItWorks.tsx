@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
-import { CARD_ICON, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
+import { CARD_ICON, CARD_ICON_HOVER, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
 function HowItWorksCard({
   icon,
@@ -17,6 +18,8 @@ function HowItWorksCard({
   index: number;
 }) {
   const Icon = CARD_ICON[icon];
+  const iconHover = CARD_ICON_HOVER[icon];
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
@@ -24,12 +27,24 @@ function HowItWorksCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5, ease: "easeOut", delay: (index % 3) * 0.08 }}
-      className="rounded-3xl bg-[#F7F7FB] p-6 md:p-7 flex flex-col gap-6"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ y: -4 }}
+      className="rounded-3xl bg-[#F7F7FB] p-6 md:p-7 flex flex-col gap-6 border border-transparent hover:border-[#B597FF]/20 hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-colors duration-300"
     >
       <div className="relative w-full h-36 rounded-2xl bg-white border border-zinc-100 flex items-center justify-center overflow-hidden">
-        <div className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[50px] rounded-full pointer-events-none" />
+        <motion.div
+          className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[50px] rounded-full pointer-events-none"
+          animate={{ opacity: isHovered ? 1 : 0.6 }}
+          transition={{ duration: 0.3 }}
+        />
         <div className="relative w-14 h-14 rounded-2xl bg-white shadow-sm border border-zinc-100 flex items-center justify-center">
-          <Icon className="w-7 h-7 text-[#8B6CFF]" strokeWidth={1.8} />
+          <motion.div
+            animate={isHovered ? iconHover.animate : { y: 0, x: 0, rotate: 0, scale: 1 }}
+            transition={iconHover.transition}
+          >
+            <Icon className="w-7 h-7 text-[#8B6CFF]" strokeWidth={1.8} />
+          </motion.div>
         </div>
       </div>
 
