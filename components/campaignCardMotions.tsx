@@ -154,16 +154,39 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
 }
 
 // Organizar no CRM: um unico funil onde os leads vao se empilhando, um a
-// um, ate o funil ficar cheio e reiniciar.
+// um, ate o funil ficar cheio e reiniciar. Header mini "Qualificando" com
+// contador ao vivo de quantos leads ja entraram no funil.
 const CRM_CYCLE = 3.6;
-const CRM_LEADS = ["9_avatar", "5_avatar", "3_avatar"];
+const CRM_LEADS = [
+  { src: "9_avatar", name: "Lucas G." },
+  { src: "5_avatar", name: "Roberto T." },
+  { src: "3_avatar", name: "Bruno S." },
+];
 
 export function CrmMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex items-end justify-center">
       <div className="relative w-[176px] h-[150px] rounded-t-2xl bg-white border border-zinc-100 border-b-0 px-3 pt-3 flex flex-col gap-2.5">
-        <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-wide">Funil de vendas</span>
-        {CRM_LEADS.map((avatar, i) => {
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold text-[#0c0d0d]">Qualificando</span>
+          <div className="relative w-3.5 h-4">
+            {CRM_LEADS.map((_, i) => {
+              const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
+              return (
+                <motion.span
+                  key={i}
+                  className="absolute inset-0 flex items-center justify-center text-[11px] font-black text-[#8B6CFF]"
+                  animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
+                  transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
+                >
+                  {i + 1}
+                </motion.span>
+              );
+            })}
+          </div>
+        </div>
+
+        {CRM_LEADS.map((lead, i) => {
           const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
           return (
             <motion.div
@@ -172,8 +195,9 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
               animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
               transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4, ease: "easeOut" }}
             >
-              <Avatar src={`/lotties/avatars/${avatar}.webp`} size={30} />
-              <span className="w-10 h-2 rounded-full" style={{ background: GRADIENT }} />
+              <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={30} />
+              <span className="text-[10px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
+              <span className="text-[7px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-1.5 py-1 whitespace-nowrap shrink-0">IA qualificando</span>
             </motion.div>
           );
         })}
@@ -226,20 +250,25 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Acompanhar funil/metricas: mini painel com numeros reais ao lado de
-// barras de grafico crescendo
+// Acompanhar funil/metricas: funil de verdade com 3 estagios (containers
+// de largura decrescente) enchendo em sequencia, com numeros reais do lado.
+const FUNNEL_STAGES = [
+  { label: "Leads", width: 76 },
+  { label: "Oportunidades", width: 56 },
+  { label: "Vendas", width: 36 },
+];
+
 export function FunnelMotion({ isActive }: { isActive: boolean }) {
-  const heights = [40, 70, 100, 55];
   return (
     <div className="absolute inset-0 flex items-center justify-center gap-6">
-      <div className="flex items-end gap-2 h-20">
-        {heights.map((h, i) => (
+      <div className="flex flex-col items-center gap-1.5">
+        {FUNNEL_STAGES.map((stage, i) => (
           <motion.div
             key={i}
-            className="w-3.5 rounded-full"
-            style={{ background: GRADIENT }}
-            animate={isActive ? { height: [`20%`, `${h}%`] } : { height: "20%" }}
-            transition={{ duration: 0.7, delay: i * 0.1, repeat: loop(isActive), repeatType: "reverse", ease: "easeInOut" }}
+            className="h-6 rounded-md"
+            style={{ width: stage.width, background: GRADIENT, opacity: 0.55 + i * 0.22 }}
+            animate={isActive ? { scaleX: [0, 1] } : { scaleX: 1 }}
+            transition={{ duration: 0.5, delay: i * 0.3, repeat: loop(isActive), repeatType: "reverse", repeatDelay: 0.6, ease: "easeOut" }}
           />
         ))}
       </div>
