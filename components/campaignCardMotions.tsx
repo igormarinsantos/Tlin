@@ -269,6 +269,7 @@ function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
         fillOpacity="0.2"
         stroke="#B597FF"
         strokeWidth="1.5"
+        strokeLinejoin="round"
       />
     </svg>
   );
