@@ -25,29 +25,56 @@ function Avatar({ src, size = 20, ring = false }: { src: string; size?: number; 
   );
 }
 
-// Capturar/qualificar: 3 leads (avatares) caem, so o do meio (qualificado)
-// chega embaixo com anel em degrade
-export function CaptureMotion({ isActive }: { isActive: boolean }) {
-  const avatars = ["/lotties/avatars/1_avatar.webp", "/lotties/avatars/2_avatar.webp", "/lotties/avatars/3_avatar.webp"];
+function CursorArrow({ className }: { className?: string }) {
   return (
-    <div className="relative w-16 h-16">
-      <div className="absolute left-0 right-0 top-9 h-[2px] bg-zinc-200" />
-      {avatars.map((src, i) => (
-        <motion.div
-          key={i}
-          className="absolute left-1/2 top-0 -translate-x-1/2"
-          animate={
-            isActive
-              ? i === 1
-                ? { y: [0, 42], scale: [1, 1.15] }
-                : { y: [0, 26], opacity: [1, 0] }
-              : { y: 0, opacity: 1, scale: 1 }
-          }
-          transition={{ duration: 0.9, delay: i * 0.15, repeat: loop(isActive), repeatDelay: 0.4, ease: "easeIn" }}
-        >
-          <Avatar src={src} size={18} ring={i === 1} />
-        </motion.div>
-      ))}
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+      <path d="M2 1.5l10 8-4.3.6 2.2 4.6-1.8.9-2.2-4.6-3 3.1L2 1.5z" fill="#0c0d0d" stroke="white" strokeWidth="0.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Capturar/qualificar: cena composta -- 2 visitantes sendo "selecionados"
+// por um cursor, bolha de qualificacao aparecendo, e o lead roteado pro
+// WhatsApp (avatar com bolinha verde de online), como uma pagina de
+// verdade capturando e qualificando quem chega.
+export function CaptureMotion({ isActive }: { isActive: boolean }) {
+  return (
+    <div className="absolute inset-0">
+      <motion.div
+        className="absolute left-5 top-4"
+        animate={isActive ? { scale: [1, 0.85, 1] } : { scale: 1 }}
+        transition={{ duration: 0.4, repeat: loop(isActive), repeatDelay: 1.6 }}
+      >
+        <CursorArrow className="absolute -left-1.5 -top-1.5 z-10" />
+        <Avatar src="/lotties/avatars/1_avatar.webp" size={34} />
+      </motion.div>
+
+      <motion.div
+        className="absolute left-16 top-1"
+        animate={isActive ? { scale: [1, 0.85, 1] } : { scale: 1 }}
+        transition={{ duration: 0.4, delay: 0.5, repeat: loop(isActive), repeatDelay: 1.5 }}
+      >
+        <CursorArrow className="absolute -left-1.5 -top-1.5 z-10" />
+        <Avatar src="/lotties/avatars/2_avatar.webp" size={30} />
+      </motion.div>
+
+      <motion.div
+        className="absolute left-2 bottom-3 bg-white border border-zinc-100 shadow-sm rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[118px]"
+        initial={false}
+        animate={isActive ? { opacity: [0, 1], y: [6, 0] } : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 1, repeat: loop(isActive), repeatDelay: 1.5 }}
+      >
+        <p className="text-[9px] leading-tight text-zinc-600 font-medium">Quer saber qual plano é ideal? 👋</p>
+      </motion.div>
+
+      <div className="absolute right-4 bottom-4">
+        <Avatar src="/lotties/avatars/3_avatar.webp" size={30} />
+        <motion.span
+          className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#25D366] border-2 border-white"
+          animate={isActive ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+          transition={{ duration: 0.8, repeat: loop(isActive), repeatDelay: 0.4 }}
+        />
+      </div>
     </div>
   );
 }
@@ -56,6 +83,7 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
 // com o avatar de quem esta conversando espiando no canto
 export function WhatsappMotion({ isActive }: { isActive: boolean }) {
   return (
+    <div className="absolute inset-0 flex items-center justify-center">
     <div className="relative w-16 h-12">
       <div className="absolute -bottom-1.5 -left-1.5">
         <Avatar src="/lotties/avatars/4_avatar.webp" size={20} />
@@ -80,6 +108,7 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
         </motion.svg>
       </div>
     </div>
+    </div>
   );
 }
 
@@ -87,21 +116,23 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
 // de proposito -- e sobre a IA, nao uma pessoa)
 export function AgentMotion({ isActive }: { isActive: boolean }) {
   return (
-    <div className="relative w-16 h-16 flex items-center justify-center">
-      <motion.div
-        className="w-8 h-8 rounded-full"
-        style={{ background: GRADIENT }}
-        animate={isActive ? { scale: [1, 1.18, 1] } : { scale: 1 }}
-        transition={{ duration: 1.2, repeat: loop(isActive), ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute inset-0"
-        animate={isActive ? { rotate: 360 } : { rotate: 0 }}
-        transition={{ duration: 3, repeat: loop(isActive), ease: "linear" }}
-      >
-        <span className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#B597FF]" />
-        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#38E3FF]" />
-      </motion.div>
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-16 h-16 flex items-center justify-center">
+        <motion.div
+          className="w-8 h-8 rounded-full"
+          style={{ background: GRADIENT }}
+          animate={isActive ? { scale: [1, 1.18, 1] } : { scale: 1 }}
+          transition={{ duration: 1.2, repeat: loop(isActive), ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute inset-0"
+          animate={isActive ? { rotate: 360 } : { rotate: 0 }}
+          transition={{ duration: 3, repeat: loop(isActive), ease: "linear" }}
+        >
+          <span className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#B597FF]" />
+          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#38E3FF]" />
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -109,17 +140,19 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
 // Organizar no CRM: card com avatar do lead desliza de uma coluna pra outra
 export function CrmMotion({ isActive }: { isActive: boolean }) {
   return (
-    <div className="relative w-24 h-14 flex gap-2">
-      <div className="w-1/2 h-full rounded-lg bg-zinc-100" />
-      <div className="w-1/2 h-full rounded-lg bg-zinc-100" />
-      <motion.div
-        className="absolute top-2 left-1.5 h-4 rounded-full bg-white shadow-sm flex items-center gap-1 pr-2"
-        animate={isActive ? { x: [0, 46] } : { x: 0 }}
-        transition={{ duration: 1, repeat: loop(isActive), repeatDelay: 0.5, ease: "easeInOut" }}
-      >
-        <Avatar src="/lotties/avatars/5_avatar.webp" size={16} />
-        <span className="w-4 h-1.5 rounded-full" style={{ background: GRADIENT }} />
-      </motion.div>
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-24 h-14 flex gap-2">
+        <div className="w-1/2 h-full rounded-lg bg-zinc-100" />
+        <div className="w-1/2 h-full rounded-lg bg-zinc-100" />
+        <motion.div
+          className="absolute top-2 left-1.5 h-4 rounded-full bg-white shadow-sm flex items-center gap-1 pr-2"
+          animate={isActive ? { x: [0, 46] } : { x: 0 }}
+          transition={{ duration: 1, repeat: loop(isActive), repeatDelay: 0.5, ease: "easeInOut" }}
+        >
+          <Avatar src="/lotties/avatars/5_avatar.webp" size={16} />
+          <span className="w-4 h-1.5 rounded-full" style={{ background: GRADIENT }} />
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -127,25 +160,27 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
 // Agendar reunioes: calendario com o dia sendo confirmado, avatar de quem agendou ao lado
 export function ScheduleMotion({ isActive }: { isActive: boolean }) {
   return (
-    <div className="relative w-14 h-16 rounded-xl bg-white border-2 border-zinc-200 overflow-hidden">
-      <div className="h-3.5 w-full bg-zinc-200" />
-      <motion.div
-        className="absolute bottom-1.5 right-1.5"
-        animate={isActive ? { scale: [0, 1.1, 1] } : { scale: 0 }}
-        transition={{ duration: 0.5, repeat: loop(isActive), repeatDelay: 0.9 }}
-      >
-        <Avatar src="/lotties/avatars/6_avatar.webp" size={22} ring />
-      </motion.div>
-      <motion.div
-        className="absolute bottom-1 left-2 w-4 h-4 rounded-full flex items-center justify-center"
-        style={{ background: GRADIENT }}
-        animate={isActive ? { scale: [0, 1, 1] } : { scale: 0 }}
-        transition={{ duration: 0.5, delay: 0.15, repeat: loop(isActive), repeatDelay: 0.9 }}
-      >
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
-          <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </motion.div>
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-14 h-16 rounded-xl bg-white border-2 border-zinc-200 overflow-hidden">
+        <div className="h-3.5 w-full bg-zinc-200" />
+        <motion.div
+          className="absolute bottom-1.5 right-1.5"
+          animate={isActive ? { scale: [0, 1.1, 1] } : { scale: 0 }}
+          transition={{ duration: 0.5, repeat: loop(isActive), repeatDelay: 0.9 }}
+        >
+          <Avatar src="/lotties/avatars/6_avatar.webp" size={22} ring />
+        </motion.div>
+        <motion.div
+          className="absolute bottom-1 left-2 w-4 h-4 rounded-full flex items-center justify-center"
+          style={{ background: GRADIENT }}
+          animate={isActive ? { scale: [0, 1, 1] } : { scale: 0 }}
+          transition={{ duration: 0.5, delay: 0.15, repeat: loop(isActive), repeatDelay: 0.9 }}
+        >
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
+            <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -155,16 +190,18 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
 export function FunnelMotion({ isActive }: { isActive: boolean }) {
   const heights = [40, 70, 100, 55];
   return (
-    <div className="flex items-end gap-1.5 h-14">
-      {heights.map((h, i) => (
-        <motion.div
-          key={i}
-          className="w-2.5 rounded-full"
-          style={{ background: GRADIENT }}
-          animate={isActive ? { height: [`20%`, `${h}%`] } : { height: "20%" }}
-          transition={{ duration: 0.7, delay: i * 0.1, repeat: loop(isActive), repeatType: "reverse", ease: "easeInOut" }}
-        />
-      ))}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="flex items-end gap-1.5 h-14">
+        {heights.map((h, i) => (
+          <motion.div
+            key={i}
+            className="w-2.5 rounded-full"
+            style={{ background: GRADIENT }}
+            animate={isActive ? { height: [`20%`, `${h}%`] } : { height: "20%" }}
+            transition={{ duration: 0.7, delay: i * 0.1, repeat: loop(isActive), repeatType: "reverse", ease: "easeInOut" }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -173,6 +210,7 @@ export function FunnelMotion({ isActive }: { isActive: boolean }) {
 // com cor, setinha de retry do lado
 export function FollowupMotion({ isActive }: { isActive: boolean }) {
   return (
+    <div className="absolute inset-0 flex items-center justify-center">
     <div className="relative w-16 h-16 flex items-center justify-center">
       <motion.div
         animate={isActive ? { filter: ["grayscale(1) opacity(0.5)", "grayscale(0) opacity(1)"] } as any : { filter: "grayscale(1) opacity(0.5)" }}
@@ -191,6 +229,7 @@ export function FollowupMotion({ isActive }: { isActive: boolean }) {
         </svg>
       </motion.div>
     </div>
+    </div>
   );
 }
 
@@ -198,6 +237,7 @@ export function FollowupMotion({ isActive }: { isActive: boolean }) {
 // sozinho pro carrinho
 export function CartMotion({ isActive }: { isActive: boolean }) {
   return (
+    <div className="absolute inset-0 flex items-center justify-center">
     <div className="relative w-16 h-16 flex items-end justify-center pb-2">
       <motion.div
         className="absolute -top-1 -left-1"
@@ -217,6 +257,7 @@ export function CartMotion({ isActive }: { isActive: boolean }) {
         animate={isActive ? { y: [0, 24], opacity: [1, 1, 0] } : { y: 0, opacity: 1 }}
         transition={{ duration: 0.7, repeat: loop(isActive), repeatDelay: 0.6, ease: "easeIn" }}
       />
+    </div>
     </div>
   );
 }
