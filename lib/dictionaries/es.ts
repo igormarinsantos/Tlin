@@ -31,35 +31,35 @@ export const esES: TranslationDictionary = {
       subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos, sin turnos, sin lead esperando respuesta.",
       highlightWords: ["WhatsApp"],
       painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Después de 24h sin respuesta, la chance de calificar ese lead se desploma. Cada mensaje que espera es una venta que se enfría."
+      painBody: "Toda demora enfría una venta."
     },
     recuperacaoDeLeads: {
       title: "¿El lead se enfrió? La IA\nretoma la conversación sola.",
       subtitle: "Seguimiento automático para quien dejó de responder, directo en WhatsApp, sin depender de que un vendedor recuerde volver a escribir.",
       highlightWords: ["IA"],
       painHeadline: "[El 80% de las ventas] exige al menos 5 seguimientos.",
-      painBody: "El 44% de los vendedores desiste después del 1º. El lead no dijo que no, solo dejó de responder. Sin alguien que retome el contacto en el momento justo, esa venta nunca vuelve a aparecer."
+      painBody: "44% desiste en el 1er seguimiento."
     },
     crmComIa: {
       title: "El CRM que tu equipo\nusa sin duplicar trabajo.",
       subtitle: "CRM nativo con IA que organiza leads, conversaciones y embudo automáticamente, sin necesidad de integrar nada para empezar.",
       highlightWords: ["CRM"],
       painHeadline: "Las empresas que usan CRM de forma consistente reportan [hasta 29% más ventas].",
-      painBody: "Planilla, grupo de WhatsApp y un CRM que nadie actualiza son 3 lugares distintos donde un lead se puede perder."
+      painBody: "Tres lugares, un lead perdido."
     },
     infoprodutores: {
       title: "Del anuncio al alumno inscrito,\ncon IA en WhatsApp.",
       subtitle: "Atiende picos de lanzamiento, califica a quien tiene fit con tu curso y recupera a quien abandonó el carrito, todo automático, 24/7.",
       highlightWords: ["IA"],
       painHeadline: "El abandono de carrito en e-commerce llega al [70%]. La falta de respuesta rápida es uno de los motivos.",
-      painBody: "El día del lanzamiento, cada mensaje que tarda en responderse es una venta que puede enfriarse antes de cerrar el carrito."
+      painBody: "Demora es carrito abandonado."
     },
     agentesDeIa: {
       title: "Agentes de IA que venden\ncomo tu mejor closer.",
       subtitle: "Entrenados en tu playbook, guiones y objeciones, los agentes de Tlin atienden, califican y escalan tu operación sin inflar el equipo.",
       highlightWords: ["IA"],
       painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Un agente de IA responde a esa velocidad 24/7, sin descanso, sin necesidad de contratar y entrenar más gente para manejar el volumen."
+      painBody: "Un agente de IA nunca descansa."
     }
   },
   trusted: {

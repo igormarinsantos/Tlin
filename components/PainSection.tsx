@@ -25,10 +25,9 @@ function HighlightedHeadline({ text }: { text: string }) {
 }
 
 // Secao de "Dor" com dado de mercado -- so aparece nas paginas de campanha
-// (quando ha variant). Frase centralizada, sem imagem/motion, sem badge e
-// sem disclaimer -- so o titulo com o dado destacado e o texto de apoio,
-// direto no fundo branco. O icone de info ao lado do texto de apoio e so
-// um indicador visual (sem caixa/container), nao um link nem tooltip.
+// (quando ha variant). Tudo centralizado, sem imagem/motion, sem badge e
+// sem disclaimer -- so o titulo com o dado destacado e um gancho curto (1
+// linha), com icone de info do lado, direto no fundo branco.
 export function PainSection({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const campaign = t.campaigns[variant];
@@ -46,13 +45,13 @@ export function PainSection({ variant }: { variant: HeroVariant }) {
           <HighlightedHeadline text={campaign.painHeadline} />
         </h2>
 
-        <div className="flex items-start gap-2 max-w-xl text-left">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0 mt-1 text-zinc-400">
+        <div className="flex items-center justify-center gap-2 max-w-2xl">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0 text-zinc-400">
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
             <path d="M12 11v5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             <circle cx="12" cy="8" r="1" fill="currentColor" />
           </svg>
-          <p className="text-lg text-zinc-500 font-medium leading-relaxed">
+          <p className="text-lg text-zinc-500 font-medium">
             {campaign.painBody}
           </p>
         </div>
