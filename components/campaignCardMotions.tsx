@@ -193,14 +193,17 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
     { src: "/lotties/avatars/7_avatar.webp", name: "Mariana L." },
     { src: "/lotties/avatars/8_avatar.webp", name: "Fernando H." },
   ];
+  const alignClass = ["self-start ml-6", "self-end mr-2", "self-start ml-1"];
+
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+    <div className="absolute inset-0 flex items-center justify-center px-4">
+      <div className="flex flex-col gap-4 w-full">
       {rows.map((row, i) => {
         const slot = i * 1.2;
         return (
           <motion.div
             key={i}
-            className="flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[168px]"
+            className={`flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[152px] ${alignClass[i]}`}
             animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 1 }}
             transition={{ duration: 0.5, delay: slot + 0.35, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.5 - slot - 0.35, ease: "easeIn" }}
           >
@@ -218,6 +221,7 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
           </motion.div>
         );
       })}
+      </div>
     </div>
   );
 }
