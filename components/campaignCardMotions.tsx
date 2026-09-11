@@ -160,20 +160,20 @@ const CRM_LEADS = ["9_avatar", "5_avatar", "3_avatar"];
 
 export function CrmMotion({ isActive }: { isActive: boolean }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="relative w-[150px] rounded-xl bg-white border border-zinc-100 p-2.5 flex flex-col gap-1.5">
-        <span className="text-[7px] font-bold text-zinc-400 uppercase tracking-wide">Funil de vendas</span>
+    <div className="absolute inset-0 flex items-end justify-center">
+      <div className="relative w-[176px] h-[150px] rounded-t-2xl bg-white border border-zinc-100 border-b-0 px-3 pt-3 flex flex-col gap-2.5">
+        <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-wide">Funil de vendas</span>
         {CRM_LEADS.map((avatar, i) => {
           const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
           return (
             <motion.div
               key={i}
-              className="flex items-center gap-1.5 bg-zinc-50 rounded-full pl-1 pr-2 py-1"
+              className="flex items-center gap-2 bg-zinc-50 rounded-full pl-1 pr-2.5 py-1.5"
               animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
               transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4, ease: "easeOut" }}
             >
-              <Avatar src={`/lotties/avatars/${avatar}.webp`} size={18} />
-              <span className="w-8 h-1.5 rounded-full" style={{ background: GRADIENT }} />
+              <Avatar src={`/lotties/avatars/${avatar}.webp`} size={30} />
+              <span className="w-10 h-2 rounded-full" style={{ background: GRADIENT }} />
             </motion.div>
           );
         })}
