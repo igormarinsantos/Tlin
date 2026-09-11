@@ -26,30 +26,46 @@ export const enUS: TranslationDictionary = {
     demoSoon: "Demo coming soon"
   },
   campaigns: {
+    painBadge: "📊 What the data shows",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds — no shifts, no lead left waiting.",
-      highlightWords: ["WhatsApp"]
+      highlightWords: ["WhatsApp"],
+      painHeadline: "Responding within the first hour makes a sale up to 7x more likely.",
+      painBody: "After 24 hours with no response, the chance of qualifying that lead drops sharply. Every message left waiting is a sale going cold.",
+      painDisclaimer: "Market data (Oldroyd study / Harvard Business Review on lead response time), not specific to Tlin. Results vary by operation."
     },
     recuperacaoDeLeads: {
       title: "Lead gone cold? The AI\npicks the conversation back up.",
       subtitle: "Automatic follow-up for leads who stopped replying, right on WhatsApp — no rep needs to remember to reach out again.",
-      highlightWords: ["AI"]
+      highlightWords: ["AI"],
+      painHeadline: "80% of sales require at least 5 follow-ups — but 44% of reps give up after the 1st.",
+      painBody: "The lead didn't say no. They just stopped replying — and without someone to re-engage at the right moment, that sale never comes back.",
+      painDisclaimer: "Widely cited sales-training data (National Sales Executive Association), not specific to Tlin."
     },
     crmComIa: {
       title: "The CRM your team\nuses without duplicating work.",
       subtitle: "A native AI-powered CRM that organizes leads, conversations, and pipeline automatically — nothing to integrate to get started.",
-      highlightWords: ["CRM"]
+      highlightWords: ["CRM"],
+      painHeadline: "Companies that use a CRM consistently report up to 29% more sales.",
+      painBody: "A spreadsheet, a WhatsApp group, and a CRM nobody updates are 3 different places for a lead to fall through the cracks.",
+      painDisclaimer: "Market data (Salesforce, State of Sales), not specific to Tlin. Results vary by segment."
     },
     infoprodutores: {
       title: "From ad click to enrolled student,\nwith AI on WhatsApp.",
       subtitle: "Handle launch spikes, qualify who's a fit for your course, and recover abandoned checkouts — all automatic, 24/7.",
-      highlightWords: ["AI"]
+      highlightWords: ["AI"],
+      painHeadline: "Cart abandonment in e-commerce reaches 70% — slow response is one of the reasons.",
+      painBody: "On launch day, every message that takes too long to answer is a sale that can go cold before checkout.",
+      painDisclaimer: "Market data (Baymard Institute, average cart abandonment rate), not specific to digital products or Tlin."
     },
     agentesDeIa: {
       title: "AI agents that sell\nlike your best closer.",
       subtitle: "Trained on your playbook, scripts and objections — Tlin's agents answer, qualify, and scale your operation without bloating the team.",
-      highlightWords: ["AI"]
+      highlightWords: ["AI"],
+      painHeadline: "Responding within the first hour makes a sale up to 7x more likely.",
+      painBody: "An AI agent replies at that speed 24/7 — no days off, no need to hire and train more people to handle the volume.",
+      painDisclaimer: "Market data (Oldroyd study / Harvard Business Review on lead response time), not specific to Tlin. Results vary by operation."
     }
   },
   trusted: {
