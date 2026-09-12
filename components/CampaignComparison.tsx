@@ -37,7 +37,7 @@ function XIcon() {
 // consistente entre plataformas, no lugar do glifo de emoji.
 function SkullIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="inline-block align-[-2px] mr-1">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="inline-block align-[-4px] mr-1.5">
       <path
         d="M12 3C7.58 3 4 6.58 4 11c0 2.79 1.42 5.26 3.58 6.7L7 20.5h10l-.58-2.8C18.58 16.26 20 13.79 20 11c0-4.42-3.58-8-8-8z"
         fill="#a1a1aa"
@@ -116,16 +116,16 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
             {/* Label "DO JEITO ANTIGO" faz parte da mesma superficie branca --
                 nao fica solta no espaço azul. */}
             <div className="flex flex-col md:flex-row">
-              <div className="bg-white rounded-t-2xl px-5 pt-4 pb-2 md:w-[38%] shrink-0 text-center">
-                <span className="text-xs font-bold text-zinc-400 lowercase tracking-wide">
+              <div className="bg-white rounded-t-2xl px-5 pt-5 pb-3 md:w-[38%] shrink-0 text-center">
+                <span className="text-sm font-bold text-zinc-400 lowercase tracking-wide">
                   <SkullIcon />
                   {t.campaigns.comparisonOldLabel}
                 </span>
               </div>
-              <div className="hidden md:flex justify-center pb-2 flex-1">
-                <div className="flex items-end gap-1.5 w-full max-w-[420px] px-3">
-                  <span className="text-xs font-bold text-[#0c0d0d] lowercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
-                  <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
+              <div className="hidden md:flex justify-center pb-3 flex-1">
+                <div className="flex items-center justify-center gap-2 w-full max-w-[420px] px-3">
+                  <span className="text-sm font-bold text-[#0c0d0d] lowercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
+                  <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-5 w-auto" />
                 </div>
               </div>
             </div>
