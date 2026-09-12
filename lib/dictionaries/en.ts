@@ -32,7 +32,6 @@ export const enUS: TranslationDictionary = {
     comparisonEyebrow: "Before and after",
     comparisonTitle: "From the old way to [Tlin.ai]",
     comparisonOldLabel: "The old way",
-    comparisonNewLabel: "With Tlin.ai",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",

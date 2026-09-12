@@ -86,7 +86,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                 <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
               </div>
               <div className="hidden md:flex items-end justify-center px-2 md:px-3 pb-2 flex-1">
-                <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
+                <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
               </div>
             </div>
 

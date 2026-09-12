@@ -30,7 +30,6 @@ export const ptBR = {
     comparisonEyebrow: "Antes e depois",
     comparisonTitle: "Do jeito antigo pro jeito [Tlin.ai]",
     comparisonOldLabel: "Do jeito antigo",
-    comparisonNewLabel: "Com a Tlin.ai",
     iaWhatsapp: {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
