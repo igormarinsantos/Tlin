@@ -122,9 +122,11 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                   {t.campaigns.comparisonOldLabel}
                 </span>
               </div>
-              <div className="hidden md:flex items-end gap-1.5 px-5 md:px-8 md:mx-2 pb-2 flex-1">
-                <span className="text-xs font-bold text-[#0c0d0d] lowercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
-                <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
+              <div className="hidden md:flex justify-center pb-2 flex-1">
+                <div className="flex items-end gap-1.5 w-full max-w-[420px] px-3">
+                  <span className="text-xs font-bold text-[#0c0d0d] lowercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
+                  <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
+                </div>
               </div>
             </div>
 
@@ -147,13 +149,15 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                     <XIcon />
                     <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
                   </div>
-                  <div className="group flex items-start gap-3 px-5 md:px-8 py-4 flex-1 md:mx-2 rounded-2xl cursor-default transition-colors duration-300 hover:bg-white/60">
-                    <div className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-6">
-                      <CheckIcon />
+                  <div className="flex md:justify-center px-5 py-4 flex-1">
+                    <div className="group flex items-start gap-3 w-full max-w-[420px] px-3 -mx-3 py-2 -my-2 rounded-2xl cursor-default transition-colors duration-300 hover:bg-white/60">
+                      <div className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-6">
+                        <CheckIcon />
+                      </div>
+                      <p className="text-base md:text-lg font-semibold text-[#0c0d0d] leading-relaxed transition-colors duration-300 group-hover:text-[#0369a1]">
+                        {pair.new}
+                      </p>
                     </div>
-                    <p className="text-base md:text-lg font-semibold text-[#0c0d0d] leading-relaxed transition-colors duration-300 group-hover:text-[#0369a1]">
-                      {pair.new}
-                    </p>
                   </div>
                 </motion.div>
               );
