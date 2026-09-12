@@ -52,15 +52,11 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
   };
 
   return (
-    <section className="relative isolate w-full min-h-[80svh] md:min-h-[85svh] pt-28 md:pt-32 pb-12 md:pb-16 px-4 md:px-8 flex items-center bg-white overflow-hidden">
-      {/* Fundo azul claro (cor solida, nao opacidade -- opacidade sobre
-          branco dilui quase de volta pro branco) que segura a cor solida
-          pela parte de cima/meio (onde o conteudo fica) e so desvanece pra
-          transparente perto da base, se misturando com o resto da pagina. */}
-      <div
-        className="absolute inset-0 -z-20"
-        style={{ background: "linear-gradient(to bottom, #D6F7FF 0%, #D6F7FF 40%, transparent 90%)" }}
-      />
+    <section className="relative isolate w-full min-h-[80svh] md:min-h-[85svh] pt-28 md:pt-32 pb-12 md:pb-16 px-4 md:px-8 flex items-center overflow-hidden">
+      {/* Fundo azul (ver wrapper em MarketingLandingPage.tsx, que estende
+          essa cor por baixo do Hero + da faixa "Confianca para escalar sua
+          operacao" logo abaixo) -- aqui a section fica sem bg proprio pra
+          deixar o gradiente do wrapper aparecer por baixo do conteudo. */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
       <div className="max-w-[1300px] w-full mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">

@@ -125,11 +125,24 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
       <GlobalBackground />
       <ScrollBgWrapper>
         {/* ATTENTION - Hero is priority */}
-        <div className="section-to-blur">
-          {heroVariant ? <CampaignHero variant={heroVariant} /> : <Hero />}
-        </div>
-
-        <div className="section-to-blur"><TrustedBy /></div>
+        {heroVariant ? (
+          // Wrapper que estende o azul claro do Hero por baixo da faixa de
+          // logos (TrustedBy) tambem, desvanecendo pra transparente só
+          // depois dela -- as duas sections ficam sem bg proprio aqui.
+          <div className="relative isolate">
+            <div
+              className="absolute inset-0 -z-10"
+              style={{ background: "linear-gradient(to bottom, #EAFBFF 0%, #EAFBFF 88%, transparent 98%)" }}
+            />
+            <div className="section-to-blur"><CampaignHero variant={heroVariant} /></div>
+            <div className="section-to-blur"><TrustedBy transparentBg /></div>
+          </div>
+        ) : (
+          <>
+            <div className="section-to-blur"><Hero /></div>
+            <div className="section-to-blur"><TrustedBy /></div>
+          </>
+        )}
 
         {/* Dor com dado de mercado -- so nas paginas de campanha */}
         {heroVariant && <div className="section-to-blur"><PainSection variant={heroVariant} /></div>}

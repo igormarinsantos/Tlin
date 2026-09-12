@@ -15,10 +15,10 @@ const logos = [
   { name: "Salesforce", src: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" },
 ];
 
-export function TrustedBy() {
+export function TrustedBy({ transparentBg }: { transparentBg?: boolean } = {}) {
   const { t } = useLanguage();
   return (
-    <section className="w-full py-16 bg-white overflow-hidden">
+    <section className={`w-full py-16 overflow-hidden ${transparentBg ? "" : "bg-white"}`}>
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row items-center gap-5 md:gap-16">
           {/* Label */}
@@ -31,9 +31,15 @@ export function TrustedBy() {
 
           {/* Carousel */}
           <div className="w-full md:flex-1 min-w-0 relative overflow-hidden">
-            {/* Gradients to fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
+            {/* Gradients to fade edges -- acompanham a cor de fundo da section
+                (branco normalmente, azul claro quando embutida no wrapper
+                azul das paginas de campanha) pra nao criar uma emenda visivel */}
+            <div
+              className={`absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r to-transparent z-10 ${transparentBg ? "from-[#EAFBFF]" : "from-white"}`}
+            />
+            <div
+              className={`absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l to-transparent z-10 ${transparentBg ? "from-[#EAFBFF]" : "from-white"}`}
+            />
             
             <motion.div 
               className="flex items-center w-max"
