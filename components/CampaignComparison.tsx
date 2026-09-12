@@ -83,26 +83,36 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
             <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {campaign.comparison.map((pair, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, ease: "easeOut", delay: (i % 5) * 0.06 }}
-                className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4"
-              >
-                <div className="flex items-start gap-3 bg-white rounded-xl px-5 py-4 md:w-[38%] shrink-0">
-                  <XIcon />
-                  <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
-                </div>
-                <div className="flex items-start gap-3 px-2 md:px-3 flex-1">
-                  <CheckIcon />
-                  <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
-                </div>
-              </motion.div>
-            ))}
+          <div className="flex flex-col">
+            {campaign.comparison.map((pair, i) => {
+              const isFirst = i === 0;
+              const isLast = i === campaign.comparison.length - 1;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: (i % 5) * 0.06 }}
+                  className="flex flex-col md:flex-row"
+                >
+                  <div
+                    className={`flex items-start gap-3 bg-white px-5 py-4 md:w-[38%] shrink-0 ${
+                      isFirst ? "rounded-t-2xl md:rounded-tr-none" : "border-t border-zinc-100"
+                    } ${isLast ? "rounded-b-2xl md:rounded-br-none" : ""} ${isFirst ? "md:rounded-tl-2xl" : ""} ${
+                      isLast ? "md:rounded-bl-2xl" : ""
+                    }`}
+                  >
+                    <XIcon />
+                    <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
+                  </div>
+                  <div className="flex items-start gap-3 px-2 md:px-3 py-4 flex-1">
+                    <CheckIcon />
+                    <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
