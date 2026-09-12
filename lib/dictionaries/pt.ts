@@ -27,6 +27,10 @@ export const ptBR = {
     howItWorksEyebrow: "Conheça a Tlin",
     howItWorksTitle: "Como funciona, [passo a passo]",
     howItWorksCtaTitle: "Pronto pra colocar isso pra rodar na [sua operação]?",
+    comparisonEyebrow: "Antes e depois",
+    comparisonTitle: "Do jeito antigo pro jeito [Tlin.ai]",
+    comparisonOldLabel: "Do jeito antigo",
+    comparisonNewLabel: "Com a Tlin.ai",
     iaWhatsapp: {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
@@ -48,6 +52,13 @@ export const ptBR = {
         { name: "Bruno Castro", role: "Sócio", text: "O atendimento ficou rápido igual eu sempre quis." },
         { name: "Renata Alves", role: "Gerente de atendimento", text: "A equipe finalmente não perde mais mensagem de madrugada." },
         { name: "Diego Farias", role: "Empreendedor", text: "Impressionante a velocidade que a IA responde." }
+      ],
+      comparison: [
+        { old: "Lead espera horas por uma resposta no WhatsApp.", new: "Resposta automática em segundos, 24 horas por dia." },
+        { old: "Time comercial correndo atrás de mensagem perdida.", new: "Toda mensagem é respondida na hora, sem plantão." },
+        { old: "Cada atendente responde de um jeito diferente.", new: "IA treinada no seu script, sempre no mesmo padrão." },
+        { old: "Lead esfria enquanto espera alguém digitar.", new: "Qualificação começa no primeiro \"oi\"." },
+        { old: "Vendedor lembra (ou esquece) de responder à noite.", new: "Atendimento nunca dorme, nunca tira folga." }
       ]
     },
     recuperacaoDeLeads: {
@@ -71,6 +82,13 @@ export const ptBR = {
         { name: "Felipe Moraes", role: "Dono de negócio", text: "A IA lembra de cada lead que parou de responder." },
         { name: "Aline Barbosa", role: "Coordenadora de vendas", text: "Recuperei clientes que já tinham sumido há semanas." },
         { name: "Marcelo Teixeira", role: "Empresário", text: "O sistema faz o que eu não tinha tempo de fazer." }
+      ],
+      comparison: [
+        { old: "Lead que não respondeu vira esquecido pra sempre.", new: "Follow-up automático reativa a conversa sozinho." },
+        { old: "Vendedor precisa lembrar de cada lead frio.", new: "A IA sabe exatamente quando e quem retomar." },
+        { old: "80% dos leads exigem 5+ follow-ups que nunca acontecem.", new: "Cada intervalo certo, sem depender de memória." },
+        { old: "Cliente que sumiu é dado como perdido.", new: "Lead reativado volta pro funil automaticamente." },
+        { old: "Follow-up manual é o primeiro a ser cortado na correria.", new: "Roda em segundo plano, todos os dias, sem esforço." }
       ]
     },
     crmComIa: {
@@ -94,6 +112,13 @@ export const ptBR = {
         { name: "André Bezerra", role: "Sócio", text: "Não perco mais nenhum lead no meio do caminho." },
         { name: "Camila Freitas", role: "Gerente de operações", text: "Consigo ver tudo num lugar só, sem depender de vendedor lembrar." },
         { name: "Rafael Monteiro", role: "Empresário", text: "Substituiu 3 ferramentas diferentes que eu usava antes." }
+      ],
+      comparison: [
+        { old: "Cada lead numa planilha, cada conversa num app diferente.", new: "Tudo organizado automaticamente no mesmo CRM." },
+        { old: "Vendedor esquece de atualizar o funil.", new: "Funil atualiza sozinho a cada mensagem." },
+        { old: "Lead se perde entre WhatsApp, planilha e CRM.", new: "Um lugar só: conversa, dados e histórico juntos." },
+        { old: "Ninguém sabe em que etapa cada lead está.", new: "Funil visual mostra a etapa de cada lead em tempo real." },
+        { old: "Métrica de vendas é feita na unha, no fim do mês.", new: "Métricas atualizadas automaticamente, todo dia." }
       ]
     },
     infoprodutores: {
@@ -117,6 +142,13 @@ export const ptBR = {
         { name: "Leonardo Dias", role: "Criador de curso", text: "A IA tirou dúvida de matrícula 24 horas por dia." },
         { name: "Priscila Nunes", role: "Produtora", text: "Não perdi venda por demora de resposta nesse lançamento." },
         { name: "Eduardo Martins", role: "Infoprodutor", text: "Finalmente um jeito de escalar o atendimento no dia do lançamento." }
+      ],
+      comparison: [
+        { old: "Pico de lançamento trava o atendimento.", new: "IA atende todo mundo ao mesmo tempo, sem fila." },
+        { old: "Carrinho abandonado nunca mais é lembrado.", new: "IA busca quem abandonou o carrinho antes de fechar." },
+        { old: "Dúvida de aluno demora horas pra ser respondida.", new: "Dúvidas de matrícula respondidas na hora, 24/7." },
+        { old: "Contratar mais gente só pra aguentar o lançamento.", new: "Escala o atendimento sem aumentar a equipe." },
+        { old: "Sem visibilidade de quantas matrículas vieram de qual campanha.", new: "Métricas de conversão por campanha em tempo real." }
       ]
     },
     agentesDeIa: {
@@ -140,6 +172,13 @@ export const ptBR = {
         { name: "Otávio Cardoso", role: "Dono de negócio", text: "O agente contorna objeção melhor do que eu esperava." },
         { name: "Vanessa Melo", role: "Coordenadora de vendas", text: "É como ter um vendedor que nunca tira folga." },
         { name: "Caio Ferreira", role: "Sócio-fundador", text: "O agente já fecha venda sozinho em boa parte dos casos." }
+      ],
+      comparison: [
+        { old: "Cada vendedor atende de um jeito, sem padrão.", new: "Agente treinado no seu playbook, sempre no ponto." },
+        { old: "Objeção pega o time desprevenido.", new: "Agente contorna objeção do jeito que você ensinou." },
+        { old: "Só o seu melhor vendedor fecha bem.", new: "Todo atendimento tem a qualidade do seu melhor closer." },
+        { old: "Contratar e treinar vendedor novo demora meses.", new: "Agente de IA já sai pronto, treinado no seu script." },
+        { old: "Vendedor de folga é atendimento parado.", new: "Agente de IA nunca tira folga." }
       ]
     }
   },

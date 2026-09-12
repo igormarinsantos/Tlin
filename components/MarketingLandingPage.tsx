@@ -16,6 +16,7 @@ const TextReveal = dynamic(() => import("@/components/TextReveal").then(mod => m
 // paginas de campanha, igual Features/Pricing/Testimonials/Faq abaixo.
 const CampaignHowItWorks = dynamic(() => import("@/components/CampaignHowItWorks").then(mod => mod.CampaignHowItWorks));
 const CampaignReviews = dynamic(() => import("@/components/CampaignReviews").then(mod => mod.CampaignReviews));
+const CampaignComparison = dynamic(() => import("@/components/CampaignComparison").then(mod => mod.CampaignComparison));
 // SSR ligado (sem ssr:false) pra essas seções: precisam existir no HTML inicial
 // pro Google indexar sem depender de JS (âncoras #como-funciona/#agentes/#crm/#planos/#faq).
 const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
@@ -168,6 +169,13 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
           style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
+
+        {/* Comparativo "jeito antigo x com a Tlin" -- so nas paginas de campanha, logo antes do Pricing */}
+        {heroVariant && (
+          <DeferredSection className="section-to-blur" minHeight="min-h-[500px]">
+            <CampaignComparison variant={heroVariant} />
+          </DeferredSection>
+        )}
 
         {/* PRICING / ACTION */}
         <div className="no-blur transition-all duration-700 relative z-50">

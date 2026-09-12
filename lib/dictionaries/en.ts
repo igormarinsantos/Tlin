@@ -29,6 +29,10 @@ export const enUS: TranslationDictionary = {
     howItWorksEyebrow: "Meet Tlin",
     howItWorksTitle: "How it works, [step by step]",
     howItWorksCtaTitle: "Ready to put this to work in [your operation]?",
+    comparisonEyebrow: "Before and after",
+    comparisonTitle: "From the old way to [Tlin.ai]",
+    comparisonOldLabel: "The old way",
+    comparisonNewLabel: "With Tlin.ai",
     iaWhatsapp: {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",
@@ -50,6 +54,13 @@ export const enUS: TranslationDictionary = {
         { name: "Bruno Castro", role: "Partner", text: "Support finally got as fast as I always wanted." },
         { name: "Renata Alves", role: "Support manager", text: "The team finally doesn't miss overnight messages anymore." },
         { name: "Diego Farias", role: "Entrepreneur", text: "The speed the AI replies at is impressive." }
+      ],
+      comparison: [
+        { old: "A lead waits hours for a reply on WhatsApp.", new: "Automatic reply in seconds, 24 hours a day." },
+        { old: "Sales team chasing missed messages.", new: "Every message gets answered instantly, no on-call shifts." },
+        { old: "Every rep replies in a different way.", new: "AI trained on your script, always consistent." },
+        { old: "A lead goes cold while waiting for someone to type.", new: "Qualification starts on the very first \"hi\"." },
+        { old: "A rep remembers (or forgets) to reply at night.", new: "Support never sleeps, never takes a day off." }
       ]
     },
     recuperacaoDeLeads: {
@@ -73,6 +84,13 @@ export const enUS: TranslationDictionary = {
         { name: "Felipe Moraes", role: "Business owner", text: "The AI remembers every lead who stopped replying." },
         { name: "Aline Barbosa", role: "Sales coordinator", text: "I recovered customers who had gone quiet weeks ago." },
         { name: "Marcelo Teixeira", role: "Business owner", text: "The system does what I never had time to do." }
+      ],
+      comparison: [
+        { old: "A lead who didn't reply gets forgotten forever.", new: "Automatic follow-up reactivates the conversation on its own." },
+        { old: "A rep has to remember every cold lead.", new: "The AI knows exactly when and who to follow up with." },
+        { old: "80% of leads need 5+ follow-ups that never happen.", new: "Every interval on time, with no memory required." },
+        { old: "A lead who went quiet gets written off.", new: "Reactivated leads go straight back into the pipeline." },
+        { old: "Manual follow-up is the first thing that gets cut when things get busy.", new: "Runs in the background, every day, with no effort." }
       ]
     },
     crmComIa: {
@@ -96,6 +114,13 @@ export const enUS: TranslationDictionary = {
         { name: "André Bezerra", role: "Partner", text: "I don't lose leads along the way anymore." },
         { name: "Camila Freitas", role: "Operations manager", text: "I can see everything in one place, no rep needs to remember." },
         { name: "Rafael Monteiro", role: "Business owner", text: "It replaced 3 different tools I used to juggle." }
+      ],
+      comparison: [
+        { old: "Every lead in a spreadsheet, every chat in a different app.", new: "Everything organized automatically in the same CRM." },
+        { old: "A rep forgets to update the pipeline.", new: "The pipeline updates itself with every message." },
+        { old: "Leads get lost between WhatsApp, spreadsheets, and the CRM.", new: "One place: conversation, data, and history together." },
+        { old: "No one knows what stage each lead is in.", new: "A visual pipeline shows every lead's stage in real time." },
+        { old: "Sales metrics get put together by hand at month's end.", new: "Metrics update automatically, every day." }
       ]
     },
     infoprodutores: {
@@ -119,6 +144,13 @@ export const enUS: TranslationDictionary = {
         { name: "Leonardo Dias", role: "Course creator", text: "The AI answered enrollment questions around the clock." },
         { name: "Priscila Nunes", role: "Producer", text: "I didn't lose a single sale to slow replies this launch." },
         { name: "Eduardo Martins", role: "Course creator", text: "Finally a way to scale support on launch day." }
+      ],
+      comparison: [
+        { old: "Launch traffic spikes overwhelm support.", new: "AI handles everyone at once, no queue." },
+        { old: "Abandoned carts never get a second chance.", new: "AI reaches out to abandoned carts before checkout closes." },
+        { old: "Student questions take hours to get answered.", new: "Enrollment questions answered instantly, 24/7." },
+        { old: "Hiring more people just to survive launch day.", new: "Scale support without growing the team." },
+        { old: "No visibility into which campaign drove which enrollment.", new: "Real-time conversion metrics per campaign." }
       ]
     },
     agentesDeIa: {
@@ -142,6 +174,13 @@ export const enUS: TranslationDictionary = {
         { name: "Otávio Cardoso", role: "Business owner", text: "The agent handles objections better than I expected." },
         { name: "Vanessa Melo", role: "Sales coordinator", text: "It's like having a salesperson who never takes a day off." },
         { name: "Caio Ferreira", role: "Co-founder", text: "The agent closes sales on its own in most cases." }
+      ],
+      comparison: [
+        { old: "Every rep sells differently, with no standard.", new: "Agent trained on your playbook, always on point." },
+        { old: "Objections catch the team off guard.", new: "The agent handles objections exactly the way you taught it." },
+        { old: "Only your best rep really closes well.", new: "Every conversation has your best closer's quality." },
+        { old: "Hiring and training a new rep takes months.", new: "The AI agent shows up ready, trained on your script." },
+        { old: "A rep's day off means support stops.", new: "The AI agent never takes a day off." }
       ]
     }
   },

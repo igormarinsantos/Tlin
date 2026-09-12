@@ -29,6 +29,10 @@ export const esES: TranslationDictionary = {
     howItWorksEyebrow: "Conoce a Tlin",
     howItWorksTitle: "Cómo funciona, [paso a paso]",
     howItWorksCtaTitle: "¿Listo para poner esto a funcionar en [tu operación]?",
+    comparisonEyebrow: "Antes y después",
+    comparisonTitle: "Del método antiguo a [Tlin.ai]",
+    comparisonOldLabel: "El método antiguo",
+    comparisonNewLabel: "Con Tlin.ai",
     iaWhatsapp: {
       title: "Atención en WhatsApp\nfuncionando 24/7 con IA de verdad.",
       subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos, sin turnos, sin lead esperando respuesta.",
@@ -50,6 +54,13 @@ export const esES: TranslationDictionary = {
         { name: "Bruno Castro", role: "Socio", text: "La atención por fin quedó tan rápida como siempre quise." },
         { name: "Renata Alves", role: "Gerente de atención", text: "El equipo por fin no pierde más mensajes de madrugada." },
         { name: "Diego Farias", role: "Emprendedor", text: "Impresionante la velocidad con la que responde la IA." }
+      ],
+      comparison: [
+        { old: "El lead espera horas por una respuesta en WhatsApp.", new: "Respuesta automática en segundos, 24 horas al día." },
+        { old: "El equipo comercial corre detrás de mensajes perdidos.", new: "Cada mensaje se responde al instante, sin guardias." },
+        { old: "Cada agente responde de una forma distinta.", new: "IA entrenada en tu guion, siempre con el mismo estándar." },
+        { old: "El lead se enfría mientras espera que alguien escriba.", new: "La calificación empieza desde el primer \"hola\"." },
+        { old: "El vendedor recuerda (o se olvida) de responder de noche.", new: "La atención nunca duerme, nunca tiene día libre." }
       ]
     },
     recuperacaoDeLeads: {
@@ -73,6 +84,13 @@ export const esES: TranslationDictionary = {
         { name: "Felipe Moraes", role: "Dueño de negocio", text: "La IA recuerda a cada lead que dejó de responder." },
         { name: "Aline Barbosa", role: "Coordinadora de ventas", text: "Recuperé clientes que ya habían desaparecido hacía semanas." },
         { name: "Marcelo Teixeira", role: "Empresario", text: "El sistema hace lo que yo no tenía tiempo de hacer." }
+      ],
+      comparison: [
+        { old: "El lead que no respondió queda olvidado para siempre.", new: "El seguimiento automático reactiva la conversación solo." },
+        { old: "El vendedor tiene que recordar cada lead frío.", new: "La IA sabe exactamente cuándo y a quién retomar." },
+        { old: "El 80% de los leads necesita 5+ seguimientos que nunca pasan.", new: "Cada intervalo en su momento, sin depender de la memoria." },
+        { old: "El cliente que desapareció se da por perdido.", new: "El lead reactivado vuelve solo al embudo." },
+        { old: "El seguimiento manual es lo primero que se deja de lado.", new: "Funciona en segundo plano, todos los días, sin esfuerzo." }
       ]
     },
     crmComIa: {
@@ -96,6 +114,13 @@ export const esES: TranslationDictionary = {
         { name: "André Bezerra", role: "Socio", text: "Ya no pierdo ningún lead en el camino." },
         { name: "Camila Freitas", role: "Gerente de operaciones", text: "Veo todo en un solo lugar, sin depender de que un vendedor lo recuerde." },
         { name: "Rafael Monteiro", role: "Empresario", text: "Reemplazó 3 herramientas distintas que usaba antes." }
+      ],
+      comparison: [
+        { old: "Cada lead en una planilla, cada conversación en una app distinta.", new: "Todo organizado automáticamente en el mismo CRM." },
+        { old: "El vendedor se olvida de actualizar el embudo.", new: "El embudo se actualiza solo con cada mensaje." },
+        { old: "El lead se pierde entre WhatsApp, planilla y CRM.", new: "Un solo lugar: conversación, datos e historial juntos." },
+        { old: "Nadie sabe en qué etapa está cada lead.", new: "El embudo visual muestra la etapa de cada lead en tiempo real." },
+        { old: "Las métricas de ventas se arman a mano a fin de mes.", new: "Métricas actualizadas automáticamente, todos los días." }
       ]
     },
     infoprodutores: {
@@ -119,6 +144,13 @@ export const esES: TranslationDictionary = {
         { name: "Leonardo Dias", role: "Creador de curso", text: "La IA resolvió dudas de matrícula las 24 horas." },
         { name: "Priscila Nunes", role: "Productora", text: "No perdí ninguna venta por demora en este lanzamiento." },
         { name: "Eduardo Martins", role: "Creador de curso", text: "Por fin una forma de escalar la atención el día del lanzamiento." }
+      ],
+      comparison: [
+        { old: "El pico de lanzamiento satura la atención.", new: "La IA atiende a todos a la vez, sin fila." },
+        { old: "El carrito abandonado nunca tiene una segunda oportunidad.", new: "La IA busca a quien abandonó el carrito antes de cerrar." },
+        { old: "La duda del alumno tarda horas en responderse.", new: "Dudas de matrícula respondidas al instante, 24/7." },
+        { old: "Contratar más gente solo para aguantar el lanzamiento.", new: "Escala la atención sin aumentar el equipo." },
+        { old: "Sin visibilidad de cuántas matrículas vinieron de cada campaña.", new: "Métricas de conversión por campaña en tiempo real." }
       ]
     },
     agentesDeIa: {
@@ -142,6 +174,13 @@ export const esES: TranslationDictionary = {
         { name: "Otávio Cardoso", role: "Dueño de negocio", text: "El agente maneja objeciones mejor de lo que esperaba." },
         { name: "Vanessa Melo", role: "Coordinadora de ventas", text: "Es como tener un vendedor que nunca descansa." },
         { name: "Caio Ferreira", role: "Cofundador", text: "El agente cierra ventas solo en la mayoría de los casos." }
+      ],
+      comparison: [
+        { old: "Cada vendedor atiende de una forma distinta, sin estándar.", new: "Agente entrenado en tu guion, siempre en el punto." },
+        { old: "La objeción agarra al equipo desprevenido.", new: "El agente maneja la objeción como tú lo enseñaste." },
+        { old: "Solo tu mejor vendedor cierra bien.", new: "Cada atención tiene la calidad de tu mejor closer." },
+        { old: "Contratar y entrenar un vendedor nuevo tarda meses.", new: "El agente de IA ya sale listo, entrenado en tu guion." },
+        { old: "El día libre del vendedor significa atención parada.", new: "El agente de IA nunca tiene día libre." }
       ]
     }
   },
