@@ -25,9 +25,9 @@ function HighlightedTitle({ text }: { text: string }) {
 
 function XIcon() {
   return (
-    <div className="w-6 h-6 rounded-full bg-zinc-200 flex items-center justify-center shrink-0 mt-0.5">
+    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path d="M6 6l12 12M18 6L6 18" stroke="#a1a1aa" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M6 6l12 12M18 6L6 18" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -78,14 +78,19 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
             o jeito antigo vira uma caixinha branca menor, abraçada pelo
             espaço azul ao redor dela (sem linhas de tabela, so o abraço). */}
         <div className="rounded-3xl bg-[#38E3FF]/10 border border-[#38E3FF]/30 p-3 md:p-5">
-          <div className="hidden md:flex items-center justify-between px-3 pb-3">
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
-            <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
-          </div>
-
           <div className="flex flex-col">
+            {/* Label "DO JEITO ANTIGO" faz parte da mesma superficie branca --
+                nao fica solta no espaço azul. */}
+            <div className="flex flex-col md:flex-row">
+              <div className="bg-white rounded-t-2xl px-5 pt-4 pb-2 md:w-[38%] shrink-0 text-center">
+                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
+              </div>
+              <div className="hidden md:flex items-end justify-center px-2 md:px-3 pb-2 flex-1">
+                <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
+              </div>
+            </div>
+
             {campaign.comparison.map((pair, i) => {
-              const isFirst = i === 0;
               const isLast = i === campaign.comparison.length - 1;
               return (
                 <motion.div
@@ -97,10 +102,8 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                   className="flex flex-col md:flex-row"
                 >
                   <div
-                    className={`flex items-start gap-3 bg-white px-5 py-4 md:w-[38%] shrink-0 ${
-                      isFirst ? "rounded-t-2xl md:rounded-tr-none" : "border-t border-zinc-100"
-                    } ${isLast ? "rounded-b-2xl md:rounded-br-none" : ""} ${isFirst ? "md:rounded-tl-2xl" : ""} ${
-                      isLast ? "md:rounded-bl-2xl" : ""
+                    className={`flex items-start gap-3 bg-white px-5 py-4 md:w-[38%] shrink-0 border-t border-zinc-100 ${
+                      isLast ? "rounded-b-2xl" : ""
                     }`}
                   >
                     <XIcon />
@@ -108,7 +111,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                   </div>
                   <div className="flex items-start gap-3 px-2 md:px-3 py-4 flex-1">
                     <CheckIcon />
-                    <p className="text-sm md:text-base font-semibold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
+                    <p className="text-base md:text-lg font-semibold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
                   </div>
                 </motion.div>
               );
