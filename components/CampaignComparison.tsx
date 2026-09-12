@@ -23,11 +23,13 @@ function HighlightedTitle({ text }: { text: string }) {
   );
 }
 
-function XIcon() {
+// Traco reto (nao um X) -- reforca a sensacao de "parado, sem vida" do
+// lado do jeito antigo.
+function FlatIcon() {
   return (
-    <div className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 mt-0.5">
+    <div className="w-6 h-6 rounded-full bg-zinc-200 flex items-center justify-center shrink-0 mt-0.5">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path d="M6 6l12 12M18 6L6 18" stroke="#a1a1aa" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M5 12h14" stroke="#a1a1aa" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -76,11 +78,11 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
 
         <div className="rounded-3xl border border-zinc-100 overflow-hidden">
           <div className="hidden md:grid grid-cols-2">
-            <div className="bg-zinc-50 px-8 py-4 border-b border-r border-zinc-100">
-              <p className="text-xs font-bold text-zinc-500 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</p>
+            <div className="bg-zinc-100 px-8 py-4 border-b border-r border-zinc-200">
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</p>
             </div>
-            <div className="bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 px-8 py-4 border-b border-zinc-100">
-              <p className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</p>
+            <div className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-8 py-4 border-b border-zinc-100">
+              <p className="text-xs font-bold text-white uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</p>
             </div>
           </div>
 
@@ -93,13 +95,13 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
               transition={{ duration: 0.4, ease: "easeOut", delay: (i % 5) * 0.06 }}
               className="grid grid-cols-1 md:grid-cols-2 border-b border-zinc-100 last:border-b-0"
             >
-              <div className="flex items-start gap-3 px-6 md:px-8 py-5 bg-white md:border-r border-zinc-100">
-                <XIcon />
-                <p className="text-sm md:text-base text-zinc-500 leading-relaxed">{pair.old}</p>
+              <div className="flex items-start gap-3 px-6 md:px-8 py-5 bg-zinc-50 md:border-r border-zinc-200">
+                <FlatIcon />
+                <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
               </div>
-              <div className="flex items-start gap-3 px-6 md:px-8 py-5 bg-gradient-to-r from-[#B597FF]/[0.04] to-[#38E3FF]/[0.04]">
+              <div className="flex items-start gap-3 px-6 md:px-8 py-5 bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10">
                 <CheckIcon />
-                <p className="text-sm md:text-base font-medium text-[#0c0d0d] leading-relaxed">{pair.new}</p>
+                <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
               </div>
             </motion.div>
           ))}
