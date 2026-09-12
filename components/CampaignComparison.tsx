@@ -23,12 +23,12 @@ function HighlightedTitle({ text }: { text: string }) {
   );
 }
 
-// Emoji de caveira no lugar do X -- reforca a leitura "morto/parado" do
-// jeito antigo (tema morto x vivo do comparativo).
 function XIcon() {
   return (
-    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5 text-[12px] leading-none">
-      💀
+    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6l12 12M18 6L6 18" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
     </div>
   );
 }
@@ -101,7 +101,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                 nao fica solta no espaço azul. */}
             <div className="flex flex-col md:flex-row">
               <div className="bg-white rounded-t-2xl px-5 pt-4 pb-2 md:w-[38%] shrink-0 text-center">
-                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
+                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">💀 {t.campaigns.comparisonOldLabel}</span>
               </div>
               <div className="hidden md:flex items-end justify-center gap-1.5 px-5 md:px-8 pb-2 flex-1">
                 <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
@@ -128,9 +128,13 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                     <XIcon />
                     <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
                   </div>
-                  <div className="flex items-start gap-3 px-5 md:px-8 py-4 flex-1">
-                    <CheckIcon />
-                    <p className="text-base md:text-lg font-semibold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
+                  <div className="group flex items-start gap-3 px-5 md:px-8 py-4 flex-1 rounded-2xl cursor-default transition-colors duration-300 hover:bg-white/60">
+                    <div className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-6">
+                      <CheckIcon />
+                    </div>
+                    <p className="text-base md:text-lg font-semibold text-[#0c0d0d] leading-relaxed transition-colors duration-300 group-hover:text-[#0369a1]">
+                      {pair.new}
+                    </p>
                   </div>
                 </motion.div>
               );
