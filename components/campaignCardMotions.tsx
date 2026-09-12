@@ -38,11 +38,11 @@ function Tag({ label }: { label: string }) {
 // "clicados" (bounce) e sumindo em sequencia mais pausada -- simbolico,
 // sem cursor nem texto de chat, so a ideia de captura acontecendo uma a uma.
 const CAPTURE_LEADS = [
-  { src: "/lotties/avatars/1_avatar.webp", size: 40, className: "left-4 top-4" },
-  { src: "/lotties/avatars/2_avatar.webp", size: 36, className: "left-24 top-2" },
-  { src: "/lotties/avatars/9_avatar.webp", size: 34, className: "left-2 bottom-10" },
-  { src: "/lotties/avatars/6_avatar.webp", size: 38, className: "left-24 bottom-6" },
-  { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8" },
+  { src: "/lotties/avatars/1_avatar.webp", size: 40, className: "left-4 top-4", driftX: [0, 6, -3, 2, 0], driftY: [0, -5, 4, -2, 0], duration: 3.2 },
+  { src: "/lotties/avatars/2_avatar.webp", size: 36, className: "left-24 top-2", driftX: [0, -5, 4, -3, 0], driftY: [0, 4, -5, 3, 0], duration: 4.1 },
+  { src: "/lotties/avatars/9_avatar.webp", size: 34, className: "left-2 bottom-10", driftX: [0, 3, -6, 4, 0], driftY: [0, -3, -5, 2, 0], duration: 3.7 },
+  { src: "/lotties/avatars/6_avatar.webp", size: 38, className: "left-24 bottom-6", driftX: [0, -4, 2, -5, 0], driftY: [0, 5, 3, -3, 0], duration: 4.6 },
+  { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8", driftX: [0, 5, 3, -4, 0], driftY: [0, -2, 5, -4, 0], duration: 3.9 },
 ];
 
 export function CaptureMotion({ isActive }: { isActive: boolean }) {
@@ -52,8 +52,8 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
         <motion.div
           key={i}
           className={`absolute ${lead.className}`}
-          animate={isActive ? { x: [0, 5, -4, 3, 0], y: [0, -4, 3, -3, 0] } : { x: 0, y: 0 }}
-          transition={{ duration: 3.2 + i * 0.5, repeat: loop(isActive), ease: "easeInOut" }}
+          animate={isActive ? { x: lead.driftX, y: lead.driftY } : { x: 0, y: 0 }}
+          transition={{ duration: lead.duration, repeat: loop(isActive), ease: "easeInOut" }}
         >
           <motion.div
             animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
@@ -154,11 +154,14 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
 // recentraliza no meio do quadro via layout animation.
 const AGENT_MESSAGES = ["Olá! 👋", "Como posso te ajudar?", "Vou te conectar com um especialista"];
 const AGENT_MSG_MS = 900;
-const AGENT_HOLD_MS = 900;
-const AGENT_GAP_MS = 500;
+const AGENT_HOLD_MS = 700;
+const AGENT_UNSTACK_MS = 200;
+const AGENT_GAP_MS = 400;
 const AGENT_STEP_MS = 100;
-const AGENT_HOLD_END_MS = (AGENT_MESSAGES.length - 1) * AGENT_MSG_MS + AGENT_MSG_MS + AGENT_HOLD_MS;
-const AGENT_CYCLE_MS = AGENT_HOLD_END_MS + AGENT_GAP_MS;
+const AGENT_BUILD_END_MS = (AGENT_MESSAGES.length - 1) * AGENT_MSG_MS;
+const AGENT_HOLD_END_MS = AGENT_BUILD_END_MS + AGENT_HOLD_MS;
+const AGENT_UNSTACK_END_MS = AGENT_HOLD_END_MS + (AGENT_MESSAGES.length - 1) * AGENT_UNSTACK_MS;
+const AGENT_CYCLE_MS = AGENT_UNSTACK_END_MS + AGENT_GAP_MS;
 
 export function AgentMotion({ isActive }: { isActive: boolean }) {
   const [tick, setTick] = useState(0);
@@ -174,10 +177,20 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
     return () => clearInterval(id);
   }, [isActive]);
 
-  // sobe ate 3 mensagens uma a uma, segura tudo visivel, depois some o
-  // grupo inteiro de uma vez (fade unico) antes de reiniciar do zero --
-  // evita o efeito de "reversa" ao remover balao por balao no reset.
-  const count = tick < AGENT_HOLD_END_MS ? Math.min(AGENT_MESSAGES.length, Math.floor(tick / AGENT_MSG_MS) + 1) : 0;
+  // sobe ate 3 mensagens uma a uma, segura tudo visivel, depois desempilha
+  // rapido (uma a uma tambem, so que bem mais veloz) ate sobrar so o
+  // "Ola!" antes de reiniciar o ciclo -- efeito de loop continuo.
+  let count: number;
+  if (tick < AGENT_BUILD_END_MS) {
+    count = Math.floor(tick / AGENT_MSG_MS) + 1;
+  } else if (tick < AGENT_HOLD_END_MS) {
+    count = AGENT_MESSAGES.length;
+  } else if (tick < AGENT_UNSTACK_END_MS) {
+    const steps = Math.floor((tick - AGENT_HOLD_END_MS) / AGENT_UNSTACK_MS) + 1;
+    count = Math.max(1, AGENT_MESSAGES.length - steps);
+  } else {
+    count = 1;
+  }
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
@@ -192,7 +205,7 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
                 layout="position"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
+                exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2 max-w-full"
               >
@@ -210,10 +223,13 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
 // um, ate o funil ficar cheio e reiniciar. Header mini "Qualificando" com
 // contador ao vivo de quantos leads ja entraram no funil.
 const CRM_CYCLE = 3.6;
+// Origem do lead (Meta ou Google Ads) no lugar de uma etiqueta generica de
+// "IA" -- fixa por lead (variada de proposito) em vez de hash, ja que sao
+// so 3 nomes fixos.
 const CRM_LEADS = [
-  { src: "9_avatar", name: "Lucas G." },
-  { src: "5_avatar", name: "Roberto T." },
-  { src: "3_avatar", name: "Bruno S." },
+  { src: "9_avatar", name: "Lucas G.", source: "/logos/google-ads.svg" },
+  { src: "5_avatar", name: "Roberto T.", source: "/logos/meta.svg" },
+  { src: "3_avatar", name: "Bruno S.", source: "/logos/meta.svg" },
 ];
 
 export function CrmMotion({ isActive }: { isActive: boolean }) {
@@ -228,7 +244,7 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
               return (
                 <motion.span
                   key={i}
-                  className="absolute inset-0 flex items-center justify-center text-[12px] font-black text-[#8B6CFF]"
+                  className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-[#8B6CFF]"
                   animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
                   transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
                 >
@@ -250,7 +266,9 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
             >
               <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={32} />
               <span className="text-[11px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
-              <span className="text-[9px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-2 py-1 whitespace-nowrap shrink-0">IA</span>
+              <span className="w-6 h-6 rounded-full bg-white border border-zinc-100 flex items-center justify-center shrink-0">
+                <img src={lead.source} alt="" className="w-3.5 h-3.5" />
+              </span>
             </motion.div>
           );
         })}
