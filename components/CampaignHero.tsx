@@ -52,7 +52,7 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
   };
 
   return (
-    <section className="relative w-full min-h-[80svh] md:min-h-[85svh] pt-28 md:pt-32 pb-12 md:pb-16 px-4 md:px-8 flex items-center bg-white overflow-hidden">
+    <section className="relative isolate w-full min-h-[80svh] md:min-h-[85svh] pt-28 md:pt-32 pb-12 md:pb-16 px-4 md:px-8 flex items-center bg-white overflow-hidden">
       {/* Fundo azul claro (cor solida, nao opacidade -- opacidade sobre
           branco dilui quase de volta pro branco) que segura a cor solida
           pela parte de cima/meio (onde o conteudo fica) e so desvanece pra
