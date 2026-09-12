@@ -151,6 +151,16 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           {heroVariant ? <CampaignHowItWorks variant={heroVariant} /> : <TextReveal />}
         </DeferredSection>
 
+        {/* Na index, alem do TextReveal, repete a sessao "Conheca a Tlin"
+            (grid de 6 cards) que ja existe nas paginas de campanha -- usa o
+            variant "agentesDeIa" pra reaproveitar o conteudo/ilustracoes ja
+            prontos, sem duplicar copy nova. */}
+        {!heroVariant && (
+          <DeferredSection minHeight="min-h-[420px]">
+            <CampaignHowItWorks variant="agentesDeIa" />
+          </DeferredSection>
+        )}
+
         {/* Avaliacoes em 2 fileiras de carrossel infinito -- so nas LPs de campanha */}
         {heroVariant && (
           <div className="section-to-blur">
