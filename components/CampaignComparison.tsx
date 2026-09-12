@@ -33,6 +33,22 @@ function XIcon() {
   );
 }
 
+// Icone de caveira (nao emoji) no titulo do "jeito antigo" -- render
+// consistente entre plataformas, no lugar do glifo de emoji.
+function SkullIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="inline-block align-[-2px] mr-1">
+      <path
+        d="M12 3C7.58 3 4 6.58 4 11c0 2.79 1.42 5.26 3.58 6.7L7 20.5h10l-.58-2.8C18.58 16.26 20 13.79 20 11c0-4.42-3.58-8-8-8z"
+        fill="#a1a1aa"
+      />
+      <circle cx="9" cy="11" r="1.7" fill="white" />
+      <circle cx="15" cy="11" r="1.7" fill="white" />
+      <path d="M12 13.2l-1.2 2.3h2.4L12 13.2z" fill="white" />
+    </svg>
+  );
+}
+
 // Micro-interacao: o circulo faz um leve "pop" e o check se desenha
 // (pathLength) logo depois, em vez de so aparecer junto com a linha.
 function CheckIcon() {
@@ -101,10 +117,13 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                 nao fica solta no espaço azul. */}
             <div className="flex flex-col md:flex-row">
               <div className="bg-white rounded-t-2xl px-5 pt-4 pb-2 md:w-[38%] shrink-0 text-center">
-                <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">💀 {t.campaigns.comparisonOldLabel}</span>
+                <span className="text-xs font-bold text-zinc-400 lowercase tracking-wide">
+                  <SkullIcon />
+                  {t.campaigns.comparisonOldLabel}
+                </span>
               </div>
               <div className="hidden md:flex items-end justify-center gap-1.5 px-5 md:px-8 pb-2 flex-1">
-                <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
+                <span className="text-xs font-bold text-[#0c0d0d] lowercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
                 <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
               </div>
             </div>
