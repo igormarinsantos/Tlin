@@ -25,14 +25,6 @@ function Avatar({ src, size = 20, ring = false }: { src: string; size?: number; 
   );
 }
 
-function CursorArrow({ className }: { className?: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 16 16" fill="none" className={className}>
-      <path d="M2 1.5l10 8-4.3.6 2.2 4.6-1.8.9-2.2-4.6-3 3.1L2 1.5z" fill="#0c0d0d" stroke="white" strokeWidth="0.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function Tag({ label }: { label: string }) {
   return (
     <span className="inline-flex items-center bg-white border border-zinc-100 rounded-full px-3 py-1.5 text-[11px] font-bold text-zinc-500 whitespace-nowrap">
@@ -41,9 +33,10 @@ function Tag({ label }: { label: string }) {
   );
 }
 
-// Capturar/qualificar: varios leads espalhados, cada um sendo "clicado"
-// (cursor + bounce) e sumindo em sequencia -- simbolico, sem texto de
-// chat, so a ideia de captura acontecendo uma a uma.
+// Capturar/qualificar: varios leads espalhados feito graos flutuando
+// organicamente (drift continuo, cada um com seu proprio ritmo), sendo
+// "clicados" (bounce) e sumindo em sequencia mais pausada -- simbolico,
+// sem cursor nem texto de chat, so a ideia de captura acontecendo uma a uma.
 const CAPTURE_LEADS = [
   { src: "/lotties/avatars/1_avatar.webp", size: 40, className: "left-4 top-4" },
   { src: "/lotties/avatars/2_avatar.webp", size: 36, className: "left-24 top-2" },
@@ -59,16 +52,15 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
         <motion.div
           key={i}
           className={`absolute ${lead.className}`}
-          animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2, ease: "easeIn" }}
+          animate={isActive ? { x: [0, 5, -4, 3, 0], y: [0, -4, 3, -3, 0] } : { x: 0, y: 0 }}
+          transition={{ duration: 3.2 + i * 0.5, repeat: loop(isActive), ease: "easeInOut" }}
         >
           <motion.div
-            animate={isActive ? { opacity: [0, 0, 1, 0] } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2 }}
+            animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
+            transition={{ duration: 0.7, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2.6, ease: "easeIn" }}
           >
-            <CursorArrow className="absolute -left-2 -top-2 z-10" />
+            <Avatar src={lead.src} size={lead.size} />
           </motion.div>
-          <Avatar src={lead.src} size={lead.size} />
         </motion.div>
       ))}
     </div>
@@ -116,8 +108,8 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0">
       <div className="absolute top-5 left-3 right-3">
-        <div className="bg-zinc-100 rounded-xl rounded-bl-sm px-3 py-2 max-w-[75%] inline-block">
-          <p className="text-[11px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
+        <div className="bg-zinc-100 rounded-xl rounded-bl-sm px-3.5 py-2.5 max-w-[75%] inline-block">
+          <p className="text-[13px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
         </div>
       </div>
 
@@ -125,29 +117,29 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
         {showBubble && (
           <motion.div
             key="sent-bubble"
-            className="absolute right-3 rounded-xl rounded-br-sm px-3 py-2 bg-[#25D366]"
+            className="absolute right-3 rounded-xl rounded-br-sm px-3.5 py-2.5 bg-[#25D366]"
             style={{ top: "37%" }}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <p className="text-[11px] font-medium text-white whitespace-nowrap">{WHATSAPP_REPLY}</p>
+            <p className="text-[13px] font-medium text-white whitespace-nowrap">{WHATSAPP_REPLY}</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="absolute bottom-3 left-3 right-3 h-8 rounded-full bg-white border border-zinc-100 flex items-center px-3.5 gap-2">
-        <p className="flex-1 text-[11px] font-medium text-zinc-600 truncate">
+      <div className="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-white border border-zinc-100 flex items-center pl-4 pr-1.5 gap-1.5">
+        <p className="flex-1 text-[13px] font-medium text-zinc-600 truncate">
           {WHATSAPP_REPLY.slice(0, charCount)}
-          {isActive && isTyping && <span className="inline-block w-[2px] h-3 bg-zinc-400 ml-0.5 align-middle animate-pulse" />}
+          {isActive && isTyping && <span className="inline-block w-[2px] h-3.5 bg-zinc-400 ml-0.5 align-middle animate-pulse" />}
         </p>
         <motion.div
-          className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
+          className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
           animate={{ scale: sending ? 1.25 : 1 }}
           transition={{ duration: 0.2 }}
         >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M5 12h13M13 6l6 6-6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
@@ -161,22 +153,31 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
 // (monta/desmonta, nao so opacidade), o grupo inteiro sobe e se
 // recentraliza no meio do quadro via layout animation.
 const AGENT_MESSAGES = ["Olá! 👋", "Como posso te ajudar?", "Vou te conectar com um especialista"];
+const AGENT_MSG_MS = 900;
+const AGENT_HOLD_MS = 900;
+const AGENT_GAP_MS = 500;
+const AGENT_STEP_MS = 100;
+const AGENT_HOLD_END_MS = (AGENT_MESSAGES.length - 1) * AGENT_MSG_MS + AGENT_MSG_MS + AGENT_HOLD_MS;
+const AGENT_CYCLE_MS = AGENT_HOLD_END_MS + AGENT_GAP_MS;
 
 export function AgentMotion({ isActive }: { isActive: boolean }) {
-  const [count, setCount] = useState(1);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (!isActive) {
-      setCount(1);
+      setTick(0);
       return;
     }
-    let i = 1;
     const id = setInterval(() => {
-      i = i >= AGENT_MESSAGES.length ? 1 : i + 1;
-      setCount(i);
-    }, 900);
+      setTick((t) => (t + AGENT_STEP_MS) % AGENT_CYCLE_MS);
+    }, AGENT_STEP_MS);
     return () => clearInterval(id);
   }, [isActive]);
+
+  // sobe ate 3 mensagens uma a uma, segura tudo visivel, depois some o
+  // grupo inteiro de uma vez (fade unico) antes de reiniciar do zero --
+  // evita o efeito de "reversa" ao remover balao por balao no reset.
+  const count = tick < AGENT_HOLD_END_MS ? Math.min(AGENT_MESSAGES.length, Math.floor(tick / AGENT_MSG_MS) + 1) : 0;
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
