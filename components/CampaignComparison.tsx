@@ -147,7 +147,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                     <XIcon />
                     <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
                   </div>
-                  <div className="group flex items-start gap-3 px-5 md:px-8 py-4 flex-1 rounded-2xl cursor-default transition-colors duration-300 hover:bg-white/60">
+                  <div className="group flex items-start gap-3 px-5 md:px-8 py-4 flex-1 md:mx-2 rounded-2xl cursor-default transition-colors duration-300 hover:bg-white/60">
                     <div className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-6">
                       <CheckIcon />
                     </div>
