@@ -75,21 +75,15 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
         </div>
 
         {/* A Tlin e o "container" (azul translucido com borda, nao degrade) --
-            o jeito antigo vira uma caixinha menor e mais baixa, encaixada
-            dentro do espaço da Tlin, como se estivesse sendo engolida por
-            ele. Cara de tabela de verdade: cabecalho fixo + linhas com
-            divisoria. */}
-        <div className="rounded-3xl bg-[#38E3FF]/10 border border-[#38E3FF]/30 overflow-hidden">
-          <div className="hidden md:grid md:grid-cols-[40%_60%] border-b border-[#38E3FF]/20">
-            <div className="px-6 py-4 border-r border-[#38E3FF]/20">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
-            </div>
-            <div className="px-6 py-4">
-              <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
-            </div>
+            o jeito antigo vira uma caixinha branca menor, abraçada pelo
+            espaço azul ao redor dela (sem linhas de tabela, so o abraço). */}
+        <div className="rounded-3xl bg-[#38E3FF]/10 border border-[#38E3FF]/30 p-3 md:p-5">
+          <div className="hidden md:flex items-center justify-between px-3 pb-3">
+            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
+            <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
           </div>
 
-          <div>
+          <div className="flex flex-col gap-3">
             {campaign.comparison.map((pair, i) => (
               <motion.div
                 key={i}
@@ -97,15 +91,13 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.4, ease: "easeOut", delay: (i % 5) * 0.06 }}
-                className="grid grid-cols-1 md:grid-cols-[40%_60%] border-b border-[#38E3FF]/15 last:border-b-0"
+                className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4"
               >
-                <div className="flex items-center px-4 md:px-6 py-4">
-                  <div className="flex items-start gap-3 bg-white rounded-xl px-4 py-3.5 w-full">
-                    <XIcon />
-                    <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
-                  </div>
+                <div className="flex items-start gap-3 bg-white rounded-xl px-5 py-4 md:w-[38%] shrink-0">
+                  <XIcon />
+                  <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
                 </div>
-                <div className="flex items-start gap-3 px-4 md:px-6 py-4 md:border-l border-[#38E3FF]/20">
+                <div className="flex items-start gap-3 px-2 md:px-3 flex-1">
                   <CheckIcon />
                   <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
                 </div>
