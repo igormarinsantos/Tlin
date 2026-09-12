@@ -108,7 +108,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                   </div>
                   <div className="flex items-start gap-3 px-2 md:px-3 py-4 flex-1">
                     <CheckIcon />
-                    <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
+                    <p className="text-sm md:text-base font-semibold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
                   </div>
                 </motion.div>
               );
