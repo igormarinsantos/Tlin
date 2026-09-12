@@ -85,7 +85,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
   const campaign = t.campaigns[variant];
 
   return (
-    <section className="w-full bg-gradient-to-b from-white via-[#38E3FF]/8 to-white py-20 md:py-28 px-4 md:px-8">
+    <section className="w-full bg-gradient-to-b from-white via-[#38E3FF]/50 to-white py-20 md:py-28 px-4 md:px-8">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center text-center mb-12 md:mb-16">
           <motion.div
