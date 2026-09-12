@@ -35,9 +35,9 @@ function XIcon() {
 
 function CheckIcon() {
   return (
-    <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5">
+    <div className="w-6 h-6 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0 mt-0.5">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path d="M4 12l5 5L20 6" stroke="#8B6CFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );
@@ -74,16 +74,22 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
           </motion.h2>
         </div>
 
-        {/* A Tlin e o "container" -- o jeito antigo vira uma caixinha menor e mais
-            baixa, encaixada dentro do espaço da Tlin, como se estivesse sendo
-            engolida por ele. */}
-        <div className="rounded-3xl bg-gradient-to-br from-[#B597FF] to-[#38E3FF] p-3 md:p-5">
-          <div className="hidden md:flex items-center justify-between px-3 pb-3">
-            <span className="text-xs font-bold text-white/60 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
-            <span className="text-xs font-bold text-white uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
+        {/* A Tlin e o "container" (azul translucido com borda, nao degrade) --
+            o jeito antigo vira uma caixinha menor e mais baixa, encaixada
+            dentro do espaço da Tlin, como se estivesse sendo engolida por
+            ele. Cara de tabela de verdade: cabecalho fixo + linhas com
+            divisoria. */}
+        <div className="rounded-3xl bg-[#38E3FF]/10 border border-[#38E3FF]/30 overflow-hidden">
+          <div className="hidden md:grid md:grid-cols-[40%_60%] border-b border-[#38E3FF]/20">
+            <div className="px-6 py-4 border-r border-[#38E3FF]/20">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
+            </div>
+            <div className="px-6 py-4">
+              <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewLabel}</span>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div>
             {campaign.comparison.map((pair, i) => (
               <motion.div
                 key={i}
@@ -91,15 +97,17 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.4, ease: "easeOut", delay: (i % 5) * 0.06 }}
-                className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4"
+                className="grid grid-cols-1 md:grid-cols-[40%_60%] border-b border-[#38E3FF]/15 last:border-b-0"
               >
-                <div className="flex items-start gap-3 bg-zinc-50 rounded-xl px-5 py-4 md:w-[38%] shrink-0">
-                  <XIcon />
-                  <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
+                <div className="flex items-center px-4 md:px-6 py-4">
+                  <div className="flex items-start gap-3 bg-white rounded-xl px-4 py-3.5 w-full">
+                    <XIcon />
+                    <p className="text-sm md:text-base text-zinc-400 leading-relaxed">{pair.old}</p>
+                  </div>
                 </div>
-                <div className="flex items-start gap-3 px-2 md:px-3 flex-1">
+                <div className="flex items-start gap-3 px-4 md:px-6 py-4 md:border-l border-[#38E3FF]/20">
                   <CheckIcon />
-                  <p className="text-sm md:text-base font-bold text-white leading-relaxed">{pair.new}</p>
+                  <p className="text-sm md:text-base font-bold text-[#0c0d0d] leading-relaxed">{pair.new}</p>
                 </div>
               </motion.div>
             ))}
