@@ -403,23 +403,22 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
               animate={{ opacity: 1, y: 0, x: isActive ? row.driftX : 0 }}
               exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }}
               transition={{ opacity: { duration: 0.4, ease: "easeOut" }, y: { duration: 0.4, ease: "easeOut" }, x: { duration: row.duration, repeat: loop(isActive), ease: "easeInOut" } }}
-              className={`flex items-center gap-2 bg-white border border-zinc-100 rounded-full pl-1.5 pr-3 py-2 w-[172px] overflow-hidden ${row.align}`}
+              className={`flex items-center justify-center gap-3 bg-white border border-zinc-100 rounded-full pl-2 pr-4 py-2.5 ${row.align}`}
             >
               <Avatar src={row.src} size={34} />
-              <span className="text-[12px] font-bold text-zinc-600 flex-1 min-w-0 truncate">{row.name}</span>
-              <div className="flex items-center gap-0.5 shrink-0">
+              <div className="flex items-center gap-1 shrink-0">
                 {Array.from({ length: 5 }).map((_, star) => (
                   <motion.svg
                     key={star}
-                    width="8"
-                    height="8"
+                    width="15"
+                    height="15"
                     viewBox="0 0 20 20"
                     fill="#38E3FF"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.25, delay: 0.1 + star * 0.06, ease: "backOut" }}
                   >
-                    <path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6L10 1z" />
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </motion.svg>
                 ))}
               </div>
