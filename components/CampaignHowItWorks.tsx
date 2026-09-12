@@ -129,7 +129,7 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
           className="w-full rounded-3xl bg-[#F7F7FB] border border-zinc-100 px-6 md:px-10 py-7 md:py-9 mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <p className="text-xl md:text-2xl font-bold text-[#0c0d0d] text-center md:text-left">
-            {t.campaigns.howItWorksCtaTitle}
+            <HighlightedTitle text={t.campaigns.howItWorksCtaTitle} />
           </p>
 
           <button

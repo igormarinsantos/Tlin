@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, animate, useMotionValue, useTransform } from "framer-motion";
 
 // 8 motions pequenos e leves (so opacity/scale/x/y em loop, sem maquina de
 // estado) pro quadro h-36 dos cards "Conheca a Tlin". Cada um e uma cena
@@ -45,57 +45,74 @@ const CAPTURE_LEADS = [
   { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8", driftX: [0, 5, 3, -4, 0], driftY: [0, -2, 5, -4, 0], duration: 3.9 },
 ];
 
-// A cada ciclo de clique/sumico (0.7s visivel + 2.6s de gap = 3.3s), cada
-// lead reaparece num lugar novo e aleatorio dentro do quadro em vez de
-// sempre no mesmo lugar -- a troca acontece durante a janela em que ele
-// esta invisivel, entao nunca "pula" na tela.
-const CAPTURE_CYCLE_MS = 3300;
-const CAPTURE_MARGIN_PCT = 14;
+// Ciclo unico e sincronizado (feito reels): todos aparecem juntos, vao
+// sendo "clicados" um a um em sequencia, todos ficam invisiveis por um
+// instante (o "corte" pro proximo frame) e entao o ciclo inteiro reinicia
+// do zero -- e nesse corte que cada lead sorteia um lugar novo dentro do
+// quadro, entao nunca reaparecem sempre nos mesmos lugares.
+const CAPTURE_SETTLE_MS = 500;
+const CAPTURE_STAGGER_MS = 400;
+const CAPTURE_CLICK_MS = 700;
+const CAPTURE_GAP_MS = 900;
+const CAPTURE_STEP_MS = 100;
+const CAPTURE_LAST_CLICK_END_MS = CAPTURE_SETTLE_MS + (CAPTURE_LEADS.length - 1) * CAPTURE_STAGGER_MS + CAPTURE_CLICK_MS;
+const CAPTURE_CYCLE_MS = CAPTURE_LAST_CLICK_END_MS + CAPTURE_GAP_MS;
 
-function randomCapturePos() {
-  const span = 100 - CAPTURE_MARGIN_PCT * 2;
-  return {
-    top: `${CAPTURE_MARGIN_PCT + Math.random() * span}%`,
-    left: `${CAPTURE_MARGIN_PCT + Math.random() * span}%`,
-  };
+// 5 lugares fixos e ja bem espacados (mesma composicao original) -- a
+// cada ciclo so a ORDEM sorteia qual lead cai em qual lugar (mais um
+// jitter pequeno), entao a posicao muda sem nunca dois avatares caírem
+// perto o suficiente pra se sobrepor.
+const CAPTURE_SLOTS = [
+  { top: 9, left: 5 },
+  { top: 5, left: 32 },
+  { top: 58, left: 3 },
+  { top: 65, left: 32 },
+  { top: 18, left: 79 },
+];
+const CAPTURE_JITTER_PCT = 3;
+
+function shuffledCapturePositions() {
+  const shuffled = [...CAPTURE_SLOTS];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.map((slot) => ({
+    top: `${slot.top + (Math.random() * 2 - 1) * CAPTURE_JITTER_PCT}%`,
+    left: `${slot.left + (Math.random() * 2 - 1) * CAPTURE_JITTER_PCT}%`,
+  }));
 }
 
 export function CaptureMotion({ isActive }: { isActive: boolean }) {
+  const [tick, setTick] = useState(0);
+  const [cycle, setCycle] = useState(0);
   const [positions, setPositions] = useState<({ top: string; left: string } | null)[]>(() =>
     CAPTURE_LEADS.map(() => null)
   );
 
   useEffect(() => {
     if (!isActive) {
-      setPositions(CAPTURE_LEADS.map(() => null));
+      setTick(0);
       return;
     }
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-    const intervals: ReturnType<typeof setInterval>[] = [];
-    CAPTURE_LEADS.forEach((_, i) => {
-      const reposition = () =>
-        setPositions((prev) => {
-          const next = [...prev];
-          next[i] = randomCapturePos();
-          return next;
-        });
-      const startDelay = i * 400 + 750;
-      timeouts.push(
-        setTimeout(() => {
-          reposition();
-          intervals.push(setInterval(reposition, CAPTURE_CYCLE_MS));
-        }, startDelay)
-      );
-    });
-    return () => {
-      timeouts.forEach(clearTimeout);
-      intervals.forEach(clearInterval);
-    };
+    const id = setInterval(() => {
+      setTick((t) => {
+        const next = (t + CAPTURE_STEP_MS) % CAPTURE_CYCLE_MS;
+        if (next < t) setCycle((c) => c + 1);
+        return next;
+      });
+    }, CAPTURE_STEP_MS);
+    return () => clearInterval(id);
   }, [isActive]);
+
+  useEffect(() => {
+    setPositions(isActive ? shuffledCapturePositions() : CAPTURE_LEADS.map(() => null));
+  }, [isActive, cycle]);
 
   return (
     <div className="absolute inset-0">
       {CAPTURE_LEADS.map((lead, i) => {
+        const clicked = isActive && tick >= CAPTURE_SETTLE_MS + i * CAPTURE_STAGGER_MS;
         const pos = positions[i];
         return (
           <motion.div
@@ -106,8 +123,8 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
             transition={{ duration: lead.duration, repeat: loop(isActive), ease: "easeInOut" }}
           >
             <motion.div
-              animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
-              transition={{ duration: 0.7, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2.6, ease: "easeIn" }}
+              animate={clicked ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
+              transition={clicked ? { duration: CAPTURE_CLICK_MS / 1000, ease: "easeIn" } : { duration: 0.2, ease: "easeOut" }}
             >
               <Avatar src={lead.src} size={lead.size} />
             </motion.div>
@@ -248,12 +265,11 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
       <motion.div layout="position" className="flex items-start gap-2.5 px-3">
         <img src="/TlinIA.svg" alt="Tlin" className="w-7 h-7 shrink-0" />
 
-        <motion.div layout="position" className="flex flex-col items-start gap-1.5 w-[160px]">
+        <div className="flex flex-col items-start gap-1.5 w-[160px]">
           <AnimatePresence initial={false}>
             {AGENT_MESSAGES.slice(0, count).map((msg, i) => (
               <motion.div
                 key={i}
-                layout="position"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }}
@@ -264,7 +280,7 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );
@@ -387,23 +403,25 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
               animate={{ opacity: 1, y: 0, x: isActive ? row.driftX : 0 }}
               exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }}
               transition={{ opacity: { duration: 0.4, ease: "easeOut" }, y: { duration: 0.4, ease: "easeOut" }, x: { duration: row.duration, repeat: loop(isActive), ease: "easeInOut" } }}
-              className={`flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[152px] ${row.align}`}
+              className={`flex items-center gap-2 bg-white border border-zinc-100 rounded-full pl-1.5 pr-3 py-2 w-[172px] overflow-hidden ${row.align}`}
             >
               <Avatar src={row.src} size={34} />
-              <span className="text-[12px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
-              <div className="w-7 h-7 rounded-full bg-[#38E3FF]/25 border border-[#38E3FF]/40 flex items-center justify-center shrink-0">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                  <motion.path
-                    d="M4 12l5 5L20 6"
-                    stroke="#0C4A6E"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.35, delay: 0.15, ease: "easeOut" }}
-                  />
-                </svg>
+              <span className="text-[12px] font-bold text-zinc-600 flex-1 min-w-0 truncate">{row.name}</span>
+              <div className="flex items-center gap-0.5 shrink-0">
+                {Array.from({ length: 5 }).map((_, star) => (
+                  <motion.svg
+                    key={star}
+                    width="8"
+                    height="8"
+                    viewBox="0 0 20 20"
+                    fill="#38E3FF"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.25, delay: 0.1 + star * 0.06, ease: "backOut" }}
+                  >
+                    <path d="M10 1l2.6 5.8 6.4.6-4.8 4.3 1.4 6.3L10 14.9 4.4 18l1.4-6.3L1 7.4l6.4-.6L10 1z" />
+                  </motion.svg>
+                ))}
               </div>
             </motion.div>
           ))}
@@ -413,20 +431,29 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Acompanhar funil/metricas: funil de verdade com 3 estagios (containers
-// de largura decrescente) enchendo em sequencia, com numeros reais do lado.
-const FUNNEL_HEIGHT = 22;
-const FUNNEL_STAGES = [
-  { top: 78, bottom: 58 },
-  { top: 58, bottom: 38 },
-  { top: 38, bottom: 22 },
-];
+// Acompanhar funil/metricas: funil de verdade com "boca" em elipse (efeito
+// 3D classico de icone de funil) + corpo afunilando, em vez de um bloco
+// trapezoidal chapado. Continua um unico silhueta so (nao 3 pilulas soltas),
+// com opacidade crescente por estagio simulando profundidade, gradiente de
+// marca no traco, e cada estagio ainda enche em sequencia (scaleX).
+const FUNNEL_TOP_WIDTH = 84;
+const FUNNEL_BOTTOM_WIDTH = 16;
+const FUNNEL_BODY_HEIGHT = 62;
+const FUNNEL_ELLIPSE_RY = 7;
+const FUNNEL_TOTAL_HEIGHT = FUNNEL_ELLIPSE_RY + FUNNEL_BODY_HEIGHT;
+const FUNNEL_STAGE_COUNT = 3;
+const FUNNEL_BAND_HEIGHT = FUNNEL_BODY_HEIGHT / FUNNEL_STAGE_COUNT;
+const FUNNEL_CENTER_X = FUNNEL_TOP_WIDTH / 2;
+const FUNNEL_BOTTOM_RADIUS = 3;
+const FUNNEL_BAND_OPACITY = [0.22, 0.42, 0.65];
 
-// Gera um path SVG de poligono com os cantos de verdade arredondados
-// (nao so o traco -- o stroke-linejoin round sozinho nao arredonda o
-// preenchimento, so a linha).
-function roundedPolygonPath(points: [number, number][], radius: number): string {
+// Gera um path SVG de poligono com os cantos de verdade arredondados (nao
+// so o traco -- stroke-linejoin round sozinho nao arredonda o preenchimento).
+// Aceita um raio por vertice pra permitir cantos retos onde a fatia encosta
+// na divisoria interna e arredondados so na borda externa do funil.
+function roundedPolygonPath(points: [number, number][], radius: number | number[]): string {
   const n = points.length;
+  const radii = Array.isArray(radius) ? radius : points.map(() => radius);
   const d: string[] = [];
   for (let i = 0; i < n; i++) {
     const [cx, cy] = points[i];
@@ -434,63 +461,115 @@ function roundedPolygonPath(points: [number, number][], radius: number): string 
     const [nx, ny] = points[(i + 1) % n];
     const distPrev = Math.hypot(cx - px, cy - py);
     const distNext = Math.hypot(cx - nx, cy - ny);
-    const r = Math.min(radius, distPrev / 2, distNext / 2);
+    const r = Math.min(radii[i], distPrev / 2, distNext / 2);
     const p1x = cx + ((px - cx) / distPrev) * r;
     const p1y = cy + ((py - cy) / distPrev) * r;
     const p2x = cx + ((nx - cx) / distNext) * r;
     const p2y = cy + ((ny - cy) / distNext) * r;
     d.push(i === 0 ? `M ${p1x} ${p1y}` : `L ${p1x} ${p1y}`);
-    d.push(`Q ${cx} ${cy} ${p2x} ${p2y}`);
+    d.push(r > 0 ? `Q ${cx} ${cy} ${p2x} ${p2y}` : `L ${p2x} ${p2y}`);
   }
   d.push("Z");
   return d.join(" ");
 }
 
-function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
-  const inset = (top - bottom) / 2;
-  // raio do canto e espessura do traco escalam com a largura do estagio --
-  // um valor fixo (4 / 1.5) fica desproporcional (grosso demais) nos
-  // estagios mais estreitos do funil.
-  const scale = top / FUNNEL_STAGES[0].top;
-  const radius = Math.max(2.5, 5 * scale);
-  const strokeWidth = Math.max(1, 1.6 * scale);
-  const path = roundedPolygonPath(
+// y aqui e sempre relativo ao topo do CORPO (logo abaixo da elipse), nao
+// do svg inteiro -- widthAt(0) = boca do funil (mesma largura da elipse).
+function funnelEdgesAtBodyY(bodyY: number): [number, number] {
+  const width = FUNNEL_TOP_WIDTH - (FUNNEL_TOP_WIDTH - FUNNEL_BOTTOM_WIDTH) * (bodyY / FUNNEL_BODY_HEIGHT);
+  return [FUNNEL_CENTER_X - width / 2, FUNNEL_CENTER_X + width / 2];
+}
+
+const FUNNEL_OUTER_PATH = (() => {
+  const [topLeft, topRight] = funnelEdgesAtBodyY(0);
+  const [bottomLeft, bottomRight] = funnelEdgesAtBodyY(FUNNEL_BODY_HEIGHT);
+  return roundedPolygonPath(
     [
-      [0, 0],
-      [top, 0],
-      [top - inset, FUNNEL_HEIGHT],
-      [inset, FUNNEL_HEIGHT],
+      [topLeft, FUNNEL_ELLIPSE_RY],
+      [topRight, FUNNEL_ELLIPSE_RY],
+      [bottomRight, FUNNEL_TOTAL_HEIGHT],
+      [bottomLeft, FUNNEL_TOTAL_HEIGHT],
     ],
-    radius
+    [0, 0, FUNNEL_BOTTOM_RADIUS, FUNNEL_BOTTOM_RADIUS]
   );
-  return (
-    <svg width={top} height={FUNNEL_HEIGHT} viewBox={`0 0 ${top} ${FUNNEL_HEIGHT}`}>
-      <path d={path} fill="#B597FF" fillOpacity="0.2" stroke="#B597FF" strokeWidth={strokeWidth} strokeLinejoin="round" />
-    </svg>
+})();
+
+const FUNNEL_BAND_PATHS = Array.from({ length: FUNNEL_STAGE_COUNT }, (_, i) => {
+  const y0 = i * FUNNEL_BAND_HEIGHT;
+  const y1 = (i + 1) * FUNNEL_BAND_HEIGHT;
+  const [l0, r0] = funnelEdgesAtBodyY(y0);
+  const [l1, r1] = funnelEdgesAtBodyY(y1);
+  const isBottom = i === FUNNEL_STAGE_COUNT - 1;
+  return roundedPolygonPath(
+    [
+      [l0, y0 + FUNNEL_ELLIPSE_RY],
+      [r0, y0 + FUNNEL_ELLIPSE_RY],
+      [r1, y1 + FUNNEL_ELLIPSE_RY],
+      [l1, y1 + FUNNEL_ELLIPSE_RY],
+    ],
+    [0, 0, isBottom ? FUNNEL_BOTTOM_RADIUS : 0, isBottom ? FUNNEL_BOTTOM_RADIUS : 0]
   );
+});
+
+// Numero "de impacto": conta subindo de um valor proximo (nao do zero)
+// ate o valor final quando o card fica ativo, em vez de so aparecer estatico.
+function CountUpStat({ isActive, from, to, decimals = 0, suffix = "" }: { isActive: boolean; from: number; to: number; decimals?: number; suffix?: string }) {
+  const count = useMotionValue(from);
+  const display = useTransform(count, (v) => `${v.toFixed(decimals).replace(".", ",")}${suffix}`);
+
+  useEffect(() => {
+    if (!isActive) {
+      count.set(from);
+      return;
+    }
+    const controls = animate(count, to, { duration: 1.3, ease: "easeOut", delay: 0.2 });
+    return () => controls.stop();
+  }, [isActive]);
+
+  return <motion.p className="text-lg font-black text-[#0c0d0d] leading-none">{display}</motion.p>;
 }
 
 export function FunnelMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center gap-6">
-      <div className="flex flex-col items-center gap-1">
-        {FUNNEL_STAGES.map((stage, i) => (
-          <motion.div
+      <svg width={FUNNEL_TOP_WIDTH} height={FUNNEL_TOTAL_HEIGHT} viewBox={`0 0 ${FUNNEL_TOP_WIDTH} ${FUNNEL_TOTAL_HEIGHT}`}>
+        <defs>
+          <linearGradient id="funnelStroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#B597FF" />
+            <stop offset="1" stopColor="#38E3FF" />
+          </linearGradient>
+        </defs>
+        {/* boca do funil em elipse -- da a leitura 3D de funil de verdade em vez de bloco chapado */}
+        <ellipse
+          cx={FUNNEL_CENTER_X}
+          cy={FUNNEL_ELLIPSE_RY}
+          rx={FUNNEL_TOP_WIDTH / 2}
+          ry={FUNNEL_ELLIPSE_RY}
+          fill="#B597FF"
+          fillOpacity={FUNNEL_BAND_OPACITY[0]}
+          stroke="url(#funnelStroke)"
+          strokeWidth="1.3"
+        />
+        <path d={FUNNEL_OUTER_PATH} fill="none" stroke="url(#funnelStroke)" strokeWidth="1.3" strokeLinejoin="round" />
+        {FUNNEL_BAND_PATHS.map((d, i) => (
+          <motion.path
             key={i}
+            d={d}
+            fill="#B597FF"
+            fillOpacity={FUNNEL_BAND_OPACITY[i]}
+            style={{ transformBox: "fill-box", transformOrigin: "center" }}
             animate={isActive ? { scaleX: [0, 1] } : { scaleX: 1 }}
             transition={{ duration: 0.5, delay: i * 0.3, repeat: loop(isActive), repeatType: "reverse", repeatDelay: 0.6, ease: "easeOut" }}
-          >
-            <FunnelTrapezoid top={stage.top} bottom={stage.bottom} />
-          </motion.div>
+          />
         ))}
-      </div>
+      </svg>
       <div className="flex flex-col gap-2">
         <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
-          <p className="text-lg font-black text-[#0c0d0d] leading-none">45,3%</p>
+          <CountUpStat isActive={isActive} from={37.8} to={45.3} decimals={1} suffix="%" />
           <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wide">conversão</p>
         </div>
         <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
-          <p className="text-lg font-black text-[#0c0d0d] leading-none">710</p>
+          <CountUpStat isActive={isActive} from={604} to={710} />
           <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wide">leads/mês</p>
         </div>
       </div>

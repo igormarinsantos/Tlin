@@ -282,7 +282,7 @@ export function Pricing() {
                        ${isOtherHovered ? 'blur-[2px] opacity-60' : 'opacity-100'} 
                        ${isHovered ? '-translate-y-4' : 'translate-y-0'}
                       ${plan.badge ? plan.badgeColor : (showHoverBorder ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF]' : 'bg-zinc-100')} 
-                      ${plan.highlight && !isOtherHovered ? 'z-20 shadow-[0_40px_100px_-20px_rgba(181,151,255,0.2)]' : 'z-10 shadow-sm'}
+                      ${plan.highlight && !isOtherHovered ? 'z-20' : 'z-10'}
                     `}
                   >
                     {plan.badge && (
@@ -334,7 +334,7 @@ export function Pricing() {
                              event.stopPropagation();
                              openPlanQualification(plan.name, "pricing_button");
                            }}
-                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 shadow-sm hover:shadow-xl active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
                        >
                           {plan.cta}
                        </button>
