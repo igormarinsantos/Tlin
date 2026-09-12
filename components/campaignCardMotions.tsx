@@ -35,7 +35,7 @@ function CursorArrow({ className }: { className?: string }) {
 
 function Tag({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center bg-white border border-zinc-100 rounded-full px-3 py-1 text-[10px] font-bold text-zinc-500 whitespace-nowrap">
+    <span className="inline-flex items-center bg-white border border-zinc-100 rounded-full px-3 py-1.5 text-[11px] font-bold text-zinc-500 whitespace-nowrap">
       {label}
     </span>
   );
@@ -75,47 +75,79 @@ export function CaptureMotion({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Atender no site ou WhatsApp: foco na tela de conversa -- o mesmo
-// elemento de texto "viaja" do input ate a posicao da bolha (top/left em
-// %, sem depender de FLIP entre dois elementos separados), mudando de
-// cor no caminho ate virar a bolha enviada.
-const WHATSAPP_CYCLE = 2.6;
+// Atender no site ou WhatsApp: o usuario "digita" a resposta letra por
+// letra no campo de input (texto real, nao um placeholder), a mensagem
+// digitada some ao enviar, e a bolha enviada aparece de forma independente
+// -- sao dois textos/elementos diferentes, nao um unico texto viajando.
 const WHATSAPP_REPLY = "Sim! Vou te ajudar 😊";
+const WHATSAPP_MS_PER_CHAR = 55;
+const WHATSAPP_HOLD_TYPED_MS = 550;
+const WHATSAPP_BUBBLE_MS = 1600;
+const WHATSAPP_GAP_MS = 550;
+const WHATSAPP_STEP_MS = 40;
+const WHATSAPP_TYPING_MS = WHATSAPP_REPLY.length * WHATSAPP_MS_PER_CHAR;
+const WHATSAPP_SENT_AT = WHATSAPP_TYPING_MS + WHATSAPP_HOLD_TYPED_MS;
+const WHATSAPP_BUBBLE_GONE_AT = WHATSAPP_SENT_AT + WHATSAPP_BUBBLE_MS;
+const WHATSAPP_CYCLE_MS = WHATSAPP_BUBBLE_GONE_AT + WHATSAPP_GAP_MS;
 
 export function WhatsappMotion({ isActive }: { isActive: boolean }) {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setTick(0);
+      return;
+    }
+    const id = setInterval(() => {
+      setTick((t) => (t + WHATSAPP_STEP_MS) % WHATSAPP_CYCLE_MS);
+    }, WHATSAPP_STEP_MS);
+    return () => clearInterval(id);
+  }, [isActive]);
+
+  const isTyping = tick < WHATSAPP_TYPING_MS;
+  const charCount = isTyping
+    ? Math.floor(tick / WHATSAPP_MS_PER_CHAR)
+    : tick < WHATSAPP_SENT_AT
+      ? WHATSAPP_REPLY.length
+      : 0;
+  const showBubble = tick >= WHATSAPP_SENT_AT && tick < WHATSAPP_BUBBLE_GONE_AT;
+  const sending = tick >= WHATSAPP_SENT_AT - 140 && tick < WHATSAPP_SENT_AT + 140;
+
   return (
     <div className="absolute inset-0">
       <div className="absolute top-5 left-3 right-3">
-        <div className="bg-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5 max-w-[75%] inline-block">
-          <p className="text-[9px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
+        <div className="bg-zinc-100 rounded-xl rounded-bl-sm px-3 py-2 max-w-[75%] inline-block">
+          <p className="text-[11px] text-zinc-600 font-medium leading-tight">Oi, ainda tem vaga?</p>
         </div>
       </div>
 
-      <motion.div
-        className="absolute z-10 rounded-xl px-2.5 py-1.5 whitespace-nowrap text-[9px] font-medium"
-        animate={
-          isActive
-            ? {
-                top: ["79%", "79%", "30%", "30%", "79%"],
-                left: ["9%", "9%", "42%", "42%", "9%"],
-                backgroundColor: ["rgba(37,211,102,0)", "rgba(37,211,102,0)", "#25D366", "#25D366", "rgba(37,211,102,0)"],
-                color: ["#71717a", "#71717a", "#ffffff", "#ffffff", "#71717a"],
-              }
-            : { top: "79%", left: "9%", backgroundColor: "rgba(37,211,102,0)", color: "#71717a" }
-        }
-        transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.35, 0.5, 0.9, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
-      >
-        {WHATSAPP_REPLY}
-      </motion.div>
+      <AnimatePresence>
+        {showBubble && (
+          <motion.div
+            key="sent-bubble"
+            className="absolute right-3 rounded-xl rounded-br-sm px-3 py-2 bg-[#25D366]"
+            style={{ top: "37%" }}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <p className="text-[11px] font-medium text-white whitespace-nowrap">{WHATSAPP_REPLY}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div className="absolute bottom-3 left-3 right-3 h-7 rounded-full bg-white border border-zinc-100 flex items-center px-3">
-        <span className="flex-1" />
+      <div className="absolute bottom-3 left-3 right-3 h-8 rounded-full bg-white border border-zinc-100 flex items-center px-3.5 gap-2">
+        <p className="flex-1 text-[11px] font-medium text-zinc-600 truncate">
+          {WHATSAPP_REPLY.slice(0, charCount)}
+          {isActive && isTyping && <span className="inline-block w-[2px] h-3 bg-zinc-400 ml-0.5 align-middle animate-pulse" />}
+        </p>
         <motion.div
-          className="w-5 h-5 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
-          animate={isActive ? { scale: [1, 1, 1.3, 1, 1] } : { scale: 1 }}
-          transition={{ duration: WHATSAPP_CYCLE, times: [0, 0.33, 0.4, 0.47, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
+          className="w-6 h-6 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
+          animate={{ scale: sending ? 1.25 : 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
             <path d="M5 12h13M13 6l6 6-6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
@@ -148,22 +180,22 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      <motion.div layout className="flex items-start gap-2.5 px-3">
-        <motion.img layout src="/TlinIA.svg" alt="Tlin" className="w-6 h-6 shrink-0" />
+      <motion.div layout="position" className="flex items-start gap-2.5 px-3">
+        <motion.img layout="position" src="/TlinIA.svg" alt="Tlin" className="w-7 h-7 shrink-0" />
 
-        <motion.div layout className="flex flex-col gap-1.5 max-w-[150px]">
+        <motion.div layout="position" className="flex flex-col items-start gap-1.5 w-[160px]">
           <AnimatePresence initial={false}>
             {AGENT_MESSAGES.slice(0, count).map((msg, i) => (
               <motion.div
                 key={i}
-                layout
+                layout="position"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-2.5 py-1.5"
+                className="bg-white border border-zinc-100 rounded-xl rounded-bl-sm px-3 py-2 max-w-full"
               >
-                <p className="text-[10px] leading-tight text-zinc-600 font-medium">{msg}</p>
+                <p className="text-[12px] leading-tight text-zinc-600 font-medium">{msg}</p>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -188,14 +220,14 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
     <div className="absolute inset-0 flex items-end justify-center">
       <div className="relative w-[176px] h-[150px] rounded-t-2xl bg-white border border-zinc-100 border-b-0 px-3 pt-3 flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-[#0c0d0d]">Qualificando</span>
-          <div className="relative w-6 h-6 rounded-full bg-[#8B6CFF]/10">
+          <span className="text-[12px] font-bold text-[#0c0d0d]">Qualificando</span>
+          <div className="relative w-7 h-7 rounded-full bg-[#8B6CFF]/10">
             {CRM_LEADS.map((_, i) => {
               const appearAt = (0.2 + i * 0.8) / CRM_CYCLE;
               return (
                 <motion.span
                   key={i}
-                  className="absolute inset-0 flex items-center justify-center text-[11px] font-black text-[#8B6CFF]"
+                  className="absolute inset-0 flex items-center justify-center text-[12px] font-black text-[#8B6CFF]"
                   animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
                   transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4 }}
                 >
@@ -215,9 +247,9 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
               animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
               transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4, ease: "easeOut" }}
             >
-              <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={30} />
-              <span className="text-[10px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
-              <span className="text-[7px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-1.5 py-1 whitespace-nowrap shrink-0">IA</span>
+              <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={32} />
+              <span className="text-[11px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
+              <span className="text-[9px] font-bold text-[#8B6CFF] bg-[#8B6CFF]/10 rounded-full px-2 py-1 whitespace-nowrap shrink-0">IA</span>
             </motion.div>
           );
         })}
@@ -251,14 +283,14 @@ export function ScheduleMotion({ isActive }: { isActive: boolean }) {
             animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 1 }}
             transition={{ duration: 0.5, delay: slot + 0.35, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.5 - slot - 0.35, ease: "easeIn" }}
           >
-            <Avatar src={row.src} size={32} />
-            <span className="text-[11px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
+            <Avatar src={row.src} size={34} />
+            <span className="text-[12px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
             <motion.div
-              className="w-6 h-6 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0"
+              className="w-7 h-7 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0"
               animate={isActive ? { scale: [0, 1.3, 1] } : { scale: 0 }}
               transition={{ duration: 0.35, delay: slot, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.35 - slot }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                 <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </motion.div>
@@ -337,12 +369,12 @@ export function FunnelMotion({ isActive }: { isActive: boolean }) {
       </div>
       <div className="flex flex-col gap-2">
         <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
-          <p className="text-base font-black text-[#0c0d0d] leading-none">45,3%</p>
-          <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wide">conversão</p>
+          <p className="text-lg font-black text-[#0c0d0d] leading-none">45,3%</p>
+          <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wide">conversão</p>
         </div>
         <div className="bg-white border border-zinc-100 rounded-lg px-3 py-1.5">
-          <p className="text-base font-black text-[#0c0d0d] leading-none">710</p>
-          <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wide">leads/mês</p>
+          <p className="text-lg font-black text-[#0c0d0d] leading-none">710</p>
+          <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wide">leads/mês</p>
         </div>
       </div>
     </div>
@@ -362,11 +394,11 @@ export function FollowupMotion({ isActive }: { isActive: boolean }) {
           <Avatar src="/lotties/avatars/7_avatar.webp" size={56} />
         </motion.div>
         <motion.div
-          className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-white border border-zinc-200 flex items-center justify-center"
+          className="absolute -top-1.5 -right-1.5 w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center"
           animate={isActive ? { rotate: 360 } : { rotate: 0 }}
           transition={{ duration: 0.8, repeat: loop(isActive), repeatDelay: 0.9 }}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
             <path d="M4 4v6h6" stroke="#8B6CFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M4.5 15a8 8 0 1 0 2-8.5L4 10" stroke="#8B6CFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -392,11 +424,11 @@ export function CartMotion({ isActive }: { isActive: boolean }) {
         animate={isActive ? { opacity: [1, 1, 0.5] } : { opacity: 1 }}
         transition={{ duration: 1.3, repeat: loop(isActive), repeatDelay: 0.6 }}
       >
-        <Avatar src="/lotties/avatars/8_avatar.webp" size={24} />
-        <span className="text-[10px] font-bold text-zinc-500 whitespace-nowrap">Carrinho abandonado</span>
+        <Avatar src="/lotties/avatars/8_avatar.webp" size={26} />
+        <span className="text-[11px] font-bold text-zinc-500 whitespace-nowrap">Carrinho abandonado</span>
       </motion.div>
       <div className="relative flex items-end justify-center pb-1 pt-3">
-        <svg width="42" height="34" viewBox="0 0 24 20" fill="none">
+        <svg width="46" height="37" viewBox="0 0 24 20" fill="none">
           <path d="M1 1h2l2.2 12.2a2 2 0 0 0 2 1.6h9a2 2 0 0 0 2-1.6L21 5H6" stroke="#a1a1aa" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           <circle cx="9" cy="19" r="1.3" fill="#a1a1aa" />
           <circle cx="17" cy="19" r="1.3" fill="#a1a1aa" />
