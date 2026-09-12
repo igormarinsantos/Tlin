@@ -33,13 +33,31 @@ function XIcon() {
   );
 }
 
+// Micro-interacao: o circulo faz um leve "pop" e o check se desenha
+// (pathLength) logo depois, em vez de so aparecer junto com a linha.
 function CheckIcon() {
   return (
-    <div className="w-6 h-6 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0 mt-0.5">
+    <motion.div
+      className="w-6 h-6 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0 mt-0.5"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.35, delay: 0.2, ease: "backOut" }}
+    >
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        <motion.path
+          d="M4 12l5 5L20 6"
+          stroke="white"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.3, delay: 0.35, ease: "easeOut" }}
+        />
       </svg>
-    </div>
+    </motion.div>
   );
 }
 
@@ -85,7 +103,8 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
               <div className="bg-white rounded-t-2xl px-5 pt-4 pb-2 md:w-[38%] shrink-0 text-center">
                 <span className="text-xs font-bold text-zinc-400 uppercase tracking-wide">{t.campaigns.comparisonOldLabel}</span>
               </div>
-              <div className="hidden md:flex items-end justify-center px-2 md:px-3 pb-2 flex-1">
+              <div className="hidden md:flex items-end justify-center gap-1.5 px-2 md:px-3 pb-2 flex-1">
+                <span className="text-xs font-bold text-[#0c0d0d] uppercase tracking-wide">{t.campaigns.comparisonNewPrefix}</span>
                 <img src="/Logo%20Horizontal.svg" alt="Tlin.ai" className="h-4 w-auto" />
               </div>
             </div>
