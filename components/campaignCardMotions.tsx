@@ -45,24 +45,75 @@ const CAPTURE_LEADS = [
   { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8", driftX: [0, 5, 3, -4, 0], driftY: [0, -2, 5, -4, 0], duration: 3.9 },
 ];
 
+// A cada ciclo de clique/sumico (0.7s visivel + 2.6s de gap = 3.3s), cada
+// lead reaparece num lugar novo e aleatorio dentro do quadro em vez de
+// sempre no mesmo lugar -- a troca acontece durante a janela em que ele
+// esta invisivel, entao nunca "pula" na tela.
+const CAPTURE_CYCLE_MS = 3300;
+const CAPTURE_MARGIN_PCT = 14;
+
+function randomCapturePos() {
+  const span = 100 - CAPTURE_MARGIN_PCT * 2;
+  return {
+    top: `${CAPTURE_MARGIN_PCT + Math.random() * span}%`,
+    left: `${CAPTURE_MARGIN_PCT + Math.random() * span}%`,
+  };
+}
+
 export function CaptureMotion({ isActive }: { isActive: boolean }) {
+  const [positions, setPositions] = useState<({ top: string; left: string } | null)[]>(() =>
+    CAPTURE_LEADS.map(() => null)
+  );
+
+  useEffect(() => {
+    if (!isActive) {
+      setPositions(CAPTURE_LEADS.map(() => null));
+      return;
+    }
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const intervals: ReturnType<typeof setInterval>[] = [];
+    CAPTURE_LEADS.forEach((_, i) => {
+      const reposition = () =>
+        setPositions((prev) => {
+          const next = [...prev];
+          next[i] = randomCapturePos();
+          return next;
+        });
+      const startDelay = i * 400 + 750;
+      timeouts.push(
+        setTimeout(() => {
+          reposition();
+          intervals.push(setInterval(reposition, CAPTURE_CYCLE_MS));
+        }, startDelay)
+      );
+    });
+    return () => {
+      timeouts.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
+    };
+  }, [isActive]);
+
   return (
     <div className="absolute inset-0">
-      {CAPTURE_LEADS.map((lead, i) => (
-        <motion.div
-          key={i}
-          className={`absolute ${lead.className}`}
-          animate={isActive ? { x: lead.driftX, y: lead.driftY } : { x: 0, y: 0 }}
-          transition={{ duration: lead.duration, repeat: loop(isActive), ease: "easeInOut" }}
-        >
+      {CAPTURE_LEADS.map((lead, i) => {
+        const pos = positions[i];
+        return (
           <motion.div
-            animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
-            transition={{ duration: 0.7, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2.6, ease: "easeIn" }}
+            key={i}
+            className={`absolute ${lead.className}`}
+            style={pos ? { top: pos.top, left: pos.left, right: "auto", bottom: "auto" } : undefined}
+            animate={isActive ? { x: lead.driftX, y: lead.driftY } : { x: 0, y: 0 }}
+            transition={{ duration: lead.duration, repeat: loop(isActive), ease: "easeInOut" }}
           >
-            <Avatar src={lead.src} size={lead.size} />
+            <motion.div
+              animate={isActive ? { scale: [1, 1.2, 1, 0.4], opacity: [1, 1, 1, 0] } : { scale: 1, opacity: 1 }}
+              transition={{ duration: 0.7, delay: i * 0.4, repeat: loop(isActive), repeatDelay: 2.6, ease: "easeIn" }}
+            >
+              <Avatar src={lead.src} size={lead.size} />
+            </motion.div>
           </motion.div>
-        </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -136,10 +187,10 @@ export function WhatsappMotion({ isActive }: { isActive: boolean }) {
         </p>
         <motion.div
           className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0"
-          animate={{ scale: sending ? 1.25 : 1 }}
+          animate={{ scale: sending ? 1.08 : 1 }}
           transition={{ duration: 0.2 }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M5 12h13M13 6l6 6-6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
@@ -195,7 +246,7 @@ export function AgentMotion({ isActive }: { isActive: boolean }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <motion.div layout="position" className="flex items-start gap-2.5 px-3">
-        <motion.img layout="position" src="/TlinIA.svg" alt="Tlin" className="w-7 h-7 shrink-0" />
+        <img src="/TlinIA.svg" alt="Tlin" className="w-7 h-7 shrink-0" />
 
         <motion.div layout="position" className="flex flex-col items-start gap-1.5 w-[160px]">
           <AnimatePresence initial={false}>
@@ -278,44 +329,85 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
 }
 
 // Agendar reunioes: 3 avatares em fila (com nome real, mesmo pool de
-// nomes do SalesNotification.tsx). Uma a uma, cada reuniao e "confirmada"
-// (check azul da marca) e some -- ciclo se repete com as 3.
-const SCHEDULE_CYCLE = 4.4;
+// nomes do SalesNotification.tsx). Empilham uma a uma de verdade (monta/
+// desmonta, analogo ao AgentMotion), com o check azul sendo desenhado
+// (pathLength) ao montar em vez de so aparecer. Cada linha ainda flutua
+// organicamente (drift continuo, como no CaptureMotion) sem mudar o
+// zigue-zague fixo de alinhamento.
+const SCHEDULE_ROWS = [
+  { src: "/lotties/avatars/6_avatar.webp", name: "Carla F.", align: "self-start ml-6", driftX: [0, 4, -3, 0], driftY: [0, -3, 2, 0], duration: 3.4 },
+  { src: "/lotties/avatars/7_avatar.webp", name: "Mariana L.", align: "self-end mr-2", driftX: [0, -4, 3, -2, 0], driftY: [0, 3, -3, 2, 0], duration: 4.0 },
+  { src: "/lotties/avatars/8_avatar.webp", name: "Fernando H.", align: "self-start ml-1", driftX: [0, 3, -4, 2, 0], driftY: [0, -2, 3, -2, 0], duration: 3.7 },
+];
+const SCHEDULE_MSG_MS = 900;
+const SCHEDULE_HOLD_MS = 700;
+const SCHEDULE_UNSTACK_MS = 200;
+const SCHEDULE_GAP_MS = 500;
+const SCHEDULE_STEP_MS = 100;
+const SCHEDULE_BUILD_END_MS = (SCHEDULE_ROWS.length - 1) * SCHEDULE_MSG_MS;
+const SCHEDULE_HOLD_END_MS = SCHEDULE_BUILD_END_MS + SCHEDULE_HOLD_MS;
+const SCHEDULE_UNSTACK_END_MS = SCHEDULE_HOLD_END_MS + (SCHEDULE_ROWS.length - 1) * SCHEDULE_UNSTACK_MS;
+const SCHEDULE_CYCLE_MS = SCHEDULE_UNSTACK_END_MS + SCHEDULE_GAP_MS;
 
 export function ScheduleMotion({ isActive }: { isActive: boolean }) {
-  const rows = [
-    { src: "/lotties/avatars/6_avatar.webp", name: "Carla F." },
-    { src: "/lotties/avatars/7_avatar.webp", name: "Mariana L." },
-    { src: "/lotties/avatars/8_avatar.webp", name: "Fernando H." },
-  ];
-  const alignClass = ["self-start ml-6", "self-end mr-2", "self-start ml-1"];
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setTick(0);
+      return;
+    }
+    const id = setInterval(() => {
+      setTick((t) => (t + SCHEDULE_STEP_MS) % SCHEDULE_CYCLE_MS);
+    }, SCHEDULE_STEP_MS);
+    return () => clearInterval(id);
+  }, [isActive]);
+
+  let count: number;
+  if (tick < SCHEDULE_BUILD_END_MS) {
+    count = Math.floor(tick / SCHEDULE_MSG_MS) + 1;
+  } else if (tick < SCHEDULE_HOLD_END_MS) {
+    count = SCHEDULE_ROWS.length;
+  } else if (tick < SCHEDULE_UNSTACK_END_MS) {
+    const steps = Math.floor((tick - SCHEDULE_HOLD_END_MS) / SCHEDULE_UNSTACK_MS) + 1;
+    count = Math.max(1, SCHEDULE_ROWS.length - steps);
+  } else {
+    count = 1;
+  }
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-4">
       <div className="flex flex-col gap-4 w-full">
-      {rows.map((row, i) => {
-        const slot = i * 1.2;
-        return (
-          <motion.div
-            key={i}
-            className={`flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[152px] ${alignClass[i]}`}
-            animate={isActive ? { opacity: [1, 1, 0, 0] } : { opacity: 1 }}
-            transition={{ duration: 0.5, delay: slot + 0.35, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.5 - slot - 0.35, ease: "easeIn" }}
-          >
-            <Avatar src={row.src} size={34} />
-            <span className="text-[12px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
+        <AnimatePresence initial={false}>
+          {SCHEDULE_ROWS.slice(0, count).map((row, i) => (
             <motion.div
-              className="w-7 h-7 rounded-full bg-[#38E3FF] flex items-center justify-center shrink-0"
-              animate={isActive ? { scale: [0, 1.3, 1] } : { scale: 0 }}
-              transition={{ duration: 0.35, delay: slot, repeat: loop(isActive), repeatDelay: SCHEDULE_CYCLE - 0.35 - slot }}
+              key={i}
+              layout="position"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0, x: isActive ? row.driftX : 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }}
+              transition={{ opacity: { duration: 0.4, ease: "easeOut" }, y: { duration: 0.4, ease: "easeOut" }, x: { duration: row.duration, repeat: loop(isActive), ease: "easeInOut" } }}
+              className={`flex items-center gap-2.5 bg-white border border-zinc-100 rounded-full pl-1.5 pr-4 py-2 w-[152px] ${row.align}`}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M4 12l5 5L20 6" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Avatar src={row.src} size={34} />
+              <span className="text-[12px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{row.name}</span>
+              <div className="w-7 h-7 rounded-full bg-[#38E3FF]/25 border border-[#38E3FF]/40 flex items-center justify-center shrink-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <motion.path
+                    d="M4 12l5 5L20 6"
+                    stroke="#0C4A6E"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.35, delay: 0.15, ease: "easeOut" }}
+                  />
+                </svg>
+              </div>
             </motion.div>
-          </motion.div>
-        );
-      })}
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -356,6 +448,12 @@ function roundedPolygonPath(points: [number, number][], radius: number): string 
 
 function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
   const inset = (top - bottom) / 2;
+  // raio do canto e espessura do traco escalam com a largura do estagio --
+  // um valor fixo (4 / 1.5) fica desproporcional (grosso demais) nos
+  // estagios mais estreitos do funil.
+  const scale = top / FUNNEL_STAGES[0].top;
+  const radius = Math.max(2.5, 5 * scale);
+  const strokeWidth = Math.max(1, 1.6 * scale);
   const path = roundedPolygonPath(
     [
       [0, 0],
@@ -363,11 +461,11 @@ function FunnelTrapezoid({ top, bottom }: { top: number; bottom: number }) {
       [top - inset, FUNNEL_HEIGHT],
       [inset, FUNNEL_HEIGHT],
     ],
-    4
+    radius
   );
   return (
     <svg width={top} height={FUNNEL_HEIGHT} viewBox={`0 0 ${top} ${FUNNEL_HEIGHT}`}>
-      <path d={path} fill="#B597FF" fillOpacity="0.2" stroke="#B597FF" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d={path} fill="#B597FF" fillOpacity="0.2" stroke="#B597FF" strokeWidth={strokeWidth} strokeLinejoin="round" />
     </svg>
   );
 }
