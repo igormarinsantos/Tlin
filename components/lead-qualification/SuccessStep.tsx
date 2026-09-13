@@ -7,6 +7,7 @@ import type { DemoDay, DemoSlot } from "./constants";
 type LeadQualifyDictionary = {
   successTitle?: string;
   successMessage?: string;
+  successMessageHigh?: string;
   fields?: { company?: string };
   demoScheduledFor?: string;
   demoPendingConfirmation?: string;
@@ -21,6 +22,7 @@ export function SuccessStep({
   selectedDay,
   selectedSlot,
   demoPendingConfirmation,
+  isHighVolume,
   onWhatsAppRedirect,
   onNewRequest,
 }: {
@@ -29,9 +31,11 @@ export function SuccessStep({
   selectedDay: DemoDay | null;
   selectedSlot: DemoSlot | null;
   demoPendingConfirmation: boolean;
+  isHighVolume?: boolean;
   onWhatsAppRedirect: () => void;
   onNewRequest: () => void;
 }) {
+  const messageTemplate = (isHighVolume && t?.successMessageHigh) || t?.successMessage || "{name}";
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -48,9 +52,9 @@ export function SuccessStep({
       </h2>
 
       <p className="text-lg sm:text-2xl font-bold text-zinc-900/80 max-w-2xl mb-6 leading-relaxed">
-        {(t?.successMessage || "{name}").split("{name}")[0]}
+        {messageTemplate.split("{name}")[0]}
         <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent font-black">{name || t?.fields?.company || ""}</span>
-        {(t?.successMessage || "{name}").split("{name}")[1]}
+        {messageTemplate.split("{name}")[1]}
       </p>
 
       {selectedSlot && (

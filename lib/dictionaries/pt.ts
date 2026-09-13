@@ -416,6 +416,7 @@ export const ptBR = {
   leadQualify: {
     initialMsg: "Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o [seu nome]?",
     step2: "[Ótimo], {name}! Me passa seu melhor [WhatsApp] que eu mesmo te chamo por lá.",
+    step2Plan: "[Ótimo], {name}! Vi que você tá de olho no plano [{plan}] — me passa seu melhor [WhatsApp] que eu mesmo te chamo por lá.",
     step3: "Fechado, {name}. Só confirmando: o número [{phone}] tá certinho?",
     step4: "[Perfeito]! Pra eu calibrar a solução certa: qual o [volume mensal] de atendimentos de {name} hoje?",
     step5: "[Entendido], {name}. E o time que cuida disso hoje — qual o tamanho da [equipe atual]?",
@@ -470,7 +471,8 @@ export const ptBR = {
       whatsapp: "WhatsApp",
       volume: "Volume",
       team: "Equipe",
-      email: "E-mail"
+      email: "E-mail",
+      plan: "Plano"
     },
     editTitles: {
       name: "Editar Nome",
@@ -481,6 +483,7 @@ export const ptBR = {
     },
     successTitle: "Solicitação enviada com sucesso!",
     successMessage: "Nossa equipe de especialistas já está analisando o perfil de {name} e entrará em contato em breve via WhatsApp.",
+    successMessageHigh: "Com o volume que {name} atende, cada minuto conta — já priorizamos o perfil e entraremos em contato em breve via WhatsApp.",
     talkToTeam: "Falar com a equipe",
     saveChange: "Salvar alteração",
     sendError: "Não consegui enviar sua solicitação agora. Tente confirmar novamente em alguns instantes.",

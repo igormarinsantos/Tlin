@@ -490,7 +490,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
     switch(step) {
       case 1: return initialMsg;
-      case 2: return t?.leadQualify?.step2?.replace("{name}", personName) || "";
+      case 2: {
+        const s2 = hasSelectedPlan ? t?.leadQualify?.step2Plan : t?.leadQualify?.step2;
+        return s2?.replace("{name}", personName).replace("{plan}", planName || "") || t?.leadQualify?.step2?.replace("{name}", personName) || "";
+      }
       case 3: return t?.leadQualify?.step3?.replace("{name}", personName).replace("{phone}", `${data.countryCode} ${data.phone}`) || "";
       case 4: return t?.leadQualify?.step4?.replace("{name}", personName) || "";
       case 5: {
@@ -789,6 +792,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   // sucesso -- a estrutura da conversa (header, baloes, calendario) e a mesma
   // nos dois, so o tema de cor muda.
   const isLight = embedded || currentStep === SUCCESS_STEP;
+  // "TLIN" e o plano generico usado pelos CTAs que nao vem de um card de
+  // plano especifico (hero, header, footer) -- so conta como "plano
+  // selecionado" quando veio de um card de verdade (Pricing).
+  const hasSelectedPlan = Boolean(planName) && planName !== "TLIN";
+  const isHighVolumeLead = (t?.leadQualify?.volumeOptions || []).indexOf(formData.volume) >= 3;
 
   const isAskingToContinue = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
   const isLastMessageBot = chatHistory[chatHistory.length - 1]?.role === 'bot';
@@ -1017,6 +1025,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                     {formData.email} <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity text-xs">✏️</span>
                                   </span>
                                 </button>
+                                {hasSelectedPlan && (
+                                  <div className="w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl">
+                                    <span className="text-zinc-500">{t?.leadQualify?.fields?.plan || "Plano"}:</span>
+                                    <span className={`font-bold ${isLight ? "text-zinc-950" : "text-white"}`}>{planName}</span>
+                                  </div>
+                                )}
                                 {selectedSlot && (
                                   <div className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl ${isLight ? "" : ""}`}>
                                     <span className="text-zinc-500">{t?.leadQualify?.demoScheduledFor || "Demo"}:</span>
@@ -1318,6 +1332,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 selectedDay={selectedDay}
                 selectedSlot={selectedSlot}
                 demoPendingConfirmation={demoPendingConfirmation}
+                isHighVolume={isHighVolumeLead}
                 onWhatsAppRedirect={() => handleWhatsAppRedirect(formData)}
                 onNewRequest={resetForm}
               />

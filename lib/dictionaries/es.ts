@@ -418,6 +418,7 @@ export const esES: TranslationDictionary = {
   leadQualify: {
     initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es [tu nombre]?",
     step2: "¡[Genial], {name}! Pásame tu mejor [WhatsApp] que yo mismo te escribo por ahí.",
+    step2Plan: "¡[Genial], {name}! Vi que estás mirando el plan [{plan}] — pásame tu mejor [WhatsApp] que yo mismo te escribo por ahí.",
     step3: "Listo, {name}. Solo confirmando: ¿el número [{phone}] está correcto?",
     step4: "¡[Perfecto]! Para calibrar la solución correcta: ¿cuál es el [volumen mensual] de atención de {name} hoy?",
     step5: "[Entendido], {name}. Y el equipo que se encarga de esto hoy — ¿cuál es el tamaño del [equipo actual]?",
@@ -472,7 +473,8 @@ export const esES: TranslationDictionary = {
       whatsapp: "WhatsApp",
       volume: "Volumen",
       team: "Equipo",
-      email: "Correo"
+      email: "Correo",
+      plan: "Plan"
     },
     editTitles: {
       name: "Editar Nombre",
@@ -483,6 +485,7 @@ export const esES: TranslationDictionary = {
     },
     successTitle: "¡Solicitud enviada con éxito!",
     successMessage: "Nuestro equipo de especialistas ya está analizando el perfil de {name} y te contactará pronto por WhatsApp.",
+    successMessageHigh: "Con el volumen que maneja {name}, cada minuto cuenta — ya priorizamos este perfil y te contactaremos pronto por WhatsApp.",
     talkToTeam: "Hablar con el equipo",
     saveChange: "Guardar cambio",
     sendError: "No pude enviar tu solicitud ahora. Intenta confirmar nuevamente en unos instantes.",
