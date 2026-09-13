@@ -9,9 +9,16 @@ export const esES: TranslationDictionary = {
     cta: "Empezar ahora",
     demo: "Demo 100% gratis",
     comoFunciona: "Cómo funciona",
-    agentes: "Agentes",
-    crm: "CRM",
-    planos: "Planes"
+    planos: "Planes",
+    content: "Contenido",
+    solutions: "Soluciones",
+    solutionsByFeature: "Por funcionalidad",
+    solutionsBySegment: "Por segmento",
+    solutionsDesc1: "Atiende y vende en el chat automáticamente",
+    solutionsDesc2: "Reactiva a quien dejó de responder",
+    solutionsDesc3: "Organiza el embudo sin esfuerzo manual",
+    solutionsDesc4: "Vende infoproductos en automático",
+    solutionsDesc5: "Agentes entrenados en tu playbook"
   },
   topBanner: {
     question: "¿Tienes alguna duda sobre Tlin?",

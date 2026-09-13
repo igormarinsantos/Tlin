@@ -70,22 +70,120 @@ function LanguageSelector() {
 }
 
 
+// As 5 paginas de campanha, agrupadas por como a pessoa provavelmente
+// pensa sobre o que precisa: 4 por funcionalidade (o que a IA faz) + 1 por
+// segmento (pra quem) -- a segunda coluna deixa espaco pronto pra crescer
+// se surgir uma nova LP de segmento, sem precisar redesenhar o menu.
+const SOLUTIONS = [
+  { href: "/ia-whatsapp", nameKey: "solutionsLink1", descKey: "solutionsDesc1", group: "feature" },
+  { href: "/recuperacao-de-leads", nameKey: "solutionsLink2", descKey: "solutionsDesc2", group: "feature" },
+  { href: "/crm-com-ia", nameKey: "solutionsLink3", descKey: "solutionsDesc3", group: "feature" },
+  { href: "/agentes-de-ia", nameKey: "solutionsLink5", descKey: "solutionsDesc5", group: "feature" },
+  { href: "/infoprodutores", nameKey: "solutionsLink4", descKey: "solutionsDesc4", group: "segment" },
+] as const;
+
+// Paginas que renderizam a mesma Features/Pricing da home (mesmos ids
+// #como-funciona/#planos) -- nelas o link e uma ancora pura. Em qualquer
+// outra pagina (ex.: /comece, /legal) a secao nao existe ali, entao o link
+// aponta pra home com a ancora, em vez de "clicar e nao acontecer nada".
+const PAGES_WITH_FEATURES_SECTION = ["/", "/ia-whatsapp", "/recuperacao-de-leads", "/crm-com-ia", "/infoprodutores", "/agentes-de-ia"];
+
+function SolutionsMenu() {
+  const { t } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const featureSolutions = SOLUTIONS.filter((s) => s.group === "feature");
+  const segmentSolutions = SOLUTIONS.filter((s) => s.group === "segment");
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200 flex items-center gap-1.5"
+      >
+        {t.nav.solutions}
+        <svg className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.97 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full left-0 mt-4 w-[520px] bg-white border border-zinc-200 rounded-3xl overflow-hidden p-4 z-50 grid grid-cols-2 gap-2"
+          >
+            <div className="flex flex-col gap-0.5">
+              <span className="px-3 pt-1 pb-2 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
+                {t.nav.solutionsByFeature}
+              </span>
+              {featureSolutions.map((s) => (
+                <a
+                  key={s.href}
+                  href={s.href}
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
+                >
+                  <p className="text-sm font-bold text-[#0c0d0d]">{t.footer[s.nameKey]}</p>
+                  <p className="text-xs text-zinc-500 mt-0.5">{t.nav[s.descKey]}</p>
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="px-3 pt-1 pb-2 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
+                {t.nav.solutionsBySegment}
+              </span>
+              {segmentSolutions.map((s) => (
+                <a
+                  key={s.href}
+                  href={s.href}
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
+                >
+                  <p className="text-sm font-bold text-[#0c0d0d]">{t.footer[s.nameKey]}</p>
+                  <p className="text-xs text-zinc-500 mt-0.5">{t.nav[s.descKey]}</p>
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function NavLinks() {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const linkClass = "relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200";
+  // Ancora pura quando a secao existe na pagina atual; senao volta pra home
+  // com a ancora, em vez de um link morto (ver PAGES_WITH_FEATURES_SECTION).
+  const sectionHref = (id: string) => (PAGES_WITH_FEATURES_SECTION.includes(pathname) ? `#${id}` : `/#${id}`);
 
   return (
     <nav aria-label="Navegação principal" className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <a href="#como-funciona" className={linkClass}>
+      <SolutionsMenu />
+      <a href={sectionHref("como-funciona")} className={linkClass}>
         {t.nav.comoFunciona}
       </a>
-      <a href="#agentes" className={linkClass}>
-        {t.nav.agentes}
+      <a href="/blog" className={linkClass}>
+        {t.nav.content}
       </a>
-      <a href="#crm" className={linkClass}>
-        {t.nav.crm}
-      </a>
-      <a href="#planos" className={linkClass}>
+      <a href={sectionHref("planos")} className={linkClass}>
         {t.nav.planos}
       </a>
     </nav>

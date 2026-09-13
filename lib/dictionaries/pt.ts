@@ -7,9 +7,16 @@ export const ptBR = {
     cta: "Começar agora",
     demo: "Demo 100% grátis",
     comoFunciona: "Como funciona",
-    agentes: "Agentes",
-    crm: "CRM",
-    planos: "Planos"
+    planos: "Planos",
+    content: "Conteúdo",
+    solutions: "Soluções",
+    solutionsByFeature: "Por funcionalidade",
+    solutionsBySegment: "Por segmento",
+    solutionsDesc1: "Atenda e venda no chat automaticamente",
+    solutionsDesc2: "Reative quem parou de responder",
+    solutionsDesc3: "Organize o funil sem esforço manual",
+    solutionsDesc4: "Venda infoprodutos no automático",
+    solutionsDesc5: "Agentes treinados no seu playbook"
   },
   topBanner: {
     question: "Tem alguma dúvida sobre a Tlin?",
