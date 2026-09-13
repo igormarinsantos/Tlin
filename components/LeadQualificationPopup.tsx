@@ -138,7 +138,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     }
     if (step >= 8 && day) {
       history.push({ role: 'user', text: day.label });
-      history.push({ role: 'bot', text: getQuestion(8, data) });
+      history.push({ role: 'bot', text: getQuestion(8, data, day) });
     }
     if (step >= 9 && slot) {
       history.push({ role: 'user', text: slot.when });
@@ -475,7 +475,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     window.open(url, '_blank');
   };
 
-  const getQuestion = (step: number, data: typeof formData) => {
+  const getQuestion = (step: number, data: typeof formData, day?: DemoDay | null) => {
     const personName = data.name || t?.leadQualify?.fields?.company || "";
     const volumeOptions = t?.leadQualify?.volumeOptions || [];
     const teamOptions = t?.leadQualify?.teamOptions || [];
@@ -501,8 +501,11 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
         const s6 = isTightTeam ? t?.leadQualify?.step6Tight : isBigTeam ? t?.leadQualify?.step6Scale : t?.leadQualify?.step6;
         return s6?.replace("{name}", personName) || t?.leadQualify?.step6?.replace("{name}", personName) || "";
       }
-      case 7: return t?.leadQualify?.step7?.replace("{name}", personName) || "";
-      case 8: return t?.leadQualify?.step8?.replace("{name}", personName) || "";
+      case 7: {
+        const s7 = isHighVolume ? t?.leadQualify?.step7High : t?.leadQualify?.step7;
+        return s7?.replace("{name}", personName) || t?.leadQualify?.step7?.replace("{name}", personName) || "";
+      }
+      case 8: return t?.leadQualify?.step8?.replace("{name}", personName).replace("{day}", day?.label || "") || "";
       case 9:
         if (isHighVolume) return t?.leadQualify?.step9High?.replace("{name}", personName) || t?.leadQualify?.step9?.replace("{name}", personName) || "";
         return t?.leadQualify?.step9?.replace("{name}", personName) || "";
@@ -534,7 +537,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
         setIsTyping(false);
         setCurrentStep(2);
         setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.step2 || "" }]);
-      }, 800);
+      }, getTypingDelay(800));
       return;
     }
 
@@ -627,7 +630,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
         setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
         setCurrentStep(prev => prev + 1);
-      }, 1500);
+      }, getTypingDelay(1500, userValue));
     }
   };
 
@@ -672,7 +675,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       }
       if (targetStep >= 8 && selectedDay) {
         rebuiltHistory.push({ role: 'user', text: selectedDay.label });
-        rebuiltHistory.push({ role: 'bot', text: getQuestion(8, formData) });
+        rebuiltHistory.push({ role: 'bot', text: getQuestion(8, formData, selectedDay) });
       }
       if (targetStep >= 9 && selectedSlot) {
         rebuiltHistory.push({ role: 'user', text: selectedSlot.when });
@@ -698,6 +701,17 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const nums = formData.phone.replace(/\D/g, "");
     if (formData.countryCode === '+55') return nums.length >= 10 && nums.length <= 11;
     return nums.length >= 8;
+  };
+
+  // Varia o "tempo de pensar" em vez de um delay sempre identico -- soma um
+  // tempo de leitura proporcional ao que a pessoa acabou de responder (capado
+  // em 500ms) e um jitter de +-150ms, com piso de 600ms. So afeta a duracao
+  // do setTimeout, nunca o texto exibido (handleBack reconstroi na hora, sem
+  // timeout, entao nao ha risco de o texto mudar entre cliques).
+  const getTypingDelay = (base: number, referenceText?: string) => {
+    const readingTime = referenceText ? Math.min(referenceText.length * 12, 500) : 0;
+    const jitter = Math.floor(Math.random() * 301) - 150;
+    return Math.max(600, base + readingTime + jitter);
   };
 
   // Busca os dias/horarios reais do Deskcomm assim que a etapa de agendamento é alcançada.
@@ -728,9 +742,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     pendingAdvanceTimeoutRef.current = setTimeout(() => {
       pendingAdvanceTimeoutRef.current = null;
       setIsTyping(false);
-      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(8, formData) }]);
+      setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(8, formData, day) }]);
       setCurrentStep(8);
-    }, 900);
+    }, getTypingDelay(900, day.label));
   };
 
   const handleSelectSlot = (slot: DemoSlot) => {
@@ -744,7 +758,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       setIsTyping(false);
       setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(9, formData) }]);
       setCurrentStep(9);
-    }, 900);
+    }, getTypingDelay(900, slot.when));
   };
 
   useEffect(() => {
@@ -896,7 +910,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                     pendingAdvanceTimeoutRef.current = null;
                     setIsTyping(false);
                     setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
-                  }, 1200);
+                  }, getTypingDelay(1200));
                 }}
               />
             ) : currentStep < SUCCESS_STEP ? (
