@@ -70,16 +70,62 @@ function LanguageSelector() {
 }
 
 
-// As 5 paginas de campanha, agrupadas por como a pessoa provavelmente
-// pensa sobre o que precisa: 4 por funcionalidade (o que a IA faz) + 1 por
-// segmento (pra quem) -- a segunda coluna deixa espaco pronto pra crescer
-// se surgir uma nova LP de segmento, sem precisar redesenhar o menu.
+// Icones minimos, um por solucao -- mesmo padrao de SVG-inline-em-JSX ja
+// usado em outros componentes do site (ex.: XIcon/CheckIcon em CampaignComparison).
+function WhatsAppIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3C7.03 3 3 7.03 3 12c0 1.77.5 3.42 1.38 4.83L3 21l4.3-1.35A8.93 8.93 0 0012 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8.5 10.5c.4 2.6 2.4 4.6 5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+function RecoveryIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M18 3v4h-4M6 21v-4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function CrmIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect x="3.5" y="5" width="5" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="9.5" y="5" width="5" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="15.5" y="5" width="5" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  );
+}
+function AgentIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect x="5" y="8" width="14" height="11" rx="3" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 8V5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="12" cy="4" r="1.2" fill="currentColor" />
+      <circle cx="9.5" cy="13.5" r="1.3" fill="currentColor" />
+      <circle cx="14.5" cy="13.5" r="1.3" fill="currentColor" />
+    </svg>
+  );
+}
+function CourseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M10 9l5 3-5 3V9z" fill="currentColor" />
+    </svg>
+  );
+}
+
+// As 5 paginas de campanha num grid unico -- a nomenclatura ("por
+// funcionalidade" x "por segmento") virou so a ordem dos cards, sem
+// precisar de colunas separadas; cada uma ganha um icone proprio.
 const SOLUTIONS = [
-  { href: "/ia-whatsapp", nameKey: "solutionsLink1", descKey: "solutionsDesc1", group: "feature" },
-  { href: "/recuperacao-de-leads", nameKey: "solutionsLink2", descKey: "solutionsDesc2", group: "feature" },
-  { href: "/crm-com-ia", nameKey: "solutionsLink3", descKey: "solutionsDesc3", group: "feature" },
-  { href: "/agentes-de-ia", nameKey: "solutionsLink5", descKey: "solutionsDesc5", group: "feature" },
-  { href: "/infoprodutores", nameKey: "solutionsLink4", descKey: "solutionsDesc4", group: "segment" },
+  { href: "/ia-whatsapp", nameKey: "solutionsLink1", descKey: "solutionsDesc1", Icon: WhatsAppIcon },
+  { href: "/recuperacao-de-leads", nameKey: "solutionsLink2", descKey: "solutionsDesc2", Icon: RecoveryIcon },
+  { href: "/crm-com-ia", nameKey: "solutionsLink3", descKey: "solutionsDesc3", Icon: CrmIcon },
+  { href: "/agentes-de-ia", nameKey: "solutionsLink5", descKey: "solutionsDesc5", Icon: AgentIcon },
+  { href: "/infoprodutores", nameKey: "solutionsLink4", descKey: "solutionsDesc4", Icon: CourseIcon },
 ] as const;
 
 // Paginas que renderizam a mesma Features/Pricing da home (mesmos ids
@@ -88,85 +134,101 @@ const SOLUTIONS = [
 // aponta pra home com a ancora, em vez de "clicar e nao acontecer nada".
 const PAGES_WITH_FEATURES_SECTION = ["/", "/ia-whatsapp", "/recuperacao-de-leads", "/crm-com-ia", "/infoprodutores", "/agentes-de-ia"];
 
-function SolutionsMenu() {
+// Painel do megamenu "Soluções" -- largura total do header (nao so a
+// largura do botao), aberto/fechado por hover (ver onEnter/onLeave, geridos
+// no Header com um pequeno delay pra nao fechar ao atravessar o espaco
+// entre o botao e o painel). Sem position:absolute: como o <header> em si
+// ja e absolute/fixed, o painel em fluxo normal nao empurra o resto da
+// pagina, so cresce dentro do proprio header.
+function SolutionsPanel({ onEnter, onLeave }: { onEnter: () => void; onLeave: () => void }) {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const featureSolutions = SOLUTIONS.filter((s) => s.group === "feature");
-  const segmentSolutions = SOLUTIONS.filter((s) => s.group === "segment");
+  const openQualification = () => {
+    trackFunnelEvent("click_pricing_cta", { cta_source: "nav_solutions_menu", plan_name: "TLIN" });
+    window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "nav_solutions_menu" } }));
+  };
 
   return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200 flex items-center gap-1.5"
-      >
-        {t.nav.solutions}
-        <svg className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.15 }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      // Largura real da viewport (nao so o max-w-6xl do header), reto e sem
+      // borda/sombra -- visualmente e uma continuacao do proprio header, nao
+      // um card flutuando por cima da pagina. Formula classica de "full
+      // bleed" (estica e recentraliza com margem negativa), funciona porque
+      // o header (pai) ja e centralizado na tela via mx-auto -- usa a CSS var
+      // --tlin-vw (window.innerWidth) em vez de 100vw, que inclui a
+      // scrollbar e estouraria a pagina em alguns pixels.
+      className="pointer-events-auto bg-white"
+      style={{
+        width: "var(--tlin-vw, 100vw)",
+        marginLeft: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
+        marginRight: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-[1fr_260px] gap-6">
+        <div>
+          <p className="px-1 pb-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">{t.nav.solutionsEyebrow}</p>
+          <div className="grid grid-cols-3 gap-1">
+            {SOLUTIONS.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                className="group flex flex-col gap-3 p-3 rounded-2xl hover:bg-zinc-50 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center text-[#0c0d0d] group-hover:from-[#B597FF]/20 group-hover:to-[#38E3FF]/20 transition-colors">
+                  <s.Icon />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#0c0d0d] flex items-center gap-1">
+                    {t.footer[s.nameKey]}
+                    <svg className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </p>
+                  <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{t.nav[s.descKey]}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-4 w-[520px] bg-white border border-zinc-200 rounded-3xl overflow-hidden p-4 z-50 grid grid-cols-2 gap-2"
+        <div className="rounded-2xl bg-[#0c0d0d] p-5 flex flex-col justify-between">
+          <div>
+            <p className="text-white font-bold text-base leading-snug">{t.nav.solutionsCtaTitle}</p>
+            <p className="text-zinc-400 text-sm mt-2 leading-relaxed">{t.nav.solutionsCtaDesc}</p>
+          </div>
+          <button
+            onClick={openQualification}
+            className="relative mt-4 p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
           >
-            <div className="flex flex-col gap-0.5">
-              <span className="px-3 pt-1 pb-2 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
-                {t.nav.solutionsByFeature}
-              </span>
-              {featureSolutions.map((s) => (
-                <a
-                  key={s.href}
-                  href={s.href}
-                  onClick={() => setIsOpen(false)}
-                  className="px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
-                >
-                  <p className="text-sm font-bold text-[#0c0d0d]">{t.footer[s.nameKey]}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{t.nav[s.descKey]}</p>
-                </a>
-              ))}
+            <div
+              className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
+              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
+            />
+            <div className="relative px-4 py-2.5 rounded-full bg-white text-[#0c0d0d] text-sm font-bold text-center">
+              {t.nav.solutionsCtaButton}
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="px-3 pt-1 pb-2 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
-                {t.nav.solutionsBySegment}
-              </span>
-              {segmentSolutions.map((s) => (
-                <a
-                  key={s.href}
-                  href={s.href}
-                  onClick={() => setIsOpen(false)}
-                  className="px-3 py-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
-                >
-                  <p className="text-sm font-bold text-[#0c0d0d]">{t.footer[s.nameKey]}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{t.nav[s.descKey]}</p>
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
-function NavLinks() {
+function NavLinks({
+  isSolutionsOpen,
+  onSolutionsEnter,
+  onSolutionsLeave,
+}: {
+  isSolutionsOpen: boolean;
+  onSolutionsEnter: () => void;
+  onSolutionsLeave: () => void;
+}) {
   const { t } = useLanguage();
   const pathname = usePathname();
   const linkClass = "relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200";
@@ -176,7 +238,18 @@ function NavLinks() {
 
   return (
     <nav aria-label="Navegação principal" className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
-      <SolutionsMenu />
+      <div onMouseEnter={onSolutionsEnter} onMouseLeave={onSolutionsLeave}>
+        <button
+          onFocus={onSolutionsEnter}
+          onBlur={onSolutionsLeave}
+          className="relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200 flex items-center gap-1.5"
+        >
+          {t.nav.solutions}
+          <svg className={`w-3 h-3 transition-transform ${isSolutionsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
       <a href={sectionHref("como-funciona")} className={linkClass}>
         {t.nav.comoFunciona}
       </a>
@@ -257,6 +330,42 @@ export function Header() {
   const { scrollY } = useScroll();
   const { t } = useLanguage();
   const [showFloating, setShowFloating] = useState(false);
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+  const solutionsCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Pequeno delay ao fechar (em vez de fechar na hora do mouseleave) pra
+  // nao fechar o menu quando o cursor atravessa o espaco entre o botao
+  // "Soluções" e o painel logo abaixo dele.
+  const openSolutions = () => {
+    if (solutionsCloseTimeout.current) {
+      clearTimeout(solutionsCloseTimeout.current);
+      solutionsCloseTimeout.current = null;
+    }
+    setIsSolutionsOpen(true);
+  };
+  const closeSolutionsWithDelay = () => {
+    solutionsCloseTimeout.current = setTimeout(() => setIsSolutionsOpen(false), 150);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (solutionsCloseTimeout.current) clearTimeout(solutionsCloseTimeout.current);
+    };
+  }, []);
+
+  // "100vw" inclui a largura da scrollbar (window.innerWidth tambem inclui --
+  // quem exclui e document.documentElement.clientWidth), entao o truque de
+  // full-bleed do megamenu com vw puro estoura a pagina em uns 8px enquanto
+  // o menu esta aberto. Guarda a largura real do conteudo numa CSS var e usa
+  // ela em vez de vw (ver SolutionsPanel).
+  useEffect(() => {
+    const setViewportWidthVar = () => {
+      document.documentElement.style.setProperty("--tlin-vw", `${document.documentElement.clientWidth}px`);
+    };
+    setViewportWidthVar();
+    window.addEventListener("resize", setViewportWidthVar);
+    return () => window.removeEventListener("resize", setViewportWidthVar);
+  }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -283,7 +392,7 @@ export function Header() {
           </div>
 
           <div className="hidden md:block">
-            <NavLinks />
+            <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
           </div>
 
           <div className="flex items-center gap-2">
@@ -291,6 +400,10 @@ export function Header() {
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
+
+        <AnimatePresence>
+          {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} />}
+        </AnimatePresence>
       </header>
 
       {/* 2. Floating Header */}
@@ -301,16 +414,16 @@ export function Header() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4"
+            className="fixed top-4 left-0 right-0 z-[100] flex flex-col items-center pointer-events-none px-4"
           >
             <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
-              
+
               <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
               </div>
 
               <div className="hidden lg:block">
-                <NavLinks />
+                <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
               </div>
 
               <div className="flex items-center gap-2">
@@ -318,6 +431,10 @@ export function Header() {
                  <HeaderCTA padding="px-4 py-2" />
               </div>
             </div>
+
+            <AnimatePresence>
+              {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} />}
+            </AnimatePresence>
           </motion.header>
         )}
       </AnimatePresence>

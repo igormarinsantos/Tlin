@@ -12,13 +12,15 @@ export const esES: TranslationDictionary = {
     planos: "Planes",
     content: "Contenido",
     solutions: "Soluciones",
-    solutionsByFeature: "Por funcionalidad",
-    solutionsBySegment: "Por segmento",
+    solutionsEyebrow: "Elige por dónde quieres empezar",
     solutionsDesc1: "Atiende y vende en el chat automáticamente",
     solutionsDesc2: "Reactiva a quien dejó de responder",
     solutionsDesc3: "Organiza el embudo sin esfuerzo manual",
     solutionsDesc4: "Vende infoproductos en automático",
-    solutionsDesc5: "Agentes entrenados en tu playbook"
+    solutionsDesc5: "Agentes entrenados en tu playbook",
+    solutionsCtaTitle: "¿No sabes cuál solución es la tuya?",
+    solutionsCtaDesc: "Habla con la IA y descúbrelo en 2 minutos.",
+    solutionsCtaButton: "Hablar ahora"
   },
   topBanner: {
     question: "¿Tienes alguna duda sobre Tlin?",

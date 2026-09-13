@@ -12,13 +12,15 @@ export const enUS: TranslationDictionary = {
     planos: "Plans",
     content: "Content",
     solutions: "Solutions",
-    solutionsByFeature: "By feature",
-    solutionsBySegment: "By segment",
+    solutionsEyebrow: "Choose where to start",
     solutionsDesc1: "Chat and sell automatically",
     solutionsDesc2: "Re-engage leads who went quiet",
     solutionsDesc3: "Organize your pipeline effortlessly",
     solutionsDesc4: "Sell info products on autopilot",
-    solutionsDesc5: "Agents trained on your playbook"
+    solutionsDesc5: "Agents trained on your playbook",
+    solutionsCtaTitle: "Not sure which solution fits?",
+    solutionsCtaDesc: "Talk to the AI and find out in 2 minutes.",
+    solutionsCtaButton: "Talk now"
   },
   topBanner: {
     question: "Do you have questions about Tlin?",

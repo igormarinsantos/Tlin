@@ -10,13 +10,15 @@ export const ptBR = {
     planos: "Planos",
     content: "Conteúdo",
     solutions: "Soluções",
-    solutionsByFeature: "Por funcionalidade",
-    solutionsBySegment: "Por segmento",
+    solutionsEyebrow: "Escolha por onde quer começar",
     solutionsDesc1: "Atenda e venda no chat automaticamente",
     solutionsDesc2: "Reative quem parou de responder",
     solutionsDesc3: "Organize o funil sem esforço manual",
     solutionsDesc4: "Venda infoprodutos no automático",
-    solutionsDesc5: "Agentes treinados no seu playbook"
+    solutionsDesc5: "Agentes treinados no seu playbook",
+    solutionsCtaTitle: "Não sabe qual solução é a sua?",
+    solutionsCtaDesc: "Fale com a IA e descubra em 2 minutos.",
+    solutionsCtaButton: "Falar agora"
   },
   topBanner: {
     question: "Tem alguma dúvida sobre a Tlin?",
