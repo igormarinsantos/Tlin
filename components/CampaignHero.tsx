@@ -107,6 +107,17 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           className="relative h-[320px] sm:h-[380px] md:h-[460px]"
         >
           {renderCampaignMotion(motion_)}
+
+          {/* Fade suave embaixo, na cor do wash azul do fundo da pagina (ver
+              MarketingLandingPage.tsx) -- fica aqui na pagina (nao dentro do
+              componente de motion) porque e o fundo da secao que muda de LP
+              pra LP, nao a animacao em si. */}
+          {variant === "crmComIa" && (
+            <div
+              className="absolute inset-x-0 bottom-0 h-24 md:h-32 pointer-events-none z-20"
+              style={{ background: "linear-gradient(to bottom, transparent, rgba(234,251,255,0.9))" }}
+            />
+          )}
         </motion.div>
       </div>
     </section>
