@@ -239,6 +239,14 @@ export function FunnelAnimation() {
             <Column title={f.col3} color="#25D366" leads={leads.filter(l => l.stage === 'fundo')} bgColor="bg-[#25D366]/10" />
           </div>
         </div>
+
+        {/* Fade suave embaixo, na cor do wash azul do fundo da pagina (ver
+            MarketingLandingPage.tsx), pra o corte do mock incorporar com o
+            fundo em vez de terminar seco. */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-24 md:h-32 pointer-events-none z-20"
+          style={{ background: "linear-gradient(to bottom, transparent, rgba(234,251,255,0.9))" }}
+        />
       </motion.div>
     </div>
   );
