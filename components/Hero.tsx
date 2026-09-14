@@ -326,8 +326,16 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
+          <a
+            href="https://app.tlin.ia.br"
+            onClick={() => trackFunnelEvent("nav_link_click", { destination: "login", cta_source: "hero" })}
+            className="text-[14px] md:text-[15px] font-bold text-zinc-500 hover:text-[#0c0d0d] transition-colors px-2"
+          >
+            {t.nav.login}
+          </a>
+
           <div className="relative">
-            <button 
+            <button
               onClick={() => {
                 trackFunnelEvent("click_pricing_cta", {
                   cta_source: "hero_primary",
