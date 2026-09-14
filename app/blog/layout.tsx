@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { BlogHeader } from "@/components/blog/BlogHeader";
+import dynamic from "next/dynamic";
 import { absoluteUrl } from "@/lib/siteConfig";
+
+const Footer = dynamic(() => import("@/components/Footer").then((mod) => mod.Footer));
 
 export const metadata: Metadata = {
   title: { default: "tlin.ai | IA, vendas e WhatsApp", template: "%s | tlin.ai" },
@@ -16,15 +18,9 @@ export const metadata: Metadata = {
 
 export default function BlogLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="min-h-screen overflow-hidden bg-[#fafafa] text-zinc-950">
-      <BlogHeader />
+    <div className="min-h-screen bg-white text-zinc-950">
       {children}
-      <footer className="relative border-t border-zinc-200 bg-white/70 px-5 py-10 md:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col justify-between gap-3 text-sm text-zinc-500 md:flex-row">
-          <p>© {new Date().getFullYear()} Tlin. Inteligência artificial aplicada a negócios.</p>
-          <a className="font-medium text-zinc-800 hover:underline" href="https://tlin.ia.br">tlin.ia.br</a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

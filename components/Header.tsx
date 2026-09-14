@@ -378,7 +378,7 @@ export function Header() {
     }
   });
 
-  if (pathname.startsWith("/blog") || pathname.startsWith("/qualificar") || pathname.startsWith("/demo")) return null;
+  if (pathname.startsWith("/qualificar") || pathname.startsWith("/demo")) return null;
 
   return (
     <>

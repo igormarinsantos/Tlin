@@ -60,6 +60,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     publishedAt: "2026-07-18",
     readingTime: "5 min de leitura",
     author: "Redação Tlin",
+    featured: true,
     content: [
       {
         heading: "Novidade não é necessariamente vantagem",
@@ -86,6 +87,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     publishedAt: "2026-07-15",
     readingTime: "8 min de leitura",
     author: "Redação Tlin",
+    featured: true,
     content: [
       {
         heading: "Qualificar é preparar a próxima conversa",
