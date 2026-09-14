@@ -82,11 +82,8 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () =>
                   <s.Icon />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-[#0c0d0d] flex items-center gap-1">
+                  <p className="text-sm font-bold text-[#0c0d0d]">
                     {t.footer[s.nameKey]}
-                    <svg className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                    </svg>
                   </p>
                   <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{t.nav[s.descKey]}</p>
                 </div>
