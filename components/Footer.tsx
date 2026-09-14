@@ -36,6 +36,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-10 gap-6">
           <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-start md:items-center">
+            <Link href="/blog" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.nav.content}</Link>
             <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
             <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
             <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>

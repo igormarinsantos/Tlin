@@ -253,9 +253,6 @@ function NavLinks({
       <a href={sectionHref("como-funciona")} className={linkClass}>
         {t.nav.comoFunciona}
       </a>
-      <a href="/blog" className={linkClass}>
-        {t.nav.content}
-      </a>
       <a href={sectionHref("planos")} className={linkClass}>
         {t.nav.planos}
       </a>
