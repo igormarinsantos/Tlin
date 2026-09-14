@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BlogArticle } from "@/lib/blog";
 import { formatArticleDate } from "@/lib/blog";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
+import { ArrowRightIcon } from "./icons";
 
 export function ArticleCard({ article, featured = false }: { article: BlogArticle; featured?: boolean }) {
   const visual = CATEGORY_VISUALS[article.category];
@@ -25,7 +26,10 @@ export function ArticleCard({ article, featured = false }: { article: BlogArticl
       <p className="relative mt-4 text-pretty leading-7 text-zinc-500">{article.description}</p>
       <div className="relative mt-auto flex items-center justify-between border-t border-zinc-100 pt-6 text-sm text-zinc-500">
         <span>{formatArticleDate(article.publishedAt)}</span>
-        <span className="font-bold text-[#0c0d0d] transition-colors group-hover:text-[#8659e7]">Ler artigo →</span>
+        <span className="flex items-center gap-1.5 font-bold text-[#0c0d0d] transition-colors group-hover:text-[#8659e7]">
+          Ler artigo
+          <ArrowRightIcon className="w-3.5 h-3.5" />
+        </span>
       </div>
     </article>
   );

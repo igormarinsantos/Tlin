@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BLOG_ARTICLES, formatArticleDate, getArticle } from "@/lib/blog";
 import { absoluteUrl } from "@/lib/siteConfig";
 import { CATEGORY_VISUALS } from "@/components/blog/categoryVisuals";
+import { ArrowLeftIcon } from "@/components/blog/icons";
 
 export function generateStaticParams() { return BLOG_ARTICLES.map(({ slug }) => ({ slug })); }
 
@@ -30,8 +31,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="bg-white px-4 pb-12 pt-28 md:px-8 md:pb-20 md:pt-36">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />
       <article className="mx-auto max-w-3xl">
-        <Link href="/blog" className="text-sm font-bold text-[#8659e7] hover:underline">
-          ← Todos os conteúdos
+        <Link href="/blog" className="flex items-center gap-1.5 text-sm font-bold text-[#8659e7] hover:underline">
+          <ArrowLeftIcon className="w-3.5 h-3.5" />
+          Todos os conteúdos
         </Link>
         <p className="mt-10 text-sm font-bold uppercase tracking-wide" style={{ color: visual.badgeText }}>
           {article.category}

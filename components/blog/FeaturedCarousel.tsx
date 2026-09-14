@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { BlogArticle } from "@/lib/blog";
 import { formatArticleDate } from "@/lib/blog";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
+import { ArrowLeftIcon, ArrowRightIcon } from "./icons";
 
 const AUTOPLAY_MS = 6000;
 
@@ -71,9 +72,10 @@ export function FeaturedCarousel({ articles }: { articles: BlogArticle[] }) {
             </div>
             <Link
               href={`/blog/${article.slug}`}
-              className="mt-6 self-start rounded-full bg-white px-5 py-3 text-sm font-bold text-[#0c0d0d] transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF]"
+              className="mt-6 self-start flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#0c0d0d] transition hover:bg-gradient-to-r hover:from-[#B597FF] hover:to-[#38E3FF]"
             >
-              Ler artigo →
+              Ler artigo
+              <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </div>
         </motion.div>
@@ -86,18 +88,14 @@ export function FeaturedCarousel({ articles }: { articles: BlogArticle[] }) {
             onClick={() => setIndex((prev) => (prev - 1 + articles.length) % articles.length)}
             className="absolute left-4 top-4 md:top-1/2 md:-translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-colors"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
+            <ArrowLeftIcon className="w-[18px] h-[18px]" />
           </button>
           <button
             aria-label="Próximo post"
             onClick={() => setIndex((prev) => (prev + 1) % articles.length)}
             className="absolute right-4 top-4 md:top-1/2 md:-translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-colors"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+            <ArrowRightIcon className="w-[18px] h-[18px]" />
           </button>
 
           <div className="absolute bottom-6 right-6 md:right-12 flex gap-2">

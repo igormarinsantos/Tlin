@@ -16,20 +16,12 @@ export default function BlogHomePage() {
         <div className="absolute right-0 top-24 h-[380px] w-[380px] rounded-full bg-[#38E3FF]/15 blur-[110px]" />
       </div>
 
-      <section className="px-4 pb-10 pt-28 md:px-8 md:pb-14 md:pt-36">
-        <div className="mx-auto max-w-6xl">
-          <p className="mb-5 text-sm font-bold uppercase tracking-wide text-zinc-400">Tlin Conteúdo</p>
-          <h1 className="max-w-4xl text-balance text-5xl md:text-7xl font-black tracking-tight text-[#0c0d0d]">
-            IA que faz negócios{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">avançarem.</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-zinc-500">
-            O que muda em inteligência artificial, e como transformar isso em vendas, atendimento e operações melhores.
-          </p>
-        </div>
-      </section>
+      {/* O hero da pagina e o proprio carrossel -- sem bloco de titulo
+          separado. O h1 continua existindo (sr-only) só pra SEO/estrutura
+          semantica, sem aparecer visualmente. */}
+      <h1 className="sr-only">Tlin Conteúdo: IA que faz negócios avançarem</h1>
 
-      <section className="px-4 pb-16 md:px-8 md:pb-24">
+      <section className="px-4 pb-16 pt-28 md:px-8 md:pb-24 md:pt-36">
         <div className="mx-auto max-w-6xl">
           <FeaturedCarousel articles={carouselArticles} />
         </div>
