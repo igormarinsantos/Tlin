@@ -93,7 +93,7 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
             <button
               type="button"
               onClick={() => openQualification("campaign_hero_secondary")}
-              className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all whitespace-nowrap"
+              className="px-6 md:px-10 py-3.5 rounded-full bg-transparent border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-black/5 transition-all whitespace-nowrap"
             >
               {t.hero.watchDemo}
             </button>
