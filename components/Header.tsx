@@ -8,6 +8,8 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
+import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
+import { MobileNavDrawer } from "./MobileNavDrawer";
 
 function LanguageSelector() {
   const { lang, setLang } = useLanguage();
@@ -70,69 +72,13 @@ function LanguageSelector() {
 }
 
 
-// Icones minimos, um por solucao -- mesmo padrao de SVG-inline-em-JSX ja
-// usado em outros componentes do site (ex.: XIcon/CheckIcon em CampaignComparison).
-function WhatsAppIcon() {
+function MenuIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M12 3C7.03 3 3 7.03 3 12c0 1.77.5 3.42 1.38 4.83L3 21l4.3-1.35A8.93 8.93 0 0012 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8.5 10.5c.4 2.6 2.4 4.6 5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+      <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
 }
-function RecoveryIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M18 3v4h-4M6 21v-4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function CrmIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="3.5" y="5" width="5" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="9.5" y="5" width="5" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="15.5" y="5" width="5" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-    </svg>
-  );
-}
-function AgentIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="5" y="8" width="14" height="11" rx="3" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M12 8V5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="12" cy="4" r="1.2" fill="currentColor" />
-      <circle cx="9.5" cy="13.5" r="1.3" fill="currentColor" />
-      <circle cx="14.5" cy="13.5" r="1.3" fill="currentColor" />
-    </svg>
-  );
-}
-function CourseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M10 9l5 3-5 3V9z" fill="currentColor" />
-    </svg>
-  );
-}
-
-// As 5 paginas de campanha num grid unico -- a nomenclatura ("por
-// funcionalidade" x "por segmento") virou so a ordem dos cards, sem
-// precisar de colunas separadas; cada uma ganha um icone proprio.
-const SOLUTIONS = [
-  { href: "/ia-whatsapp", nameKey: "solutionsLink1", descKey: "solutionsDesc1", Icon: WhatsAppIcon },
-  { href: "/recuperacao-de-leads", nameKey: "solutionsLink2", descKey: "solutionsDesc2", Icon: RecoveryIcon },
-  { href: "/crm-com-ia", nameKey: "solutionsLink3", descKey: "solutionsDesc3", Icon: CrmIcon },
-  { href: "/agentes-de-ia", nameKey: "solutionsLink5", descKey: "solutionsDesc5", Icon: AgentIcon },
-  { href: "/infoprodutores", nameKey: "solutionsLink4", descKey: "solutionsDesc4", Icon: CourseIcon },
-] as const;
-
-// Paginas que renderizam a mesma Features/Pricing da home (mesmos ids
-// #como-funciona/#planos) -- nelas o link e uma ancora pura. Em qualquer
-// outra pagina (ex.: /comece, /legal) a secao nao existe ali, entao o link
-// aponta pra home com a ancora, em vez de "clicar e nao acontecer nada".
-const PAGES_WITH_FEATURES_SECTION = ["/", "/ia-whatsapp", "/recuperacao-de-leads", "/crm-com-ia", "/infoprodutores", "/agentes-de-ia"];
 
 // Painel do megamenu "Soluções" -- largura total do header (nao so a
 // largura do botao), aberto/fechado por hover (ver onEnter/onLeave, geridos
@@ -178,6 +124,7 @@ function SolutionsPanel({ onEnter, onLeave }: { onEnter: () => void; onLeave: ()
               <a
                 key={s.href}
                 href={s.href}
+                onClick={() => trackFunnelEvent("nav_solution_click", { solution: s.href, cta_source: "nav_solutions_menu" })}
                 className="group flex flex-col gap-3 p-3 rounded-2xl hover:bg-zinc-50 transition-colors"
               >
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center text-[#0c0d0d] group-hover:from-[#B597FF]/20 group-hover:to-[#38E3FF]/20 transition-colors">
@@ -250,10 +197,18 @@ function NavLinks({
           </svg>
         </button>
       </div>
-      <a href={sectionHref("como-funciona")} className={linkClass}>
+      <a
+        href={sectionHref("como-funciona")}
+        onClick={() => trackFunnelEvent("nav_link_click", { destination: "como-funciona", cta_source: "nav" })}
+        className={linkClass}
+      >
         {t.nav.comoFunciona}
       </a>
-      <a href={sectionHref("planos")} className={linkClass}>
+      <a
+        href={sectionHref("planos")}
+        onClick={() => trackFunnelEvent("nav_link_click", { destination: "planos", cta_source: "nav" })}
+        className={linkClass}
+      >
         {t.nav.planos}
       </a>
     </nav>
@@ -328,6 +283,7 @@ export function Header() {
   const { t } = useLanguage();
   const [showFloating, setShowFloating] = useState(false);
   const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const solutionsCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Pequeno delay ao fechar (em vez de fechar na hora do mouseleave) pra
@@ -338,6 +294,7 @@ export function Header() {
       clearTimeout(solutionsCloseTimeout.current);
       solutionsCloseTimeout.current = null;
     }
+    if (!isSolutionsOpen) trackFunnelEvent("nav_solutions_menu_open", {});
     setIsSolutionsOpen(true);
   };
   const closeSolutionsWithDelay = () => {
@@ -393,7 +350,17 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-             <LanguageSelector />
+             <div className="hidden md:block">
+               <LanguageSelector />
+             </div>
+             <button
+               type="button"
+               aria-label="Abrir menu"
+               onClick={() => setIsMobileMenuOpen(true)}
+               className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-[#0c0d0d] hover:bg-zinc-100 transition-colors"
+             >
+               <MenuIcon />
+             </button>
              <HeaderCTA padding="px-5 py-2.5" />
           </div>
         </div>
@@ -424,7 +391,17 @@ export function Header() {
               </div>
 
               <div className="flex items-center gap-2">
-                 <LanguageSelector />
+                 <div className="hidden lg:block">
+                   <LanguageSelector />
+                 </div>
+                 <button
+                   type="button"
+                   aria-label="Abrir menu"
+                   onClick={() => setIsMobileMenuOpen(true)}
+                   className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center text-[#0c0d0d] hover:bg-zinc-100 transition-colors"
+                 >
+                   <MenuIcon />
+                 </button>
                  <HeaderCTA padding="px-4 py-2" />
               </div>
             </div>
@@ -435,6 +412,8 @@ export function Header() {
           </motion.header>
         )}
       </AnimatePresence>
+
+      <MobileNavDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </>
   );
 }
