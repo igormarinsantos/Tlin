@@ -30,7 +30,13 @@ function MenuIcon() {
 //   quebrar o layout compacto dela com um painel largura-total.
 function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () => void; onLeave: () => void; variant?: "full" | "contained" }) {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const isContained = variant === "contained";
+  // Nas LPs de campanha a hero tem um wash azul clarinho por baixo (ver
+  // MarketingLandingPage.tsx), nao branco puro -- o painel "full" abre
+  // bem no topo, sobre esse wash, entao usa a mesma cor em vez de
+  // bg-white pra nao criar um retangulo branco destacado.
+  const isCampaignPage = SOLUTIONS.some((s) => s.href === pathname);
 
   const openQualification = () => {
     trackFunnelEvent("click_pricing_cta", { cta_source: "nav_solutions_menu", plan_name: "TLIN" });
@@ -48,7 +54,7 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () =>
       className={
         isContained
           ? "pointer-events-auto bg-white rounded-3xl border border-zinc-200 shadow-xl mt-3 overflow-hidden w-[min(720px,calc(100vw-2rem))]"
-          : "pointer-events-auto bg-white"
+          : `pointer-events-auto ${isCampaignPage ? "bg-[#F5FDFF]" : "bg-white"}`
       }
       style={
         isContained
