@@ -2,51 +2,24 @@
 // MobileNavDrawer.tsx (menu mobile) -- ficam num arquivo a parte pra evitar
 // import circular entre os dois (o drawer precisa do que o Header define).
 
-// Icones minimos, um por solucao -- mesmo padrao de SVG-inline-em-JSX ja
-// usado em outros componentes do site (ex.: XIcon/CheckIcon em CampaignComparison).
+import { MessageCircle, RefreshCw, Kanban, Bot, GraduationCap } from "lucide-react";
+
+// Icones das solucoes -- lucide-react (ja usada em FunnelAnimation.tsx),
+// em vez de SVG desenhado a mao, pra um traco mais consistente/polido.
 function WhatsAppIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M12 3C7.03 3 3 7.03 3 12c0 1.77.5 3.42 1.38 4.83L3 21l4.3-1.35A8.93 8.93 0 0012 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8.5 10.5c.4 2.6 2.4 4.6 5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
+  return <MessageCircle size={20} strokeWidth={1.75} />;
 }
 function RecoveryIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M18 3v4h-4M6 21v-4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <RefreshCw size={20} strokeWidth={1.75} />;
 }
 function CrmIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="3.5" y="5" width="5" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="9.5" y="5" width="5" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="15.5" y="5" width="5" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-    </svg>
-  );
+  return <Kanban size={20} strokeWidth={1.75} />;
 }
 function AgentIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="5" y="8" width="14" height="11" rx="3" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M12 8V5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="12" cy="4" r="1.2" fill="currentColor" />
-      <circle cx="9.5" cy="13.5" r="1.3" fill="currentColor" />
-      <circle cx="14.5" cy="13.5" r="1.3" fill="currentColor" />
-    </svg>
-  );
+  return <Bot size={20} strokeWidth={1.75} />;
 }
 function CourseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M10 9l5 3-5 3V9z" fill="currentColor" />
-    </svg>
-  );
+  return <GraduationCap size={20} strokeWidth={1.75} />;
 }
 
 // Icone do item "Fale com a IA" do nav (desktop + mobile) -- mesmo estrelinha
