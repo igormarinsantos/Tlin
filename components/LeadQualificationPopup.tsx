@@ -835,7 +835,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             }`}
             style={{ backgroundColor: isLight ? '#ffffff' : '#0c0d0d' }}
           >
-            {/* Elementos Visuais Animados (Estilo Lia) para o Sucesso */}
+            {/* Elementos Visuais Animados (Estilo Igor) para o Sucesso */}
             <AnimatePresence>
               {currentStep === SUCCESS_STEP && (
                 <motion.div

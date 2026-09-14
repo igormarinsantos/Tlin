@@ -34,14 +34,14 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error || `Lia local AI returned HTTP ${response.status}`);
+      throw new Error(data?.error || `Igor local AI returned HTTP ${response.status}`);
     }
 
     const text = data?.message?.content || data?.response || "";
 
     return NextResponse.json({ text });
   } catch (error: any) {
-    console.error("Lia local AI Error:", error);
+    console.error("Igor local AI Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

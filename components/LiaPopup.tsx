@@ -164,7 +164,7 @@ export function LiaPopup() {
       setIsTyping(false);
       setStatus(t.liaPopup.online);
 
-      // Clean tool tags and split into blocks. Lia does not control page scroll.
+      // Clean tool tags and split into blocks. Igor does not control page scroll.
       const cleanText = botResponse.replace(/\[scrollToSection:\w+\]/g, "").replace(/\[openWhatsApp\]/g, "").trim();
       const blocks = cleanText.split('\n').filter(b => b.trim() !== "");
 
@@ -335,14 +335,14 @@ export function LiaPopup() {
               <div className="flex items-center justify-between p-3.5 bg-transparent shrink-0 z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-zinc-100 overflow-hidden shrink-0">
-                    <img 
-                      src="/team/LIA PERFIL.webp" 
-                      alt="Lia" 
+                    <img
+                      src="/team/igor-avatar.png"
+                      alt="Igor"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-[#0c0d0d] text-lg tracking-tight leading-none mb-0.5">Lia</span>
+                    <span className="font-bold text-[#0c0d0d] text-lg tracking-tight leading-none mb-0.5">Igor</span>
                     <span className="text-[11px] font-bold bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent transition-all duration-300">
                       {status.toLowerCase()}
                     </span>
@@ -427,9 +427,9 @@ export function LiaPopup() {
                             <div className="w-8 h-8 shrink-0">
                               {isFirstInBlock && (
                                 <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden mt-1">
-                                  <img 
-                                    src="/team/LIA PERFIL.webp" 
-                                    alt="Lia" 
+                                  <img
+                                    src="/team/igor-avatar.png"
+                                    alt="Igor"
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -454,9 +454,9 @@ export function LiaPopup() {
                     {isTyping && (
                       <div className="flex items-start gap-2">
                          <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden shrink-0 mt-1">
-                           <img 
-                             src="/team/LIA PERFIL.webp" 
-                             alt="Lia" 
+                           <img
+                             src="/team/igor-avatar.png"
+                             alt="Igor"
                              className="w-full h-full object-cover"
                            />
                          </div>
@@ -477,7 +477,7 @@ export function LiaPopup() {
                  }`}>
                    <textarea 
                      ref={textareaRef}
-                     aria-label="Mensagem para Lia"
+                     aria-label="Mensagem para Igor"
                      value={inputValue}
                      onChange={(e) => setInputValue(e.target.value)}
                      onFocus={keepInputVisible}
@@ -516,7 +516,7 @@ export function LiaPopup() {
         <AnimatePresence>
           {(canShow || isOpen) && (
             <>
-              {/* Lia Button */}
+              {/* Igor Button */}
               <motion.div
                 initial={{ y: 200 }}
                 animate={{ y: 0 }}

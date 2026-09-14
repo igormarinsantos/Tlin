@@ -8,7 +8,7 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
-import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION, SparkleIcon } from "./navData";
+import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 
 function LanguageSelector() {
@@ -219,7 +219,6 @@ function NavLinks({
         }}
         className="flex items-center gap-1.5 py-2 px-4 rounded-full bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 text-[#0c0d0d] hover:from-[#B597FF]/20 hover:to-[#38E3FF]/20 transition-colors duration-200"
       >
-        <SparkleIcon className="w-3.5 h-3.5" />
         {t.nav.ia}
       </button>
     </nav>
