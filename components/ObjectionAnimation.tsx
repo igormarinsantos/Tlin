@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-export function ObjectionAnimation() {
+export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey?: "objectionAnimation" | "agentObjectionAnimation" }) {
   const { t } = useLanguage();
-  const f = t.objectionAnimation;
+  const f = t[dictKey];
   const [step, setStep] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);

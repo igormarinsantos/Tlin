@@ -3,8 +3,9 @@ import { ObjectionAnimation } from "@/components/ObjectionAnimation";
 import { WhatsAppQualifyAnimation } from "@/components/WhatsAppQualifyAnimation";
 import { SalesNotification } from "@/components/SalesNotification";
 import { FunnelAnimation } from "@/components/FunnelAnimation";
+import { FollowUpAnimation } from "@/components/FollowUpAnimation";
 
-export type CampaignMotion = "objection" | "whatsapp" | "sales" | "funnel";
+export type CampaignMotion = "objection" | "agentObjection" | "whatsapp" | "sales" | "funnel" | "followup";
 
 export function renderCampaignMotion(motion: CampaignMotion) {
   switch (motion) {
@@ -14,6 +15,10 @@ export function renderCampaignMotion(motion: CampaignMotion) {
       return <SalesNotification />;
     case "funnel":
       return <FunnelAnimation />;
+    case "followup":
+      return <FollowUpAnimation />;
+    case "agentObjection":
+      return <ObjectionAnimation dictKey="agentObjectionAnimation" />;
     case "objection":
     default:
       return <ObjectionAnimation />;
@@ -25,8 +30,8 @@ export function renderCampaignMotion(motion: CampaignMotion) {
 // centralizado, sem motion -- esse mapa ficou exclusivo do CampaignHero.)
 export const HERO_MOTION_BY_VARIANT: Record<HeroVariant, CampaignMotion> = {
   iaWhatsapp: "whatsapp",
-  recuperacaoDeLeads: "objection",
+  recuperacaoDeLeads: "followup",
   crmComIa: "funnel",
   infoprodutores: "whatsapp",
-  agentesDeIa: "objection",
+  agentesDeIa: "agentObjection",
 };

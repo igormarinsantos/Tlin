@@ -425,6 +425,22 @@ export const esES: TranslationDictionary = {
     msg6: "¡Perfecto, definitivamente quiero probarlo! ¿Cómo lo hacemos?",
     msg7: "¡Genial! Liberaré tu acceso ahora mismo. Revisa tu WhatsApp en 1 minuto, te envié el enlace por ahí. 🚀"
   },
+  agentObjectionAnimation: {
+    msg1: "Me pareció un poco alto el precio para lo que necesito ahora...",
+    msg2: "¡Te entiendo! Es común antes de ver el retorno de cerca, ¿te muestro rapidito?",
+    msg3: "Con este plan recuperas la inversión ya en las primeras atenciones. ¿Tiene sentido para ti?",
+    msg4: "¡Sí, mucho sentido! ¿Cómo empiezo?",
+    msg5: "¡Genial! Solo necesito confirmar tus datos y libero tu acceso hoy mismo.",
+    msg6: "¡Perfecto, puedes confirmar!",
+    msg7: "¡Cerrado! Te escribo por WhatsApp en un momento con los próximos pasos. 🚀"
+  },
+  followUpAnimation: {
+    msg1: "Lo voy a mirar con calma y te aviso, ¡gracias!",
+    gapLabel: "3 días después",
+    msg2: "¡Hola! Pasaba para saber si todavía tiene sentido seguir esta conversación 🙂",
+    msg3: "¡Uy, se me había olvidado por completo! Sigo interesado, sí.",
+    msg4: "¡Qué bueno! Te paso los próximos pasos ahora mismo. 🚀"
+  },
   leadQualify: {
     initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es [tu nombre]?",
     step2: "¡[Genial], {name}! Pásame tu mejor [WhatsApp] que yo mismo te escribo por ahí.",
