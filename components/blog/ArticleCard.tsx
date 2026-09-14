@@ -10,7 +10,7 @@ export function ArticleCard({ article, featured = false }: { article: BlogArticl
   const summaryUrl = getChatGptSummaryUrl(absoluteUrl(`/blog/${article.slug}`));
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#B597FF]/30 hover:shadow-[0_20px_50px_rgba(181,151,255,0.15)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#B597FF]/30">
       {/* "Imagem" do post -- o site nao tem banco de fotos, entao o banner
           usa o mesmo gradiente + icone por categoria do carrossel de
           destaque (ver categoryVisuals.ts), em vez de fabricar foto falsa.
