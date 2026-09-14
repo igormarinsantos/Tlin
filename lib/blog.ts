@@ -118,6 +118,26 @@ export function getArticle(slug: string) {
   return BLOG_ARTICLES.find((article) => article.slug === slug);
 }
 
+// Prioriza posts da mesma categoria; completa com outros se faltar --
+// usado no fim da pagina de artigo pra manter a pessoa navegando no blog.
+export function getRelatedArticles(article: BlogArticle, limit = 2) {
+  const others = BLOG_ARTICLES.filter((a) => a.slug !== article.slug);
+  const sameCategory = others.filter((a) => a.category === article.category);
+  const rest = others.filter((a) => a.category !== article.category);
+  return [...sameCategory, ...rest].slice(0, limit);
+}
+
+// Gera um id de ancora a partir do titulo de uma secao (sem acento, so
+// letras/numeros/hifen) -- usado pelo sumario da pagina de artigo.
+export function slugifyHeading(heading: string) {
+  return heading
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 export function formatArticleDate(date: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
