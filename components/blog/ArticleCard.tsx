@@ -13,18 +13,22 @@ export function ArticleCard({ article, featured = false }: { article: BlogArticl
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#B597FF]/30 hover:shadow-[0_20px_50px_rgba(181,151,255,0.15)]">
       {/* "Imagem" do post -- o site nao tem banco de fotos, entao o banner
           usa o mesmo gradiente + icone por categoria do carrossel de
-          destaque (ver categoryVisuals.ts), em vez de fabricar foto falsa. */}
-      <div
-        className="relative h-32 md:h-40 overflow-hidden shrink-0"
-        style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
-      >
-        <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute inset-0 flex items-center justify-center text-white/30">
-          <visual.Icon className="w-12 h-12" />
+          destaque (ver categoryVisuals.ts), em vez de fabricar foto falsa.
+          Cantos proprios (nao so o recorte do card) + respiro de 10px em
+          volta, em vez de colada nas bordas do card. */}
+      <div className="p-2.5 shrink-0">
+        <div
+          className="relative h-32 md:h-40 rounded-2xl overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
+        >
+          <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute inset-0 flex items-center justify-center text-white/30">
+            <visual.Icon className="w-12 h-12" />
+          </div>
         </div>
       </div>
 
-      <div className={`relative flex flex-1 flex-col p-6 ${featured ? "md:p-10" : ""}`}>
+      <div className={`relative flex flex-1 flex-col px-6 pb-6 ${featured ? "md:px-10 md:pb-10" : ""}`}>
         <div className="mb-6 flex items-center justify-between gap-4">
           <span
             className="rounded-full px-3 py-1 text-xs font-bold"
