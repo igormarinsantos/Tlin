@@ -5,10 +5,10 @@ import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 // Mock de chat pra pagina de Recuperacao de Leads -- ao contrario do
-// ObjectionAnimation (chat ao vivo), aqui o ponto e mostrar que o
-// follow-up acontece dias depois do lead ter parado de responder. O selo
-// de tempo (gapLabel) fica grudado embaixo do balao do follow-up, nao
-// como um divisor separado no meio do chat.
+// ObjectionAnimation (chat ao vivo), aqui o ponto e mostrar que a IA
+// insiste em varios pontos de contato (1h, 3 dias, 5 dias) ate reativar o
+// lead, batendo com a copy da pagina ("44% desistem no 1o follow-up").
+// Cada selo de tempo fica grudado embaixo do balao daquele follow-up.
 export function FollowUpAnimation() {
   const { t } = useLanguage();
   const f = t.followUpAnimation;
@@ -31,11 +31,13 @@ export function FollowUpAnimation() {
   }, [step]);
 
   useEffect(() => {
-    // 0: Lead typing, 1: Lead msg (antes do silencio)
-    // 2: IA typing, 3: IA follow-up (com selo "3 dias depois")
-    // 4: Lead typing, 5: Lead reply
-    // 6: IA typing, 7: IA fechamento
-    const delays = [1200, 2500, 1500, 3000, 1200, 2000, 1200, 8000];
+    // 0: Lead typing, 1: Lead msg1 (antes do silencio)
+    // 2: IA typing, 3: IA msg2 -- selo "1 hora depois"
+    // 4: IA typing, 5: IA msg3 -- selo "3 dias depois"
+    // 6: IA typing, 7: IA msg4 -- selo "5 dias depois"
+    // 8: Lead typing, 9: Lead msg5 (reativado)
+    // 10: IA typing, 11: IA msg6 (fechamento)
+    const delays = [1200, 2000, 1200, 2500, 1200, 2500, 1200, 2500, 1200, 2000, 1200, 8000];
 
     const timer = setTimeout(() => {
       setStep((prev) => (prev < delays.length - 1 ? prev + 1 : 0));
@@ -57,20 +59,32 @@ export function FollowUpAnimation() {
         )}
 
         {step >= 2 && (
-          <ConversationMessage key="m2" side="right" isBot showAvatar isTyping={step === 2} caption={step >= 3 ? f.gapLabel : undefined}>
+          <ConversationMessage key="m2" side="right" isBot showAvatar isTyping={step === 2} caption={step >= 3 ? f.gap1 : undefined}>
             {f.msg2}
           </ConversationMessage>
         )}
 
         {step >= 4 && (
-          <ConversationMessage key="m3" side="left" isTyping={step === 4}>
+          <ConversationMessage key="m3" side="right" isBot showAvatar={false} isTyping={step === 4} caption={step >= 5 ? f.gap2 : undefined}>
             {f.msg3}
           </ConversationMessage>
         )}
 
         {step >= 6 && (
-          <ConversationMessage key="m4" side="right" isBot showAvatar isTyping={step === 6}>
+          <ConversationMessage key="m4" side="right" isBot showAvatar={false} isTyping={step === 6} caption={step >= 7 ? f.gap3 : undefined}>
             {f.msg4}
+          </ConversationMessage>
+        )}
+
+        {step >= 8 && (
+          <ConversationMessage key="m5" side="left" isTyping={step === 8}>
+            {f.msg5}
+          </ConversationMessage>
+        )}
+
+        {step >= 10 && (
+          <ConversationMessage key="m6" side="right" isBot showAvatar isTyping={step === 10}>
+            {f.msg6}
           </ConversationMessage>
         )}
       </AnimatePresence>

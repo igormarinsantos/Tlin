@@ -427,19 +427,20 @@ export const esES: TranslationDictionary = {
   },
   agentObjectionAnimation: {
     msg1: "Me pareció un poco alto el precio para lo que necesito ahora...",
-    msg2: "¡Te entiendo! Es común antes de ver el retorno de cerca, ¿te muestro rapidito?",
-    msg3: "Con este plan recuperas la inversión ya en las primeras atenciones. ¿Tiene sentido para ti?",
-    msg4: "¡Sí, mucho sentido! ¿Cómo empiezo?",
-    msg5: "¡Genial! Solo necesito confirmar tus datos y libero tu acceso hoy mismo.",
-    msg6: "¡Perfecto, puedes confirmar!",
-    msg7: "¡Cerrado! Te escribo por WhatsApp en un momento con los próximos pasos. 🚀"
+    msg2: "¡Te entiendo! Con este plan recuperas la inversión ya en las primeras atenciones. ¿Tiene sentido para ti?",
+    msg3: "¡Sí, mucho sentido! ¿Cómo empiezo?",
+    msg4: "¡Genial! Solo necesito confirmar tus datos y te escribo por WhatsApp con los próximos pasos. 🚀"
   },
   followUpAnimation: {
     msg1: "Lo voy a mirar con calma y te aviso, ¡gracias!",
-    gapLabel: "3 días después",
-    msg2: "¡Hola! Pasaba para saber si todavía tiene sentido seguir esta conversación 🙂",
-    msg3: "¡Uy, se me había olvidado por completo! Sigo interesado, sí.",
-    msg4: "¡Qué bueno! Te paso los próximos pasos ahora mismo. 🚀"
+    gap1: "1 hora después",
+    msg2: "Solo para confirmar: ya dejé todo listo para ti, ¡cualquier duda me avisas!",
+    gap2: "3 días después",
+    msg3: "¡Hola! Pasaba para saber si todavía tiene sentido seguir esta conversación 🙂",
+    gap3: "5 días después",
+    msg4: "¡Todavía hay tiempo! Puedo ayudarte rapidísimo, solo avísame.",
+    msg5: "¡Uy, se me había olvidado por completo! Sigo interesado, sí.",
+    msg6: "¡Qué bueno! Te paso los próximos pasos ahora mismo. 🚀"
   },
   leadQualify: {
     initialMsg: "¡Vamos a [escalar los ingresos] de tu negocio con IA ahora! Para empezar, ¿cuál es [tu nombre]?",

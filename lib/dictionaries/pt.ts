@@ -425,19 +425,20 @@ export const ptBR = {
   },
   agentObjectionAnimation: {
     msg1: "Achei o valor um pouco alto pro que eu preciso agora...",
-    msg2: "Entendo! Isso é comum antes de ver o retorno de perto, posso te mostrar rapidinho?",
-    msg3: "Com esse plano você recupera o investimento já nos primeiros atendimentos. Faz sentido pra você?",
-    msg4: "Faz sim, muito! Como eu começo?",
-    msg5: "Show! Só preciso confirmar seus dados e já libero seu acesso hoje.",
-    msg6: "Perfeito, pode confirmar!",
-    msg7: "Fechado! Te chamo no WhatsApp em instantes com os próximos passos. 🚀"
+    msg2: "Entendo! Com esse plano você recupera o investimento já nos primeiros atendimentos. Faz sentido pra você?",
+    msg3: "Faz sim, muito! Como eu começo?",
+    msg4: "Show! Só preciso confirmar seus dados e te chamo no WhatsApp com os próximos passos. 🚀"
   },
   followUpAnimation: {
     msg1: "Vou dar uma olhada com calma e te chamo, valeu!",
-    gapLabel: "3 dias depois",
-    msg2: "Oi! Passando pra saber se ainda faz sentido a gente continuar essa conversa 🙂",
-    msg3: "Nossa, tinha esquecido completamente! Ainda tenho interesse sim.",
-    msg4: "Que bom! Vou te passar os próximos passos agora mesmo. 🚀"
+    gap1: "1 hora depois",
+    msg2: "Só reforçando: já separei tudo certinho, qualquer dúvida me chama por aqui!",
+    gap2: "3 dias depois",
+    msg3: "Oi! Passando pra saber se ainda faz sentido a gente continuar essa conversa 🙂",
+    gap3: "5 dias depois",
+    msg4: "Ainda dá tempo! Consigo te ajudar rapidinho, é só me chamar.",
+    msg5: "Nossa, tinha esquecido completamente! Ainda tenho interesse sim.",
+    msg6: "Que bom! Vou te passar os próximos passos agora mesmo. 🚀"
   },
   leadQualify: {
     initialMsg: "Vamos [escalar o faturamento] do seu negócio com IA agora! Para começar, qual é o [seu nome]?",

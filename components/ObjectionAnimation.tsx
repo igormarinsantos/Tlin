@@ -4,9 +4,44 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey?: "objectionAnimation" | "agentObjectionAnimation" }) {
+type DictKey = "objectionAnimation" | "agentObjectionAnimation";
+type Role = { side: "left" | "right"; isBot?: boolean; showAvatar?: boolean };
+
+// Papel (lado/avatar) de cada mensagem, na ordem msg1, msg2, msg3... Um
+// array por dictKey porque as duas variantes tem numero de mensagens
+// diferente (a de "Agentes de IA" e mais curta, so pra conceituar).
+const ROLES: Record<DictKey, Role[]> = {
+  objectionAnimation: [
+    { side: "left" },
+    { side: "right", isBot: true, showAvatar: true },
+    { side: "right", isBot: true, showAvatar: false },
+    { side: "left" },
+    { side: "right", isBot: true, showAvatar: true },
+    { side: "left" },
+    { side: "right", isBot: true, showAvatar: true },
+  ],
+  agentObjectionAnimation: [
+    { side: "left" },
+    { side: "right", isBot: true, showAvatar: true },
+    { side: "left" },
+    { side: "right", isBot: true, showAvatar: true },
+  ],
+};
+
+// 2 delays por mensagem: [tempo digitando, tempo com o balao visivel antes
+// da proxima]. O ultimo delay de cada variante e bem maior (pausa antes do
+// loop reiniciar).
+const DELAYS: Record<DictKey, number[]> = {
+  objectionAnimation: [1200, 2000, 1200, 2000, 1000, 2000, 1500, 2500, 1200, 3000, 1200, 2000, 1000, 8000],
+  agentObjectionAnimation: [1200, 2500, 1200, 2500, 1200, 2000, 1200, 8000],
+};
+
+export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey?: DictKey }) {
   const { t } = useLanguage();
   const f = t[dictKey];
+  const messages = Object.values(f);
+  const roles = ROLES[dictKey];
+  const delays = DELAYS[dictKey];
   const [step, setStep] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -20,7 +55,7 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
         });
       }
     };
-    
+
     scroll();
     // Second scroll after a short delay to account for animation growth
     const timer = setTimeout(scroll, 300);
@@ -28,113 +63,54 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
   }, [step]);
 
   useEffect(() => {
-    // 0: Lead typing, 1: Lead msg
-    // 2: Bot typing, 3: Bot msg 1
-    // 4: Bot typing, 5: Bot msg 2
-    // 6: Lead typing, 7: Lead reply
-    // 8: Bot typing, 9: Bot final ask
-    // 10: Lead typing, 11: Lead confirmation
-    // 12: Bot typing, 13: Bot closing
-    const delays = [1200, 2000, 1200, 2000, 1000, 2000, 1500, 2500, 1200, 3000, 1200, 2000, 1000, 8000];
-    
     const timer = setTimeout(() => {
-      setStep((prev) => {
-        if (prev < delays.length - 1) return prev + 1;
-        return 0;
-      });
+      setStep((prev) => (prev < delays.length - 1 ? prev + 1 : 0));
     }, delays[step]);
 
     return () => clearTimeout(timer);
-  }, [step]);
+  }, [step, delays]);
 
   return (
-    <div 
+    <div
       ref={scrollRef}
       className="relative w-full h-full flex flex-col gap-1 p-4 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth"
     >
+      {/* Blocos discretos (nao .map()) de proposito, igual o componente
+          original -- cada mensagem e uma expressao JSX irma separada. */}
       <AnimatePresence>
-        {/* Step 0-1: Lead Objection */}
-        {step >= 0 && (
-          <ConversationMessage 
-            key="m1" 
-            side="left" 
-            isTyping={step === 0}
-          >
-            {f.msg1}
+        {roles[0] && step >= 0 && (
+          <ConversationMessage key="m1" side={roles[0].side} isBot={roles[0].isBot} showAvatar={roles[0].showAvatar ?? true} isTyping={step === 0}>
+            {messages[0]}
           </ConversationMessage>
         )}
-
-        {/* Step 2-3: Bot Response 1 */}
-        {step >= 2 && (
-          <ConversationMessage 
-            key="m2" 
-            side="right" 
-            isBot 
-            showAvatar={true}
-            isTyping={step === 2}
-          >
-            {f.msg2}
+        {roles[1] && step >= 2 && (
+          <ConversationMessage key="m2" side={roles[1].side} isBot={roles[1].isBot} showAvatar={roles[1].showAvatar ?? true} isTyping={step === 2}>
+            {messages[1]}
           </ConversationMessage>
         )}
-
-        {/* Step 4-5: Bot Response 2 */}
-        {step >= 4 && (
-          <ConversationMessage 
-            key="m3" 
-            side="right" 
-            isBot 
-            showAvatar={false}
-            isTyping={step === 4}
-          >
-            {f.msg3}
+        {roles[2] && step >= 4 && (
+          <ConversationMessage key="m3" side={roles[2].side} isBot={roles[2].isBot} showAvatar={roles[2].showAvatar ?? true} isTyping={step === 4}>
+            {messages[2]}
           </ConversationMessage>
         )}
-
-        {/* Step 6-7: Lead Reply */}
-        {step >= 6 && (
-          <ConversationMessage 
-            key="m4" 
-            side="left"
-            isTyping={step === 6}
-          >
-            {f.msg4}
+        {roles[3] && step >= 6 && (
+          <ConversationMessage key="m4" side={roles[3].side} isBot={roles[3].isBot} showAvatar={roles[3].showAvatar ?? true} isTyping={step === 6}>
+            {messages[3]}
           </ConversationMessage>
         )}
-
-        {/* Step 8-9: Bot Final Ask */}
-        {step >= 8 && (
-          <ConversationMessage 
-            key="m6" 
-            side="right" 
-            isBot 
-            showAvatar={true}
-            isTyping={step === 8}
-          >
-            {f.msg5}
+        {roles[4] && step >= 8 && (
+          <ConversationMessage key="m5" side={roles[4].side} isBot={roles[4].isBot} showAvatar={roles[4].showAvatar ?? true} isTyping={step === 8}>
+            {messages[4]}
           </ConversationMessage>
         )}
-
-        {/* Step 10-11: Lead Confirmation */}
-        {step >= 10 && (
-          <ConversationMessage 
-            key="m7" 
-            side="left"
-            isTyping={step === 10}
-          >
-            {f.msg6}
+        {roles[5] && step >= 10 && (
+          <ConversationMessage key="m6" side={roles[5].side} isBot={roles[5].isBot} showAvatar={roles[5].showAvatar ?? true} isTyping={step === 10}>
+            {messages[5]}
           </ConversationMessage>
         )}
-
-        {/* Step 12-13: Bot Closing */}
-        {step >= 12 && (
-          <ConversationMessage 
-            key="m8" 
-            side="right" 
-            isBot 
-            showAvatar={true}
-            isTyping={step === 12}
-          >
-            {f.msg7}
+        {roles[6] && step >= 12 && (
+          <ConversationMessage key="m7" side={roles[6].side} isBot={roles[6].isBot} showAvatar={roles[6].showAvatar ?? true} isTyping={step === 12}>
+            {messages[6]}
           </ConversationMessage>
         )}
       </AnimatePresence>
@@ -142,16 +118,16 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
   );
 }
 
-function ConversationMessage({ 
-  children, 
-  side, 
-  isBot, 
-  showAvatar = true, 
-  isTyping = false 
-}: { 
-  children: React.ReactNode; 
-  side: "left" | "right"; 
-  isBot?: boolean; 
+function ConversationMessage({
+  children,
+  side,
+  isBot,
+  showAvatar = true,
+  isTyping = false
+}: {
+  children: React.ReactNode;
+  side: "left" | "right";
+  isBot?: boolean;
   showAvatar?: boolean;
   isTyping?: boolean;
 }) {
@@ -176,26 +152,26 @@ function ConversationMessage({
         layout
         initial={{ opacity: 0, x: side === "left" ? -10 : 10, y: 5, scale: 0.95 }}
         animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-        transition={{ 
-          type: "spring", 
-          damping: 32, 
+        transition={{
+          type: "spring",
+          damping: 32,
           stiffness: 180,
-          layout: { 
-            type: "spring", 
-            damping: 35, 
+          layout: {
+            type: "spring",
+            damping: 35,
             stiffness: 200,
             mass: 1.2
           }
         }}
         className={`p-3 rounded-2xl relative overflow-hidden ${
-          side === "right" 
-            ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${showAvatar ? 'rounded-tr-none' : ''}` 
+          side === "right"
+            ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${showAvatar ? 'rounded-tr-none' : ''}`
             : `bg-white text-zinc-800 ${showAvatar ? 'rounded-tl-none' : ''} border border-zinc-200`
         } ${isTyping ? 'w-fit' : 'max-w-[80%]'}`}
       >
         <AnimatePresence mode="wait">
           {isTyping ? (
-            <motion.div 
+            <motion.div
               key="typing"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -212,10 +188,10 @@ function ConversationMessage({
               key="content"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.5, 
+              transition={{
+                duration: 0.5,
                 ease: [0.23, 1, 0.32, 1], // Custom cubic-bezier for extra smoothness
-                delay: 0.1 
+                delay: 0.1
               }}
             >
               <p className="text-[13px] leading-relaxed font-semibold whitespace-pre-wrap">{children}</p>
