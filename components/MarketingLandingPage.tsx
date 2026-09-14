@@ -132,7 +132,7 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           <div className="relative isolate">
             <div
               className="absolute inset-0 -z-10"
-              style={{ background: "linear-gradient(to bottom, #EAFBFF 0%, #EAFBFF 88%, transparent 98%)" }}
+              style={{ background: "linear-gradient(to bottom, rgba(234,251,255,0.5) 0%, rgba(234,251,255,0.5) 88%, transparent 98%)" }}
             />
             <div className="section-to-blur"><CampaignHero variant={heroVariant} /></div>
             <div className="section-to-blur"><TrustedBy transparentBg /></div>
