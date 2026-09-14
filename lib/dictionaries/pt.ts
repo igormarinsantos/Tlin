@@ -45,8 +45,8 @@ export const ptBR = {
       title: "Atendimento no WhatsApp\nrodando 24/7 com IA de verdade.",
       subtitle: "Responda, qualifique e converse com todo lead no WhatsApp em segundos, sem plantão, sem lead esperando resposta.",
       highlightWords: ["WhatsApp"],
-      painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
-      painBody: "Toda demora esfria uma venda.",
+      painHeadline: "Depois da 1ª hora sem resposta, você [perde até 7x a chance de fechar a venda].",
+      painBody: "Cada minuto de demora esfria uma venda que já era sua.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Toda visita ou mensagem já entra qualificada pela IA, sem esperar um humano responder." },
         { title: "Atenda no WhatsApp", desc: "Responda cada lead em segundos, 24 horas por dia, direto no WhatsApp." },
@@ -75,8 +75,8 @@ export const ptBR = {
       title: "Lead esfriou? A IA\nretoma a conversa sozinha.",
       subtitle: "Follow-up automático pra quem parou de responder, direto no WhatsApp, sem depender de vendedor lembrar de chamar de novo.",
       highlightWords: ["IA"],
-      painHeadline: "[80% das vendas] exigem pelo menos 5 follow-ups.",
-      painBody: "44% desistem no 1º follow-up.",
+      painHeadline: "44% desistem no 1º follow-up e [perdem até 80% das vendas] que vinham depois.",
+      painBody: "A maioria das vendas só acontece a partir do 2º follow-up.",
       howItWorksCards: [
         { title: "Retome quem parou de responder", desc: "A IA reativa a conversa automaticamente nos intervalos certos, sem vendedor lembrar." },
         { title: "Atenda no WhatsApp", desc: "Quando o lead volta a responder, a IA já retoma o atendimento na hora." },
@@ -105,7 +105,7 @@ export const ptBR = {
       title: "O CRM que sua equipe\nusa sem duplicar trabalho.",
       subtitle: "CRM nativo com IA que organiza leads, conversas e funil automaticamente, sem precisar integrar nada pra começar.",
       highlightWords: ["CRM"],
-      painHeadline: "Empresas que usam CRM de forma consistente reportam [até 29% mais vendas].",
+      painHeadline: "Sem CRM, sua operação pode estar [perdendo até 29% em vendas].",
       painBody: "Três lugares, um lead perdido.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Todo novo lead entra qualificado direto no seu CRM, sem digitação manual." },
@@ -135,8 +135,8 @@ export const ptBR = {
       title: "Do anúncio ao aluno matriculado,\ncom IA no WhatsApp.",
       subtitle: "Responda pico de lançamento, qualifique quem tem fit com o curso e recupere quem sumiu no carrinho, tudo automático, 24/7.",
       highlightWords: ["IA"],
-      painHeadline: "O abandono de carrinho no e-commerce chega a [70%]. Falta de resposta rápida é um dos motivos.",
-      painBody: "Demora vira carrinho abandonado.",
+      painHeadline: "O abandono de carrinho no e-commerce chega a [70%], e a demora pra responder é um dos motivos.",
+      painBody: "Cada minuto de demora vira mais um carrinho abandonado.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Todo lead do anúncio já chega qualificado pela IA, mesmo no pico do lançamento." },
         { title: "Atenda no WhatsApp", desc: "Responda todo mundo no lançamento sem fila de espera." },
@@ -165,8 +165,8 @@ export const ptBR = {
       title: "Agentes de IA que vendem\ncomo seu melhor closer.",
       subtitle: "Treinados no seu playbook, script e objeções, os agentes da Tlin atendem, qualificam e escalam sua operação sem inchar a equipe.",
       highlightWords: ["IA"],
-      painHeadline: "Responder na 1ª hora torna a venda [até 7x mais provável].",
-      painBody: "Um agente de IA nunca tira folga.",
+      painHeadline: "Depois da 1ª hora sem resposta, você [perde até 7x a chance de fechar a venda].",
+      painBody: "Sem um agente ativo, cada resposta atrasada custa uma venda.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "O agente de IA qualifica automaticamente quem chega, sem intervenção humana." },
         { title: "Atenda no WhatsApp", desc: "Seu agente responde 24/7 com a mesma qualidade do seu melhor vendedor." },

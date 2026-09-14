@@ -47,8 +47,8 @@ export const enUS: TranslationDictionary = {
       title: "WhatsApp support\nrunning 24/7 with real AI.",
       subtitle: "Answer, qualify, and chat with every lead on WhatsApp in seconds, no shifts, no lead left waiting.",
       highlightWords: ["WhatsApp"],
-      painHeadline: "Responding within the first hour makes a sale [up to 7x more likely].",
-      painBody: "Every delay cools a sale.",
+      painHeadline: "After the first hour without a reply, you [lose up to 7x the chance of closing the sale].",
+      painBody: "Every minute of delay cools a sale that was already yours.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every visit or message is already qualified by AI, no human needed to reply." },
         { title: "Answer on WhatsApp", desc: "Reply to every lead in seconds, 24 hours a day, right on WhatsApp." },
@@ -77,8 +77,8 @@ export const enUS: TranslationDictionary = {
       title: "Lead gone cold? The AI\npicks the conversation back up.",
       subtitle: "Automatic follow-up for leads who stopped replying, right on WhatsApp, no rep needs to remember to reach out again.",
       highlightWords: ["AI"],
-      painHeadline: "[80% of sales] require at least 5 follow-ups.",
-      painBody: "44% quit after the 1st follow-up.",
+      painHeadline: "44% give up after the 1st follow-up and [lose up to 80% of the sales] that would come after.",
+      painBody: "Most sales only happen from the 2nd follow-up onward.",
       howItWorksCards: [
         { title: "Re-engage who stopped replying", desc: "The AI reactivates the conversation automatically at the right intervals, no rep needs to remember." },
         { title: "Answer on WhatsApp", desc: "When the lead replies again, the AI picks the conversation right back up." },
@@ -107,7 +107,7 @@ export const enUS: TranslationDictionary = {
       title: "The CRM your team\nuses without duplicating work.",
       subtitle: "A native AI-powered CRM that organizes leads, conversations, and pipeline automatically, nothing to integrate to get started.",
       highlightWords: ["CRM"],
-      painHeadline: "Companies that use a CRM consistently report [up to 29% more sales].",
+      painHeadline: "Without a CRM, your operation could be [losing up to 29% in sales].",
       painBody: "Three places, one lost lead.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every new lead comes in qualified straight into your CRM, no manual typing." },
@@ -137,8 +137,8 @@ export const enUS: TranslationDictionary = {
       title: "From ad click to enrolled student,\nwith AI on WhatsApp.",
       subtitle: "Handle launch spikes, qualify who's a fit for your course, and recover abandoned checkouts, all automatic, 24/7.",
       highlightWords: ["AI"],
-      painHeadline: "Cart abandonment in e-commerce reaches [70%]. Slow response is one of the reasons.",
-      painBody: "Slow replies mean abandoned carts.",
+      painHeadline: "Cart abandonment in e-commerce reaches [70%], and slow responses are one of the reasons.",
+      painBody: "Every minute of delay turns into one more abandoned cart.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every lead from the ad already arrives qualified by AI, even at launch peak." },
         { title: "Answer on WhatsApp", desc: "Answer everyone during launch with no waiting line." },
@@ -167,8 +167,8 @@ export const enUS: TranslationDictionary = {
       title: "AI agents that sell\nlike your best closer.",
       subtitle: "Trained on your playbook, scripts and objections, Tlin's agents answer, qualify, and scale your operation without bloating the team.",
       highlightWords: ["AI"],
-      painHeadline: "Responding within the first hour makes a sale [up to 7x more likely].",
-      painBody: "An AI agent never takes a day off.",
+      painHeadline: "After the first hour without a reply, you [lose up to 7x the chance of closing the sale].",
+      painBody: "Without an active agent, every delayed reply costs you a sale.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "The AI agent automatically qualifies whoever comes in, no human needed." },
         { title: "Answer on WhatsApp", desc: "Your agent replies 24/7 with the same quality as your best salesperson." },

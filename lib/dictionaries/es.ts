@@ -47,8 +47,8 @@ export const esES: TranslationDictionary = {
       title: "Atención en WhatsApp\nfuncionando 24/7 con IA de verdad.",
       subtitle: "Responde, califica y conversa con cada lead en WhatsApp en segundos, sin turnos, sin lead esperando respuesta.",
       highlightWords: ["WhatsApp"],
-      painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Toda demora enfría una venta.",
+      painHeadline: "Después de la 1ª hora sin respuesta, [pierdes hasta 7x la chance de cerrar la venta].",
+      painBody: "Cada minuto de demora enfría una venta que ya era tuya.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Toda visita o mensaje ya llega calificada por la IA, sin esperar que un humano responda." },
         { title: "Atiende en WhatsApp", desc: "Responde a cada lead en segundos, 24 horas al día, directo en WhatsApp." },
@@ -77,8 +77,8 @@ export const esES: TranslationDictionary = {
       title: "¿El lead se enfrió? La IA\nretoma la conversación sola.",
       subtitle: "Seguimiento automático para quien dejó de responder, directo en WhatsApp, sin depender de que un vendedor recuerde volver a escribir.",
       highlightWords: ["IA"],
-      painHeadline: "[El 80% de las ventas] exige al menos 5 seguimientos.",
-      painBody: "44% desiste en el 1er seguimiento.",
+      painHeadline: "44% desiste en el 1er seguimiento y [pierde hasta el 80% de las ventas] que vendrían después.",
+      painBody: "La mayoría de las ventas solo ocurre a partir del 2º seguimiento.",
       howItWorksCards: [
         { title: "Retoma a quien dejó de responder", desc: "La IA reactiva la conversación automáticamente en los intervalos justos, sin que el vendedor lo recuerde." },
         { title: "Atiende en WhatsApp", desc: "Cuando el lead vuelve a responder, la IA retoma la atención al instante." },
@@ -107,7 +107,7 @@ export const esES: TranslationDictionary = {
       title: "El CRM que tu equipo\nusa sin duplicar trabajo.",
       subtitle: "CRM nativo con IA que organiza leads, conversaciones y embudo automáticamente, sin necesidad de integrar nada para empezar.",
       highlightWords: ["CRM"],
-      painHeadline: "Las empresas que usan CRM de forma consistente reportan [hasta 29% más ventas].",
+      painHeadline: "Sin CRM, tu operación puede estar [perdiendo hasta 29% en ventas].",
       painBody: "Tres lugares, un lead perdido.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Todo lead nuevo entra calificado directo a tu CRM, sin escribir nada a mano." },
@@ -137,8 +137,8 @@ export const esES: TranslationDictionary = {
       title: "Del anuncio al alumno inscrito,\ncon IA en WhatsApp.",
       subtitle: "Atiende picos de lanzamiento, califica a quien tiene fit con tu curso y recupera a quien abandonó el carrito, todo automático, 24/7.",
       highlightWords: ["IA"],
-      painHeadline: "El abandono de carrito en e-commerce llega al [70%]. La falta de respuesta rápida es uno de los motivos.",
-      painBody: "Demora es carrito abandonado.",
+      painHeadline: "El abandono de carrito en e-commerce llega al [70%], y la demora en responder es uno de los motivos.",
+      painBody: "Cada minuto de demora se convierte en un carrito más abandonado.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Todo lead del anuncio ya llega calificado por la IA, incluso en el pico del lanzamiento." },
         { title: "Atiende en WhatsApp", desc: "Atiende a todos durante el lanzamiento sin fila de espera." },
@@ -167,8 +167,8 @@ export const esES: TranslationDictionary = {
       title: "Agentes de IA que venden\ncomo tu mejor closer.",
       subtitle: "Entrenados en tu playbook, guiones y objeciones, los agentes de Tlin atienden, califican y escalan tu operación sin inflar el equipo.",
       highlightWords: ["IA"],
-      painHeadline: "Responder en la primera hora hace la venta [hasta 7x más probable].",
-      painBody: "Un agente de IA nunca descansa.",
+      painHeadline: "Después de la 1ª hora sin respuesta, [pierdes hasta 7x la chance de cerrar la venta].",
+      painBody: "Sin un agente activo, cada respuesta atrasada te cuesta una venta.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "El agente de IA califica automáticamente a quien llega, sin intervención humana." },
         { title: "Atiende en WhatsApp", desc: "Tu agente responde 24/7 con la misma calidad que tu mejor vendedor." },

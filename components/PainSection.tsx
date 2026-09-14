@@ -13,7 +13,7 @@ function HighlightedHeadline({ text }: { text: string }) {
       {parts.map((part, i) => {
         if (part.startsWith("[") && part.endsWith("]")) {
           return (
-            <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
+            <span key={i} className="text-red-600">
               {part.slice(1, -1)}
             </span>
           );
