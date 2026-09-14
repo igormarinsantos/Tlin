@@ -2,75 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { CountryFlag } from "@/components/CountryFlag";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
-import type { Lang } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
 import { MobileNavDrawer } from "./MobileNavDrawer";
-
-function LanguageSelector() {
-  const { lang, setLang } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const languages: { code: Lang; flag: string; name: string }[] = [
-    { code: 'PT', flag: 'br', name: 'Português' },
-    { code: 'EN', flag: 'us', name: 'English' },
-    { code: 'ES', flag: 'es', name: 'Español' },
-  ];
-
-  const current = languages.find(l => l.code === lang) || languages[0];
-
-  return (
-    <div className="relative" ref={ref}>
-      <button 
-        aria-label="Toggle language"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors text-sm font-semibold text-zinc-600 focus:outline-none"
-      >
-        <CountryFlag country={current.flag} />
-        <span className="tracking-tight">{lang}</span>
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-36 bg-white border border-zinc-200 rounded-2xl overflow-hidden py-1 px-1 z-50"
-          >
-            {languages.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => { setLang(l.code); setIsOpen(false); }}
-                className="w-full text-left px-3 py-2 rounded-xl hover:bg-zinc-100 flex items-center gap-3 transition-all duration-200 ease-out"
-              >
-                <CountryFlag country={l.flag} />
-                <span className="text-sm font-semibold text-zinc-600">{l.name}</span>
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 
 function MenuIcon() {
   return (
@@ -360,9 +297,6 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-             <div className="hidden md:block">
-               <LanguageSelector />
-             </div>
              <button
                type="button"
                aria-label="Abrir menu"
@@ -401,9 +335,6 @@ export function Header() {
               </div>
 
               <div className="flex items-center gap-2">
-                 <div className="hidden lg:block">
-                   <LanguageSelector />
-                 </div>
                  <button
                    type="button"
                    aria-label="Abrir menu"
