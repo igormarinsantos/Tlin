@@ -46,43 +46,50 @@ export function FollowUpAnimation() {
     return () => clearTimeout(timer);
   }, [step]);
 
+  // So mantem as ultimas 3 mensagens montadas -- com selo de tempo cada
+  // balao ocupa mais altura que num chat comum, e as 6 mensagens juntas
+  // nao cabem na caixa (320-460px) sem precisar de scroll interno, o que
+  // cortava a animacao. Janela deslizante em vez de acumular tudo.
+  const current = Math.floor(step / 2);
+  const visible = (i: number) => step >= i * 2 && current - i < 3;
+
   return (
     <div
       ref={scrollRef}
       className="relative w-full h-full flex flex-col gap-1 p-4 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth"
     >
       <AnimatePresence>
-        {step >= 0 && (
+        {visible(0) && (
           <ConversationMessage key="m1" side="left" isTyping={step === 0}>
             {f.msg1}
           </ConversationMessage>
         )}
 
-        {step >= 2 && (
+        {visible(1) && (
           <ConversationMessage key="m2" side="right" isBot showAvatar isTyping={step === 2} caption={step >= 3 ? f.gap1 : undefined}>
             {f.msg2}
           </ConversationMessage>
         )}
 
-        {step >= 4 && (
+        {visible(2) && (
           <ConversationMessage key="m3" side="right" isBot showAvatar={false} isTyping={step === 4} caption={step >= 5 ? f.gap2 : undefined}>
             {f.msg3}
           </ConversationMessage>
         )}
 
-        {step >= 6 && (
+        {visible(3) && (
           <ConversationMessage key="m4" side="right" isBot showAvatar={false} isTyping={step === 6} caption={step >= 7 ? f.gap3 : undefined}>
             {f.msg4}
           </ConversationMessage>
         )}
 
-        {step >= 8 && (
+        {visible(4) && (
           <ConversationMessage key="m5" side="left" isTyping={step === 8}>
             {f.msg5}
           </ConversationMessage>
         )}
 
-        {step >= 10 && (
+        {visible(5) && (
           <ConversationMessage key="m6" side="right" isBot showAvatar isTyping={step === 10}>
             {f.msg6}
           </ConversationMessage>
