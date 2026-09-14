@@ -247,37 +247,37 @@ export function LiaPopup() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-green-50 border border-green-200 rounded-2xl p-4 flex flex-col items-center gap-3 w-full"
+        className="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 flex flex-col items-center gap-3 w-full"
       >
-        <div className="flex flex-col items-center gap-1 text-green-700 font-bold text-sm">
+        <div className="flex flex-col items-center gap-1 text-green-400 font-bold text-sm">
           {t.liaPopup.handoffForwarding}
           {!isCancelled && !isRedirected && (
-            <span className="text-[10px] font-medium opacity-60">{t.liaPopup.handoffRedirect} {countdown}s</span>
+            <span className="text-[10px] font-medium opacity-70">{t.liaPopup.handoffRedirect} {countdown}s</span>
           )}
         </div>
 
         {!isCancelled ? (
           <div className="w-full flex flex-col items-center gap-2">
-            <button 
+            <button
               onClick={handleRedirect}
               className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group"
             >
               {isRedirected ? t.liaPopup.handoffOpening : t.liaPopup.handoffOpenNow}
             </button>
-            <button 
+            <button
               onClick={handleCancel}
-              className="text-[11px] text-green-700/50 hover:text-green-700 font-bold underline transition-colors"
+              className="text-[11px] text-green-400/60 hover:text-green-400 font-bold underline transition-colors"
             >
               {t.liaPopup.handoffCancel}
             </button>
           </div>
         ) : (
-          <div className="text-green-800 font-bold text-sm py-2">
+          <div className="text-green-400 font-bold text-sm py-2">
             {t.liaPopup.handoffCancelled}
           </div>
         )}
 
-        <p className="text-[10px] text-green-600/70 font-medium text-center">
+        <p className="text-[10px] text-green-400/70 font-medium text-center">
           {!isCancelled ? t.liaPopup.handoffAutoRedirect : t.liaPopup.handoffChangeMind}
         </p>
       </motion.div>
@@ -326,11 +326,11 @@ export function LiaPopup() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 165deg, #B597FF 180deg, #38E3FF 195deg, transparent 210deg 360deg)` }}
             />
             
-            <div className="relative w-full h-full bg-white rounded-[2.4rem] flex flex-col overflow-hidden">
+            <div className="relative w-full h-full bg-[#0c0d0d] rounded-[2.4rem] flex flex-col overflow-hidden">
               {/* Top Bar */}
               <div className="flex items-center justify-between p-3.5 bg-transparent shrink-0 z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-zinc-100 overflow-hidden shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden shrink-0">
                     <img
                       src="/team/igor-avatar.png"
                       alt="Igor"
@@ -338,7 +338,7 @@ export function LiaPopup() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-[#0c0d0d] text-lg tracking-tight leading-none mb-0.5">Igor</span>
+                    <span className="font-bold text-white text-lg tracking-tight leading-none mb-0.5">Igor</span>
                     <span className="text-[11px] font-bold bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent transition-all duration-300">
                       {status.toLowerCase()}
                     </span>
@@ -347,15 +347,15 @@ export function LiaPopup() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={resetChat}
-                    className="h-9 px-3 flex items-center justify-center rounded-full hover:bg-black/5 text-[11px] font-black text-zinc-400 hover:text-zinc-900 transition-all"
+                    className="h-9 px-3 flex items-center justify-center rounded-full hover:bg-white/10 text-[11px] font-black text-zinc-500 hover:text-white transition-all"
                     aria-label={t.liaPopup.newChat}
                     title={t.liaPopup.newChat}
                   >
                     {t.liaPopup.newChat}
                   </button>
-                  <button 
+                  <button
                     onClick={() => setIsOpen(false)}
-                    className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 text-zinc-400 hover:text-zinc-900 transition-all"
+                    className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-500 hover:text-white transition-all"
                     aria-label={t.liaPopup.close}
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -372,24 +372,24 @@ export function LiaPopup() {
                   <div className="flex-1 flex flex-col pt-1 pb-6">
                     <div className="mb-3 mt-1">
                       <h2 className="text-xl font-black bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent mb-1 tracking-tight">{t.liaPopup.greetingTitle}</h2>
-                      <p className="text-[12px] text-zinc-500 font-medium leading-tight">{t.liaPopup.greetingSubtitle}</p>
+                      <p className="text-[12px] text-zinc-400 font-medium leading-tight">{t.liaPopup.greetingSubtitle}</p>
                     </div>
 
                     <div className="flex flex-col gap-2">
                       {/* FAQ Cards */}
                       <div className="grid grid-cols-1 gap-1.5">
-                        <button 
-                          onClick={() => setInputValue(t.liaPopup.suggestion1)} 
-                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-4 sm:px-5"
+                        <button
+                          onClick={() => setInputValue(t.liaPopup.suggestion1)}
+                          className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-2xl hover:border-[#B597FF]/40 transition-all text-left group px-4 sm:px-5"
                         >
-                          <span className="text-[13px] text-zinc-700 font-bold leading-tight">{t.liaPopup.suggestion1}</span>
+                          <span className="text-[13px] text-zinc-200 font-bold leading-tight">{t.liaPopup.suggestion1}</span>
                         </button>
 
-                        <button 
-                          onClick={() => setInputValue(t.liaPopup.suggestion2)} 
-                          className="flex items-center gap-3 p-3 bg-white border border-zinc-100 rounded-2xl hover:border-[#B597FF]/30 transition-all text-left group px-4 sm:px-5"
+                        <button
+                          onClick={() => setInputValue(t.liaPopup.suggestion2)}
+                          className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-2xl hover:border-[#B597FF]/40 transition-all text-left group px-4 sm:px-5"
                         >
-                          <span className="text-[13px] text-zinc-700 font-bold leading-tight">{t.liaPopup.suggestion2}</span>
+                          <span className="text-[13px] text-zinc-200 font-bold leading-tight">{t.liaPopup.suggestion2}</span>
                         </button>
                       </div>
                     </div>
@@ -404,7 +404,7 @@ export function LiaPopup() {
                           {msg.role === 'bot' && msg.type !== 'handoff' && (
                             <div className="w-8 h-8 shrink-0">
                               {isFirstInBlock && (
-                                <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden mt-1">
+                                <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden mt-1">
                                   <img
                                     src="/team/igor-avatar.png"
                                     alt="Igor"
@@ -414,14 +414,14 @@ export function LiaPopup() {
                               )}
                             </div>
                           )}
-                          
+
                           {msg.type === 'handoff' ? (
                             <WhatsAppHandoff />
                           ) : (
                             <div className={`max-w-[82%] p-3.5 rounded-2xl text-[13px] font-semibold leading-relaxed transition-all ${
-                              msg.role === 'user' 
-                                ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${isFirstInBlock ? 'rounded-tr-none' : ''}` 
-                                : `bg-white text-zinc-800 border border-zinc-200 ${isFirstInBlock ? 'rounded-tl-none' : ''}`
+                              msg.role === 'user'
+                                ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${isFirstInBlock ? 'rounded-tr-none' : ''}`
+                                : `bg-white/[0.06] text-zinc-100 border border-white/10 ${isFirstInBlock ? 'rounded-tl-none' : ''}`
                             }`}>
                               <FormattedMessage text={msg.text} />
                             </div>
@@ -431,14 +431,14 @@ export function LiaPopup() {
                     })}
                     {isTyping && (
                       <div className="flex items-start gap-2">
-                         <div className="w-8 h-8 rounded-full bg-zinc-100 overflow-hidden shrink-0 mt-1">
+                         <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
                            <img
                              src="/team/igor-avatar.png"
                              alt="Igor"
                              className="w-full h-full object-cover"
                            />
                          </div>
-                        <div className="bg-white px-3 py-2.5 rounded-xl rounded-tl-none border border-zinc-200 flex gap-1 items-center">
+                        <div className="bg-white/[0.06] px-3 py-2.5 rounded-xl rounded-tl-none border border-white/10 flex gap-1 items-center">
                           <span className="w-1 h-1 bg-[#B597FF] rounded-full animate-bounce" />
                           <span className="w-1 h-1 bg-[#B597FF] rounded-full animate-bounce [animation-delay:0.2s]" />
                           <span className="w-1 h-1 bg-[#B597FF] rounded-full animate-bounce [animation-delay:0.4s]" />
@@ -450,10 +450,10 @@ export function LiaPopup() {
               </div>
 
               <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
-                 <div className={`border border-zinc-200/50 bg-white flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
+                 <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-1.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
-                   <textarea 
+                   <textarea
                      ref={textareaRef}
                      aria-label="Mensagem para Igor"
                      value={inputValue}
@@ -461,24 +461,24 @@ export function LiaPopup() {
                      onFocus={keepInputVisible}
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                      placeholder={messages.length === 0 ? placeholder : ""}
-                     className={`bg-transparent border-none outline-none text-zinc-800 placeholder-zinc-400 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
+                     className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
                        messages.length > 0 ? 'min-h-8 py-1.5 text-[13px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-sm'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
-                     <button 
+                     <button
                        aria-label="Enviar mensagem"
                        onClick={handleSendMessage}
                        disabled={!inputValue.trim()}
                        className={`${messages.length > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center transition-all ${
-                          inputValue.trim() ? 'bg-zinc-950 text-white' : 'bg-zinc-100 text-zinc-400'
+                          inputValue.trim() ? 'bg-white text-zinc-950' : 'bg-white/10 text-zinc-500'
                        }`}
                      >
                         <svg width={messages.length > 0 ? 17 : 20} height={messages.length > 0 ? 17 : 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
                      </button>
                    </div>
                  </div>
-                 <p className={`text-center text-[10px] text-zinc-400 font-medium opacity-40 transition-all duration-300 ${
+                 <p className={`text-center text-[10px] text-zinc-500 font-medium opacity-60 transition-all duration-300 ${
                    messages.length > 0 ? 'mt-2' : 'mt-4'
                  }`}>
                    {t.liaPopup.errorWarning}
