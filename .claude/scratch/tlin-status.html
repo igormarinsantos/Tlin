@@ -1,0 +1,585 @@
+<title>Status do Tlin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff;
+    --paper-sunken: #f5f3f9;
+    --surface: #ffffff;
+    --ink: #0c0d0d;
+    --muted: #6e6b78;
+    --faint: #9c99a6;
+    --line: #e6e3ed;
+    --accent-a: #B597FF;
+    --accent-b: #38E3FF;
+    --done-bg: #eafaf1;
+    --done-fg: #16824a;
+    --pending-bg: #fdf1e3;
+    --pending-fg: #9a5b0a;
+    --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0c0d0d;
+      --paper-sunken: #131319;
+      --surface: #17171f;
+      --ink: #f4f3f7;
+      --muted: #a6a3b0;
+      --faint: #706d7a;
+      --line: #29283355;
+      --done-bg: #113325;
+      --done-fg: #4fd390;
+      --pending-bg: #362a13;
+      --pending-fg: #f0ad4e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0c0d0d;
+    --paper-sunken: #131319;
+    --surface: #17171f;
+    --ink: #f4f3f7;
+    --muted: #a6a3b0;
+    --faint: #706d7a;
+    --line: #29283355;
+    --done-bg: #113325;
+    --done-fg: #4fd390;
+    --pending-bg: #362a13;
+    --pending-fg: #f0ad4e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper-sunken);
+    color: var(--ink);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    padding: 56px 20px 96px;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  .masthead {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 36px 40px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .masthead::before {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 640px;
+    height: 260px;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-a) 16%, transparent), transparent 70%),
+                radial-gradient(closest-side, color-mix(in srgb, var(--accent-b) 14%, transparent), transparent 70%);
+    filter: blur(30px);
+    pointer-events: none;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .masthead h1 {
+    position: relative;
+    z-index: 1;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 20px 0 10px;
+    text-wrap: balance;
+  }
+  .masthead p {
+    position: relative;
+    z-index: 1;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+    max-width: 46ch;
+    line-height: 1.55;
+    margin: 0 0 20px;
+  }
+  .meta-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .meta-chip {
+    background: var(--paper-sunken);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    color: var(--muted);
+  }
+  .meta-chip b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Phase nav ---------- */
+  .phase-nav {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 44px;
+  }
+  .phase-nav a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 12px 11px;
+    transition: border-color .15s ease;
+  }
+  .phase-nav a:hover { border-color: color-mix(in srgb, var(--accent-a) 50%, var(--line)); }
+  .phase-nav .ph-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .phase-nav .ph-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .phase-nav .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    background: var(--done-fg);
+  }
+  .phase-nav .dot.pending { background: var(--pending-fg); }
+
+  /* ---------- Timeline ---------- */
+  .timeline { position: relative; padding-left: 34px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 9px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(var(--accent-a), var(--accent-b));
+    opacity: .35;
+  }
+
+  .phase {
+    position: relative;
+    margin-bottom: 40px;
+    scroll-margin-top: 20px;
+  }
+  .phase-dot {
+    position: absolute;
+    left: -34px;
+    top: 2px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent-a);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phase-dot.pending { border-color: var(--pending-fg); border-style: dashed; }
+  .phase-dot::after {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+  }
+  .phase-dot.pending::after { background: var(--pending-fg); }
+
+  .phase-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 4px;
+  }
+  .phase h2 {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    float: right;
+    margin-left: 12px;
+  }
+  .status-pill.done { background: var(--done-bg); color: var(--done-fg); }
+  .status-pill.pending { background: var(--pending-bg); color: var(--pending-fg); }
+
+  ul.check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  ul.check-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  ul.check-list li svg { flex-shrink: 0; margin-top: 3px; }
+  ul.check-list li span.detail { color: var(--muted); font-weight: 400; }
+
+  /* route grid for phase C */
+  .route-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .route-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--paper-sunken);
+  }
+  .route-path {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+  .route-angle {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .arch-note {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .arch-note code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--pending-bg, var(--paper-sunken));
+    background: color-mix(in srgb, var(--accent-a) 12%, var(--paper-sunken));
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  /* pending section */
+  .pending-list { display: flex; flex-direction: column; gap: 14px; }
+  .pending-item {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+  }
+  .pending-item .box {
+    width: 16px; height: 16px;
+    border: 2px solid var(--pending-fg);
+    border-radius: 4px;
+    margin-top: 2px;
+  }
+  .pending-item h3 {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0 0 3px;
+  }
+  .pending-item p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* commit log */
+  .commit-log {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .commit-log div { display: flex; gap: 10px; }
+  .commit-log .hash { color: var(--faint); flex-shrink: 0; }
+  .commit-log .msg { color: var(--muted); }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  footer a:hover { text-decoration: underline; }
+  footer .note {
+    font-size: 12px;
+    color: var(--faint);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 560px) {
+    body { padding: 32px 14px 72px; }
+    .masthead { padding: 26px 22px; }
+    .masthead h1 { font-size: 27px; }
+    .phase-nav { grid-template-columns: repeat(2, 1fr); }
+    .route-grid { grid-template-columns: 1fr; }
+    .timeline { padding-left: 26px; }
+    .phase-dot { left: -26px; width: 18px; height: 18px; }
+    .status-pill { float: none; display: inline-flex; margin: 0 0 8px; }
+  }
+</style>
+
+<div class="page">
+
+  <div class="masthead">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">tlin.ai</span>
+    </div>
+    <h1>Onde estamos no reposicionamento e nas páginas de campanha</h1>
+    <p>Panorama do que foi decidido e construído nesta frente de trabalho — pra retomar o fio sem reabrir o histórico da conversa inteira.</p>
+    <div class="meta-row">
+      <span class="meta-chip">atualizado em <b>10 de setembro de 2026</b></span>
+      <span class="meta-chip">branch <b>main</b></span>
+      <span class="meta-chip">deploy <b>Vercel · automático</b></span>
+    </div>
+  </div>
+
+  <nav class="phase-nav">
+    <a href="#fase-a"><span class="ph-label">Fase A</span><span class="ph-title"><span class="dot"></span>Popup de qualificação</span></a>
+    <a href="#fase-b"><span class="ph-label">Fase B</span><span class="ph-title"><span class="dot"></span>SEO / GEO / LLM</span></a>
+    <a href="#fase-c"><span class="ph-label">Fase C</span><span class="ph-title"><span class="dot"></span>Páginas de campanha</span></a>
+    <a href="#fase-d"><span class="ph-label">Fase D</span><span class="ph-title"><span class="dot"></span>Polimento i18n/UI</span></a>
+    <a href="#fase-e"><span class="ph-label">Fase E</span><span class="ph-title"><span class="dot"></span>Limpeza estrutural</span></a>
+    <a href="#fase-f"><span class="ph-label">Fase F</span><span class="ph-title"><span class="dot"></span>Pain + Hero dividido</span></a>
+    <a href="#proximo"><span class="ph-label">Próximo</span><span class="ph-title"><span class="dot pending"></span>Pendências</span></a>
+  </nav>
+
+  <div class="timeline">
+
+    <section class="phase" id="fase-a">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase A</div>
+      <h2>UX do popup de qualificação (/demo, /comece e popup da index)</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <ul class="check-list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Header parou de "empurrar" o layout — <span class="detail">"Online" e "digitando..." reservam a largura do texto mais longo</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Campo de input não colapsa mais entre uma pergunta e outra</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Teclado do celular tratado por <code style="font-family:var(--font-mono);font-size:12px">visualViewport</code> também no popup embutido, não só no modal</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Mensagem de boas-vindas fica no histórico e "Vamos começar" vira bolha do próprio usuário</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Copy de cada pergunta reescrita com storytelling personalizado por volume/tamanho de equipe</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Calendário de verdade (grade mensal) no lugar da lista de dias pra marcar a demo</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase" id="fase-b">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase B</div>
+      <h2>Reposicionamento SEO / GEO / LLM</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 14px;">
+          Decisão central: liderar com <b style="color:var(--ink)">"IA comercial"</b> como categoria — a mesma lógica do Claude, onde "IA" é o núcleo e a plataforma vem embutida — em vez de "agência de inteligência artificial". CRM, follow-up e agendamento passaram a aparecer como <b style="color:var(--ink)">nativos</b>, nunca como integração de terceiro.
+        </p>
+        <ul class="check-list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Title, description e keywords reescritos <span class="detail">(app/layout.tsx, lib/siteConfig.ts)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Structured data realinhado <span class="detail">(Organization, SoftwareApplication, Service, FAQPage)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>FAQ ampliado de 6 pra 8 perguntas <span class="detail">(follow-up automático e agendamento automático)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">llms.txt</code> e <code style="font-family:var(--font-mono);font-size:12px">llms-full.txt</code> atualizados pros crawlers de LLM</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase" id="fase-c">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase C</div>
+      <h2>5 páginas de campanha</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 14px;">
+          Cada rota reaproveita a home inteira — só o headline/subtítulo/palavra em degradê do topo muda por ângulo de campanha.
+        </p>
+        <div class="route-grid">
+          <div class="route-card"><span class="route-path">/ia-whatsapp</span><span class="route-angle">Atendimento e qualificação no WhatsApp</span></div>
+          <div class="route-card"><span class="route-path">/recuperacao-de-leads</span><span class="route-angle">Follow-up automático de leads frios</span></div>
+          <div class="route-card"><span class="route-path">/crm-com-ia</span><span class="route-angle">CRM nativo / gestão comercial</span></div>
+          <div class="route-card"><span class="route-path">/infoprodutores</span><span class="route-angle">Vertical — lançamento, carrinho, aluno</span></div>
+          <div class="route-card"><span class="route-path">/agentes-de-ia</span><span class="route-angle">O mecanismo do produto</span></div>
+        </div>
+        <div class="arch-note">
+          Arquitetura: <code>components/MarketingLandingPage.tsx</code> compartilhado entre a home e as 5 rotas; <code>Hero.tsx</code> ganhou uma prop opcional <code>variant</code>. Linkadas numa coluna nova "Soluções" no rodapé e no <code>sitemap.xml</code> — o Header/nav principal ficou intocado, por decisão sua.
+        </div>
+      </div>
+    </section>
+
+    <section class="phase" id="fase-d">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase D</div>
+      <h2>Polimento de i18n e UI</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <ul class="check-list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Calculadora de ROI totalmente traduzida <span class="detail">(estava quase toda fixa em PT, ignorando o dicionário)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Dropdown de idioma centralizado sob a setinha <span class="detail">(estava alinhado à direita)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Hover dos itens do dropdown com borda proporcional ao container <span class="detail">(era pílula 100% arredondada)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>9 bandeiras de país/idioma trazidas pra <code style="font-family:var(--font-mono);font-size:12px">public/flags/</code> <span class="detail">(antes buscava de um CDN externo a cada carregamento)</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase" id="fase-e">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase E</div>
+      <h2>Limpeza estrutural do código</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 14px;">
+          Raio-x completo do projeto + limpeza em 9 commits pequenos e reversíveis, sem nenhuma mudança de comportamento visível.
+        </p>
+        <ul class="check-list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>~1100 linhas de código morto removidas <span class="detail">(rota Gemini órfã, 6 componentes sem import, dependência não usada, chaves de dicionário órfãs)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">lib/dictionaries.ts</code> (1136 linhas) dividido por idioma</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">LeadQualificationPopup.tsx</code> quebrado de 1849 pra 1314 linhas <span class="detail">(9 subcomponentes extraídos, núcleo da máquina de estados ficou no arquivo principal)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Templates de e-mail extraídos pra <code style="font-family:var(--font-mono);font-size:12px">lib/emailTemplates.ts</code></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">AGENTS.md</code> atualizado pro estado real do projeto</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Bug do "Continuar" na sessão salva corrigido <span class="detail">(não reativava a tela depois de restaurar os dados)</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase" id="fase-f">
+      <div class="phase-dot"></div>
+      <div class="phase-eyebrow">Fase F</div>
+      <h2>Pain section + Hero dividido nas campanhas</h2>
+      <div class="card">
+        <span class="status-pill done">no ar</span>
+        <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin:0 0 14px;">
+          Brainstorm colaborativo (anatomia de LP → tabela por página → plano seção-a-seção) virou implementação nas 5 páginas de campanha, sem criar nenhum asset novo.
+        </p>
+        <ul class="check-list">
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">PainSection.tsx</code> novo — dor com dado de mercado real + disclaimer, logo depois do Hero <span class="detail">(ex.: "responder na 1ª hora torna a venda até 7x mais provável", estudo Oldroyd/HBR)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">CampaignHero.tsx</code> novo — Hero em layout dividido (texto esquerda, motion direita) só nas 5 campanhas</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Motion reaproveita as 4 animações que já existiam pareadas aos cards de Features <span class="detail">(zero asset novo criado)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><code style="font-family:var(--font-mono);font-size:12px">Faq.tsx</code> ganha <code style="font-family:var(--font-mono);font-size:12px">priorityKeys</code> — <code style="font-family:var(--font-mono);font-size:12px">/recuperacao-de-leads</code> sobe follow-up/agendamento pro topo</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="none" stroke="#16824a" stroke-width="1.6"/><path d="M5 8.2l2 2 4-4.4" stroke="#16824a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Home e <code style="font-family:var(--font-mono);font-size:12px">/demo</code> continuam 100% intocados — Hero centralizado original, sem Pain section</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase" id="proximo">
+      <div class="phase-dot pending"></div>
+      <div class="phase-eyebrow">Próximo</div>
+      <h2>Pendências em aberto</h2>
+      <div class="card">
+        <span class="status-pill pending">aguardando</span>
+        <div class="pending-list">
+          <div class="pending-item">
+            <div class="box"></div>
+            <div>
+              <h3>Prova social real em /infoprodutores</h3>
+              <p>Hoje é copy genérica adaptada ao nicho, sem case/depoimento. Trocar assim que houver cliente real nesse segmento.</p>
+            </div>
+          </div>
+          <div class="pending-item">
+            <div class="box"></div>
+            <div>
+              <h3>Env vars do Deskcomm no Vercel</h3>
+              <p>Calendário de demo funciona 100% local; em produção o erro relatado é quase certamente <code style="font-family:var(--font-mono);font-size:12px">DESKCOMM_MCP_URL</code>/<code style="font-family:var(--font-mono);font-size:12px">API_TOKEN</code> faltando no dashboard do Vercel.</p>
+            </div>
+          </div>
+          <div class="pending-item">
+            <div class="box"></div>
+            <div>
+              <h3>Acompanhar sitelinks no Search Console</h3>
+              <p><code style="font-family:var(--font-mono);font-size:12px">/crm-com-ia</code>, <code style="font-family:var(--font-mono);font-size:12px">/agentes-de-ia</code> e <code style="font-family:var(--font-mono);font-size:12px">/recuperacao-de-leads</code> são a base real da estratégia de sitelinks — vale checar em algumas semanas se o Google começou a puxar alguma delas.</p>
+            </div>
+          </div>
+          <div class="pending-item">
+            <div class="box"></div>
+            <div>
+              <h3>Decidir sobre versão enxuta das campanhas</h3>
+              <p>Hoje as 5 páginas são a home inteira com Hero trocado. Depois que o tráfego pago rodar, vale revisitar se alguma converte melhor sendo mais curta.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <a href="https://tlin.ia.br" target="_blank" rel="noopener">tlin.ia.br ↗</a>
+    <span class="note">556d8e1 · ad7ff04 · 3adbaee</span>
+  </footer>
+
+</div>
