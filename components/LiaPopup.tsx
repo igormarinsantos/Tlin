@@ -326,11 +326,7 @@ export function LiaPopup() {
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 165deg, #B597FF 180deg, #38E3FF 195deg, transparent 210deg 360deg)` }}
             />
             
-            <div className="relative w-full h-full bg-white/95 backdrop-blur-3xl rounded-[2.4rem] flex flex-col overflow-hidden">
-              {/* Animated Gradient Orbs */}
-              <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#B597FF]/30 rounded-full blur-[60px] animate-pulse pointer-events-none" />
-              <div className="absolute top-1/2 -left-32 w-64 h-64 bg-[#38E3FF]/20 rounded-full blur-[60px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
-              
+            <div className="relative w-full h-full bg-white rounded-[2.4rem] flex flex-col overflow-hidden">
               {/* Top Bar */}
               <div className="flex items-center justify-between p-3.5 bg-transparent shrink-0 z-10">
                 <div className="flex items-center gap-3">
