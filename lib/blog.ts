@@ -125,3 +125,11 @@ export function formatArticleDate(date: string) {
     year: "numeric",
   }).format(new Date(`${date}T12:00:00`));
 }
+
+// Prompt padrao (o mesmo pra todo post) que manda a pessoa pro ChatGPT ja
+// com o link do artigo pra ele resumir -- nao substitui "Ler artigo", e uma
+// segunda acao pra quem quer o resumo rapido antes de decidir ler tudo.
+export function getChatGptSummaryUrl(articleUrl: string) {
+  const prompt = `Resuma esse artigo pra mim, em português, com os pontos principais: ${articleUrl}`;
+  return `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+}
