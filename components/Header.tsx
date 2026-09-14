@@ -297,6 +297,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+             <a
+               href="https://app.tlin.ia.br"
+               onClick={() => trackFunnelEvent("nav_link_click", { destination: "login", cta_source: "header" })}
+               className="hidden md:block text-sm font-semibold text-zinc-600 hover:text-[#0c0d0d] transition-colors px-2"
+             >
+               {t.nav.login}
+             </a>
              <button
                type="button"
                aria-label="Abrir menu"
@@ -335,6 +342,13 @@ export function Header() {
               </div>
 
               <div className="flex items-center gap-2">
+                 <a
+                   href="https://app.tlin.ia.br"
+                   onClick={() => trackFunnelEvent("nav_link_click", { destination: "login", cta_source: "header" })}
+                   className="hidden lg:block text-sm font-semibold text-zinc-600 hover:text-[#0c0d0d] transition-colors px-2"
+                 >
+                   {t.nav.login}
+                 </a>
                  <button
                    type="button"
                    aria-label="Abrir menu"
