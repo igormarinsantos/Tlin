@@ -17,14 +17,20 @@ function MenuIcon() {
   );
 }
 
-// Painel do megamenu "Soluções" -- largura total do header (nao so a
-// largura do botao), aberto/fechado por hover (ver onEnter/onLeave, geridos
-// no Header com um pequeno delay pra nao fechar ao atravessar o espaco
-// entre o botao e o painel). Sem position:absolute: como o <header> em si
-// ja e absolute/fixed, o painel em fluxo normal nao empurra o resto da
-// pagina, so cresce dentro do proprio header.
-function SolutionsPanel({ onEnter, onLeave }: { onEnter: () => void; onLeave: () => void }) {
+// Painel do megamenu "Soluções", aberto/fechado por hover (ver
+// onEnter/onLeave, geridos no Header com um pequeno delay pra nao fechar ao
+// atravessar o espaco entre o botao e o painel). Dois formatos:
+// - "full" (header do topo, em fluxo normal): largura total da viewport,
+//   reto e sem borda/sombra -- visualmente e uma continuacao do proprio
+//   header. Formula classica de "full bleed" (estica e recentraliza com
+//   margem negativa); usa a CSS var --tlin-vw (window.innerWidth) em vez de
+//   100vw, que inclui a scrollbar e estouraria a pagina em alguns pixels.
+// - "contained" (header flutuante, que ja e uma pilula centralizada): um
+//   card com largura propria, alinhado embaixo da pilula, em vez de
+//   quebrar o layout compacto dela com um painel largura-total.
+function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () => void; onLeave: () => void; variant?: "full" | "contained" }) {
   const { t } = useLanguage();
+  const isContained = variant === "contained";
 
   const openQualification = () => {
     trackFunnelEvent("click_pricing_cta", { cta_source: "nav_solutions_menu", plan_name: "TLIN" });
@@ -39,21 +45,22 @@ function SolutionsPanel({ onEnter, onLeave }: { onEnter: () => void; onLeave: ()
       transition={{ duration: 0.15 }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      // Largura real da viewport (nao so o max-w-6xl do header), reto e sem
-      // borda/sombra -- visualmente e uma continuacao do proprio header, nao
-      // um card flutuando por cima da pagina. Formula classica de "full
-      // bleed" (estica e recentraliza com margem negativa), funciona porque
-      // o header (pai) ja e centralizado na tela via mx-auto -- usa a CSS var
-      // --tlin-vw (window.innerWidth) em vez de 100vw, que inclui a
-      // scrollbar e estouraria a pagina em alguns pixels.
-      className="pointer-events-auto bg-white"
-      style={{
-        width: "var(--tlin-vw, 100vw)",
-        marginLeft: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
-        marginRight: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
-      }}
+      className={
+        isContained
+          ? "pointer-events-auto bg-white rounded-3xl border border-zinc-200 shadow-xl mt-3 overflow-hidden w-[min(720px,calc(100vw-2rem))]"
+          : "pointer-events-auto bg-white"
+      }
+      style={
+        isContained
+          ? undefined
+          : {
+              width: "var(--tlin-vw, 100vw)",
+              marginLeft: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
+              marginRight: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
+            }
+      }
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-[1fr_260px] gap-6">
+      <div className={isContained ? "p-6 grid grid-cols-[1fr_240px] gap-5" : "max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-[1fr_260px] gap-6"}>
         <div>
           <p className="px-1 pb-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">{t.nav.solutionsEyebrow}</p>
           <div className="grid grid-cols-3 gap-1">
@@ -331,7 +338,7 @@ export function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed top-4 left-0 right-0 z-[100] flex flex-col items-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8 transition-all hover:bg-zinc-50">
+            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8">
 
               <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
@@ -362,7 +369,7 @@ export function Header() {
             </div>
 
             <AnimatePresence>
-              {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} />}
+              {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} variant="contained" />}
             </AnimatePresence>
           </motion.header>
         )}
