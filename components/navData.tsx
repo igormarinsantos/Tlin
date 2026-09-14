@@ -49,6 +49,20 @@ function CourseIcon() {
   );
 }
 
+// Icone do item "Fale com a IA" do nav (desktop + mobile) -- mesmo estrelinha
+// usada como acento de "IA" no blog (Resumir com IA), reaproveitado aqui pra
+// manter a mesma linguagem visual em vez de inventar um icone novo.
+export function SparkleIcon({ className = "w-[18px] h-[18px]" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 // As 5 paginas de campanha num grid unico -- a nomenclatura ("por
 // funcionalidade" x "por segmento") virou so a ordem dos cards, sem
 // precisar de colunas separadas; cada uma ganha um icone proprio.

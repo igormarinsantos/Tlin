@@ -7,7 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { CountryFlag } from "@/components/CountryFlag";
 import { trackFunnelEvent } from "@/lib/utm";
-import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
+import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION, SparkleIcon } from "./navData";
 
 function CloseIcon() {
   return (
@@ -50,6 +50,12 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
   const openQualification = () => {
     trackFunnelEvent("click_pricing_cta", { cta_source: "mobile_nav_drawer", plan_name: "TLIN" });
     window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "mobile_nav_drawer" } }));
+    onClose();
+  };
+
+  const openLiaChat = () => {
+    trackFunnelEvent("nav_ai_click", { cta_source: "mobile_nav_drawer" });
+    window.dispatchEvent(new CustomEvent("open-lia-chat"));
     onClose();
   };
 
@@ -108,6 +114,14 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
               >
                 {t.nav.planos}
               </a>
+              <button
+                type="button"
+                onClick={openLiaChat}
+                className="flex items-center gap-2 px-3 py-3 rounded-2xl text-sm font-bold text-[#0c0d0d] bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10"
+              >
+                <SparkleIcon className="w-4 h-4" />
+                {t.nav.ia}
+              </button>
             </div>
 
             <div className="flex items-center gap-2 border-t border-zinc-100 pt-6 mb-8">

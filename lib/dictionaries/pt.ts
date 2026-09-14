@@ -10,6 +10,7 @@ export const ptBR = {
     planos: "Planos",
     content: "Conteúdo",
     solutions: "Soluções",
+    ia: "Fale com a IA",
     solutionsEyebrow: "Escolha por onde quer começar",
     solutionsDesc1: "Atenda e venda no chat automaticamente",
     solutionsDesc2: "Reative quem parou de responder",

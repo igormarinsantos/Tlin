@@ -12,6 +12,7 @@ export const enUS: TranslationDictionary = {
     planos: "Plans",
     content: "Content",
     solutions: "Solutions",
+    ia: "Talk to the AI",
     solutionsEyebrow: "Choose where to start",
     solutionsDesc1: "Chat and sell automatically",
     solutionsDesc2: "Re-engage leads who went quiet",

@@ -12,6 +12,7 @@ export const esES: TranslationDictionary = {
     planos: "Planes",
     content: "Contenido",
     solutions: "Soluciones",
+    ia: "Habla con la IA",
     solutionsEyebrow: "Elige por dónde quieres empezar",
     solutionsDesc1: "Atiende y vende en el chat automáticamente",
     solutionsDesc2: "Reactiva a quien dejó de responder",
