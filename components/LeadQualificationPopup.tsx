@@ -44,6 +44,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const initialMsg = t?.leadQualify?.initialMsg || "";
   const [isTyping, setIsTyping] = useState(false);
+  // Fase curta antes do "digitando" -- uma linha tipo "Anotando nome..."
+  // pra parecer que a IA processou a resposta antes de comecar a compor
+  // a proxima pergunta, em vez de pular direto pro mascote pulsando.
+  const [reasoningText, setReasoningText] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,6 +83,42 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       clearTimeout(pendingAdvanceTimeoutRef.current);
       pendingAdvanceTimeoutRef.current = null;
     }
+  };
+
+  const REASONING_MS = 550;
+  // Duas fases antes de revelar a proxima mensagem: primeiro a linha de
+  // raciocinio (reasoningText), depois o mascote "digitando" (isTyping) ja
+  // existente. Reaproveita pendingAdvanceTimeoutRef pras duas fases -- cada
+  // uma sobrescreve a ref com seu proprio timeout, entao clearPendingAdvance()
+  // cancela a fase que estiver ativa no momento.
+  const runThinkingThenType = (thinkingText: string, typingDelay: number, reveal: () => void | Promise<void>) => {
+    setReasoningText(thinkingText);
+    pendingAdvanceTimeoutRef.current = setTimeout(() => {
+      setReasoningText(null);
+      setIsTyping(true);
+      pendingAdvanceTimeoutRef.current = setTimeout(() => {
+        pendingAdvanceTimeoutRef.current = null;
+        setIsTyping(false);
+        reveal();
+      }, typingDelay);
+    }, REASONING_MS);
+  };
+
+  // Qual etapa de raciocinio mostrar, pelo numero do proximo step que vai
+  // ser revelado (currentStep+1 na maioria dos casos).
+  const getThinkingText = (nextStep: number): string => {
+    const map: Record<number, string | undefined> = {
+      2: t?.leadQualify?.thinking2,
+      3: t?.leadQualify?.thinking3,
+      4: t?.leadQualify?.thinking4,
+      5: t?.leadQualify?.thinking5,
+      6: t?.leadQualify?.thinking6,
+      7: t?.leadQualify?.thinking7,
+      8: t?.leadQualify?.thinking8,
+      9: t?.leadQualify?.thinking9,
+      10: t?.leadQualify?.thinking10,
+    };
+    return map[nextStep] || "";
   };
 
   const translateOptionValue = (value: string, group: 'volumeOptions' | 'teamOptions', fromLang = previousLangRef.current) => {
@@ -258,6 +298,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     if (previousLangRef.current !== lang) {
       clearPendingAdvance();
       setIsTyping(false);
+      setReasoningText(null);
       const localizedData = localizeFormData(formData, previousLangRef.current);
       setFormData(localizedData);
       setChatHistory(buildLocalizedHistory(currentStep, localizedData));
@@ -417,6 +458,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
   const resetForm = () => {
     clearPendingAdvance();
+    setReasoningText(null);
     isLiveSession.current = false;
     hasTrackedQualifiedLeadRef.current = false;
     hasAutoClosed.current = false;
@@ -534,13 +576,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
     if (t?.leadQualify && currentStep === 3 && userValue === t?.leadQualify?.noCorrect) {
       setChatHistory(prev => [...prev, { role: 'user', text: userValue }]);
-      setIsTyping(true);
-      pendingAdvanceTimeoutRef.current = setTimeout(() => {
-        pendingAdvanceTimeoutRef.current = null;
-        setIsTyping(false);
+      runThinkingThenType(t?.leadQualify?.thinking2 || "", getTypingDelay(800), () => {
         setCurrentStep(2);
         setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.step2 || "" }]);
-      }, getTypingDelay(800));
+      });
       return;
     }
 
@@ -565,10 +604,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     setChatHistory(prev => [...prev, { role: 'user', text: displayText }]);
     
     if (currentStep < SUCCESS_STEP) {
-      setIsTyping(true);
-      pendingAdvanceTimeoutRef.current = setTimeout(async () => {
-        pendingAdvanceTimeoutRef.current = null;
-        setIsTyping(false);
+      runThinkingThenType(getThinkingText(currentStep + 1), getTypingDelay(1500, userValue), async () => {
         const nextQ = getQuestion(currentStep + 1, updatedData);
         const isConfirming = currentStep === 9 && userValue === t?.leadQualify?.confirm;
 
@@ -633,12 +669,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
 
         setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
         setCurrentStep(prev => prev + 1);
-      }, getTypingDelay(1500, userValue));
+      });
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1 && !isTyping && currentStep < SUCCESS_STEP) {
+    if (currentStep > 1 && !isTyping && !reasoningText && currentStep < SUCCESS_STEP) {
       clearPendingAdvance();
       // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
       const isAsking = chatHistory[chatHistory.length - 1]?.text === t?.leadQualify?.resumeTitle;
@@ -737,31 +773,25 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   }, [currentStep, availabilityDays, availabilityLoading, lang, t]);
 
   const handleSelectDay = (day: DemoDay) => {
-    if (isTyping) return;
+    if (isTyping || reasoningText) return;
     setSelectedDay(day);
     setChatHistory(prev => [...prev, { role: 'user', text: day.label }]);
     trackFunnelEvent('lead_step_completed', { lead_step: 7, field_name: 'demo_day', plan_name: planName || 'not_selected' });
-    setIsTyping(true);
-    pendingAdvanceTimeoutRef.current = setTimeout(() => {
-      pendingAdvanceTimeoutRef.current = null;
-      setIsTyping(false);
+    runThinkingThenType(t?.leadQualify?.thinking8 || "", getTypingDelay(900, day.label), () => {
       setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(8, formData, day) }]);
       setCurrentStep(8);
-    }, getTypingDelay(900, day.label));
+    });
   };
 
   const handleSelectSlot = (slot: DemoSlot) => {
-    if (isTyping) return;
+    if (isTyping || reasoningText) return;
     setSelectedSlot(slot);
     setChatHistory(prev => [...prev, { role: 'user', text: slot.when }]);
     trackFunnelEvent('lead_step_completed', { lead_step: 8, field_name: 'demo_slot', plan_name: planName || 'not_selected' });
-    setIsTyping(true);
-    pendingAdvanceTimeoutRef.current = setTimeout(() => {
-      pendingAdvanceTimeoutRef.current = null;
-      setIsTyping(false);
+    runThinkingThenType(t?.leadQualify?.thinking9 || "", getTypingDelay(900, slot.when), () => {
       setChatHistory(prev => [...prev, { role: 'bot', text: getQuestion(9, formData) }]);
       setCurrentStep(9);
-    }, getTypingDelay(900, slot.when));
+    });
   };
 
   useEffect(() => {
@@ -913,12 +943,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 onStart={() => {
                   setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);
                   setHasStarted(true);
-                  setIsTyping(true);
-                  pendingAdvanceTimeoutRef.current = setTimeout(() => {
-                    pendingAdvanceTimeoutRef.current = null;
-                    setIsTyping(false);
+                  runThinkingThenType(t?.leadQualify?.thinkingWelcome || "", getTypingDelay(1200), () => {
                     setChatHistory(prev => [...prev, { role: 'bot', text: initialMsg }]);
-                  }, getTypingDelay(1200));
+                  });
                 }}
               />
             ) : currentStep < SUCCESS_STEP ? (
@@ -1111,6 +1138,24 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                       </motion.div>
                     );
                   })}
+
+                  {reasoningText && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex justify-start items-center gap-2"
+                    >
+                      <motion.span
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className={`w-1.5 h-1.5 rounded-full ${isLight ? "bg-[#B597FF]" : "bg-[#38E3FF]"}`}
+                      />
+                      <span className={`text-xs italic font-medium ${isLight ? "text-zinc-400" : "text-zinc-500"}`}>
+                        {reasoningText}
+                      </span>
+                    </motion.div>
+                  )}
 
                   {isTyping && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">

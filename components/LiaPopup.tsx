@@ -13,6 +13,9 @@ export function LiaPopup() {
   const [messages, setMessages] = useState<{role: 'user' | 'bot', text: string, type: 'text' | 'handoff'}[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  // Mostrado enquanto espera a resposta real da API, antes do "digitando"
+  // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
+  const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
   const [status, setStatus] = useState("online");
   const [placeholder, setPlaceholder] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -129,6 +132,7 @@ export function LiaPopup() {
     setMessages([]);
     setInputValue("");
     setIsTyping(false);
+    setReasoningLabel(null);
     setStatus(t.liaPopup.online);
     trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
   };
@@ -144,7 +148,7 @@ export function LiaPopup() {
     });
     setMessages(prev => [...prev, { role: 'user', text: userMsg, type: 'text' }]);
     setInputValue("");
-    setIsTyping(true);
+    setReasoningLabel(t.liaPopup.thinking);
     setStatus(t.liaPopup.typing);
 
     // Call Gemini API
@@ -156,12 +160,12 @@ export function LiaPopup() {
       });
 
       if (!response.ok) throw new Error("Failed to fetch AI response");
-      
+
       const data = await response.json();
       const botResponse = data.text;
       if (sessionId !== chatSessionRef.current) return;
-      
-      setIsTyping(false);
+
+      setReasoningLabel(null);
       setStatus(t.liaPopup.online);
 
       // Clean tool tags and split into blocks. Igor does not control page scroll.
@@ -197,6 +201,7 @@ export function LiaPopup() {
       }
     } catch (error) {
       console.error(error);
+      setReasoningLabel(null);
       setIsTyping(false);
       setStatus(t.liaPopup.online);
       setMessages(prev => [...prev, 
@@ -429,6 +434,26 @@ export function LiaPopup() {
                         </div>
                       );
                     })}
+                    {reasoningLabel && (
+                      <div className="flex items-start gap-2">
+                         <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
+                           <img
+                             src="/team/igor-avatar.png"
+                             alt="Igor"
+                             className="w-full h-full object-cover"
+                           />
+                         </div>
+                        <div className="bg-white/[0.06] px-3 py-2.5 rounded-xl rounded-tl-none border border-white/10 flex items-center gap-2">
+                          <motion.span
+                            animate={{ opacity: [0.3, 1, 0.3] }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                            className="w-1.5 h-1.5 bg-[#B597FF] rounded-full shrink-0"
+                          />
+                          <span className="text-[12px] text-zinc-400 italic font-medium">{reasoningLabel}</span>
+                        </div>
+                      </div>
+                    )}
+
                     {isTyping && (
                       <div className="flex items-start gap-2">
                          <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
