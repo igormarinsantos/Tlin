@@ -352,7 +352,8 @@ export const esES: TranslationDictionary = {
   liaPopup: {
     online: "en línea",
     typing: "escribiendo...",
-    thinking: "Pensando la mejor respuesta...",
+    thinking1: "Analizando tu pregunta...",
+    thinking2: "Pensando la mejor respuesta...",
     botReply: "¡Entendido! Estoy procesando tu solicitud. Como soy una demo, puedo ayudarte con dudas generales o dirigirte a un especialista en WhatsApp.",
     title: "Hola 👋 Soy Igor",
     subtitle: "Tu copiloto comercial. ¿Cómo puedo ayudarte?",
@@ -389,7 +390,7 @@ export const esES: TranslationDictionary = {
     viaWhatsapp: "por WhatsApp."
   },
   textReveal: {
-    text: "Imagina tener un [asistente 🧠] con cada detalle de lo que [vendes 📦], [digitalmente autónomo ⚡] y un socio [24/7 ⏳], con la [experiencia] específicamente enseñada por ti 🎯"
+    text: "Imagina tu comercial funcionando con una [IA 🧠] que sabe todo sobre lo que [vendes 📦], nunca se apaga [24 horas ⏳], y aprendió todo tal como tú le [enseñaste 🎯]"
   },
   funnelAnimation: {
     days: ["Hoy", "Mañana", "Lunes", "Martes", "Miércoles"],
@@ -461,6 +462,7 @@ export const esES: TranslationDictionary = {
     step9: "Antes de confirmar todo, {name}, [dale un vistazo rápido] para ver si quedó bien:",
     step9High: "{name}, con ese volumen [ya estás dejando dinero sobre la mesa] esperando respuestas manuales. Confirma los datos abajo antes de que agende tu demo:",
     step10: "¡[Listo]! Ya recibí los datos de [{name}] y nuestro equipo ya está al tanto. Te contactamos pronto por [WhatsApp].",
+    thinkingGeneric: "Procesando tu respuesta...",
     thinkingWelcome: "Preparando todo...",
     thinking2: "Anotando tu nombre...",
     thinking3: "Registrando tu WhatsApp...",

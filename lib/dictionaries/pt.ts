@@ -350,7 +350,8 @@ export const ptBR = {
   liaPopup: {
     online: "online",
     typing: "digitando...",
-    thinking: "Pensando na melhor resposta...",
+    thinking1: "Analisando sua pergunta...",
+    thinking2: "Pensando na melhor resposta...",
     botReply: "Entendi! Estou processando sua solicitação. Como sou uma demonstração, posso te ajudar com dúvidas gerais ou te encaminhar para um especialista no WhatsApp.",
     title: "Olá 👋 Eu sou o Igor",
     subtitle: "Seu copiloto comercial. Como posso ajudar?",
@@ -387,7 +388,7 @@ export const ptBR = {
     viaWhatsapp: "via WhatsApp."
   },
   textReveal: {
-    text: "Imagine você ter um [assistente 🧠] com os mínimos detalhes do que você [vende 📦], [autônomo digitalmente ⚡] e um parceiro [24 horas ⏳], com a [expertise] especificamente ensinada por você 🎯"
+    text: "Imagine seu comercial rodando com uma [IA 🧠] que sabe tudo sobre o que você [vende 📦], nunca desliga [24 horas ⏳], e aprendeu tudo do jeito que você [ensinou 🎯]"
   },
   funnelAnimation: {
     days: ["Hoje", "Amanhã", "Segunda", "Terça", "Quarta"],
@@ -459,6 +460,7 @@ export const ptBR = {
     step9: "Antes de eu confirmar tudo, {name}, [dá uma olhada rápida] se ficou certo:",
     step9High: "{name}, com esse volume [você já tá deixando dinheiro na mesa] esperando resposta manual. Confirma se os dados abaixo estão certinhos antes de eu travar sua demo:",
     step10: "[Prontinho]! Já recebi os dados de [{name}] e nossa equipe já está de olho. A gente te chama em breve no [WhatsApp].",
+    thinkingGeneric: "Processando resposta...",
     thinkingWelcome: "Preparando tudo...",
     thinking2: "Anotando nome...",
     thinking3: "Registrando WhatsApp...",

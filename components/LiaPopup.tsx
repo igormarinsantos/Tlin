@@ -21,6 +21,14 @@ export function LiaPopup() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatSessionRef = useRef(0);
+  const reasoningIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearReasoningCycle = () => {
+    if (reasoningIntervalRef.current) {
+      clearInterval(reasoningIntervalRef.current);
+      reasoningIntervalRef.current = null;
+    }
+  };
 
   const fullPlaceholder = t.liaPopup.fullPlaceholder;
   const scrollToBottom = () => {
@@ -129,6 +137,7 @@ export function LiaPopup() {
 
   const resetChat = () => {
     chatSessionRef.current += 1;
+    clearReasoningCycle();
     setMessages([]);
     setInputValue("");
     setIsTyping(false);
@@ -140,7 +149,7 @@ export function LiaPopup() {
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     const sessionId = chatSessionRef.current;
-    
+
     const userMsg = inputValue.trim();
     trackFunnelEvent("lia_message_sent", {
       message_length: userMsg.length,
@@ -148,7 +157,24 @@ export function LiaPopup() {
     });
     setMessages(prev => [...prev, { role: 'user', text: userMsg, type: 'text' }]);
     setInputValue("");
-    setReasoningLabel(t.liaPopup.thinking);
+
+    // Vai trocando de "pensamento" a cada 1s enquanto espera a API responder
+    // de verdade -- para sozinho (ou quando a resposta chega, o que vier
+    // primeiro) no ultimo item da lista.
+    clearReasoningCycle();
+    const thoughts = [t.liaPopup.thinking1, t.liaPopup.thinking2].filter(Boolean);
+    let thoughtIndex = 0;
+    setReasoningLabel(thoughts[0] || null);
+    if (thoughts.length > 1) {
+      reasoningIntervalRef.current = setInterval(() => {
+        thoughtIndex++;
+        if (thoughtIndex < thoughts.length) {
+          setReasoningLabel(thoughts[thoughtIndex]);
+        } else {
+          clearReasoningCycle();
+        }
+      }, 1000);
+    }
     setStatus(t.liaPopup.typing);
 
     // Call Gemini API
@@ -163,6 +189,7 @@ export function LiaPopup() {
 
       const data = await response.json();
       const botResponse = data.text;
+      clearReasoningCycle();
       if (sessionId !== chatSessionRef.current) return;
 
       setReasoningLabel(null);
@@ -201,6 +228,7 @@ export function LiaPopup() {
       }
     } catch (error) {
       console.error(error);
+      clearReasoningCycle();
       setReasoningLabel(null);
       setIsTyping(false);
       setStatus(t.liaPopup.online);
@@ -443,13 +471,19 @@ export function LiaPopup() {
                              className="w-full h-full object-cover"
                            />
                          </div>
-                        <div className="bg-white/[0.06] px-3 py-2.5 rounded-xl rounded-tl-none border border-white/10 flex items-center gap-2">
-                          <motion.span
-                            animate={{ opacity: [0.3, 1, 0.3] }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                            className="w-1.5 h-1.5 bg-[#B597FF] rounded-full shrink-0"
-                          />
-                          <span className="text-[12px] text-zinc-400 italic font-medium">{reasoningLabel}</span>
+                        <div className="bg-white/[0.06] px-3 py-2.5 rounded-xl rounded-tl-none border border-white/10">
+                          <AnimatePresence mode="wait">
+                            <motion.span
+                              key={reasoningLabel}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="text-[12px] text-zinc-400 font-medium block"
+                            >
+                              {reasoningLabel}
+                            </motion.span>
+                          </AnimatePresence>
                         </div>
                       </div>
                     )}

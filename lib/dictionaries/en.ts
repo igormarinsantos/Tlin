@@ -352,7 +352,8 @@ export const enUS: TranslationDictionary = {
   liaPopup: {
     online: "online",
     typing: "typing...",
-    thinking: "Thinking of the best answer...",
+    thinking1: "Analyzing your question...",
+    thinking2: "Thinking of the best answer...",
     botReply: "Got it! I am processing your request. Since I am a demo, I can help with general questions or forward you to a specialist on WhatsApp.",
     title: "Hello 👋 I am Igor",
     subtitle: "Your sales copilot. How can I help?",
@@ -389,7 +390,7 @@ export const enUS: TranslationDictionary = {
     viaWhatsapp: "via WhatsApp."
   },
   textReveal: {
-    text: "Imagine having an [assistant 🧠] with every detail of what you [sell 📦], [digitally autonomous ⚡] and a [24/7 partner ⏳], with the [expertise] specifically taught by you 🎯"
+    text: "Imagine your sales running with an [AI 🧠] that knows everything about what you [sell 📦], never shuts down [24 hours ⏳], and learned everything exactly the way you [taught it 🎯]"
   },
   funnelAnimation: {
     days: ["Today", "Tomorrow", "Monday", "Tuesday", "Wednesday"],
@@ -461,6 +462,7 @@ export const enUS: TranslationDictionary = {
     step9: "Before I lock this in, {name}, [take a quick look] to make sure it's right:",
     step9High: "{name}, with that volume [you're already leaving money on the table] waiting on manual replies. Confirm the details below before I lock in your demo:",
     step10: "[All set]! I've got [{name}]'s details and our team is already on it. We'll reach out soon on [WhatsApp].",
+    thinkingGeneric: "Processing your answer...",
     thinkingWelcome: "Getting everything ready...",
     thinking2: "Noting down your name...",
     thinking3: "Logging your WhatsApp...",
