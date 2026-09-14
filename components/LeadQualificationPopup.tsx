@@ -428,6 +428,10 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       const height = viewport?.height || window.innerHeight;
       document.documentElement.style.setProperty("--lead-popup-height", `${height}px`);
       document.documentElement.style.setProperty("--lead-popup-offset-top", `${viewport?.offsetTop || 0}px`);
+      // iOS dispara "resize" varias vezes enquanto o teclado abre/fecha/anima --
+      // reancora o scroll no fundo a cada um desses eventos, nao so quando um
+      // input recebe foco, senao a ultima mensagem some atras do teclado.
+      keepInputVisible();
     };
 
     if (isOpen) {

@@ -22,6 +22,8 @@ export function LiaPopup() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatSessionRef = useRef(0);
   const reasoningIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const scrollFrameRef = useRef<number | null>(null);
+  const scrollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearReasoningCycle = () => {
     if (reasoningIntervalRef.current) {
@@ -37,9 +39,32 @@ export function LiaPopup() {
     }
   };
 
+  const clearScrollTimers = () => {
+    scrollTimeoutsRef.current.forEach(clearTimeout);
+    scrollTimeoutsRef.current = [];
+    if (scrollFrameRef.current !== null) {
+      cancelAnimationFrame(scrollFrameRef.current);
+      scrollFrameRef.current = null;
+    }
+  };
+
+  const scheduleScrollToBottom = () => {
+    if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      scrollToBottom();
+    });
+  };
+
+  // iOS dispara "resize" do visualViewport varias vezes enquanto o teclado
+  // abre/fecha/anima -- cancela timers/rAF pendentes antes de agendar novos
+  // pra nao empilhar scrolls concorrentes competindo durante a animacao.
   const keepInputVisible = () => {
-    setTimeout(scrollToBottom, 80);
-    setTimeout(scrollToBottom, 280);
+    clearScrollTimers();
+    scrollTimeoutsRef.current = [
+      setTimeout(scheduleScrollToBottom, 80),
+      setTimeout(scheduleScrollToBottom, 280),
+    ];
   };
 
   const resizeTextarea = () => {
@@ -123,6 +148,7 @@ export function LiaPopup() {
       window.removeEventListener("resize", updateViewportVars);
       document.documentElement.style.removeProperty("--lia-popup-height");
       document.documentElement.style.removeProperty("--lia-popup-offset-top");
+      clearScrollTimers();
     };
   }, [isOpen]);
 
