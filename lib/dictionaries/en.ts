@@ -28,7 +28,7 @@ export const enUS: TranslationDictionary = {
     ask: "Ask Igor right now"
   },
   hero: {
-    title: "Sales running 24/7.\nWith real AI.",
+    title: "Sales running 24/7\nWith real AI",
     subtitle: "An AI-powered sales system on WhatsApp and CRM to run your sales operation 24/7, with agents that answer, qualify, and sell on their own.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",

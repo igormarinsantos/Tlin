@@ -26,7 +26,7 @@ export const ptBR = {
     ask: "Pergunte para o Igor"
   },
   hero: {
-    title: "Comercial rodando 24/7.\nCom IA de verdade.",
+    title: "Comercial rodando 24/7\nCom IA de verdade",
     subtitle: "Sistema de vendas com IA no WhatsApp e CRM para escalar sua operação comercial 24/7, com agentes que atendem, qualificam e vendem sozinhos.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
