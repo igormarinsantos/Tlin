@@ -196,7 +196,7 @@ export function FunnelAnimation() {
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full h-[115%] max-w-[700px] bg-white rounded-t-[2rem] flex shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-zinc-100 relative z-10 translate-y-8 overflow-hidden"
+        className="w-full h-[115%] max-w-[700px] bg-white rounded-t-[2rem] flex border border-zinc-100 relative z-10 translate-y-8 overflow-hidden"
       >
         {/* Lateral Menu (Sidebar) - Premium Light Style */}
         <div className="w-12 md:w-14 bg-white border-r border-zinc-100 flex flex-col items-center py-8 gap-7 shrink-0">
