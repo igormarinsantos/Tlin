@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -301,9 +302,9 @@ export function Header() {
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
+          <Link href="/" className="flex items-center gap-2" data-mascot-hide>
              <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
-          </div>
+          </Link>
 
           <div className="hidden md:block">
             <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
@@ -346,9 +347,9 @@ export function Header() {
           >
             <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8">
 
-              <div className="flex items-center gap-2 cursor-pointer" data-mascot-hide>
+              <Link href="/" className="flex items-center gap-2" data-mascot-hide>
                  <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
-              </div>
+              </Link>
 
               <div className="hidden lg:block">
                 <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
