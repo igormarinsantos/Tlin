@@ -104,15 +104,9 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
-          className="relative h-[320px] sm:h-[380px] md:h-[460px] rounded-[2rem] overflow-hidden p-[2px]"
+          className="relative h-[320px] sm:h-[380px] md:h-[460px]"
         >
-          <div
-            className="absolute inset-[-100%] animate-[spin_4s_linear_infinite]"
-            style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
-          />
-          <div className="relative w-full h-full rounded-[calc(2rem-2px)] overflow-hidden bg-[#F8F6FF]">
-            {renderCampaignMotion(motion_)}
-          </div>
+          {renderCampaignMotion(motion_)}
         </motion.div>
       </div>
     </section>
