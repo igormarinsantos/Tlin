@@ -329,7 +329,7 @@ export const enUS: TranslationDictionary = {
   },
   footerBanner: {
     title: "Don't miss another",
-    rotatingWords: ["buyer.", "lead.", "sale."],
+    rotatingWords: ["buyer", "lead", "sale"],
     titleHighlight: "your operation?",
     subtitle: "Try it free for 14 days and see the results in practice. At the end of the trial, you will receive a proposal, with no automatic charges.",
     cta1: "Request a free trial",
@@ -344,6 +344,7 @@ export const enUS: TranslationDictionary = {
     solutionsLink3: "CRM with AI",
     solutionsLink4: "For course creators",
     solutionsLink5: "AI agents",
+    companyTitle: "Company",
     terms: "Terms",
     privacy: "Privacy",
     cookies: "Cookies",

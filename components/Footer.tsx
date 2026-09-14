@@ -73,9 +73,11 @@ export function Footer() {
   return (
     <footer className="w-full bg-white text-[#0c0d0d] py-20 px-10 md:px-20">
       <div className="max-w-[1440px] mx-auto">
-        {/* Top Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-          <div className="flex flex-col gap-2">
+        {/* Top Section -- 3 colunas: marca / Solucoes / Institucional, mesmo
+            padrao de eyebrow (uppercase, text-zinc-400) ja usado no megamenu
+            do Header pra rotular grupos de link. */}
+        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr] gap-x-8 gap-y-12 mb-20">
+          <div className="flex flex-col gap-2 max-w-sm">
             <h3 className="text-2xl font-medium tracking-tight">{t.footer.title}</h3>
             <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
           </div>
@@ -88,6 +90,14 @@ export function Footer() {
             <Link href="/infoprodutores" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink4}</Link>
             <Link href="/agentes-de-ia" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink5}</Link>
           </div>
+
+          <div className="flex flex-col gap-3">
+            <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-wide">{t.footer.companyTitle}</h4>
+            <Link href="/blog" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.nav.content}</Link>
+            <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
+            <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
+            <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>
+          </div>
         </div>
 
         {/* Huge Brand Text */}
@@ -97,15 +107,14 @@ export function Footer() {
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-10 gap-6">
-          <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-start md:items-center">
-            <Link href="/blog" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.nav.content}</Link>
-            <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
-            <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
-            <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-400 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>
-            <span className="text-sm font-medium text-zinc-400">CNPJ 66.798.512/0001-53</span>
-            <span className="text-sm font-medium text-zinc-400">{t.footer.country}</span>
-          </div>
+        {/* Linha de baixo -- so metadado (CNPJ/pais) + idioma, os links ja
+            moraram pras colunas Solucoes/Institucional acima. Divisor fino
+            (border-zinc-100, mesmo tom usado em cards/dropdowns no resto do
+            site) separa do wordmark em vez de mais uma fileira de links. */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pt-8 border-t border-zinc-100">
+          <span className="text-sm font-medium text-zinc-400">
+            CNPJ 66.798.512/0001-53 · {t.footer.country}
+          </span>
 
           <LanguageSelector />
         </div>

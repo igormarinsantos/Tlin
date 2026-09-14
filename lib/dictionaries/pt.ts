@@ -327,7 +327,7 @@ export const ptBR = {
   },
   footerBanner: {
     title: "Não perca mais",
-    rotatingWords: ["nenhum comprador.", "nenhum lead.", "nenhuma venda."],
+    rotatingWords: ["nenhum comprador", "nenhum lead", "nenhuma venda"],
     titleHighlight: "sua operação?",
     subtitle: "Teste por 14 dias grátis e comprove o resultado na prática. Ao final do teste, você receberá uma proposta, sem cobranças automáticas.",
     cta1: "Solicitar teste grátis",
@@ -342,6 +342,7 @@ export const ptBR = {
     solutionsLink3: "CRM com IA",
     solutionsLink4: "Para infoprodutores",
     solutionsLink5: "Agentes de IA",
+    companyTitle: "Institucional",
     terms: "Termos",
     privacy: "Privacidade",
     cookies: "Cookies",

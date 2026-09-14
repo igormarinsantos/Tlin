@@ -329,7 +329,7 @@ export const esES: TranslationDictionary = {
   },
   footerBanner: {
     title: "No pierdas más",
-    rotatingWords: ["ningún comprador.", "ningún lead.", "ninguna venta."],
+    rotatingWords: ["ningún comprador", "ningún lead", "ninguna venta"],
     titleHighlight: "tu operación?",
     subtitle: "Prueba gratis durante 14 días y comprueba los resultados en la práctica. Al finalizar, recibirás una propuesta, sin cobros automáticos.",
     cta1: "Solicitar prueba gratis",
@@ -344,6 +344,7 @@ export const esES: TranslationDictionary = {
     solutionsLink3: "CRM con IA",
     solutionsLink4: "Para infoproductores",
     solutionsLink5: "Agentes de IA",
+    companyTitle: "Empresa",
     terms: "Términos",
     privacy: "Privacidad",
     cookies: "Cookies",
