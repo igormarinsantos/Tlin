@@ -182,18 +182,7 @@ export function FunnelAnimation() {
         )}
       </AnimatePresence>
 
-      {/* Background Animated Blob (Subtle) */}
       <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          x: [0, 50, 0],
-          y: [0, -30, 0],
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[500px] h-[500px] bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 blur-[100px] rounded-full pointer-events-none"
-      />
-
-      <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="w-full h-[115%] max-w-[700px] bg-white rounded-t-[2rem] flex border border-zinc-100 relative z-10 translate-y-8 overflow-hidden"
