@@ -41,8 +41,8 @@ function LanguageSelector() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors text-sm font-semibold text-zinc-600 focus:outline-none"
       >
+        <CountryFlag country={current.flag} />
         <span className="tracking-tight">{lang}</span>
-        <svg className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
       </button>
 
       <AnimatePresence>
@@ -217,7 +217,7 @@ function NavLinks({
           trackFunnelEvent("nav_ai_click", { cta_source: "nav" });
           window.dispatchEvent(new CustomEvent("open-lia-chat"));
         }}
-        className="flex items-center gap-1.5 py-2 px-4 rounded-full bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 text-[#0c0d0d] hover:from-[#B597FF]/20 hover:to-[#38E3FF]/20 transition-colors duration-200"
+        className={linkClass}
       >
         {t.nav.ia}
       </button>
