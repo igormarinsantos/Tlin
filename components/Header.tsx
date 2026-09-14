@@ -76,9 +76,9 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () =>
                 key={s.href}
                 href={s.href}
                 onClick={() => trackFunnelEvent("nav_solution_click", { solution: s.href, cta_source: "nav_solutions_menu" })}
-                className="group flex flex-col gap-3 p-3 rounded-2xl hover:bg-zinc-50 transition-colors"
+                className="group flex items-start gap-3 p-3 rounded-2xl hover:bg-zinc-50 transition-colors"
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center text-[#0c0d0d] group-hover:from-[#B597FF]/20 group-hover:to-[#38E3FF]/20 transition-colors">
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center text-[#0c0d0d]">
                   <s.Icon />
                 </div>
                 <div>
