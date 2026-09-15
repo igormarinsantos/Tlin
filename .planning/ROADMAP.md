@@ -92,3 +92,14 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Como Funciona — Prova da Operação | 0/TBD | Not started | - |
 | 4. Planos e Caminho de Fit | 0/TBD | Not started | - |
 | 5. Otimização por Origem | 0/TBD | Not started | - |
+
+## Backlog
+
+### Phase 999.1: Configuração operacional do Deskcomm (BACKLOG)
+
+**Goal:** Concluir a configuração do CRM que não pode ser inventada pela landing: estágios, segredo da fonte de captação, resposta com identificador e webhook de saída para o backup.
+**Requirements:** FUN-03
+**Plans:** 0 plans
+
+Plans:
+- [ ] Criar/revisar os estágios e automações no Deskcomm; configurar e validar o webhook de retorno antes de promover esta pendência novamente.
