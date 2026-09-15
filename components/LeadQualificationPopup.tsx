@@ -61,6 +61,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const hasTrackedQualifiedLeadRef = useRef(false);
   const hasInitializedCountryCodeRef = useRef(false);
   const leadCaptureIdRef = useRef<string | null>(null);
+  const hasCapturedPhoneRef = useRef(false);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
@@ -608,6 +609,21 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const updatedData = { ...formData };
     if (field) updatedData[field] = userValue;
     setFormData(updatedData);
+    if (field === 'phone' && turnstileToken && !hasCapturedPhoneRef.current) {
+      hasCapturedPhoneRef.current = true;
+      void fetch('/api/leads/capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: updatedData.name,
+          phone: updatedData.phone,
+          countryCode: updatedData.countryCode,
+          leadCaptureId: leadCaptureIdRef.current ??= crypto.randomUUID(),
+          utm: getUtmLeadPayload(),
+          turnstileToken,
+        }),
+      }).catch(() => { hasCapturedPhoneRef.current = false; });
+    }
     trackFunnelEvent('lead_step_completed', {
       lead_step: currentStep,
       field_name: field || `step_${currentStep}`,
@@ -870,8 +886,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
           className={embedded
             ? "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden bg-white overscroll-none"
             : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
-        >
-          <motion.div
+          >
+            <Turnstile onTokenChange={setTurnstileToken} />
+            <motion.div
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
@@ -1085,7 +1102,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                 <div className={`text-[10px] text-zinc-500 text-center font-medium pt-2 border-t ${isLight ? "border-zinc-200" : "border-white/5"}`}>
                                   {t?.leadQualify?.clickToEdit || "Clique para editar"}
                                 </div>
-                                <Turnstile onTokenChange={setTurnstileToken} />
                               </div>
                             )}
 
