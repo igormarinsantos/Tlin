@@ -103,3 +103,18 @@ export async function updateLeadSubmissionNotification(id: string | null, notifi
     console.error("Erro ao atualizar notificacao do lead no Supabase:", error);
   }
 }
+
+export async function projectDeskcommStatusEvent(event: {
+  eventId: string; leadCaptureId?: string; leadId?: string; contactId?: string; status: string; occurredAt: string; payload: Record<string, unknown>;
+}) {
+  const supabaseUrl = (process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, "");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  if (!key) return { saved: false, duplicate: false };
+  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates" };
+  try {
+    const inserted = await fetch(`${supabaseUrl}/rest/v1/deskcomm_status_events`, { method: "POST", headers, body: JSON.stringify({ external_event_id: event.eventId, lead_capture_id: event.leadCaptureId || null, deskcomm_lead_id: event.leadId || null, deskcomm_contact_id: event.contactId || null, status: event.status, occurred_at: event.occurredAt, payload: event.payload }) });
+    if (!inserted.ok) return { saved: false, duplicate: false };
+    if (event.leadCaptureId) await fetch(`${supabaseUrl}/rest/v1/lead_form_submissions?lead_capture_id=eq.${encodeURIComponent(event.leadCaptureId)}`, { method: "PATCH", headers, body: JSON.stringify({ deskcomm_lead_id: event.leadId || null, deskcomm_contact_id: event.contactId || null, crm_status: event.status, crm_status_at: event.occurredAt }) });
+    return { saved: true, duplicate: false };
+  } catch { return { saved: false, duplicate: false }; }
+}
