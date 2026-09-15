@@ -1,0 +1,38 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": null,
+  "phases": [
+    {
+      "number": "1",
+      "name": "Medição Comercial do Funil",
+      "status": "pending"
+    },
+    {
+      "number": "2",
+      "name": "Pós-conversão de Alta Intenção",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "Como Funciona — Prova da Operação",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "Planos e Caminho de Fit",
+      "status": "pending"
+    },
+    {
+      "number": "5",
+      "name": "Otimização por Origem",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 1 of 5 · 0% · executing"
+  },
+  "updated_at": "2026-09-15T20:05:26.424Z"
+}

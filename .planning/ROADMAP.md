@@ -27,7 +27,10 @@ Este roadmap evolui uma LP já posicionada em cinco fatias verticais: primeiro t
   1. Cada lead criado pela LP mantém informação de origem/campanha disponível no registro operacional.
   2. A equipe pode distinguir em seus dados lead gerado, demo agendada, lead qualificado e venda.
   3. Um canal de aquisição pode ser comparado por qualidade comercial e resultado, não apenas por submissões.
-**Plans**: TBD
+**Plans**:
+- **Wave 1:** `01-01-PLAN.md` — Contrato e adaptador idempotente de captura Deskcomm (bloqueia na configuração real do CRM).
+- **Wave 2** *(blocked on Wave 1 completion)*: `01-02-PLAN.md` — Fluxo Deskcomm-first, espelho Supabase e retorno seguro de estágios.
+**Cross-cutting constraints:** Deskcomm é a fonte operacional; Supabase é somente espelho de backup e não dispara ações comerciais. Atribuição preserva first-touch como crédito primário e last-touch como contexto.
 **UI hint**: yes
 
 ### Phase 2: Pós-conversão de Alta Intenção
