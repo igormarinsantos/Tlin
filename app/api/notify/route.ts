@@ -5,8 +5,8 @@ import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/l
 import { getLeadNotificationHtml, getWelcomeEmailHtml } from "@/lib/emailTemplates";
 import { checkRateLimit, rateLimitedResponse, requestIsTooLarge } from "@/lib/rate-limit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
+import { captureDeskcommLead } from "@/lib/deskcomm-leads";
 
-const DESKCOMM_WEBHOOK_URL = process.env.DESKCOMM_WEBHOOK_URL || "";
 const DESKCOMM_DEMO_EVENT_TYPE_SLUG = process.env.DESKCOMM_DEMO_EVENT_TYPE_SLUG || "reuniao";
 
 type DemoBookingOutcome = {
@@ -31,24 +31,6 @@ function isValidLead(data: unknown): data is Record<string, any> {
   const startsAt = (lead.demoSlot as { starts_at?: unknown } | undefined)?.starts_at;
   return typeof startsAt === "undefined"
     || (typeof startsAt === "string" && !Number.isNaN(Date.parse(startsAt)));
-}
-
-/** Envia o lead pro webhook de captacao ja configurado no Deskcomm (cria/atualiza contato + lead). */
-async function sendToDeskcommWebhook(input: { name?: string; fullPhone: string; email?: string }) {
-  if (!DESKCOMM_WEBHOOK_URL) return;
-  try {
-    await fetch(DESKCOMM_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome: input.name || undefined,
-        telefone: input.fullPhone,
-        email: input.email || undefined,
-      }),
-    });
-  } catch (err) {
-    console.error("Erro ao enviar lead para o webhook do Deskcomm:", err);
-  }
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -120,6 +102,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Não foi possível validar o envio. Tente novamente." }, { status: 403 });
     }
     const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm, demoSlot } = data;
+    const leadCaptureId = typeof data.leadCaptureId === "string" && data.leadCaptureId.length <= 128
+      ? data.leadCaptureId
+      : crypto.randomUUID();
+    const fullPhone = `+${String(countryCode || "+55").replace(/\D/g, "")}${String(phone || "").replace(/\D/g, "")}`;
+
+    // Deskcomm e a fonte operacional do funil. O Supabase abaixo e somente uma
+    // projecao de contingencia/analise e jamais decide se o lead foi recebido.
+    const deskcommCapture = await captureDeskcommLead({
+      leadCaptureId,
+      name,
+      phone: fullPhone,
+      email,
+      leadScore: lead_score,
+      leadQuality: lead_quality,
+      status: "novo",
+      utm,
+    });
 
     const supabaseResult = await saveLeadSubmission({
       name,
@@ -138,11 +137,8 @@ export async function POST(req: NextRequest) {
       ? (supabaseResult.row[0] as any)?.id || null
       : (supabaseResult.row as any)?.id || null;
 
-    const fullPhone = `+${String(countryCode || "+55").replace(/\D/g, "")}${String(phone || "").replace(/\D/g, "")}`;
-
     let demoBooking: DemoBookingOutcome = { attempted: false, booked: false };
-    if (demoSlot?.starts_at) {
-      await sendToDeskcommWebhook({ name, fullPhone, email });
+    if (deskcommCapture.ok && demoSlot?.starts_at) {
       demoBooking = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
     }
 
@@ -207,7 +203,7 @@ export async function POST(req: NextRequest) {
       emailError = "Variáveis SMTP_USER ou SMTP_PASS ausentes";
     }
 
-    const success = emailSent;
+    const success = deskcommCapture.ok;
     const notificationResult = {
       success,
       whatsappTriggered: false,
@@ -216,6 +212,7 @@ export async function POST(req: NextRequest) {
       groupError: null,
       emailSent,
       emailError,
+      deskcommCapture,
       demoBooking,
     };
 
@@ -234,6 +231,9 @@ export async function POST(req: NextRequest) {
       groupError: null,
       emailSent,
       emailError,
+      crmCaptured: deskcommCapture.ok,
+      crmError: deskcommCapture.ok === false ? deskcommCapture.error : null,
+      leadCaptureId,
       demoBooking,
     }, { status: success ? 200 : 502 });
 

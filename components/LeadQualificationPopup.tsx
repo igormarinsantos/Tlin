@@ -60,6 +60,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const scrollFrameRef = useRef<number | null>(null);
   const hasTrackedQualifiedLeadRef = useRef(false);
   const hasInitializedCountryCodeRef = useRef(false);
+  const leadCaptureIdRef = useRef<string | null>(null);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
@@ -647,6 +648,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 ...updatedData,
+                leadCaptureId: leadCaptureIdRef.current ??= crypto.randomUUID(),
                 planName,
                 ...score,
                 utm: getUtmLeadPayload(),
@@ -671,7 +673,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             // esconder da pessoa que a reunião foi confirmada — o compromisso já existe.
             const demoAlreadyBooked = Boolean(selectedSlot && notifyResult?.demoBooking?.booked);
             if ((!response.ok || !notifyResult?.success) && !demoAlreadyBooked) {
-              throw new Error(notifyResult?.whatsappError || notifyResult?.emailError || "Falha ao notificar API");
+              throw new Error(notifyResult?.crmError || notifyResult?.emailError || "Falha ao notificar API");
             }
             setDemoPendingConfirmation(Boolean(notifyResult.demoBooking?.pendingConfirmation));
 
