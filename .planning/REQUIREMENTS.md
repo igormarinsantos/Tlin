@@ -57,24 +57,24 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FUN-01 | Unmapped | Pending |
-| FUN-02 | Unmapped | Pending |
-| FUN-03 | Unmapped | Pending |
-| OBR-01 | Unmapped | Pending |
-| OBR-02 | Unmapped | Pending |
-| OBR-03 | Unmapped | Pending |
-| COMO-01 | Unmapped | Pending |
-| COMO-02 | Unmapped | Pending |
-| COMO-03 | Unmapped | Pending |
-| PLAN-01 | Unmapped | Pending |
-| PLAN-02 | Unmapped | Pending |
-| OTIM-01 | Unmapped | Pending |
-| OTIM-02 | Unmapped | Pending |
+| FUN-01 | Phase 1 | Pending |
+| FUN-02 | Phase 1 | Pending |
+| FUN-03 | Phase 1 | Pending |
+| OBR-01 | Phase 2 | Pending |
+| OBR-02 | Phase 2 | Pending |
+| OBR-03 | Phase 2 | Pending |
+| COMO-01 | Phase 3 | Pending |
+| COMO-02 | Phase 3 | Pending |
+| COMO-03 | Phase 3 | Pending |
+| PLAN-01 | Phase 4 | Pending |
+| PLAN-02 | Phase 4 | Pending |
+| OTIM-01 | Phase 1 | Pending |
+| OTIM-02 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 13 total
-- Mapped to phases: 0
-- Unmapped: 13 ⚠️
+- Mapped to phases: 13
+- Unmapped: 0 ✓
 
 ---
 
