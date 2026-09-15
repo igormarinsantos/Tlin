@@ -15,7 +15,7 @@ Estabelecer a leitura comercial do funil da Tlin: preservar origem de aquisiçã
 
 ### Fonte de verdade e estágios comerciais
 - **D-01:** Deskcomm é a fonte de verdade dos estágios comerciais posteriores ao lead capturado: demo agendada, demo realizada, oportunidade qualificada, proposta enviada, venda ganha ou perdida. — **Reversibility:** costly — a mudança exige remapear histórico e a integração do relatório futuro.
-- **D-02:** Supabase e a LP preservam dados de aquisição e contexto do formulário; não substituem o Deskcomm como CRM operacional.
+- **D-02:** Deskcomm é a fonte de verdade operacional desde a criação do lead com WhatsApp utilizável. Supabase é um espelho secundário de backup e histórico; sua indisponibilidade não pode impedir a criação, atualização, automação ou agendamento no Deskcomm. — **Reversibility:** costly — exige reorientar o orquestrador atual e a leitura de dados já gravados.
 - **D-03:** O relatório futuro do Fernando deve consumir a mesma estrutura de estágios, sem criar uma medição paralela.
 
 ### Qualificação e agenda do closer
@@ -61,8 +61,8 @@ Estabelecer a leitura comercial do funil da Tlin: preservar origem de aquisiçã
 ### Reusable Assets
 - `lib/utm.ts`: já mantém first-touch e last-touch em localStorage/cookie e expõe `getUtmLeadPayload()`.
 - `components/LeadQualificationPopup.tsx`: já tem os dados de volume, equipe, e-mail e slot de demo, e calcula `lead_score`/`lead_quality`.
-- `app/api/notify/route.ts`: já persiste no Supabase, dispara webhook Deskcomm, busca contato e confirma agenda.
-- `lib/supabase-leads.ts`: já grava payload completo e atualiza resultado de notificação.
+- `app/api/notify/route.ts`: hoje persiste no Supabase antes de disparar o webhook Deskcomm, e só envia ao Deskcomm quando há demo; deve ser invertido nesta fase.
+- `lib/supabase-leads.ts`: deve permanecer como espelho de backup, sem disparar ou governar ações comerciais.
 
 ### Established Patterns
 - Integrações externas ficam em `lib/` e retornam unions com `ok`/`error`; handlers em `app/api/` validam o request primeiro.
@@ -70,7 +70,7 @@ Estabelecer a leitura comercial do funil da Tlin: preservar origem de aquisiçã
 - Para narrowing de resultados do Deskcomm, usar `result.ok === false`.
 
 ### Integration Points
-- `POST /api/notify` é o ponto principal para criar/atualizar o lead operacional.
+- `POST /api/notify` é o ponto principal para criar/atualizar o lead operacional primeiro no Deskcomm e, depois, espelhar o resultado no Supabase.
 - `lib/deskcomm-mcp.ts` pode receber novas operações de estágio somente depois de confirmar a capacidade real da API/MCP Deskcomm.
 - `lib/utm.ts` e o payload salvo no Supabase são o ponto para preservar primeira/última origem.
 
