@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findFreeSlots } from "@/lib/deskcomm-mcp";
+import { checkRateLimit, rateLimitedResponse } from "@/lib/rate-limit";
 
 const EVENT_TYPE_SLUG = process.env.DESKCOMM_DEMO_EVENT_TYPE_SLUG || "reuniao";
 const DEFAULT_DIAS_A_FRENTE = 21;
@@ -37,9 +38,15 @@ const LOCALE_BY_LANG: Record<string, string> = { PT: "pt-BR", EN: "en-US", ES: "
  * sempre o periodo inteiro e agrupando aqui.
  */
 export async function GET(req: NextRequest) {
+  const rateLimit = checkRateLimit(req, "demo-availability", 30, 60_000);
+  if (!rateLimit.allowed) return rateLimitedResponse(rateLimit.retryAfter);
+
   const url = new URL(req.url);
   const diasAFrenteParam = url.searchParams.get("diasAFrente");
-  const diasAFrente = diasAFrenteParam ? Number(diasAFrenteParam) : DEFAULT_DIAS_A_FRENTE;
+  const requestedDays = diasAFrenteParam ? Number(diasAFrenteParam) : DEFAULT_DIAS_A_FRENTE;
+  const diasAFrente = Number.isFinite(requestedDays)
+    ? Math.min(30, Math.max(1, Math.trunc(requestedDays)))
+    : DEFAULT_DIAS_A_FRENTE;
   const locale = LOCALE_BY_LANG[url.searchParams.get("lang") || "PT"] || "pt-BR";
 
   const result = await findFreeSlots({ eventTypeSlug: EVENT_TYPE_SLUG, diasAFrente, limite: 50 });

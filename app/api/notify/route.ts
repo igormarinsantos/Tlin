@@ -3,6 +3,8 @@ import nodemailer from "nodemailer";
 import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
 import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/lib/deskcomm-mcp";
 import { getLeadNotificationHtml, getWelcomeEmailHtml } from "@/lib/emailTemplates";
+import { checkRateLimit, rateLimitedResponse, requestIsTooLarge } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const DESKCOMM_WEBHOOK_URL = process.env.DESKCOMM_WEBHOOK_URL || "";
 const DESKCOMM_DEMO_EVENT_TYPE_SLUG = process.env.DESKCOMM_DEMO_EVENT_TYPE_SLUG || "reuniao";
@@ -13,6 +15,23 @@ type DemoBookingOutcome = {
   pendingConfirmation?: boolean;
   error?: string;
 };
+
+function isValidLead(data: unknown): data is Record<string, any> {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+  const lead = data as Record<string, unknown>;
+  const name = typeof lead.name === "string" ? lead.name.trim() : "";
+  const phone = typeof lead.phone === "string" ? lead.phone.replace(/\D/g, "") : "";
+  const email = typeof lead.email === "string" ? lead.email.trim() : "";
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  if (!name || name.length > 120 || phone.length < 8 || phone.length > 15 || !validEmail || email.length > 254) {
+    return false;
+  }
+
+  const startsAt = (lead.demoSlot as { starts_at?: unknown } | undefined)?.starts_at;
+  return typeof startsAt === "undefined"
+    || (typeof startsAt === "string" && !Number.isNaN(Date.parse(startsAt)));
+}
 
 /** Envia o lead pro webhook de captacao ja configurado no Deskcomm (cria/atualiza contato + lead). */
 async function sendToDeskcommWebhook(input: { name?: string; fullPhone: string; email?: string }) {
@@ -86,8 +105,20 @@ async function bookDemoInDeskcomm(input: {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimit = checkRateLimit(req, "lead-notification", 5, 60 * 60_000);
+  if (!rateLimit.allowed) return rateLimitedResponse(rateLimit.retryAfter);
+  if (requestIsTooLarge(req, 32_000)) {
+    return NextResponse.json({ success: false, error: "Dados enviados são grandes demais." }, { status: 413 });
+  }
+
   try {
     const data = await req.json();
+    if (!isValidLead(data)) {
+      return NextResponse.json({ success: false, error: "Dados de contato inválidos." }, { status: 400 });
+    }
+    if (!(await verifyTurnstileToken(data.turnstileToken, req))) {
+      return NextResponse.json({ success: false, error: "Não foi possível validar o envio. Tente novamente." }, { status: 403 });
+    }
     const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm, demoSlot } = data;
 
     const supabaseResult = await saveLeadSubmission({
@@ -208,7 +239,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Erro no endpoint /api/notify:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Não foi possível registrar o contato agora." }, { status: 500 });
   }
 }
 

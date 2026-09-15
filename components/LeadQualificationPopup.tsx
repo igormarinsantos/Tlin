@@ -27,6 +27,7 @@ import { WelcomeScreen } from "@/components/lead-qualification/WelcomeScreen";
 import { ResumeSessionOverlay } from "@/components/lead-qualification/ResumeSessionOverlay";
 import { FieldEditOverlay } from "@/components/lead-qualification/FieldEditOverlay";
 import { SuccessStep } from "@/components/lead-qualification/SuccessStep";
+import { Turnstile } from "@/components/Turnstile";
 // confetti is dynamically imported
 
 type LeadQualificationPopupProps = {
@@ -77,6 +78,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<DemoSlot | null>(null);
   const [demoPendingConfirmation, setDemoPendingConfirmation] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const clearPendingAdvance = () => {
     if (pendingAdvanceTimeoutRef.current) {
@@ -488,6 +490,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     setAvailabilityDays(null);
     setAvailabilityError(null);
     setDemoPendingConfirmation(false);
+    setTurnstileToken(null);
     try {
       localStorage.removeItem("tlin_lead_qualify_state");
     } catch (e) {}
@@ -648,6 +651,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 ...score,
                 utm: getUtmLeadPayload(),
                 demoSlot: selectedSlot ? { starts_at: selectedSlot.startsAt } : undefined,
+                turnstileToken,
               })
             });
             const notifyResult = await response.json();
@@ -1079,6 +1083,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                 <div className={`text-[10px] text-zinc-500 text-center font-medium pt-2 border-t ${isLight ? "border-zinc-200" : "border-white/5"}`}>
                                   {t?.leadQualify?.clickToEdit || "Clique para editar"}
                                 </div>
+                                <Turnstile onTokenChange={setTurnstileToken} />
                               </div>
                             )}
 
