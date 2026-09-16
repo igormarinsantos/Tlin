@@ -173,12 +173,12 @@ function PlanTierComparison({
       </div>
 
       <div className="mt-12 hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
-        <div className="sticky top-24 z-30 grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 shadow-[0_12px_24px_rgba(24,24,27,0.06)] backdrop-blur">
-          <div className="flex items-end px-8 pb-7 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
+        <div className="sticky top-0 z-[110] grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 shadow-[0_10px_20px_rgba(24,24,27,0.06)] backdrop-blur">
+          <div className="flex items-end px-8 pb-5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
           {columns.map((column) => (
-            <div key={column.key} className={`min-h-[124px] px-5 py-6 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-              <p className="mt-4 text-base font-bold">{column.name}</p>
-              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-4 rounded-full px-4 py-2 text-[11px] font-bold transition-all hover:-translate-y-0.5 hover:shadow-sm ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+            <div key={column.key} className={`min-h-[96px] px-5 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+              <p className="text-base font-bold">{column.name}</p>
+              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-4 py-1.5 text-[11px] font-bold transition-all hover:-translate-y-0.5 hover:shadow-sm ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
         </div>
