@@ -1,61 +1,128 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Bot, CalendarCheck2, CheckCircle2, ChevronRight, HeartHandshake, LayoutDashboard, MessageCircleMore, UserRoundCheck } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
+import { ArrowDown, MessagesSquare, TrendingUp, Zap } from "lucide-react";
+import { GlobalBackground } from "@/components/GlobalBackground";
+import { ScrollBgWrapper } from "@/components/ScrollBgWrapper";
+import { FooterBanner } from "@/components/FooterBanner";
+import { Footer } from "@/components/Footer";
+import { CampaignReviews } from "@/components/CampaignReviews";
+import { OperationNumbers } from "@/components/OperationNumbers";
+import { LeadQualificationPopup } from "@/components/LeadQualificationPopup";
+import { HowItWorksCard } from "@/components/CampaignHowItWorks";
+import { HumanCalendarMotion } from "@/components/HumanCalendarMotion";
+import { SystemPreview } from "@/components/SystemPreview";
 import { trackFunnelEvent } from "@/lib/utm";
 
-const steps = [
-  { label: "Lead chega", title: "Toda conversa começa com contexto.", text: "A Tlin identifica a origem do lead e organiza a entrada para que mídia, campanha e interesse não se percam no caminho.", Icon: MessageCircleMore, tag: "CAPTURA" },
-  { label: "IA atende", title: "Resposta rápida, com conversa que avança.", text: "A IA conduz o primeiro contato, entende intenção, responde dúvidas e qualifica sem deixar o lead esfriar no WhatsApp.", Icon: Bot, tag: "QUALIFICAÇÃO" },
-  { label: "CRM orienta", title: "O comercial enxerga o que importa.", text: "Cada etapa fica registrada no CRM: lead captado, qualificado, demo e resultado. Sua equipe trabalha com prioridade, não com adivinhação.", Icon: LayoutDashboard, tag: "OPERAÇÃO" },
-  { label: "Humano entra", title: "Automação onde acelera. Pessoas onde decidem.", text: "A equipe humana acompanha a operação, melhora as conversas e entra nos pontos que pedem estratégia, contexto e fechamento.", Icon: HeartHandshake, tag: "ACOMPANHAMENTO" },
-  { label: "Demo acontece", title: "A reunião chega mais preparada.", text: "Quando existe fit, a Tlin agenda a demo e entrega para o time comercial um lead com contexto, necessidade e próximo passo claros.", Icon: CalendarCheck2, tag: "CONVERSÃO" },
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <div className="relative mb-5 inline-flex overflow-hidden rounded-full p-[1px]"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} /><span className="relative rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">{children}</span></div>;
+}
+
+function HeroDemoCta({ onClick }: { onClick: () => void }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
+  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
+  const updatePointer = (element: HTMLButtonElement, clientX: number, clientY: number) => {
+    const rect = element.getBoundingClientRect();
+    mouseX.set(clientX - rect.left);
+    mouseY.set(clientY - rect.top);
+  };
+
+  return <div className="relative"><button onClick={onClick} onMouseEnter={(event) => { updatePointer(event.currentTarget, event.clientX, event.clientY); setIsHovered(true); }} onMouseLeave={() => setIsHovered(false)} onMouseMove={(event) => updatePointer(event.currentTarget, event.clientX, event.clientY)} className={`group/btn relative block w-full cursor-pointer overflow-hidden rounded-full p-[1px] transition-all duration-300 ${isHovered ? "z-[100]" : "z-10"}`}><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }} /><div className="relative block w-full rounded-full bg-[#0c0d0d] px-7 py-4 text-center text-sm font-bold text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d]"><span className="relative z-10">Ver isso na minha operação</span><div className="absolute inset-0 rounded-full bg-[#0c0d0d] transition-opacity duration-500 group-hover/btn:opacity-0" /><div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" /></div></button><AnimatePresence>{isHovered && <motion.div initial={{ opacity: 0, scale: 0.8, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 10 }} style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}><div className="relative inline-flex overflow-hidden rounded-full p-[1px]"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} /><div className="relative whitespace-nowrap rounded-full border border-white/10 bg-zinc-950 px-2 py-0.5 text-white"><span className="text-[10px] font-bold leading-none tracking-wide">Demo 100% grátis</span></div></div></motion.div>}</AnimatePresence></div>;
+}
+
+const iaDeliveries = [
+  { icon: "whatsapp", title: "Atende na hora", text: "Responde o lead quando ele demonstra interesse, sem deixar a oportunidade esfriar" },
+  { icon: "agent", title: "Qualifica com contexto", text: "Entende momento, necessidade e potencial antes de ocupar o tempo do seu comercial" },
+  { icon: "followup", title: "Mantém o acompanhamento vivo", text: "Retoma conversas e conduz os próximos passos com consistência" },
+  { icon: "schedule", title: "Prepara a agenda", text: "Quando há fit, ajuda a levar uma oportunidade mais pronta para a conversa comercial" },
 ] as const;
 
-export default function ComoFuncionaPage() {
-  const [active, setActive] = useState(0);
-  const current = steps[active];
-  const CurrentIcon = current.Icon;
+const benefitCards = [
+  { kind: "speed", title: "Mais velocidade", text: "Seus leads recebem resposta enquanto ainda estão interessados" },
+  { kind: "context", title: "Mais contexto", text: "O comercial chega em conversas mais preparadas e com próximos passos claros" },
+  { kind: "growth", title: "Mais evolução", text: "A operação aprende com o que acontece e melhora sem depender de mais uma ferramenta solta" },
+] as const;
+
+function BenefitIcon({ kind }: { kind: (typeof benefitCards)[number]["kind"] }) {
+  const iconByKind = { speed: Zap, context: MessagesSquare, growth: TrendingUp } as const;
+  const Icon = iconByKind[kind];
+  const animation = kind === "speed"
+    ? { y: [0, -3, 0], rotate: [0, -4, 0] }
+    : kind === "context"
+      ? { scale: [1, 1.08, 1] }
+      : { y: [0, -3, 0], x: [0, 2, 0] };
 
   return (
-    <main className="min-h-screen bg-white text-[#0c0d0d]">
-      <section className="relative overflow-hidden px-5 pb-20 pt-36 sm:px-8 sm:pt-44">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(234,251,255,.72) 0%, rgba(255,255,255,0) 100%), radial-gradient(circle at 20% 10%, rgba(181,151,255,.18), transparent 30%)" }} />
-        <div className="relative mx-auto max-w-6xl">
-          <p className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">COMO FUNCIONA</p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[.94] tracking-tight sm:text-7xl">Não é só uma IA respondendo. É uma operação comercial que acompanha cada oportunidade.</h1>
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-zinc-500">Veja como tráfego, conversa, CRM, follow-up e pessoas trabalham juntos para transformar mais leads em vendas.</p>
-        </div>
-      </section>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.82 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -3, scale: 1.05 }}
+      viewport={{ once: false, amount: 0.65 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+      className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/20 text-[#7254c8]"
+    >
+      <motion.div
+        whileInView={animation}
+        viewport={{ once: false, amount: 0.65 }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Icon size={22} strokeWidth={2} />
+      </motion.div>
+      <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#38E3FF]" />
+    </motion.div>
+  );
+}
 
-      <section className="px-5 pb-24 sm:px-8">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[.72fr_1.28fr]">
-          <nav aria-label="Etapas da operação" className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
-            {steps.map((step, index) => {
-              const Icon = step.Icon;
-              const selected = index === active;
-              return <button key={step.label} onClick={() => { setActive(index); trackFunnelEvent("how_it_works_step_view", { step: index + 1, step_name: step.tag }); }} className={`flex w-full items-center gap-4 rounded-2xl p-4 text-left transition ${selected ? "bg-[#0c0d0d] text-white shadow-lg" : "text-zinc-500 hover:bg-zinc-50 hover:text-[#0c0d0d]"}`}>
-                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${selected ? "bg-[#B597FF] text-[#0c0d0d]" : "bg-[#F5FDFF] text-[#7254c8]"}`}><Icon size={19} /></span>
-                <span className="min-w-0"><span className="block text-[10px] font-black tracking-[.16em] opacity-60">0{index + 1}</span><span className="block font-bold">{step.label}</span></span>
-                <ChevronRight className="ml-auto" size={17} />
-              </button>;
-            })}
-          </nav>
+export default function ComoFuncionaPage() {
+  const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
 
-          <div className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm sm:p-12">
-            <div className="absolute right-[-8%] top-[-10%] h-72 w-72 rounded-full bg-[#38E3FF]/20 blur-3xl" />
-            <div className="relative">
-              <div className="flex items-center justify-between"><span className="rounded-full border border-[#B597FF]/20 bg-white px-3 py-1 text-[10px] font-black tracking-[.16em] text-[#7254c8]">{current.tag}</span><span className="text-sm text-zinc-400">Etapa {active + 1} de {steps.length}</span></div>
-              <div className="mt-14 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#b597ff] to-[#38e3ff] text-zinc-950"><CurrentIcon size={31} /></div>
-              <h2 className="mt-8 max-w-xl text-4xl font-black leading-tight sm:text-5xl">{current.title}</h2>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-500">{current.text}</p>
-              <div className="mt-12 grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-zinc-100 bg-[#F5FDFF] p-4"><Bot size={18} className="text-[#7254c8]"/><p className="mt-3 text-sm font-bold">IA em ação</p><p className="mt-1 text-xs text-zinc-500">Velocidade e consistência.</p></div><div className="rounded-2xl border border-zinc-100 bg-[#F5FDFF] p-4"><UserRoundCheck size={18} className="text-[#38aebb]"/><p className="mt-3 text-sm font-bold">Equipe humana</p><p className="mt-1 text-xs text-zinc-500">Estratégia e evolução.</p></div><div className="rounded-2xl border border-zinc-100 bg-[#F5FDFF] p-4"><CheckCircle2 size={18} className="text-[#7254c8]"/><p className="mt-3 text-sm font-bold">Tudo rastreável</p><p className="mt-1 text-xs text-zinc-500">Do lead ao resultado.</p></div></div>
+  useEffect(() => {
+    const open = (event: Event) => {
+      const detail = (event as CustomEvent<{ plan?: string; source?: string }>).detail;
+      setQualifyPlan(detail?.plan || "TLIN");
+      trackFunnelEvent("start_lead_form", { plan_name: detail?.plan || "TLIN", cta_source: detail?.source || "how_it_works" });
+    };
+    window.addEventListener("open-qualification", open);
+    return () => window.removeEventListener("open-qualification", open);
+  }, []);
+
+  const openQualification = () => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "how_it_works_page" } }));
+
+  return (
+    <main className="flex min-h-[100svh] flex-col bg-white text-[#0c0d0d]">
+      <GlobalBackground />
+      <ScrollBgWrapper>
+        <section className="relative isolate flex min-h-[78svh] items-center overflow-visible px-4 pb-16 pt-28 md:px-8 md:pt-32">
+          <div className="absolute left-1/2 top-1/3 -z-10 h-[420px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10 blur-[120px]" />
+          <div className="mx-auto grid w-full max-w-[1280px] items-center gap-12 lg:grid-cols-[.82fr_1.18fr]">
+            <div className="text-center lg:text-left">
+              <Eyebrow>✨ Sistema comercial operado por IA</Eyebrow>
+              <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl md:tracking-tighter">Um sistema comercial <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operado por IA</span></h1>
+              <p className="mx-auto mt-7 max-w-xl text-base font-medium leading-relaxed text-zinc-500 md:text-lg lg:mx-0">Atendimento, qualificação, acompanhamento e agenda em uma operação só</p>
+              <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row lg:justify-start"><HeroDemoCta onClick={openQualification} /><a href="#sistema-comercial" className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-7 py-4 text-sm font-bold text-[#0c0d0d] transition-colors hover:bg-zinc-50">Entender o sistema <ArrowDown size={17} /></a></div>
             </div>
+            <SystemPreview />
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mt-12 border-t border-zinc-100 bg-[#F5FDFF] px-5 py-20 sm:px-8"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-end"><div><p className="text-xs font-black tracking-[.18em] text-[#7254c8]">PRÓXIMO PASSO</p><h2 className="mt-4 max-w-2xl text-4xl font-black tracking-tight sm:text-5xl">Vamos mostrar o que essa operação faria no seu comercial.</h2></div><button onClick={() => { trackFunnelEvent("how_it_works_demo_click", { cta_source: "how_it_works" }); window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "how_it_works" } })); }} className="inline-flex items-center gap-3 rounded-full bg-[#0c0d0d] px-6 py-4 font-black text-white transition hover:scale-[1.02]">Agendar uma demo <ArrowRight size={18}/></button></div></section>
+        <section id="sistema-comercial" className="bg-white px-4 py-20 md:px-8 md:py-28"><div className="mx-auto max-w-[1100px]"><div className="mx-auto max-w-2xl text-center"><Eyebrow>🤖 O que a IA faz por você</Eyebrow><h2 className="text-3xl font-bold tracking-tight md:text-5xl">Ela cuida da conversa que o seu comercial <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">não pode perder</span></h2><p className="mt-5 leading-relaxed text-zinc-500">A Tlin entra na rotina onde o volume pesa: atendimento, qualificação, acompanhamento e preparo para o próximo passo</p></div><div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">{iaDeliveries.map((card, index) => <HowItWorksCard key={card.title} icon={card.icon} title={card.title} desc={card.text} index={index} MotionOverride={card.icon === "schedule" ? HumanCalendarMotion : undefined} />)}</div></div></section>
+
+        <section className="bg-white px-4 py-20 md:px-8 md:py-28"><div className="mx-auto max-w-[1100px]"><div className="max-w-2xl"><Eyebrow>📈 O que você recebe</Eyebrow><h2 className="text-3xl font-bold tracking-tight md:text-5xl">Uma operação comercial mais presente, organizada e <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">preparada para crescer</span></h2></div><div className="mt-12 grid gap-5 md:grid-cols-3">{benefitCards.map(({ kind, title, text }) => <div key={title} className="rounded-3xl border border-zinc-100 bg-white p-7"><BenefitIcon kind={kind} /><h3 className="mt-7 text-xl font-bold">{title}</h3><p className="mt-3 text-sm leading-relaxed text-zinc-500">{text}</p></div>)}</div></div></section>
+
+        <section className="relative isolate overflow-hidden bg-white px-4 py-20 md:px-8 md:py-28"><div className="pointer-events-none absolute inset-0 -z-10" style={{ background: "radial-gradient(circle at 68% 48%, rgba(56, 227, 255, 0.1), transparent 34%), radial-gradient(circle at 32% 72%, rgba(181, 151, 255, 0.08), transparent 38%)" }} /><div className="mx-auto flex max-w-[1100px] flex-col items-center gap-10 md:flex-row md:items-stretch"><div className="order-2 w-full md:order-1 md:basis-[calc(52%_-_20px)] md:shrink-0"><Eyebrow>👋 Por trás da Tlin</Eyebrow><h2 className="mt-5 text-3xl font-bold tracking-tight md:text-5xl">Por trás de uma IA que vende melhor, existe uma <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operação bem pensada</span></h2><p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-500">Antes de colocar a IA para conversar com seus leads, a gente entende como sua venda funciona, onde as oportunidades se perdem e o que o seu comercial precisa saber para agir melhor</p><div className="mt-8 rounded-3xl bg-[#0c0d0d] p-6 shadow-xl"><p className="text-xl font-bold leading-relaxed text-white">“A IA executa todos os dias. A gente cuida para que ela continue útil para o seu negócio”</p><p className="mt-5 text-sm leading-relaxed text-white/55">É contexto, critério e evolução contínua para cada conversa contribuir com a venda</p></div></div><div className="order-1 mx-auto h-[500px] w-full max-w-[400px] md:order-2 md:ml-auto md:h-auto md:max-w-none md:basis-[calc(48%_-_20px)] md:self-stretch md:shrink-0"><div className="group relative h-full w-full overflow-hidden rounded-[2.5rem] bg-[#0c0d0d]"><Image src="/team/igor-avatar.png" alt="Igor Marin, fundador da Tlin" fill sizes="(max-width: 768px) 90vw, 560px" className="object-cover transition-transform duration-700 ease-out motion-reduce:transition-none md:group-hover:scale-105" priority /><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0c0d0d] via-[#0c0d0d]/35 to-transparent px-8 pb-8 pt-24"><p className="text-2xl font-bold text-white">Igor Marin</p><p className="mt-1 text-[11px] font-bold tracking-wide text-[#38E3FF]">Fundador da Tlin</p></div></div></div></div></section>
+
+        <OperationNumbers />
+
+        <CampaignReviews variant="iaWhatsapp" />
+
+        <FooterBanner /><Footer />
+        {qualifyPlan && <LeadQualificationPopup isOpen onClose={() => setQualifyPlan(null)} planName={qualifyPlan} />}
+      </ScrollBgWrapper>
     </main>
   );
 }

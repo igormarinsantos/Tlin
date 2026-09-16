@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 
 const LEADS_MIN = 40;
 const LEADS_MAX = 10000;
@@ -26,11 +27,11 @@ export function RoiCalculator() {
           </div>
         </div>
         <div className="relative rounded-[2rem] overflow-hidden p-[1px]">
-          <div className="absolute inset-[-150%] animate-[spin_6s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, #B597FF 0 18%, #38E3FF 28%, #ffffff 40%, #B597FF 58%, #38E3FF 76%, #ffffff 90%, #B597FF 100%)" }} />
-          <div className="relative rounded-[calc(2rem-1px)] bg-white p-8 md:p-16 shadow-2xl">
+          <div className="absolute inset-[-150%] animate-[spin_6s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, #B597FF 0 18%, #38E3FF 28%, #26242f 40%, #B597FF 58%, #38E3FF 76%, #26242f 90%, #B597FF 100%)" }} />
+          <div className="relative rounded-[calc(2rem-1px)] bg-[#111016] p-8 shadow-2xl md:p-16">
           <div className="text-center mb-12 md:mb-14">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-zinc-900">{t.roi.heading}</h2>
-            <p className="text-zinc-500 mt-3">{t.roi.sliderSubtitle}</p>
+            <h2 className="text-3xl font-black tracking-tight text-white md:text-5xl">{withoutClosingPeriod(t.roi.heading)}</h2>
+            <p className="mt-3 text-zinc-400">{withoutClosingPeriod(t.roi.sliderSubtitle)}</p>
           </div>
 
           <div className="rounded-3xl bg-gradient-to-br from-[#B597FF] to-[#38E3FF] p-6 md:p-10 text-zinc-900 -mx-6 md:-mx-14 -mb-6 md:-mb-14">
@@ -42,9 +43,9 @@ export function RoiCalculator() {
             <div className="flex justify-between text-xs text-zinc-700 mt-2"><span>40</span><span>10.000+</span></div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-10">
-              <div className="rounded-2xl bg-white p-5 md:p-6"><p className="text-xs text-zinc-500">{t.roi.currentRateLabel}</p><p className="text-2xl font-black mt-1 text-zinc-900">5%</p><p className="text-xs text-zinc-500">{currentSales} {t.roi.salesSuffix}</p></div>
-              <div className="rounded-2xl bg-white p-5 md:p-6"><p className="text-xs text-zinc-500">{t.roi.withTlinLabel}</p><p className="text-2xl font-black mt-1 text-[#8A63D2]">6,25%</p><p className="text-xs text-zinc-500">{projectedSales} {t.roi.salesSuffix}</p></div>
-              <div className="rounded-2xl bg-[#0c0d0d] p-5 md:p-6 text-white"><p className="text-xs font-bold text-[#38E3FF]">{t.roi.additionalRevenueLabel}</p><p className="text-2xl font-black mt-1">R$ {additionalRevenue.toLocaleString("pt-BR")}</p><p className="text-xs text-white/60">{t.roi.perMonthLabel}</p></div>
+              <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.currentRateLabel}</p><p className="mt-1 text-2xl font-black text-white">5%</p><p className="text-xs text-white/60">{currentSales} {t.roi.salesSuffix}</p></div>
+              <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.withTlinLabel}</p><p className="mt-1 text-2xl font-black text-[#B597FF]">6,25%</p><p className="text-xs text-white/60">{projectedSales} {t.roi.salesSuffix}</p></div>
+              <div className="rounded-2xl border border-white/10 bg-[#0c0d0d] p-5 text-white md:p-6"><p className="text-xs font-bold text-[#38E3FF]">{t.roi.additionalRevenueLabel}</p><p className="mt-1 text-2xl font-black">R$ {additionalRevenue.toLocaleString("pt-BR")}</p><p className="text-xs text-white/60">{t.roi.perMonthLabel}</p></div>
             </div>
           </div>
           </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 
 const FAQ_KEYS = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"] as const;
 type FaqKey = (typeof FAQ_KEYS)[number];
@@ -57,9 +58,9 @@ export function Faq({ priorityKeys }: { priorityKeys?: FaqKey[] } = {}) {
             </div>
           </div>
              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0c0d0d] mb-6">
-                {t.faq.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.faq.titleHighlight}</span>
+                {withoutClosingPeriod(t.faq.title)} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{withoutClosingPeriod(t.faq.titleHighlight)}</span>
              </h2>
-             <p className="text-zinc-500 font-medium text-lg max-w-xl mx-auto">{t.faq.subtitle}</p>
+             <p className="text-zinc-500 font-medium text-lg max-w-xl mx-auto">{withoutClosingPeriod(t.faq.subtitle)}</p>
           </div>
 
           <div className="flex flex-col gap-4 mb-24">

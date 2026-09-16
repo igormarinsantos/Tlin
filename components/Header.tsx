@@ -10,11 +10,12 @@ import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 
-function MenuIcon() {
+function MenuIcon({ isOpen = false }: { isOpen?: boolean }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
+    <span aria-hidden="true" className="relative block h-[18px] w-[18px]">
+      <span className={`absolute left-0 top-[5px] h-[1.8px] w-[18px] rounded-full bg-current transition-transform duration-300 ease-out ${isOpen ? "translate-y-[3px] rotate-45" : ""}`} />
+      <span className={`absolute bottom-[5px] left-0 h-[1.8px] w-[18px] rounded-full bg-current transition-transform duration-300 ease-out ${isOpen ? "-translate-y-[3px] -rotate-45" : ""}`} />
+    </span>
   );
 }
 
@@ -29,7 +30,7 @@ function MenuIcon() {
 // - "contained" (header flutuante, que ja e uma pilula centralizada): um
 //   card com largura propria, alinhado embaixo da pilula, em vez de
 //   quebrar o layout compacto dela com um painel largura-total.
-function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () => void; onLeave: () => void; variant?: "full" | "contained" }) {
+function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: { onEnter: () => void; onLeave: () => void; variant?: "full" | "contained"; containedWidth?: number }) {
   const { t } = useLanguage();
   const pathname = usePathname();
   const isContained = variant === "contained";
@@ -54,12 +55,12 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full" }: { onEnter: () =>
       onMouseLeave={onLeave}
       className={
         isContained
-          ? "pointer-events-auto bg-white rounded-3xl border border-zinc-200 shadow-xl mt-3 overflow-hidden w-[min(720px,calc(100vw-2rem))]"
+          ? "pointer-events-auto mt-3 w-[min(720px,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl"
           : `pointer-events-auto ${isCampaignPage ? "bg-[#F5FDFF]" : "bg-white"}`
       }
       style={
         isContained
-          ? undefined
+          ? (containedWidth ? { width: `${containedWidth}px` } : undefined)
           : {
               width: "var(--tlin-vw, 100vw)",
               marginLeft: "calc(-0.5 * var(--tlin-vw, 100vw) + 50%)",
@@ -153,11 +154,11 @@ function NavLinks({
         {t.nav.comoFunciona}
       </a>
       <a
-        href={sectionHref("planos")}
-        onClick={() => trackFunnelEvent("nav_link_click", { destination: "planos", cta_source: "nav" })}
+        href="/precos"
+        onClick={() => trackFunnelEvent("nav_link_click", { destination: "precos", cta_source: "nav" })}
         className={linkClass}
       >
-        {t.nav.planos}
+        {t.nav.pricing}
       </a>
       <button
         type="button"
@@ -211,10 +212,10 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
         <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
           style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
         />
-        <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-white text-[14px] font-bold transition-all z-10 group-hover/btn:text-[#0c0d0d] flex items-center justify-center text-center`}>
+        <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-[13px] font-bold text-white transition-all z-10 flex items-center justify-center text-center group-hover/btn:text-[#0c0d0d]`}>
           <span className="relative z-10">{t.nav.cta}</span>
-          <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-300 group-hover/btn:opacity-0" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+          <div className="absolute inset-0 rounded-full bg-[#0c0d0d] transition-opacity duration-300 group-hover/btn:opacity-0" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
         </div>
       </button>
       
@@ -243,6 +244,8 @@ export function Header() {
   const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const solutionsCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const floatingHeaderRef = useRef<HTMLDivElement | null>(null);
+  const [floatingHeaderWidth, setFloatingHeaderWidth] = useState(0);
 
   // Pequeno delay ao fechar (em vez de fechar na hora do mouseleave) pra
   // nao fechar o menu quando o cursor atravessa o espaco entre o botao
@@ -264,6 +267,16 @@ export function Header() {
       if (solutionsCloseTimeout.current) clearTimeout(solutionsCloseTimeout.current);
     };
   }, []);
+
+  useEffect(() => {
+    const element = floatingHeaderRef.current;
+    if (!showFloating || !element) return;
+    const updateWidth = () => setFloatingHeaderWidth(Math.round(element.getBoundingClientRect().width));
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [showFloating]);
 
   // "100vw" inclui a largura da scrollbar (window.innerWidth tambem inclui --
   // quem exclui e document.documentElement.clientWidth), entao o truque de
@@ -299,9 +312,20 @@ export function Header() {
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] pt-6 px-4 md:px-6 w-full max-w-6xl mx-auto"
       >
         <div className="flex items-center justify-between w-full">
-          <Link href="/" className="flex items-center gap-2" data-mascot-hide>
-             <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[#0c0d0d] transition-colors hover:bg-zinc-100 md:hidden"
+            >
+              <MenuIcon isOpen={isMobileMenuOpen} />
+            </button>
+            <Link href="/" className="flex items-center gap-2" data-mascot-hide>
+               <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={80} height={28} priority />
+            </Link>
+          </div>
 
           <div className="hidden md:block">
             <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
@@ -315,15 +339,7 @@ export function Header() {
              >
                {t.nav.login}
              </a>
-             <button
-               type="button"
-               aria-label="Abrir menu"
-               onClick={() => setIsMobileMenuOpen(true)}
-               className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-[#0c0d0d] hover:bg-zinc-100 transition-colors"
-             >
-               <MenuIcon />
-             </button>
-             <HeaderCTA padding="px-5 py-2.5" />
+             <HeaderCTA padding="px-4 py-2.5 md:px-5" />
           </div>
         </div>
 
@@ -342,11 +358,22 @@ export function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed top-4 left-0 right-0 z-[100] flex flex-col items-center pointer-events-none px-4"
           >
-            <div className="pointer-events-auto flex items-center justify-between bg-white border border-zinc-200 rounded-full px-4 py-2 w-max gap-8">
+            <div ref={floatingHeaderRef} className="pointer-events-auto flex w-max items-center justify-between gap-8 rounded-full border border-zinc-200 bg-white px-4 py-2">
 
-              <Link href="/" className="flex items-center gap-2" data-mascot-hide>
-                 <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+                  aria-expanded={isMobileMenuOpen}
+                  onClick={() => setIsMobileMenuOpen((open) => !open)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-[#0c0d0d] transition-colors hover:bg-zinc-100 lg:hidden"
+                >
+                  <MenuIcon isOpen={isMobileMenuOpen} />
+                </button>
+                <Link href="/" className="flex items-center gap-2" data-mascot-hide>
+                   <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
+                </Link>
+              </div>
 
               <div className="hidden lg:block">
                 <NavLinks isSolutionsOpen={isSolutionsOpen} onSolutionsEnter={openSolutions} onSolutionsLeave={closeSolutionsWithDelay} />
@@ -360,20 +387,12 @@ export function Header() {
                  >
                    {t.nav.login}
                  </a>
-                 <button
-                   type="button"
-                   aria-label="Abrir menu"
-                   onClick={() => setIsMobileMenuOpen(true)}
-                   className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center text-[#0c0d0d] hover:bg-zinc-100 transition-colors"
-                 >
-                   <MenuIcon />
-                 </button>
-                 <HeaderCTA padding="px-4 py-2" />
+                 <HeaderCTA padding="px-3 py-2 md:px-4" />
               </div>
             </div>
 
             <AnimatePresence>
-              {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} variant="contained" />}
+              {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} variant="contained" containedWidth={floatingHeaderWidth} />}
             </AnimatePresence>
           </motion.header>
         )}

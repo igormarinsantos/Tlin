@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Header } from "@/components/Header";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { UTMTracker } from "@/components/UTMTracker";
+import { LiaPopup } from "@/components/LiaPopup";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import { stringifyStructuredData } from "@/lib/structuredData";
@@ -172,6 +173,7 @@ export default function RootLayout({
           <SmoothScroll>
             <Header />
             {children}
+            <LiaPopup />
           </SmoothScroll>
         </LanguageProvider>
       </body>

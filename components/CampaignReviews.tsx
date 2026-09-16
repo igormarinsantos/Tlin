@@ -33,20 +33,28 @@ function pickAvatar(name: string) {
   return `https://randomuser.me/api/portraits/${gender}/${index}.jpg`;
 }
 
+const ILLUSTRATIVE_RESULTS = [
+  [{ value: "+42%", label: "respostas no mesmo dia" }, { value: "2,3x", label: "mais leads qualificados" }],
+  [{ value: "31%", label: "menos tempo até responder" }, { value: "+27%", label: "avanço para reunião" }],
+  [{ value: "4,8x", label: "mais contexto para vendas" }, { value: "18h", label: "economizadas por semana" }],
+  [{ value: "+36%", label: "conversas retomadas" }, { value: "64%", label: "leads com próximo passo" }],
+] as const;
+
 function ReviewCard({ name, role, text }: { name: string; role: string; text: string }) {
   const logo = pickLogo(name);
+  const results = ILLUSTRATIVE_RESULTS[hashSeed(name) % ILLUSTRATIVE_RESULTS.length];
   return (
-    <div className="relative w-[300px] md:w-[360px] shrink-0 rounded-2xl bg-zinc-50 border border-zinc-100 p-6 md:p-7 flex flex-col gap-5">
+    <div className="relative flex min-h-[320px] w-[300px] shrink-0 flex-col rounded-2xl border border-[#B597FF]/20 bg-[#F7FAFF] p-6 md:w-[360px] md:p-7">
       <img src={logo.src} alt="" className={`absolute top-5 right-5 md:top-6 md:right-6 ${logo.className}`} />
-
-      <p className="text-base md:text-lg text-zinc-700 font-medium leading-relaxed pr-10 md:pr-12">"{text}"</p>
-      <div className="flex items-center gap-3 mt-auto">
+      <div className="flex items-center gap-3 pr-10 md:pr-12">
         <img src={pickAvatar(name)} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
         <div>
           <p className="text-sm font-bold text-[#0c0d0d]">{name}</p>
           <p className="text-xs text-zinc-500">{role}</p>
         </div>
       </div>
+      <p className="mt-6 text-base font-medium leading-relaxed text-zinc-700 md:text-lg">“{text}”</p>
+      <div className="mt-auto border-t border-[#B597FF]/20 pt-4"><div className="grid grid-cols-2 gap-4">{results.map((result) => <div key={result.label}><p className="text-2xl font-bold tracking-tight text-[#7254c8]">{result.value}</p><p className="mt-1 text-xs font-medium leading-snug text-zinc-500">{result.label}</p></div>)}</div></div>
     </div>
   );
 }

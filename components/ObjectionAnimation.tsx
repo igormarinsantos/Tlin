@@ -51,15 +51,20 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
       if (scrollRef.current) {
         scrollRef.current.scrollTo({
           top: scrollRef.current.scrollHeight,
-          behavior: "smooth"
+          behavior: "auto"
         });
       }
     };
 
-    scroll();
-    // Second scroll after a short delay to account for animation growth
-    const timer = setTimeout(scroll, 300);
-    return () => clearTimeout(timer);
+    // A mensagem entra com motion layout. Esperar dois frames e fazer uma
+    // segunda leitura depois da transição evita que o ultimo balão fique
+    // parcialmente escondido no container do mobile.
+    const firstFrame = requestAnimationFrame(() => requestAnimationFrame(scroll));
+    const timer = setTimeout(scroll, 650);
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      clearTimeout(timer);
+    };
   }, [step]);
 
   useEffect(() => {
@@ -73,7 +78,7 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
   return (
     <div
       ref={scrollRef}
-      className="relative w-full h-full flex flex-col gap-1 p-4 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth"
+      className="relative flex h-full min-h-0 w-full flex-col gap-1 overflow-y-auto overscroll-contain p-4 pb-8 scrollbar-hide md:p-12"
     >
       {/* Blocos discretos (nao .map()) de proposito, igual o componente
           original -- cada mensagem e uma expressao JSX irma separada. */}

@@ -28,8 +28,10 @@ export const enUS: TranslationDictionary = {
     ask: "Ask Igor right now"
   },
   hero: {
-    title: "Sales running 24/7\nWith real AI",
+    title: "Sales running 24\u2060/7\nWith real AI",
+    mobileTitle: "Sales AI 24\u2060/7\nthat actually sells.",
     subtitle: "An AI-powered sales system on WhatsApp and CRM to run your sales operation 24/7, with agents that answer, qualify, and sell on their own.",
+    mobileSubtitle: "Scale sales with WhatsApp and CRM.\nAgents answer, qualify, and sell 24/7.",
     cta: "Start Free Now",
     demoHover: "100% Free Demo",
     watchDemo: "Book a demo",
@@ -49,6 +51,7 @@ export const enUS: TranslationDictionary = {
       highlightWords: ["WhatsApp"],
       painHeadline: "After the first hour without a reply, you [lose up to 7x the chance of closing the sale].",
       painBody: "Every minute of delay cools a sale that was already yours.",
+      painBodyMobile: "Every minute cools a sale.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every visit or message is already qualified by AI, no human needed to reply." },
         { title: "Answer on WhatsApp", desc: "Reply to every lead in seconds, 24 hours a day, right on WhatsApp." },
@@ -79,6 +82,7 @@ export const enUS: TranslationDictionary = {
       highlightWords: ["AI"],
       painHeadline: "44% give up after the 1st follow-up and [lose up to 80% of the sales] that would come after.",
       painBody: "Most sales only happen from the 2nd follow-up onward.",
+      painBodyMobile: "Sales need follow through.",
       howItWorksCards: [
         { title: "Re-engage who stopped replying", desc: "The AI reactivates the conversation automatically at the right intervals, no rep needs to remember." },
         { title: "Answer on WhatsApp", desc: "When the lead replies again, the AI picks the conversation right back up." },
@@ -109,6 +113,7 @@ export const enUS: TranslationDictionary = {
       highlightWords: ["CRM"],
       painHeadline: "Without a CRM, your operation could be [losing up to 29% in sales].",
       painBody: "Three places, one lost lead.",
+      painBodyMobile: "Three places, one lost lead.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every new lead comes in qualified straight into your CRM, no manual typing." },
         { title: "Answer on WhatsApp", desc: "Answer in the same place you organize: everything inside Tlin's CRM." },
@@ -139,6 +144,7 @@ export const enUS: TranslationDictionary = {
       highlightWords: ["AI"],
       painHeadline: "Cart abandonment in e-commerce reaches [70%], and slow responses are one of the reasons.",
       painBody: "Every minute of delay turns into one more abandoned cart.",
+      painBodyMobile: "Delay increases abandonment.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "Every lead from the ad already arrives qualified by AI, even at launch peak." },
         { title: "Answer on WhatsApp", desc: "Answer everyone during launch with no waiting line." },
@@ -169,6 +175,7 @@ export const enUS: TranslationDictionary = {
       highlightWords: ["AI"],
       painHeadline: "After the first hour without a reply, you [lose up to 7x the chance of closing the sale].",
       painBody: "Without an active agent, every delayed reply costs you a sale.",
+      painBodyMobile: "A late reply costs a sale.",
       howItWorksCards: [
         { title: "Capture and qualify", desc: "The AI agent automatically qualifies whoever comes in, no human needed." },
         { title: "Answer on WhatsApp", desc: "Your agent replies 24/7 with the same quality as your best salesperson." },
@@ -268,7 +275,7 @@ export const enUS: TranslationDictionary = {
     starterF5: "Expert Support",
     scaleName: "Scale",
     scaleTarget: "Best Seller",
-    scaleBadge: "Popular",
+    scaleBadge: "+ INVESTED",
     scaleDesc: "Accelerate your traction with multiple agents and Tlin's native CRM.",
     scaleCta: "Scale My Operation",
     scaleF1: "Everything in Starter +",

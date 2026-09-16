@@ -28,8 +28,10 @@ export const esES: TranslationDictionary = {
     ask: "Pregúntale a Igor"
   },
   hero: {
-    title: "Comercial funcionando 24/7\nCon IA de verdad",
+    title: "Comercial funcionando 24\u2060/7\nCon IA de verdad",
+    mobileTitle: "IA comercial 24\u2060/7\nque vende de verdad.",
     subtitle: "Sistema de ventas con IA en WhatsApp y CRM para escalar tu operación comercial 24/7, con agentes que atienden, califican y venden solos.",
+    mobileSubtitle: "Escala ventas con WhatsApp y CRM.\nAgentes atienden, califican y venden 24/7.",
     cta: "Empezar Gratis",
     demoHover: "Demo 100% gratis",
     watchDemo: "Agendar demo",
@@ -49,6 +51,7 @@ export const esES: TranslationDictionary = {
       highlightWords: ["WhatsApp"],
       painHeadline: "Después de la 1ª hora sin respuesta, [pierdes hasta 7x la chance de cerrar la venta].",
       painBody: "Cada minuto de demora enfría una venta que ya era tuya.",
+      painBodyMobile: "Cada minuto enfría una venta.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Toda visita o mensaje ya llega calificada por la IA, sin esperar que un humano responda." },
         { title: "Atiende en WhatsApp", desc: "Responde a cada lead en segundos, 24 horas al día, directo en WhatsApp." },
@@ -79,6 +82,7 @@ export const esES: TranslationDictionary = {
       highlightWords: ["IA"],
       painHeadline: "44% desiste en el 1er seguimiento y [pierde hasta el 80% de las ventas] que vendrían después.",
       painBody: "La mayoría de las ventas solo ocurre a partir del 2º seguimiento.",
+      painBodyMobile: "Vender exige seguimiento.",
       howItWorksCards: [
         { title: "Retoma a quien dejó de responder", desc: "La IA reactiva la conversación automáticamente en los intervalos justos, sin que el vendedor lo recuerde." },
         { title: "Atiende en WhatsApp", desc: "Cuando el lead vuelve a responder, la IA retoma la atención al instante." },
@@ -109,6 +113,7 @@ export const esES: TranslationDictionary = {
       highlightWords: ["CRM"],
       painHeadline: "Sin CRM, tu operación puede estar [perdiendo hasta 29% en ventas].",
       painBody: "Tres lugares, un lead perdido.",
+      painBodyMobile: "Tres lugares, un lead perdido.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Todo lead nuevo entra calificado directo a tu CRM, sin escribir nada a mano." },
         { title: "Atiende en WhatsApp", desc: "Atiende en el mismo lugar donde organizas: todo dentro del CRM de Tlin." },
@@ -139,6 +144,7 @@ export const esES: TranslationDictionary = {
       highlightWords: ["IA"],
       painHeadline: "El abandono de carrito en e-commerce llega al [70%], y la demora en responder es uno de los motivos.",
       painBody: "Cada minuto de demora se convierte en un carrito más abandonado.",
+      painBodyMobile: "La demora aumenta el abandono.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "Todo lead del anuncio ya llega calificado por la IA, incluso en el pico del lanzamiento." },
         { title: "Atiende en WhatsApp", desc: "Atiende a todos durante el lanzamiento sin fila de espera." },
@@ -169,6 +175,7 @@ export const esES: TranslationDictionary = {
       highlightWords: ["IA"],
       painHeadline: "Después de la 1ª hora sin respuesta, [pierdes hasta 7x la chance de cerrar la venta].",
       painBody: "Sin un agente activo, cada respuesta atrasada te cuesta una venta.",
+      painBodyMobile: "Responder tarde cuesta ventas.",
       howItWorksCards: [
         { title: "Captura y califica", desc: "El agente de IA califica automáticamente a quien llega, sin intervención humana." },
         { title: "Atiende en WhatsApp", desc: "Tu agente responde 24/7 con la misma calidad que tu mejor vendedor." },
@@ -268,7 +275,7 @@ export const esES: TranslationDictionary = {
     starterF5: "Soporte Especializado",
     scaleName: "Scale",
     scaleTarget: "El más vendido",
-    scaleBadge: "Popular",
+    scaleBadge: "+ INVERTIDO",
     scaleDesc: "Acelera tu tracción con múltiples agentes y el CRM nativo de Tlin.",
     scaleCta: "Escalar Mi Operación",
     scaleF1: "Todo en Starter +",

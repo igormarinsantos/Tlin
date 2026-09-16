@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { renderCampaignMotion, HERO_MOTION_BY_VARIANT } from "@/components/campaignMotion";
 
 // Envolve em degrade as palavras do titulo que baterem com highlightWords
@@ -67,11 +68,11 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           className="text-center md:text-left"
         >
           <h1 className="text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] mb-6 break-words [overflow-wrap:anywhere]">
-            <HighlightedTitle title={campaign.title} highlightWords={campaign.highlightWords} />
+            <HighlightedTitle title={withoutClosingPeriod(campaign.title)} highlightWords={campaign.highlightWords} />
           </h1>
 
           <p className="text-zinc-500 font-medium text-base md:text-lg max-w-xl mx-auto md:mx-0 mb-8">
-            {campaign.subtitle}
+            {withoutClosingPeriod(campaign.subtitle)}
           </p>
 
           <div className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-4">

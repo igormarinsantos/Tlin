@@ -40,8 +40,8 @@ export default function ObrigadoPage() {
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("tlin_demo_confirmation");
-      if (!raw) return router.replace("/demo");
-      const parsed = JSON.parse(raw) as Confirmation;
+      if (!raw && process.env.NODE_ENV !== "development") return router.replace("/demo");
+      const parsed = raw ? JSON.parse(raw) as Confirmation : { day: "Quarta-feira", time: "14:30" };
       if (!parsed.day || !parsed.time) return router.replace("/demo");
       const timer = window.setTimeout(() => {
         setConfirmation(parsed);
@@ -59,33 +59,33 @@ export default function ObrigadoPage() {
   const whatsappUrl = `https://wa.me/5511916248604?text=${encodeURIComponent("Olá! Minha demo está marcada e eu tenho uma dúvida antes da reunião.")}`;
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0c0d0d] px-5 py-24 text-white sm:px-8">
-      <div className="pointer-events-none absolute inset-0 opacity-50" style={{ background: "radial-gradient(circle at 20% 0%, rgba(181,151,255,.25), transparent 35%), radial-gradient(circle at 90% 25%, rgba(56,227,255,.16), transparent 30%)" }} />
+    <main className="min-h-screen overflow-hidden bg-white px-5 py-24 text-[#0c0d0d] sm:px-8">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px]" style={{ background: "linear-gradient(180deg, rgba(234,251,255,.75) 0%, rgba(255,255,255,0) 100%), radial-gradient(circle at 25% 0%, rgba(181,151,255,.16), transparent 35%)" }} />
       <div className="relative mx-auto max-w-5xl">
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-black tracking-[.18em] text-[#b597ff]"><CheckCircle2 size={15} /> {copy.eyebrow}</div>
+        <div className="relative mb-8 inline-flex overflow-hidden rounded-full p-[1px]"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} /><div className="relative inline-flex items-center gap-2 rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]"><CheckCircle2 size={15} /> {copy.eyebrow}</div></div>
         <div className="grid gap-8 lg:grid-cols-[1.15fr_.85fr]">
           <section>
             <h1 className="max-w-3xl text-4xl font-black leading-[.98] tracking-tight sm:text-6xl">{copy.title}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300">{copy.intro}</p>
-            <div className="mt-10 rounded-3xl border border-white/15 bg-white p-6 text-zinc-950 shadow-2xl sm:p-8">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-500">{copy.intro}</p>
+            <div className="mt-10 rounded-3xl border border-zinc-100 bg-[#F7F7FB] p-6 text-zinc-950 sm:p-8">
               <div className="flex items-center gap-3 text-sm font-black uppercase tracking-widest text-zinc-500"><CalendarCheck2 size={18} className="text-[#7254c8]" /> {copy.meeting}</div>
               <p className="mt-4 text-2xl font-black sm:text-3xl">{confirmation.day}</p>
               <p className="mt-1 text-lg font-bold text-zinc-600">{confirmation.time}</p>
             </div>
           </section>
-          <aside className="rounded-3xl border border-white/15 bg-white/[.07] p-6 backdrop-blur sm:p-8">
+          <aside className="rounded-3xl border border-zinc-100 bg-white p-6 shadow-sm sm:p-8">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#b597ff] text-[#0c0d0d]"><Sparkles size={21} /></div>
             <h2 className="mt-6 text-2xl font-black">{copy.prepareTitle}</h2>
-            <ul className="mt-5 space-y-4 text-sm leading-relaxed text-zinc-300">{copy.prepare.map((item) => <li className="flex gap-3" key={item}><CheckCircle2 size={18} className="mt-0.5 shrink-0 text-[#38e3ff]" />{item}</li>)}</ul>
+            <ul className="mt-5 space-y-4 text-sm leading-relaxed text-zinc-500">{copy.prepare.map((item) => <li className="flex gap-3" key={item}><CheckCircle2 size={18} className="mt-0.5 shrink-0 text-[#38aebb]" />{item}</li>)}</ul>
           </aside>
         </div>
-        <section className="mt-8 grid gap-6 rounded-3xl border border-[#b597ff]/30 bg-[#15121d] p-7 sm:p-10 md:grid-cols-[auto_1fr]">
-          <ShieldCheck size={34} className="text-[#38e3ff]" />
-          <div><h2 className="text-2xl font-black">{copy.proofTitle}</h2><p className="mt-3 max-w-3xl leading-relaxed text-zinc-300">{copy.proof}</p></div>
+        <section className="mt-8 grid gap-6 rounded-3xl border border-[#B597FF]/20 bg-[#F5FDFF] p-7 sm:p-10 md:grid-cols-[auto_1fr]">
+          <ShieldCheck size={34} className="text-[#7254c8]" />
+          <div><h2 className="text-2xl font-black">{copy.proofTitle}</h2><p className="mt-3 max-w-3xl leading-relaxed text-zinc-500">{copy.proof}</p></div>
         </section>
-        <section className="mt-12 flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
+        <section className="mt-12 flex flex-col items-start justify-between gap-5 border-t border-zinc-100 pt-8 sm:flex-row sm:items-center">
           <div><p className="font-bold">{copy.support}</p><p className="mt-1 text-sm text-zinc-400">{copy.meeting} continua sendo o próximo passo principal.</p></div>
-          <div className="flex flex-wrap gap-3"><a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={() => trackFunnelEvent("click_whatsapp", { cta_source: "demo_thank_you" })} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-3 text-sm font-bold hover:bg-white/10"><MessageCircle size={17} />{copy.whatsapp}</a><Link href="/" className="rounded-full bg-white px-5 py-3 text-sm font-black text-zinc-950">{copy.back}</Link></div>
+          <div className="flex flex-wrap gap-3"><a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={() => trackFunnelEvent("click_whatsapp", { cta_source: "demo_thank_you" })} className="inline-flex items-center gap-2 rounded-full border border-zinc-200 px-5 py-3 text-sm font-bold hover:bg-zinc-50"><MessageCircle size={17} />{copy.whatsapp}</a><Link href="/" className="rounded-full bg-[#0c0d0d] px-5 py-3 text-sm font-black text-white">{copy.back}</Link></div>
         </section>
       </div>
     </main>

@@ -31,7 +31,6 @@ const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
 // crm/planos/faq), então manter client-only é seguro aqui.
 const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(mod => mod.FooterBanner), { ssr: false });
 const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer));
-const LiaPopup = dynamic(() => import("@/components/LiaPopup").then(mod => mod.LiaPopup), { ssr: false });
 const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificationPopup").then(mod => mod.LeadQualificationPopup), { ssr: false });
 
 function DeferredSection({
@@ -224,11 +223,6 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         <div className="section-to-blur">
           <Footer />
         </div>
-
-        {/* IA Assistant Popup */}
-        <DeferredSection minHeight="min-h-0" idleDelay={1800}>
-          <LiaPopup />
-        </DeferredSection>
 
         {/* Lead Qualification Global State */}
         <QualificationController />

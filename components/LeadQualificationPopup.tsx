@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { CountryFlag } from "@/components/CountryFlag";
@@ -41,6 +41,8 @@ type LeadQualificationPopupProps = {
 export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
   const router = useRouter();
+  const pathname = usePathname();
+  const showProgressHeader = pathname === "/comece" || pathname === "/demo";
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
@@ -971,7 +973,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               </button>
             </div>}
 
-            <ProgressHeader
+            {showProgressHeader && <ProgressHeader
               currentStep={currentStep}
               hasStarted={hasStarted}
               embedded={embedded}
@@ -979,7 +981,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               isTyping={isTyping}
               welcomeTyping={welcomeTyping}
               t={t?.leadQualify}
-            />
+            />}
 
             {!hasStarted ? (
               <WelcomeScreen

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
@@ -67,64 +68,66 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] bg-white overflow-y-auto"
+          className="fixed inset-0 z-[200] overflow-y-auto bg-[#0c0d0d]/20 p-3 backdrop-blur-sm"
         >
-          <div className="flex items-center justify-between px-4 pt-6 pb-2">
-            <span className="text-lg font-black tracking-tight text-[#0c0d0d]">tlin.ai</span>
+          <motion.div initial={{ opacity: 0, y: 12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: 0.2 }} className="min-h-full rounded-[2rem] border border-white/70 bg-white shadow-2xl">
+          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
+            <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={76} height={26} className="h-auto w-[76px]" />
             <button
               type="button"
               aria-label="Fechar menu"
               onClick={onClose}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-[#0c0d0d] hover:bg-zinc-100 transition-colors"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 text-[#0c0d0d] transition-colors hover:bg-zinc-100"
             >
               <CloseIcon />
             </button>
           </div>
 
-          <div className="px-4 pb-10">
-            <p className="mt-6 mb-2 px-3 text-xs font-bold uppercase tracking-wide text-zinc-400">{t.nav.solutions}</p>
-            <div className="flex flex-col gap-1 mb-6">
+          <div className="px-5 pb-6">
+            <p className="mb-3 mt-6 px-1 text-[11px] font-bold uppercase tracking-wide text-zinc-400">{t.nav.solutions}</p>
+            <div className="grid grid-cols-2 gap-2 mb-6">
               {SOLUTIONS.map((s) => (
                 <a
                   key={s.href}
                   href={s.href}
                   onClick={() => trackAndClose("nav_solution_click", { solution: s.href })}
-                  className="flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-zinc-50 transition-colors"
+                  className="flex min-h-[104px] flex-col items-start rounded-2xl border border-zinc-100 bg-[#FCFCFD] p-3 transition-colors hover:border-[#B597FF]/30 hover:bg-[#F7F7FB]"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#B597FF]/10 to-[#38E3FF]/10 flex items-center justify-center text-[#0c0d0d] shrink-0">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/20 text-[#0c0d0d]">
                     <s.Icon />
                   </div>
-                  <span className="text-sm font-bold text-[#0c0d0d]">{t.footer[s.nameKey]}</span>
+                  <span className="mt-2 text-sm font-bold leading-tight text-[#0c0d0d]">{t.footer[s.nameKey]}</span>
+                  <span className="mt-1 text-[11px] leading-snug text-zinc-500">{t.nav[s.descKey]}</span>
                 </a>
               ))}
             </div>
 
-            <div className="flex flex-col gap-1 border-t border-zinc-100 pt-4 mb-6">
+            <div className="mb-6 grid grid-cols-2 gap-2 border-t border-zinc-100 pt-5">
               <a
                 href={sectionHref("como-funciona")}
                 onClick={() => trackAndClose("nav_link_click", { destination: "como-funciona" })}
-                className="px-3 py-3 rounded-2xl text-sm font-bold text-[#0c0d0d] hover:bg-zinc-50 transition-colors"
+                className="rounded-xl border border-zinc-100 px-3 py-3 text-sm font-bold text-[#0c0d0d] transition-colors hover:bg-zinc-50"
               >
                 {t.nav.comoFunciona}
               </a>
               <a
-                href={sectionHref("planos")}
-                onClick={() => trackAndClose("nav_link_click", { destination: "planos" })}
-                className="px-3 py-3 rounded-2xl text-sm font-bold text-[#0c0d0d] hover:bg-zinc-50 transition-colors"
+                href="/precos"
+                onClick={() => trackAndClose("nav_link_click", { destination: "precos" })}
+                className="rounded-xl border border-zinc-100 px-3 py-3 text-sm font-bold text-[#0c0d0d] transition-colors hover:bg-zinc-50"
               >
-                {t.nav.planos}
+                {t.nav.pricing}
               </a>
               <button
                 type="button"
                 onClick={openLiaChat}
-                className="flex items-center gap-2 px-3 py-3 rounded-2xl text-sm font-bold text-[#0c0d0d] bg-gradient-to-r from-[#B597FF]/10 to-[#38E3FF]/10"
+                className="col-span-2 flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#B597FF]/15 to-[#38E3FF]/20 px-3 py-3 text-sm font-bold text-[#0c0d0d]"
               >
                 <SparkleIcon className="w-4 h-4" />
                 {t.nav.ia}
               </button>
             </div>
 
-            <div className="flex items-center gap-2 border-t border-zinc-100 pt-6 mb-8">
+            <div className="mb-6 flex items-center gap-2 border-t border-zinc-100 pt-5">
               {LANGUAGES.map((l) => (
                 <button
                   key={l.code}
@@ -143,11 +146,12 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
             <button
               type="button"
               onClick={openQualification}
-              className="w-full rounded-full bg-[#0c0d0d] text-white text-sm font-bold py-4 text-center"
+              className="w-full rounded-full bg-[#0c0d0d] py-4 text-center text-sm font-bold text-white"
             >
               {t.nav.cta}
             </button>
           </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -26,8 +26,10 @@ export const ptBR = {
     ask: "Pergunte para o Igor"
   },
   hero: {
-    title: "Comercial rodando 24/7\nCom IA de verdade",
+    title: "Comercial rodando 24\u2060/7\nCom IA de verdade",
+    mobileTitle: "IA comercial 24\u2060/7\nque vende de verdade.",
     subtitle: "Sistema de vendas com IA no WhatsApp e CRM para escalar sua operação comercial 24/7, com agentes que atendem, qualificam e vendem sozinhos.",
+    mobileSubtitle: "Escala o comercial com WhatsApp e CRM.\nAgentes atendem, qualificam e vendem 24/7.",
     cta: "Começar Agora",
     demoHover: "Demo 100% grátis",
     watchDemo: "Agendar demo",
@@ -47,6 +49,7 @@ export const ptBR = {
       highlightWords: ["WhatsApp"],
       painHeadline: "Depois da 1ª hora sem resposta, você [perde até 7x a chance de fechar a venda].",
       painBody: "Cada minuto de demora esfria uma venda que já era sua.",
+      painBodyMobile: "Cada minuto esfria uma venda.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Toda visita ou mensagem já entra qualificada pela IA, sem esperar um humano responder." },
         { title: "Atenda no WhatsApp", desc: "Responda cada lead em segundos, 24 horas por dia, direto no WhatsApp." },
@@ -77,6 +80,7 @@ export const ptBR = {
       highlightWords: ["IA"],
       painHeadline: "44% desistem no 1º follow-up e [perdem até 80% das vendas] que vinham depois.",
       painBody: "A maioria das vendas só acontece a partir do 2º follow-up.",
+      painBodyMobile: "Vender exige acompanhamento.",
       howItWorksCards: [
         { title: "Retome quem parou de responder", desc: "A IA reativa a conversa automaticamente nos intervalos certos, sem vendedor lembrar." },
         { title: "Atenda no WhatsApp", desc: "Quando o lead volta a responder, a IA já retoma o atendimento na hora." },
@@ -107,6 +111,7 @@ export const ptBR = {
       highlightWords: ["CRM"],
       painHeadline: "Sem CRM, sua operação pode estar [perdendo até 29% em vendas].",
       painBody: "Três lugares, um lead perdido.",
+      painBodyMobile: "Três lugares, um lead perdido.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Todo novo lead entra qualificado direto no seu CRM, sem digitação manual." },
         { title: "Atenda no WhatsApp", desc: "Atenda no mesmo lugar onde organiza: tudo dentro do CRM da Tlin." },
@@ -137,6 +142,7 @@ export const ptBR = {
       highlightWords: ["IA"],
       painHeadline: "O abandono de carrinho no e-commerce chega a [70%], e a demora pra responder é um dos motivos.",
       painBody: "Cada minuto de demora vira mais um carrinho abandonado.",
+      painBodyMobile: "A demora aumenta o abandono.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "Todo lead do anúncio já chega qualificado pela IA, mesmo no pico do lançamento." },
         { title: "Atenda no WhatsApp", desc: "Responda todo mundo no lançamento sem fila de espera." },
@@ -167,6 +173,7 @@ export const ptBR = {
       highlightWords: ["IA"],
       painHeadline: "Depois da 1ª hora sem resposta, você [perde até 7x a chance de fechar a venda].",
       painBody: "Sem um agente ativo, cada resposta atrasada custa uma venda.",
+      painBodyMobile: "Responder tarde custa venda.",
       howItWorksCards: [
         { title: "Capture e qualifique", desc: "O agente de IA qualifica automaticamente quem chega, sem intervenção humana." },
         { title: "Atenda no WhatsApp", desc: "Seu agente responde 24/7 com a mesma qualidade do seu melhor vendedor." },
@@ -266,7 +273,7 @@ export const ptBR = {
     starterF5: "Suporte Especializado",
     scaleName: "Scale",
     scaleTarget: "O mais vendido",
-    scaleBadge: "Popular",
+    scaleBadge: "+ INVESTIDO",
     scaleDesc: "Acelere sua tração com múltiplos agentes e o CRM nativo da Tlin.",
     scaleCta: "Escalar Minha Operação",
     scaleF1: "Tudo do Starter +",

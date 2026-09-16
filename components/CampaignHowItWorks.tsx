@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
+import { motion, useInView } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { CARD_MOTION, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
 // Destaca em degrade o trecho marcado entre colchetes no titulo (mesmo
@@ -27,22 +29,38 @@ function HighlightedTitle({ text }: { text: string }) {
   );
 }
 
-function HowItWorksCard({
+export function HowItWorksCard({
   icon,
   title,
   desc,
   index,
+  MotionOverride,
 }: {
   icon: keyof typeof CARD_MOTION;
   title: string;
   desc: string;
   index: number;
+  MotionOverride?: ComponentType<{ isActive: boolean }>;
 }) {
-  const Motion = CARD_MOTION[icon];
+  const Motion = MotionOverride ?? CARD_MOTION[icon];
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(cardRef, { amount: 0.45 });
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  const isActive = isHovered || (isMobile && isInView);
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -55,17 +73,17 @@ function HowItWorksCard({
       <div className="relative w-full h-44 rounded-2xl bg-white border border-zinc-100 overflow-hidden">
         <motion.div
           className="absolute -inset-1/2 bg-gradient-to-tr from-[#B597FF]/10 to-[#38E3FF]/10 blur-[50px] rounded-full pointer-events-none"
-          animate={{ opacity: isHovered ? 1 : 0.6 }}
+          animate={{ opacity: isActive ? 1 : 0.6 }}
           transition={{ duration: 0.3 }}
         />
         <div className="relative w-full h-full">
-          <Motion isActive={isHovered} />
+          <Motion isActive={isActive} />
         </div>
       </div>
 
       <div className="px-2 pb-2 md:px-3 md:pb-3">
-        <h3 className="text-lg font-bold text-[#0c0d0d] mb-2">{title}</h3>
-        <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
+        <h3 className="text-lg font-bold text-[#0c0d0d] mb-2">{withoutClosingPeriod(title)}</h3>
+        <p className="text-sm text-zinc-500 leading-relaxed">{withoutClosingPeriod(desc)}</p>
       </div>
     </motion.div>
   );
@@ -111,7 +129,7 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="text-3xl md:text-5xl font-black tracking-tight text-[#0c0d0d]"
           >
-            <HighlightedTitle text={t.campaigns.howItWorksTitle} />
+            <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksTitle)} />
           </motion.h2>
         </div>
 
@@ -129,7 +147,7 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
           className="w-full rounded-3xl bg-[#F7F7FB] border border-zinc-100 px-6 md:px-10 py-7 md:py-9 mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <p className="text-xl md:text-2xl font-bold text-[#0c0d0d] text-center md:text-left">
-            <HighlightedTitle text={t.campaigns.howItWorksCtaTitle} />
+            <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksCtaTitle)} />
           </p>
 
           <button

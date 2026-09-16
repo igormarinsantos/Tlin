@@ -5,6 +5,7 @@ import { Play, Pause } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 
 import { SalesNotification } from "./SalesNotification";
 import { FunnelAnimation } from "./FunnelAnimation";
@@ -54,13 +55,13 @@ function FeatureCard({
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
   return (
-    <div className="w-full h-[900px] md:h-[650px] relative py-8 md:py-0">
+    <div className="relative w-full py-8 md:h-[650px] md:py-0">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "600px" }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className={`w-full h-full overflow-hidden flex flex-col relative z-10 ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
+        className={`relative z-10 flex w-full flex-col md:h-full md:overflow-hidden ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
       >
         <div className="h-[300px] md:h-auto md:flex-1 p-8 md:p-12 flex flex-col justify-center shrink-0">
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-6 md:gap-8">
@@ -71,7 +72,7 @@ function FeatureCard({
             </h3>
             <p 
               className="text-lg md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-xl"
-              dangerouslySetInnerHTML={{ __html: feature.desc }}
+              dangerouslySetInnerHTML={{ __html: withoutClosingPeriod(feature.desc) }}
             />
             
             {/* Desktop Button */}
@@ -149,12 +150,12 @@ function FeatureCard({
            </button>
         </div>
 
-        <div className="h-[480px] md:h-auto md:flex-1 relative overflow-hidden p-2 md:p-6 flex items-center justify-center shrink-0">
-          <div className="w-full h-full rounded-t-[2rem] rounded-b-none md:rounded-[3rem] overflow-hidden relative flex items-center justify-center pt-[2px] px-[2px] pb-0 md:p-[2px]">
+        <div className="relative flex h-[560px] shrink-0 items-center justify-center p-2 sm:h-[520px] md:h-auto md:flex-1 md:p-6">
+          <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[2rem] p-[2px] md:rounded-[3rem]">
             <div className="absolute inset-[-100%] opacity-100 md:animate-[spin_4s_linear_infinite]"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
             />
-            <div className="absolute top-[2px] inset-x-[2px] bottom-0 md:inset-[2px] bg-[#F8F6FF] rounded-t-[1.9rem] rounded-b-none md:rounded-[2.9rem] z-0" />
+            <div className="absolute inset-[2px] z-0 rounded-[1.9rem] bg-[#F8F6FF] md:rounded-[2.9rem]" />
             <div className="relative z-10 w-full h-full">
               {feature.id === "f1" ? (
                 <ObjectionAnimation />
@@ -169,8 +170,6 @@ function FeatureCard({
               )}
             </div>
           </div>
-          {/* Mobile deep gradient overlay to completely cover the bottom border/fade into white bg */}
-          <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-white via-white/95 to-transparent z-40 pointer-events-none md:hidden" />
         </div>
 
       </motion.div>
@@ -180,6 +179,28 @@ function FeatureCard({
 
 export function Features() {
   const { t } = useLanguage();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isFeaturesVisible = useInView(sectionRef, { amount: 0.05 });
+  const [isMotionPaused, setIsMotionPaused] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const updateAnimations = () => {
+      section.getAnimations({ subtree: true }).forEach((animation) => {
+        if (isMotionPaused) animation.pause();
+        else if (animation.playState === "paused") animation.play();
+      });
+    };
+
+    updateAnimations();
+    const observer = new MutationObserver(() => {
+      if (isMotionPaused) updateAnimations();
+    });
+    observer.observe(section, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [isMotionPaused]);
 
   const featuresList = [
     {
@@ -213,7 +234,11 @@ export function Features() {
   ];
 
   return (
-    <section id="como-funciona" className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
+    <section ref={sectionRef} data-features-paused={isMotionPaused} id="como-funciona" className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
+      <style jsx global>{`[data-features-paused="true"] *, [data-features-paused="true"] *::before, [data-features-paused="true"] *::after { animation-play-state: paused !important; }`}</style>
+      {isFeaturesVisible && <button type="button" onClick={() => setIsMotionPaused((paused) => !paused)} aria-pressed={isMotionPaused} aria-label={isMotionPaused ? "Reproduzir animações" : "Pausar animações"} className="fixed bottom-5 right-5 z-[90] flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-[#0c0d0d] shadow-lg shadow-zinc-900/10 transition-transform duration-200 hover:scale-105 active:scale-95 md:bottom-8 md:right-8" title={isMotionPaused ? "Reproduzir animações" : "Pausar animações"}>
+        {isMotionPaused ? <Play size={16} fill="currentColor" aria-hidden="true" /> : <Pause size={16} fill="currentColor" aria-hidden="true" />}
+      </button>}
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="max-w-3xl mb-32 text-center mx-auto">
@@ -234,9 +259,9 @@ export function Features() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "200px" }}
-            className="text-5xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.05] text-center"
+            className="text-4xl md:text-7xl font-black tracking-tight text-zinc-900 leading-[1.08] text-center"
           >
-            <span dangerouslySetInnerHTML={{ __html: t.features.title }} />
+            <span dangerouslySetInnerHTML={{ __html: t.features.title.replace("<br />", '<br class="hidden md:block" />') }} />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">{t.features.titleHighlight}</span>
           </motion.h2>
         </div>

@@ -4,6 +4,7 @@ import { m, LazyMotion, domAnimation, useInView, AnimatePresence, useMotionValue
 import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
@@ -41,7 +42,7 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
       }} 
       className="transition-opacity duration-75"
     >
-      {char === " " ? "\u00A0" : char}
+      {char}
     </span>
   );
 };
@@ -61,8 +62,6 @@ export function Hero() {
   const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
-  const title = t.hero.title.replace(/\s*\{stars\}/g, "");
-  const subtitle = t.hero.subtitle;
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
 
   const [isDesktop, setIsDesktop] = useState(true);
@@ -72,6 +71,9 @@ export function Hero() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const title = withoutClosingPeriod((isDesktop ? t.hero.title : t.hero.mobileTitle).replace(/\s*\{stars\}/g, ""));
+  const subtitle = withoutClosingPeriod(isDesktop ? t.hero.subtitle : t.hero.mobileSubtitle);
 
   useEffect(() => {
     return () => {
@@ -259,7 +261,7 @@ export function Hero() {
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] text-center w-full mb-6 md:min-h-[2.5em] break-words [overflow-wrap:anywhere]">
+          <h1 className="text-[30px] xs:text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] text-center w-full mb-8 md:mb-6 md:min-h-[2.5em]">
             {Array.from(new Set(allChars.map(c => c.line))).sort((a,b) => a-b).map(lineIdx => {
               const lineChars = allChars.filter(c => c.line === lineIdx);
               const globalLineStart = allChars.findIndex(c => c.line === lineIdx);
@@ -314,7 +316,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 15 }}
             animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
             transition={{ duration: 0.8 }}
-            className="text-zinc-500 font-medium text-base md:text-lg max-w-2xl mx-auto text-center mb-10"
+            className="mx-auto mb-10 max-w-[310px] whitespace-pre-line text-center text-[13px] font-medium leading-relaxed text-zinc-600 md:max-w-2xl md:whitespace-normal md:text-lg md:text-zinc-500"
           >
             {subtitle}
           </m.p>

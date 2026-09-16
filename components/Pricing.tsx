@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { LeadQualificationPopup } from "./LeadQualificationPopup";
 import { trackFunnelEvent } from "@/lib/utm";
+import { withoutClosingPeriod } from "@/lib/marketingCopy";
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -67,7 +68,43 @@ function PriceDisplayInner({ value, highlight }: { value: string; highlight: boo
     return <RollingNumber value={value} highlight={highlight} />;
 }
 
-export function Pricing() {
+const COMPARISON_ROWS = [
+  { label: "Responde no WhatsApp enquanto o lead está quente", tlin: true, agent: true, crm: false, human: false },
+  { label: "Qualifica com as regras do seu comercial", tlin: true, agent: true, crm: false, human: true },
+  { label: "Atualiza o CRM a cada conversa", tlin: true, agent: false, crm: false, human: false },
+  { label: "Mantém origem, conversa e interesse no mesmo lugar", tlin: true, agent: false, crm: true, human: false },
+  { label: "Retoma leads que pararam de responder", tlin: true, agent: false, crm: false, human: false },
+  { label: "Mostra a próxima ação para cada oportunidade", tlin: true, agent: false, crm: true, human: false },
+  { label: "Agenda reunião com o contexto da venda", tlin: true, agent: false, crm: false, human: true },
+  { label: "Chama uma pessoa quando a conversa pede", tlin: true, agent: false, crm: false, human: false },
+  { label: "Mostra o funil sem depender de planilha", tlin: true, agent: false, crm: true, human: false },
+  { label: "Tem time que evolui o playbook com você", tlin: true, agent: false, crm: false, human: false },
+] as const;
+
+function StatusMark({ enabled, inverse = false }: { enabled: boolean; inverse?: boolean }) {
+  return <span aria-label={enabled ? "Incluído" : "Não incluído"} className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${enabled ? inverse ? "bg-[#38E3FF] text-[#0c0d0d]" : "bg-emerald-100 text-emerald-600" : "bg-red-50 text-red-500"}`}>
+    {enabled ? <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden="true"><path d="m3.5 8.25 2.7 2.7 6.3-6.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> : <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden="true"><path d="m5 5 6 6m0-6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
+  </span>;
+}
+
+function PlansComparison() {
+  const columns = [
+    { key: "tlin", label: "Tlin" },
+    { key: "agent", label: "Agente de IA comum" },
+    { key: "crm", label: "CRM comum" },
+    { key: "human", label: "Atendimento humano" },
+  ] as const;
+
+  return <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
+    <div className="mx-auto max-w-3xl text-center"><div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare as operações</div><h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight"><span className="md:hidden">Não é só uma IA<br />É a <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operação inteira</span><br />trabalhando para vender</span><span className="hidden md:inline">Não é só uma IA. É a <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operação inteira</span> trabalhando para vender</span></h2><p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Quando chega volume de leads, responder é só o começo. Compare o que cada opção sustenta na operação</p></div>
+    <div className="mt-10 md:hidden">
+      <div className="space-y-3">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border ${column.key === "tlin" ? "border-[#0c0d0d] bg-[#0c0d0d]" : "border-zinc-200 bg-white"}`}><div className={`flex h-14 items-center px-5 ${column.key === "tlin" ? "text-white" : "text-[#0c0d0d]"}`}>{column.key === "tlin" ? <Image src="/_unused/Logo_Branco.svg" alt="Tlin" width={66} height={24} className="h-6 w-auto" /> : <p className="text-base font-bold">{column.label}</p>}</div><div className="grid grid-cols-2 border-t border-white/10">{COMPARISON_ROWS.map((row) => <div key={row.label} className={`flex min-h-14 items-center gap-2 border-b border-r px-3 py-2 text-[11px] font-semibold leading-snug ${column.key === "tlin" ? "border-white/10 text-white/80" : "border-zinc-100 text-zinc-600"}`}><StatusMark enabled={row[column.key]} inverse={column.key === "tlin"} /><span>{row.label}</span></div>)}</div></article>)}</div>
+    </div>
+    <div className="mt-12 hidden overflow-hidden rounded-[2rem] border border-zinc-200 bg-white md:block"><div className="grid grid-cols-[1.9fr_repeat(4,1fr)] border-b border-zinc-100 bg-[#FCFCFD]"><div className="flex items-end px-7 pb-5 text-[11px] font-bold uppercase tracking-wide text-zinc-400">O que evita perder oportunidades</div>{columns.map((column) => <div key={column.key} className={`flex min-h-16 items-center justify-center px-3 py-5 text-center ${column.key === "tlin" ? "bg-[#0c0d0d] text-white" : ""}`}>{column.key === "tlin" ? <Image src="/_unused/Logo_Branco.svg" alt="Tlin" width={70} height={26} className="h-6 w-auto" /> : <p className="text-sm font-bold">{column.label}</p>}</div>)}</div>{COMPARISON_ROWS.map((row, index) => <div key={row.label} className={`grid grid-cols-[1.9fr_repeat(4,1fr)] ${index < COMPARISON_ROWS.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "tlin" ? "bg-[#0c0d0d]/[0.03]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}</div>
+  </section>;
+}
+
+export function Pricing({ hideEyebrow = false }: { hideEyebrow?: boolean }) {
   const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -87,7 +124,7 @@ export function Pricing() {
       priceMonthly: 497,
       priceAnnual: 397,
       period: "/mês",
-      desc: t.pricing.starterDesc,
+      desc: withoutClosingPeriod(t.pricing.starterDesc),
       cta: t.pricing.starterCta,
       highlight: false,
       features: [
@@ -105,7 +142,7 @@ export function Pricing() {
       priceMonthly: 997,
       priceAnnual: 797,
       period: "/mês",
-      desc: t.pricing.scaleDesc,
+      desc: withoutClosingPeriod(t.pricing.scaleDesc),
       cta: t.pricing.scaleCta,
       highlight: true,
       badge: t.pricing.scaleBadge,
@@ -125,7 +162,7 @@ export function Pricing() {
       name: t.pricing.enterpriseName,
       target: t.pricing.enterpriseTarget,
       isCustom: true,
-      desc: t.pricing.enterpriseDesc,
+      desc: withoutClosingPeriod(t.pricing.enterpriseDesc),
       cta: t.pricing.enterpriseCta,
       highlight: false,
       features: [
@@ -207,22 +244,22 @@ export function Pricing() {
   return (
     <section 
       onMouseMove={handleMouseMove}
-      className="w-full py-24 relative overflow-hidden bg-white"
+      className={`relative w-full overflow-hidden bg-white pb-24 ${hideEyebrow ? "pt-36 md:pt-40" : "py-24"}`}
     >
 
 
        <div className="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center mb-12">
              <div className={`transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
-                <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
+                {!hideEyebrow && <div className="relative p-[1px] rounded-full overflow-hidden inline-flex mb-6">
                    <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
                     style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
                    />
                    <div className="relative px-3 py-1.5 rounded-full bg-white border border-[#B597FF]/20 text-[11px] font-bold tracking-wide text-[#B597FF] flex items-center gap-2">
                     💰 {t.pricing.badge}
                    </div>
-                </div>
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[#0c0d0d] mb-4">
+                </div>}
+                <h2 className={`text-3xl font-bold tracking-tight text-[#0c0d0d] md:text-5xl ${hideEyebrow ? "mb-7 leading-[1.12] md:mb-8" : "mb-4"}`}>
                    {t.pricing.title}
                 </h2>
              </div>
@@ -357,6 +394,8 @@ export function Pricing() {
                );
              })}
           </div>
+
+          <PlansComparison />
        </div>
     </section>
   );

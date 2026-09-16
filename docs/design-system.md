@@ -432,6 +432,48 @@ Evitar:
 - excesso de jargao tecnico;
 - promessas absolutas sem contexto.
 
+### Linguagem visivel e eyebrows
+
+Estas regras valem para todo texto que o visitante ve: titulos, subtitulos,
+eyebrows, CTAs, cards, pills, labels, mensagens de formulario e avisos.
+
+- nunca usar hifens no texto visivel;
+- usar ponto, virgula, dois pontos ou reescrever a frase quando uma pausa for
+  necessaria;
+- eyebrows usam frase curta em caixa normal, nunca tudo em maiusculas;
+- eyebrows sempre levam um emoji coerente com a secao, por exemplo
+  `✨ Entenda como funciona` e `🤖 O que a IA faz por voce`;
+- manter o eyebrow com a borda conica animada da marca, nao substituir por
+  um badge generico;
+- preferir tom direto para quem decide: falar de "sua operacao", "seus
+  leads" e "seu comercial";
+- a proposta apresenta uma IA comercial acompanhada pela Tlin, nao apenas
+  uma ferramenta ou um dashboard;
+- apresentar a Tlin como um sistema comercial operado por IA: atendimento,
+  qualificacao, acompanhamento e agenda fazem parte da mesma operacao;
+- nao inventar promessas, dados proprios, equipe grande ou resultados
+  garantidos.
+
+### Paginas de conversao e prova
+
+- preservar a landing principal como referencia visual antes de criar uma
+  secao nova;
+- usar blocos claros, espacamento generoso, preto, branco e o gradiente Tlin;
+- evitar sombras decorativas em cards. Bordas leves e contraste de superficie
+  devem criar a hierarquia;
+- provas de qualificacao devem ser legiveis de relance: usar pills curtas e
+  cores suaves, sem bolinhas decorativas;
+- animacoes de cards acontecem em hover no desktop. No mobile, iniciam quando
+  o card entra na viewport e pausam ao sair;
+- CTAs que navegam para uma secao da mesma pagina usam ancora e rolagem suave.
+  Nunca teletransportar o visitante para a secao;
+- a pagina "Entenda como funciona a Tlin" fala diretamente com o lead sobre
+  o que a IA executa e como a Tlin a prepara e acompanha;
+- mostrar Igor Marin como fundador. Falar da Tlin em tom coletivo sem sugerir
+  uma equipe grande ou fixa;
+- o mascote Tlin pode aparecer como funcionario digital, nunca como promessa
+  de autonomia sem acompanhamento humano.
+
 ## 13. Checklist para novas telas
 
 Antes de publicar:
