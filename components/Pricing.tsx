@@ -108,22 +108,82 @@ type PlanTierRow = { label: string; starter: boolean; scale: boolean; enterprise
 
 function PlanTierComparison({
   rows,
-  names,
+  plans,
 }: {
   rows: PlanTierRow[];
-  names: { starter: string; scale: string; enterprise: string };
+  plans: {
+    starter: { name: string; target: string };
+    scale: { name: string; target: string };
+    enterprise: { name: string; target: string };
+  };
 }) {
   const columns = [
-    { key: "starter", label: names.starter },
-    { key: "scale", label: names.scale },
-    { key: "enterprise", label: names.enterprise },
+    { key: "starter", ...plans.starter },
+    { key: "scale", ...plans.scale },
+    { key: "enterprise", ...plans.enterprise },
   ] as const;
 
-  return <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
-    <div className="mx-auto max-w-3xl text-center"><div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare os planos</div><h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight">A estrutura certa para o <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">seu volume de leads</span></h2><p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Veja o que entra em cada nível para escolher o plano que acompanha sua operação</p></div>
-    <div className="mt-10 space-y-3 md:hidden">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border ${column.key === "scale" ? "border-[#0c0d0d] bg-[#0c0d0d]" : "border-zinc-200 bg-white"}`}><div className={`flex h-14 items-center px-5 ${column.key === "scale" ? "text-white" : "text-[#0c0d0d]"}`}><p className="text-base font-bold">{column.label}</p></div><div className="grid grid-cols-2 border-t border-white/10">{rows.map((row) => <div key={row.label} className={`flex min-h-14 items-center gap-2 border-b border-r px-3 py-2 text-[11px] font-semibold leading-snug ${column.key === "scale" ? "border-white/10 text-white/80" : "border-zinc-100 text-zinc-600"}`}><StatusMark enabled={row[column.key]} inverse={column.key === "scale"} /><span>{row.label}</span></div>)}</div></article>)}</div>
-    <div className="mt-12 hidden overflow-hidden rounded-[2rem] border border-zinc-200 bg-white md:block"><div className="grid grid-cols-[2.2fr_repeat(3,1fr)] border-b border-zinc-100 bg-[#FCFCFD]"><div className="flex items-end px-7 pb-5 text-[11px] font-bold uppercase tracking-wide text-zinc-400">O que está incluído</div>{columns.map((column) => <div key={column.key} className={`flex min-h-16 items-center justify-center px-3 py-5 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : ""}`}><p className="text-sm font-bold">{column.label}</p></div>)}</div>{rows.map((row, index) => <div key={row.label} className={`grid grid-cols-[2.2fr_repeat(3,1fr)] ${index < rows.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "scale" ? "bg-[#0c0d0d]/[0.03]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}</div>
-  </section>;
+  return (
+    <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare os planos</div>
+        <h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight">A estrutura certa para o <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">seu volume de leads</span></h2>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Veja o que entra em cada nível para escolher o plano que acompanha sua operação</p>
+      </div>
+
+      <div className="mt-10 md:hidden">
+        <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white">
+          <div className="grid grid-cols-3 border-b border-zinc-100">
+            {columns.map((column) => (
+              <div key={column.key} className={`min-h-[86px] px-2 py-4 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+                {column.key === "scale" && <span className="inline-flex rounded-full bg-white/10 px-2 py-0.5 text-[8px] font-bold tracking-[0.08em] text-[#64E5FA]">+ INVESTIDO</span>}
+                <p className={`font-bold ${column.key === "scale" ? "mt-1 text-[13px]" : "mt-4 text-[13px]"}`}>{column.name}</p>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-px bg-zinc-100">
+            {rows.map((row) => (
+              <article key={row.label} className="bg-white px-4 py-4">
+                <p className="text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</p>
+                <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-xl border border-zinc-100">
+                  {columns.map((column) => (
+                    <div key={column.key} className={`flex h-11 items-center justify-center border-r border-zinc-100 last:border-r-0 ${column.key === "scale" ? "bg-[#F7F3FF]" : "bg-white"}`}>
+                      <StatusMark enabled={row[column.key]} />
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-12 hidden overflow-hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
+        <div className="grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100">
+          <div className="flex items-end px-8 pb-7 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">O que sua operação recebe</div>
+          {columns.map((column) => (
+            <div key={column.key} className={`min-h-[124px] px-5 py-6 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+              {column.key === "scale" ? <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-[#64E5FA]">+ INVESTIDO</span> : <span className="block h-[26px]" />}
+              <p className="mt-2 text-base font-bold">{column.name}</p>
+              <p className={`mx-auto mt-1 max-w-[140px] text-[11px] leading-snug ${column.key === "scale" ? "text-white/60" : "text-zinc-400"}`}>{column.target}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-zinc-100">
+          {rows.map((row) => (
+            <div key={row.label} className="grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100 bg-white last:border-b-0">
+              <div className="flex min-h-[68px] items-center px-8 py-4 text-sm font-semibold leading-snug text-[#27272a]">{row.label}</div>
+              {columns.map((column) => (
+                <div key={column.key} className={`flex min-h-[68px] items-center justify-center border-l border-zinc-100 ${column.key === "scale" ? "bg-gradient-to-b from-[#FBF9FF] to-[#F4FDFF]" : "bg-white"}`}>
+                  <StatusMark enabled={row[column.key]} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hideEyebrow?: boolean; comparisonMode?: "market" | "plans" }) {
@@ -431,7 +491,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
              })}
           </div>
 
-          {comparisonMode === "plans" ? <PlanTierComparison rows={planComparisonRows} names={{ starter: t.pricing.starterName, scale: t.pricing.scaleName, enterprise: t.pricing.enterpriseName }} /> : <MarketComparison />}
+          {comparisonMode === "plans" ? <PlanTierComparison rows={planComparisonRows} plans={{ starter: { name: t.pricing.starterName, target: t.pricing.starterTarget }, scale: { name: t.pricing.scaleName, target: t.pricing.scaleTarget }, enterprise: { name: t.pricing.enterpriseName, target: t.pricing.enterpriseTarget } }} /> : <MarketComparison />}
        </div>
     </section>
   );
