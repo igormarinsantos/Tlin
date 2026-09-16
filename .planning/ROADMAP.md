@@ -10,7 +10,7 @@ Este roadmap evolui uma LP já posicionada em cinco fatias verticais: primeiro t
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Medição Comercial do Funil** - Conecta origem, lead, demo e resultado comercial em uma taxonomia útil.
+- [~] **Phase 1: Medição Comercial do Funil** - Implementada e publicada; validação operacional CRM pendente aceita no backlog.
 - [ ] **Phase 2: Pós-conversão de Alta Intenção** - Transforma a confirmação do formulário em continuidade de confiança e preparação para demo.
 - [ ] **Phase 3: Como Funciona — Prova da Operação** - Mostra visualmente a jornada comercial com IA e acompanhamento humano.
 - [ ] **Phase 4: Planos e Caminho de Fit** - Ajuda o visitante a entender a oferta e avançar para uma demo apropriada.
@@ -87,7 +87,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Medição Comercial do Funil | 0/TBD | Not started | - |
+| 1. Medição Comercial do Funil | 2/2 | Implemented — operational validation deferred | 2026-09-16 |
 | 2. Pós-conversão de Alta Intenção | 0/TBD | Not started | - |
 | 3. Como Funciona — Prova da Operação | 0/TBD | Not started | - |
 | 4. Planos e Caminho de Fit | 0/TBD | Not started | - |
@@ -97,9 +97,10 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 ### Phase 999.1: Configuração operacional do Deskcomm (BACKLOG)
 
-**Goal:** Concluir a configuração do CRM que não pode ser inventada pela landing: estágios, segredo da fonte de captação, resposta com identificador e webhook de saída para o backup.
+**Goal:** Manter a configuração do CRM e concluir a validação operacional que não pode ser provada apenas pela landing.
 **Requirements:** FUN-03
 **Plans:** 0 plans
 
 Plans:
-- [ ] Criar/revisar os estágios e automações no Deskcomm; configurar e validar o webhook de retorno antes de promover esta pendência novamente.
+- [x] Criar/revisar a fonte, automações e webhook de saída no Deskcomm; adicionar o segredo de retorno e a migration de backup.
+- [ ] Disparar um lead real de teste e uma mudança de estágio; confirmar a atividade no Deskcomm e a projeção correlacionada no Supabase, sem novo lead ou nova agenda.
