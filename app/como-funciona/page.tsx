@@ -64,7 +64,7 @@ function BenefitIcon({ kind }: { kind: (typeof benefitCards)[number]["kind"] }) 
       whileHover={{ y: -3, scale: 1.05 }}
       viewport={{ once: false, amount: 0.65 }}
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
-      className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/20 text-[#7254c8]"
+      className="flex h-8 w-8 items-center justify-center text-[#7254c8]"
     >
       <motion.div
         whileInView={animation}
@@ -73,7 +73,6 @@ function BenefitIcon({ kind }: { kind: (typeof benefitCards)[number]["kind"] }) 
       >
         <Icon size={22} strokeWidth={2} />
       </motion.div>
-      <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#38E3FF]" />
     </motion.div>
   );
 }
