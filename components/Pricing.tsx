@@ -148,9 +148,8 @@ function PlanTierComparison({
         <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white">
           <div className="grid grid-cols-3 border-b border-zinc-100">
             {columns.map((column) => (
-              <div key={column.key} className={`min-h-[116px] px-2 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-                {column.key === "scale" && <span className="inline-flex rounded-full border border-[#B597FF]/25 bg-white/70 px-2 py-0.5 text-[8px] font-bold tracking-[0.08em] text-[#8A6DE0]">+ INVESTIDO</span>}
-                <p className={`font-bold ${column.key === "scale" ? "mt-1 text-[13px]" : "mt-4 text-[13px]"}`}>{column.name}</p>
+              <div key={column.key} className={`min-h-[96px] px-2 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+                <p className="mt-2 font-bold text-[13px]">{column.name}</p>
                 <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-2.5 py-1.5 text-[9px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
               </div>
             ))}
@@ -178,9 +177,7 @@ function PlanTierComparison({
           <div className="flex items-end px-8 pb-7 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
           {columns.map((column) => (
             <div key={column.key} className={`min-h-[124px] px-5 py-6 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-              {column.key === "scale" ? <span className="inline-flex rounded-full border border-[#B597FF]/25 bg-white/70 px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-[#8A6DE0]">+ INVESTIDO</span> : <span className="block h-[26px]" />}
-              <p className="mt-2 text-base font-bold">{column.name}</p>
-              <p className="mx-auto mt-1 max-w-[140px] text-[11px] leading-snug text-zinc-500">{column.target}</p>
+              <p className="mt-4 text-base font-bold">{column.name}</p>
               <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-4 rounded-full px-4 py-2 text-[11px] font-bold transition-all hover:-translate-y-0.5 hover:shadow-sm ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
