@@ -129,7 +129,7 @@ function NavLinks({
   const linkClass = "relative py-2 px-4 rounded-full hover:bg-zinc-100 hover:text-[#0c0d0d] transition-colors duration-200";
   // Ancora pura quando a secao existe na pagina atual; senao volta pra home
   // com a ancora, em vez de um link morto (ver PAGES_WITH_FEATURES_SECTION).
-  const sectionHref = (id: string) => (PAGES_WITH_FEATURES_SECTION.includes(pathname) ? `#${id}` : `/#${id}`);
+  const sectionHref = (id: string) => id === "como-funciona" ? "/como-funciona" : (PAGES_WITH_FEATURES_SECTION.includes(pathname) ? `#${id}` : `/#${id}`);
 
   return (
     <nav aria-label="Navegação principal" className="flex items-center gap-2 font-semibold text-sm text-zinc-600 relative">
@@ -290,7 +290,7 @@ export function Header() {
     }
   });
 
-  if (pathname.startsWith("/qualificar") || pathname.startsWith("/demo")) return null;
+  if (pathname.startsWith("/qualificar") || pathname.startsWith("/demo") || pathname.startsWith("/obrigado")) return null;
 
   return (
     <>
