@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { CountryFlag } from "@/components/CountryFlag";
@@ -39,6 +40,7 @@ type LeadQualificationPopupProps = {
 
 export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
+  const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
@@ -692,6 +694,16 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               throw new Error(notifyResult?.crmError || notifyResult?.emailError || "Falha ao notificar API");
             }
             setDemoPendingConfirmation(Boolean(notifyResult.demoBooking?.pendingConfirmation));
+
+            if (demoAlreadyBooked && selectedDay && selectedSlot) {
+              sessionStorage.setItem("tlin_demo_confirmation", JSON.stringify({
+                day: selectedDay.label,
+                time: selectedSlot.when,
+              }));
+              trackFunnelEvent("demo_thank_you_opened", { plan_name: planName || "not_selected" });
+              router.push("/obrigado");
+              return;
+            }
 
             console.log("Status do envio:", notifyResult);
           } catch (err) {
