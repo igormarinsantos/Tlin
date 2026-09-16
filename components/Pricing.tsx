@@ -109,6 +109,7 @@ type PlanTierRow = { label: string; starter: boolean; scale: boolean; enterprise
 function PlanTierComparison({
   rows,
   plans,
+  onSelectPlan,
 }: {
   rows: PlanTierRow[];
   plans: {
@@ -116,12 +117,16 @@ function PlanTierComparison({
     scale: { name: string; target: string };
     enterprise: { name: string; target: string };
   };
+  onSelectPlan: (planName: string) => void;
 }) {
+  const [query, setQuery] = useState("");
   const columns = [
     { key: "starter", ...plans.starter },
     { key: "scale", ...plans.scale },
     { key: "enterprise", ...plans.enterprise },
   ] as const;
+  const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
+  const filteredRows = rows.filter((row) => row.label.toLocaleLowerCase("pt-BR").includes(normalizedQuery));
 
   return (
     <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
@@ -131,19 +136,28 @@ function PlanTierComparison({
         <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Veja o que entra em cada nível para escolher o plano que acompanha sua operação</p>
       </div>
 
+      <div className="mx-auto mt-8 max-w-md">
+        <label className="flex h-12 items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-4 transition-colors focus-within:border-[#B597FF] focus-within:ring-4 focus-within:ring-[#B597FF]/10">
+          <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-zinc-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" strokeLinecap="round" /></svg>
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar uma funcionalidade" className="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#0c0d0d] outline-none placeholder:text-zinc-400" aria-label="Buscar funcionalidade" />
+          {query && <button type="button" onClick={() => setQuery("")} className="text-xs font-bold text-[#B597FF]">Limpar</button>}
+        </label>
+      </div>
+
       <div className="mt-10 md:hidden">
         <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white">
           <div className="grid grid-cols-3 border-b border-zinc-100">
             {columns.map((column) => (
-              <div key={column.key} className={`min-h-[86px] px-2 py-4 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-                {column.key === "scale" && <span className="inline-flex rounded-full bg-white/10 px-2 py-0.5 text-[8px] font-bold tracking-[0.08em] text-[#64E5FA]">+ INVESTIDO</span>}
+              <div key={column.key} className={`min-h-[116px] px-2 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+                {column.key === "scale" && <span className="inline-flex rounded-full border border-[#B597FF]/25 bg-white/70 px-2 py-0.5 text-[8px] font-bold tracking-[0.08em] text-[#8A6DE0]">+ INVESTIDO</span>}
                 <p className={`font-bold ${column.key === "scale" ? "mt-1 text-[13px]" : "mt-4 text-[13px]"}`}>{column.name}</p>
+                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-2.5 py-1.5 text-[9px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
               </div>
             ))}
           </div>
           <div className="space-y-px bg-zinc-100">
-            {rows.map((row) => (
-              <article key={row.label} className="bg-white px-4 py-4">
+            {filteredRows.map((row) => (
+              <motion.article key={row.label} whileTap={{ scale: 0.985 }} className="bg-white px-4 py-4 transition-colors hover:bg-[#FCFCFD]">
                 <p className="text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</p>
                 <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-xl border border-zinc-100">
                   {columns.map((column) => (
@@ -152,34 +166,37 @@ function PlanTierComparison({
                     </div>
                   ))}
                 </div>
-              </article>
+              </motion.article>
             ))}
+            {filteredRows.length === 0 && <p className="bg-white px-5 py-10 text-center text-sm font-medium text-zinc-500">Nenhuma funcionalidade encontrada</p>}
           </div>
         </div>
       </div>
 
-      <div className="mt-12 hidden overflow-hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
-        <div className="grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100">
-          <div className="flex items-end px-8 pb-7 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">O que sua operação recebe</div>
+      <div className="mt-12 hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
+        <div className="sticky top-4 z-20 grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 backdrop-blur">
+          <div className="flex items-end px-8 pb-7 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
           {columns.map((column) => (
-            <div key={column.key} className={`min-h-[124px] px-5 py-6 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-              {column.key === "scale" ? <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-[#64E5FA]">+ INVESTIDO</span> : <span className="block h-[26px]" />}
+            <div key={column.key} className={`min-h-[124px] px-5 py-6 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+              {column.key === "scale" ? <span className="inline-flex rounded-full border border-[#B597FF]/25 bg-white/70 px-2.5 py-1 text-[9px] font-bold tracking-[0.1em] text-[#8A6DE0]">+ INVESTIDO</span> : <span className="block h-[26px]" />}
               <p className="mt-2 text-base font-bold">{column.name}</p>
-              <p className={`mx-auto mt-1 max-w-[140px] text-[11px] leading-snug ${column.key === "scale" ? "text-white/60" : "text-zinc-400"}`}>{column.target}</p>
+              <p className="mx-auto mt-1 max-w-[140px] text-[11px] leading-snug text-zinc-500">{column.target}</p>
+              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-4 rounded-full px-4 py-2 text-[11px] font-bold transition-all hover:-translate-y-0.5 hover:shadow-sm ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
         </div>
         <div className="bg-zinc-100">
-          {rows.map((row) => (
-            <div key={row.label} className="grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100 bg-white last:border-b-0">
+          {filteredRows.map((row) => (
+            <motion.div key={row.label} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="group grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100 bg-white last:border-b-0 transition-colors hover:bg-[#FCFCFD]">
               <div className="flex min-h-[68px] items-center px-8 py-4 text-sm font-semibold leading-snug text-[#27272a]">{row.label}</div>
               {columns.map((column) => (
-                <div key={column.key} className={`flex min-h-[68px] items-center justify-center border-l border-zinc-100 ${column.key === "scale" ? "bg-gradient-to-b from-[#FBF9FF] to-[#F4FDFF]" : "bg-white"}`}>
+                <div key={column.key} className={`flex min-h-[68px] items-center justify-center border-l border-zinc-100 transition-colors ${column.key === "scale" ? "bg-gradient-to-b from-[#FCFAFF] to-[#F5FCFF] group-hover:from-[#F7F1FF] group-hover:to-[#EDFBFF]" : "bg-white"}`}>
                   <StatusMark enabled={row[column.key]} />
                 </div>
               ))}
-            </div>
+            </motion.div>
           ))}
+          {filteredRows.length === 0 && <p className="bg-white px-8 py-14 text-center text-sm font-medium text-zinc-500">Nenhuma funcionalidade encontrada</p>}
         </div>
       </div>
     </section>
@@ -491,7 +508,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
              })}
           </div>
 
-          {comparisonMode === "plans" ? <PlanTierComparison rows={planComparisonRows} plans={{ starter: { name: t.pricing.starterName, target: t.pricing.starterTarget }, scale: { name: t.pricing.scaleName, target: t.pricing.scaleTarget }, enterprise: { name: t.pricing.enterpriseName, target: t.pricing.enterpriseTarget } }} /> : <MarketComparison />}
+          {comparisonMode === "plans" ? <PlanTierComparison rows={planComparisonRows} plans={{ starter: { name: t.pricing.starterName, target: t.pricing.starterTarget }, scale: { name: t.pricing.scaleName, target: t.pricing.scaleTarget }, enterprise: { name: t.pricing.enterpriseName, target: t.pricing.enterpriseTarget } }} onSelectPlan={(planName) => openPlanQualification(planName, "comparison_table")} /> : <MarketComparison />}
        </div>
     </section>
   );
