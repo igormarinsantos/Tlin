@@ -87,7 +87,7 @@ function StatusMark({ enabled, inverse = false }: { enabled: boolean; inverse?: 
   </span>;
 }
 
-function PlansComparison() {
+function MarketComparison() {
   const columns = [
     { key: "tlin", label: "Tlin" },
     { key: "agent", label: "Agente de IA comum" },
@@ -104,7 +104,29 @@ function PlansComparison() {
   </section>;
 }
 
-export function Pricing({ hideEyebrow = false }: { hideEyebrow?: boolean }) {
+type PlanTierRow = { label: string; starter: boolean; scale: boolean; enterprise: boolean };
+
+function PlanTierComparison({
+  rows,
+  names,
+}: {
+  rows: PlanTierRow[];
+  names: { starter: string; scale: string; enterprise: string };
+}) {
+  const columns = [
+    { key: "starter", label: names.starter },
+    { key: "scale", label: names.scale },
+    { key: "enterprise", label: names.enterprise },
+  ] as const;
+
+  return <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
+    <div className="mx-auto max-w-3xl text-center"><div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare os planos</div><h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight">A estrutura certa para o <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">seu volume de leads</span></h2><p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Veja o que entra em cada nível para escolher o plano que acompanha sua operação</p></div>
+    <div className="mt-10 space-y-3 md:hidden">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border ${column.key === "scale" ? "border-[#0c0d0d] bg-[#0c0d0d]" : "border-zinc-200 bg-white"}`}><div className={`flex h-14 items-center px-5 ${column.key === "scale" ? "text-white" : "text-[#0c0d0d]"}`}><p className="text-base font-bold">{column.label}</p></div><div className="grid grid-cols-2 border-t border-white/10">{rows.map((row) => <div key={row.label} className={`flex min-h-14 items-center gap-2 border-b border-r px-3 py-2 text-[11px] font-semibold leading-snug ${column.key === "scale" ? "border-white/10 text-white/80" : "border-zinc-100 text-zinc-600"}`}><StatusMark enabled={row[column.key]} inverse={column.key === "scale"} /><span>{row.label}</span></div>)}</div></article>)}</div>
+    <div className="mt-12 hidden overflow-hidden rounded-[2rem] border border-zinc-200 bg-white md:block"><div className="grid grid-cols-[2.2fr_repeat(3,1fr)] border-b border-zinc-100 bg-[#FCFCFD]"><div className="flex items-end px-7 pb-5 text-[11px] font-bold uppercase tracking-wide text-zinc-400">O que está incluído</div>{columns.map((column) => <div key={column.key} className={`flex min-h-16 items-center justify-center px-3 py-5 text-center ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : ""}`}><p className="text-sm font-bold">{column.label}</p></div>)}</div>{rows.map((row, index) => <div key={row.label} className={`grid grid-cols-[2.2fr_repeat(3,1fr)] ${index < rows.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "scale" ? "bg-[#0c0d0d]/[0.03]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}</div>
+  </section>;
+}
+
+export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hideEyebrow?: boolean; comparisonMode?: "market" | "plans" }) {
   const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -177,6 +199,20 @@ export function Pricing({ hideEyebrow = false }: { hideEyebrow?: boolean }) {
       ].filter(Boolean)
     }
   ];
+
+  const planComparisonRows: PlanTierRow[] = [
+    { label: t.pricing.starterF1, starter: true, scale: true, enterprise: true },
+    { label: t.pricing.scaleF2, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.scaleF3, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.scaleF7, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.scaleF6, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.scaleF4, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.scaleF5, starter: false, scale: true, enterprise: true },
+    { label: t.pricing.enterpriseF3, starter: false, scale: false, enterprise: true },
+    { label: t.pricing.enterpriseF4, starter: false, scale: false, enterprise: true },
+    { label: t.pricing.enterpriseF5, starter: false, scale: false, enterprise: true },
+    { label: t.pricing.enterpriseF6, starter: false, scale: false, enterprise: true },
+  ].filter((row) => Boolean(row.label));
 
   useEffect(() => {
     if (isAnnual) {
@@ -395,7 +431,7 @@ export function Pricing({ hideEyebrow = false }: { hideEyebrow?: boolean }) {
              })}
           </div>
 
-          <PlansComparison />
+          {comparisonMode === "plans" ? <PlanTierComparison rows={planComparisonRows} names={{ starter: t.pricing.starterName, scale: t.pricing.scaleName, enterprise: t.pricing.enterpriseName }} /> : <MarketComparison />}
        </div>
     </section>
   );

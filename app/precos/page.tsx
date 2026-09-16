@@ -32,7 +32,7 @@ export default function PrecosPage() {
     <main className="flex min-h-[100svh] flex-col bg-white text-[#0c0d0d]">
       <GlobalBackground />
       <ScrollBgWrapper>
-        <Pricing hideEyebrow />
+        <Pricing hideEyebrow comparisonMode="plans" />
         <Faq />
         <FooterBanner />
         <Footer />
