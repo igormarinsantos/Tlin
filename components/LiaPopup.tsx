@@ -709,7 +709,7 @@ export function LiaPopup() {
                 animate={{ y: 0 }}
                 exit={{ y: 200 }}
                 transition={{ duration: 0.875, ease: [0.23, 1, 0.32, 1] }}
-                className="relative group"
+                className={`relative group ${isOpen ? "hidden sm:block" : ""}`}
               >
                 {/* External Lilac Glow */}
                 <div className={`absolute -inset-1 bg-[#B597FF] rounded-full blur-md transition duration-1000 group-hover:duration-200 animate-pulse opacity-70 group-hover:opacity-100 pointer-events-none ${isOpen ? 'opacity-40' : ''}`}></div>
