@@ -113,7 +113,7 @@ function MarketComparison() {
           </div>
         ))}
       </div>
-      <div className="overflow-hidden rounded-b-[2rem] border border-zinc-200 bg-white">
+      <div className="overflow-hidden rounded-bl-[2rem] rounded-tl-[2rem] rounded-br-[2rem] border border-zinc-200 bg-white">
         {COMPARISON_ROWS.map((row, index) => <div key={row.label} className={`grid grid-cols-[1.9fr_repeat(4,1fr)] ${index < COMPARISON_ROWS.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "tlin" ? "bg-[#38E3FF]/[0.06]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}
       </div>
     </div>
