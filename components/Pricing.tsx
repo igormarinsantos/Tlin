@@ -91,9 +91,9 @@ function StatusMark({ enabled, inverse = false }: { enabled: boolean; inverse?: 
 function MarketComparison() {
   const columns = [
     { key: "tlin", label: "Tlin" },
-    { key: "agent", label: "Agente de IA comum" },
+    { key: "agent", label: "Agente de IA" },
     { key: "crm", label: "CRM comum" },
-    { key: "human", label: "Atendimento humano" },
+    { key: "human", label: "Vendedor" },
   ] as const;
   const HeaderIcon = ({ column }: { column: "agent" | "crm" | "human" }) => {
     const Icon = column === "agent" ? Bot : column === "crm" ? Kanban : Headset;
@@ -103,13 +103,13 @@ function MarketComparison() {
   return <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
     <div className="mx-auto max-w-3xl text-center"><div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare as operações</div><h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight"><span className="md:hidden">Não é só uma IA<br />É a <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operação inteira</span><br />trabalhando para vender</span><span className="hidden md:inline">Não é só uma IA. É a <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">operação inteira</span> trabalhando para vender</span></h2><p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-500">Quando chega volume de leads, responder é só o começo. Compare o que cada opção sustenta na operação</p></div>
     <div className="mt-10 md:hidden">
-      <div className="space-y-3">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border bg-white ${column.key === "tlin" ? "border-[#38E3FF]/60" : "border-zinc-200"}`}><div className={`flex h-14 items-center px-5 ${column.key === "tlin" ? "bg-[#F3FDFF]" : ""}`}>{column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={66} height={24} className="h-6 w-auto" /> : <div className="flex items-center gap-2.5"><HeaderIcon column={column.key} /><p className="text-base font-bold text-[#0c0d0d]">{column.label}</p></div>}</div><div className="grid grid-cols-2 border-t border-zinc-100">{COMPARISON_ROWS.map((row) => <div key={row.label} className="flex min-h-14 items-center gap-2 border-b border-r border-zinc-100 px-3 py-2 text-[11px] font-semibold leading-snug text-zinc-600"><StatusMark enabled={row[column.key]} /><span>{row.label}</span></div>)}</div></article>)}</div>
+      <div className="space-y-3">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border bg-white ${column.key === "tlin" ? "border-[#38E3FF]/60" : "border-zinc-200"}`}><div className={`flex h-14 items-center px-5 ${column.key === "tlin" ? "bg-[#F3FDFF]" : ""}`}>{column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={66} height={24} className="h-6 w-auto" /> : <div className="flex w-full items-center justify-center gap-2.5"><HeaderIcon column={column.key} /><p className="text-[17px] font-bold text-[#0c0d0d]">{column.label}</p></div>}</div><div className="grid grid-cols-2 border-t border-zinc-100">{COMPARISON_ROWS.map((row) => <div key={row.label} className="flex min-h-14 items-center gap-2 border-b border-r border-zinc-100 px-3 py-2 text-[11px] font-semibold leading-snug text-zinc-600"><StatusMark enabled={row[column.key]} /><span>{row.label}</span></div>)}</div></article>)}</div>
     </div>
     <div className="mt-12 hidden md:block">
       <div className="ml-[32.203%] grid grid-cols-4 overflow-hidden rounded-t-[2rem] border border-b-0 border-zinc-200">
         {columns.map((column) => (
           <div key={column.key} className={`flex min-h-[76px] items-center justify-center px-2 py-4 text-center ${column.key === "tlin" ? "bg-[#F3FDFF]" : "bg-[#FCFCFD]"}`}>
-            {column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={70} height={26} className="h-6 w-auto" /> : <div className="flex items-center gap-1.5 text-left"><HeaderIcon column={column.key} /><p className="whitespace-nowrap text-[12px] font-bold leading-tight tracking-tight text-[#0c0d0d]">{column.label}</p></div>}
+            {column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={70} height={26} className="h-6 w-auto" /> : <div className="flex items-center justify-center gap-2 text-center"><HeaderIcon column={column.key} /><p className="whitespace-nowrap text-[14px] font-bold leading-tight tracking-tight text-[#0c0d0d]">{column.label}</p></div>}
           </div>
         ))}
       </div>
