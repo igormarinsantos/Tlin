@@ -371,7 +371,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
   return (
     <section 
       onMouseMove={handleMouseMove}
-      className={`relative w-full [overflow-x:clip] bg-white pb-24 ${hideEyebrow ? "pt-36 md:pt-40" : "py-24"}`}
+      className={`relative w-full [overflow-anchor:none] [overflow-x:clip] bg-white pb-24 ${hideEyebrow ? "pt-36 md:pt-40" : "py-24"}`}
     >
 
 
@@ -392,10 +392,10 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
              </div>
              
              <div className={`flex flex-col items-center justify-center gap-4 mt-6 transition-all duration-300 ${hoveredIndex !== null ? 'blur-[2px] opacity-60' : 'opacity-100'}`}>
-                <div className="relative bg-zinc-100/50 p-1 rounded-full flex items-center border border-zinc-200 w-[280px]">
+                <div className="relative flex h-12 w-[280px] items-center rounded-full border border-zinc-200 bg-zinc-100/50 p-1">
                    {/* Sliding Background */}
                    <motion.div 
-                      className="absolute top-1 bottom-1 left-1 rounded-full bg-white border border-zinc-200/50 z-0"
+                      className="absolute bottom-1 left-1 top-1 z-0 rounded-full bg-white"
                       initial={false}
                       animate={{ 
                         x: isAnnual ? "100%" : "0%",
@@ -406,14 +406,14 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                    
                    <button 
                      onClick={() => setIsAnnual(false)}
-                     className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
+                     className={`relative z-10 h-10 flex-1 rounded-full text-xs font-bold transition-colors duration-300 ${!isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
                      {t.pricing.monthly}
                    </button>
                    
                    <button 
                      onClick={() => setIsAnnual(true)}
-                     className={`relative z-10 flex-1 py-2.5 rounded-full text-xs font-bold transition-colors duration-300 flex items-center justify-center gap-2 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
+                     className={`relative z-10 flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-bold transition-colors duration-300 ${isAnnual ? 'text-[#0c0d0d]' : 'text-zinc-500 hover:text-zinc-700'}`}
                    >
                      {t.pricing.annual}
                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-[#B597FF] text-white' : 'bg-white text-[#B597FF] border border-[#B597FF]/20'}`}>
