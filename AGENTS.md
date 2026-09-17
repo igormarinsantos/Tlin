@@ -148,10 +148,10 @@ jornada, ROI, comparação e CTA final. Mesmo um import com SSR não produz HTML
 inicial se seu pai adiar a montagem. TextReveal, ROI e FooterBanner também
 usam imports com `ssr: false`. Avalie indexação e hidratação ao mudar isso.
 
-`SiteChrome` fornece Header, LiaPopup e SmoothScroll fora de `/demo` e `/comece`.
-O controlador de `open-qualification` ainda é local a MarketingLandingPage,
-`/precos` e `/como-funciona`; blog/legal têm header mas não o listener do modal.
-Essa lacuna pertence à fase 2. `/qualificar` redireciona para `/demo`.
+`SiteChrome` fornece Header, LiaPopup, SmoothScroll e um único
+`QualificationController` fora de `/demo` e `/comece`. Não adicione listeners
+locais de `open-qualification`: blog/legal e as demais rotas já usam o controlador
+global, que desmonta na mudança de pathname. `/qualificar` redireciona para `/demo`.
 
 ### Pricing (`components/Pricing.tsx`)
 
@@ -182,14 +182,21 @@ nativo — nunca uma lib de timezone). A confirmação final (`POST /api/notify`
 também dispara o webhook de captação do Deskcomm e
 `crm_book_appointment` via MCP.
 
-A captura antecipada tenta `POST /api/leads/capture` ao informar telefone,
-se o token Turnstile já estiver disponível. Uma demo efetivamente marcada
-redireciona a `/obrigado` com dia/horário em sessionStorage; WhatsApp é opcional.
-`POST /api/webhooks/deskcomm` recebe eventos com assinatura HMAC e tenta projetar
-o estágio no Supabase. Renovação de token, retries, identidade, correlação e
-semântica de eventos ainda têm lacunas: consulte a auditoria de 17/09.
-Não trate `qualify_lead` como prova de agenda/qualificação: hoje dispara antes
-da resposta da API. `close_convert_lead` é clique no WhatsApp, não venda.
+Na fase 2, `useQualificationRequest` centraliza captura, tokens e envio. Captura
+antecipada só após confirmar telefone; cada envio consome um token diferente.
+`QualificationRequest` persiste identidade/captura/estado por até 24 horas; um envio
+interrompido vira incerto e exige verificar com a equipe antes de outra reserva.
+Novo pedido explícito recebe nova identidade. Progresso inválido é descartado e
+horários expirados voltam ao calendário. Nunca persista tokens de segurança.
+`POST /api/notify` exige horário futuro e só retorna sucesso quando a agenda
+confirma `marcado === true`; erros secundários preservam uma reserva já confirmada.
+`/obrigado` usa recibo versionado por até 24 horas em sessionStorage, sem removê-lo
+no refresh. Recibos são estado de UI, nunca autorização para operações no servidor.
+`qualify_lead` só dispara após confirmação no formulário, mas score e reserva ainda
+não comprovam qualificação comercial. `close_convert_lead` continua sendo clique
+no WhatsApp, não venda. Correlação, idempotência durável e contrato de métricas
+são fase 3; `POST /api/webhooks/deskcomm` mantém a projeção HMAC existente.
+Leia `docs/quality/phase-2-verification.md` para limites e testes.
 
 A validação real de ponta a ponta Deskcomm/Supabase foi adiada no ciclo anterior;
 não a declare concluída com base em build ou testes do adaptador.

@@ -8,7 +8,10 @@ export async function POST(req: NextRequest) {
   if (!rateLimit.allowed) return rateLimitedResponse(rateLimit.retryAfter);
   if (requestIsTooLarge(req, 8_000)) return NextResponse.json({ success: false }, { status: 413 });
 
-  const data = await req.json();
+  const data = await req.json().catch(() => null);
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return NextResponse.json({ success: false }, { status: 400 });
+  }
   const name = typeof data.name === "string" ? data.name.trim() : "";
   const phone = typeof data.phone === "string" ? data.phone.replace(/\D/g, "") : "";
   const countryCode = typeof data.countryCode === "string" ? data.countryCode.replace(/\D/g, "") : "55";
@@ -19,7 +22,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Validação necessária." }, { status: 403 });
   }
   const result = await captureDeskcommLead({
-    leadCaptureId: typeof data.leadCaptureId === "string" ? data.leadCaptureId : crypto.randomUUID(),
+    leadCaptureId: typeof data.leadCaptureId === "string" && data.leadCaptureId.length > 0 && data.leadCaptureId.length <= 128 ? data.leadCaptureId : crypto.randomUUID(),
     name,
     phone: `+${countryCode}${phone}`,
     status: "novo",

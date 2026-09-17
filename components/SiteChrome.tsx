@@ -5,6 +5,8 @@ import { Header } from "@/components/Header";
 import { LiaPopup } from "@/components/LiaPopup";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
+import { QualificationController } from "@/components/QualificationController";
+
 // Rotas de conversão são experiências próprias, sem a navegação da LP.
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -17,6 +19,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Header />
       {children}
       <LiaPopup />
+      <QualificationController key={pathname} />
     </SmoothScroll>
   );
 }

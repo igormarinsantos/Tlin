@@ -41,6 +41,7 @@ export async function captureDeskcommLead(
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
+      signal: AbortSignal.timeout(10_000),
       headers: {
         "Content-Type": "application/json",
         "Idempotency-Key": input.leadCaptureId,

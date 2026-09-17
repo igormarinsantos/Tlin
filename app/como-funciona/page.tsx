@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, MessagesSquare, TrendingUp, Zap } from "lucide-react";
 import { GlobalBackground } from "@/components/GlobalBackground";
@@ -10,11 +10,9 @@ import { FooterBanner } from "@/components/FooterBanner";
 import { Footer } from "@/components/Footer";
 import { CampaignReviews } from "@/components/CampaignReviews";
 import { OperationNumbers } from "@/components/OperationNumbers";
-import { LeadQualificationPopup } from "@/components/LeadQualificationPopup";
 import { HowItWorksCard } from "@/components/CampaignHowItWorks";
 import { HumanCalendarMotion } from "@/components/HumanCalendarMotion";
 import { SystemPreview } from "@/components/SystemPreview";
-import { trackFunnelEvent } from "@/lib/utm";
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <div className="relative mb-5 inline-flex overflow-hidden rounded-full p-[1px]"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} /><span className="relative rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">{children}</span></div>;
@@ -78,17 +76,6 @@ function BenefitIcon({ kind }: { kind: (typeof benefitCards)[number]["kind"] }) 
 }
 
 export default function ComoFuncionaPage() {
-  const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
-
-  useEffect(() => {
-    const open = (event: Event) => {
-      const detail = (event as CustomEvent<{ plan?: string; source?: string }>).detail;
-      setQualifyPlan(detail?.plan || "TLIN");
-      trackFunnelEvent("start_lead_form", { plan_name: detail?.plan || "TLIN", cta_source: detail?.source || "how_it_works" });
-    };
-    window.addEventListener("open-qualification", open);
-    return () => window.removeEventListener("open-qualification", open);
-  }, []);
 
   const openQualification = () => window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "how_it_works_page" } }));
 
@@ -120,7 +107,6 @@ export default function ComoFuncionaPage() {
         <CampaignReviews variant="iaWhatsapp" />
 
         <FooterBanner /><Footer />
-        {qualifyPlan && <LeadQualificationPopup isOpen onClose={() => setQualifyPlan(null)} planName={qualifyPlan} />}
       </ScrollBgWrapper>
     </main>
   );

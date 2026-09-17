@@ -38,6 +38,7 @@ export async function callDeskcommTool<T = Record<string, unknown>>(
   try {
     const response = await fetch(MCP_URL, {
       method: "POST",
+      signal: AbortSignal.timeout(15_000),
       headers: {
         Authorization: `Bearer ${API_TOKEN}`,
         "Content-Type": "application/json",

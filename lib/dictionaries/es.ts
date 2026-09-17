@@ -536,6 +536,11 @@ export const esES: TranslationDictionary = {
     successMessageHigh: "Con el volumen que maneja {name}, cada minuto cuenta. Ya priorizamos este perfil y te contactaremos pronto por WhatsApp.",
     talkToTeam: "Hablar con el equipo",
     saveChange: "Guardar cambio",
+    sendingRequest: "Enviando tu solicitud. Espera la confirmación.",
+    bookingUncertain: "No llegó la respuesta de la reserva. Para evitar otra reserva, consulta con el equipo antes de intentarlo de nuevo.",
+    bookingSupport: "Consultar con el equipo",
+    bookingSupportMessage: "¡Hola! Necesito verificar si mi demo quedó agendada. Referencia:",
+    retryAvailability: "Consultar horarios de nuevo",
     sendError: "No pude enviar tu solicitud ahora. Intenta confirmar nuevamente en unos instantes.",
     volumeOptions: ["Hasta 40", "40 a 150", "150 a 500", "500 a 1.5k", "Más de 5k"],
     teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Más de 50"]

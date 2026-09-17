@@ -5,10 +5,10 @@ Site comercial da tlin.ai: uma operação de vendas com IA para WhatsApp, CRM, f
 > **Estado atual · 17 de setembro de 2026**  
 > A experiência comercial está implementada em desktop e mobile: home, páginas de solução, preços, calculadora de ROI, comparativos, fluxo de demo, chat “Fale com a IA”, blog e páginas legais. O foco de evolução agora é polimento de conversão, conteúdo real de cases e validação das integrações de produção.
 
-Prioridade comercial: **demos confirmadas com leads qualificados**. A fase 1 do
-[plano de qualidade](docs/quality/README.md) estabelece checks locais/CI, referência
-visual e controle da dívida de lint. Páginas implementadas não significam que as
-integrações ou métricas já estejam validadas de ponta a ponta.
+Prioridade comercial: **demos confirmadas com leads qualificados**. As fases 1 e 2 do
+[plano de qualidade](docs/quality/README.md) estabelecem checks locais/CI, referência
+visual e um fluxo de demo com retomada e tratamento de falhas. Integrações reais e
+qualificação comercial ainda precisam da validação operacional da fase 3.
 
 ## Para uma IA que vai continuar o trabalho
 
@@ -100,10 +100,10 @@ avalie o HTML inicial, a hidratação e o custo de carregamento.
 
 ## Fluxo de conversão
 
-Os CTAs de marketing emitem `open-qualification`. Home/campanhas, `/precos` e
-`/como-funciona` possuem listeners locais: registram a origem no tracking e passam
-o plano ao popup. O header global também aparece em blog/legal, onde ainda falta
-esse listener. A centralização é uma correção prevista para a fase 2.
+Os CTAs emitem `open-qualification`. Um único `QualificationController` em
+`SiteChrome` atende todas as páginas com header, incluindo blog e páginas legais.
+Ele preserva plano/origem, ignora aberturas repetidas e desmonta na mudança de rota.
+`/demo` e `/comece` continuam com o formulário embedded.
 
 ```text
 CTA → open-qualification → LeadQualificationPopup
@@ -117,11 +117,15 @@ O popup tem duas apresentações:
 - **Embedded** em `/demo` e `/comece`, como uma página de conversão própria
 - **Modal escuro** nas páginas de marketing, aberto por CTA
 
-O fluxo tenta a captura antecipada em `POST /api/leads/capture` quando o telefone é
-informado e já existe token Turnstile. A agenda vem de `GET /api/public/demo/availability`;
-a confirmação final passa por `POST /api/notify`. Deskcomm é a fonte operacional;
-Supabase é uma projeção de backup. Renovação de token, retries, identidade e correlação
-são pendências descritas na [auditoria](docs/auditoria-padroes-conversao-2026-09-17.md).
+Após confirmar o telefone, o fluxo aguarda um token e tenta `POST /api/leads/capture`.
+A confirmação final aguarda essa captura, usa outro token e envia os dados revisados
+com o mesmo identificador a `POST /api/notify`. Só `demoBooking.booked === true`
+abre `/obrigado`; o recibo permanece na sessão por até 24 horas, inclusive no refresh.
+Horários recusados levam a uma nova consulta. Falhas conhecidas permitem retry;
+respostas incertas bloqueiam outra reserva e oferecem contato com a equipe.
+Deskcomm continua sendo a fonte operacional; Supabase é a projeção de backup.
+O bloqueio do cliente não substitui idempotência durável no CRM. Veja o
+[contrato e limites da fase 2](docs/quality/phase-2-verification.md).
 
 ## Stack e comandos
 
@@ -179,7 +183,7 @@ O domínio configurado pelo código é `https://tlin.ia.br`; `https://app.tlin.i
 - Componentes React em PascalCase. Utilitários e dados em `lib/`
 - Não crie uma nova página de campanha duplicando toda a landing: prefira uma nova `HeroVariant` e conteúdo nos dicionários
 - Não mova a máquina de estados de `LeadQualificationPopup` para um componente gigante novo. Extras de UI ficam em `components/lead-qualification/`
-- Reutilize os helpers de tracking, mas confira a semântica: `qualify_lead` atualmente dispara antes da resposta da API e `close_convert_lead` representa um clique no WhatsApp. A correção do contrato está na fase 3
+- Reutilize os helpers de tracking, mas confira a semântica: `qualify_lead` no formulário agora dispara apenas após reserva confirmada, mas ainda não comprova qualificação comercial e `close_convert_lead` representa um clique no WhatsApp. A correção do contrato está na fase 3
 - Em unions discriminadas da integração Deskcomm, prefira `result.ok === false` em vez de `!result.ok`, pois o narrowing deste projeto foi inconsistente
 
 ## Checklist antes de subir

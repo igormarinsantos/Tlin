@@ -12,7 +12,7 @@ como concluídas as fases antigas de `.planning/`.
 | Fase | Entrega | Estado |
 | --- | --- | --- |
 | 1. Base de qualidade | Documentação atual, lint, checks automáticos e referência visual | Implementada localmente; publicação/CI remoto pendentes |
-| 2. Funil confiável | CTAs globais, token, captura/retry, identidade, retomada e confirmação | Planejada |
+| 2. Funil confiável | CTAs globais, token, captura/retry, identidade, retomada e confirmação | Implementada localmente; integrações reais/publicação pendentes |
 | 3. Tracking e CRM | Contrato de eventos, atribuição, correlação, deduplicação, contas e painel | Planejada |
 | 4. Fundação do design system | Tokens, componentes oficiais e catálogo real | Planejada |
 | 5. Aplicação e consistência | Migração gradual, teclado, acessibilidade, idiomas e mobile | Planejada |
@@ -48,7 +48,7 @@ git status --short
 | `npm run typecheck` | `next typegen` e `tsc --noEmit --incremental false`; funciona sem um build prévio |
 | `npm run lint` | Diagnóstico completo de ESLint, incluindo a dívida conhecida |
 | `npm run lint:check` | Bloqueia erros e aumento dos avisos por arquivo/regra |
-| `npm test` | Todos os testes Vitest, incluindo adaptador e política de lint |
+| `npm test` | Vitest: adaptadores, endpoints simulados, tokens, retomada, formulário, CTAs, confirmação e política de lint |
 | `npm run test:lead-capture` | Apenas o teste existente do adaptador Deskcomm |
 | `npm run build` | Compilação de produção e geração das rotas |
 | `npm run check` | Executa tipos, lint controlado, testes e build em sequência |
@@ -103,3 +103,8 @@ adiada; só deve ser declarada concluída com evidência real quando for retomad
 - Capturas reais das primeiras dobras de home, campanha, preços e demo, em desktop/mobile, com limites de cobertura declarados.
 
 Checks finais e limitações desta entrega estão em [phase-1-verification.md](phase-1-verification.md).
+
+## Evidências da fase 2
+
+Contrato, verificações e limites de retry em [phase-2-verification.md](phase-2-verification.md).
+Testes de interface usam React Testing Library e jsdom apenas como dependências de desenvolvimento.
