@@ -640,18 +640,18 @@ export function LiaPopup() {
               </div>
 
               {qualificationStep > 0 && qualificationStep < 7 && !isTyping && !reasoningLabel && !currentOptions && <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
-                 <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
-                   messages.length > 0 ? `flex-row ${qualificationStep === 2 ? 'items-center' : 'items-end'} gap-1.5 rounded-[1.25rem] p-2.5` : 'flex-col rounded-[1.5rem] p-3 py-4'
+                 <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/60 focus-within:ring-4 focus-within:ring-[#B597FF]/10 transition-all duration-300 ${
+                   messages.length > 0 ? `flex-row ${qualificationStep === 2 ? 'items-center gap-2 rounded-[1.25rem] p-2' : 'items-end gap-1.5 rounded-[1.25rem] p-2.5'}` : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
                    {qualificationStep === 2 && <div className="relative shrink-0">
                      <button
                        type="button"
                        onClick={() => setIsCountryDropdownOpen((open) => !open)}
-                       className="flex h-9 items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-2 text-[12px] font-bold text-zinc-200 transition-colors hover:bg-white/10"
+                       className="flex h-10 items-center gap-1.5 rounded-xl bg-white/[0.04] px-2.5 text-[13px] font-bold text-zinc-200 transition-colors hover:bg-white/[0.08]"
                        aria-label="Selecionar DDI"
                        aria-expanded={isCountryDropdownOpen}
                      >
-                       <CountryFlag country={COUNTRIES.find((country) => country.code === countryCode)?.flag || "br"} size={18} />
+                       <CountryFlag country={COUNTRIES.find((country) => country.code === countryCode)?.flag || "br"} size={20} />
                        {countryCode}
                        <svg viewBox="0 0 24 24" className={`h-3 w-3 text-zinc-500 transition-transform ${isCountryDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
                      </button>
@@ -665,6 +665,7 @@ export function LiaPopup() {
                        </motion.div>}
                      </AnimatePresence>
                    </div>}
+                   {qualificationStep === 2 && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-white/10" />}
                    <textarea
                      ref={textareaRef}
                      aria-label="Mensagem para Igor"
@@ -676,7 +677,7 @@ export function LiaPopup() {
                      maxLength={qualificationStep === 2 ? 15 : qualificationStep === 6 ? 160 : 80}
                      placeholder={inputPlaceholder}
                      className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full px-2 font-semibold leading-relaxed transition-all duration-300 ${
-                       qualificationStep === 2 ? 'h-9 min-h-9 py-0 leading-9 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
+                       qualificationStep === 2 ? 'h-10 min-h-10 py-[9px] leading-5 text-[15px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
@@ -684,11 +685,11 @@ export function LiaPopup() {
                        aria-label="Enviar mensagem"
                        onClick={() => handleSendMessage()}
                        disabled={!isInputValid()}
-                       className={`${messages.length > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center transition-all ${
+                       className={`${qualificationStep === 2 ? 'h-10 w-10' : messages.length > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center transition-all ${
                           isInputValid() ? 'bg-white text-zinc-950' : 'bg-white/10 text-zinc-500'
                        }`}
                      >
-                        <svg width={messages.length > 0 ? 17 : 20} height={messages.length > 0 ? 17 : 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                        <svg width={qualificationStep === 2 ? 20 : messages.length > 0 ? 17 : 20} height={qualificationStep === 2 ? 20 : messages.length > 0 ? 17 : 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
                      </button>
                    </div>
                  </div>
