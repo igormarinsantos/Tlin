@@ -166,10 +166,16 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
             <button
               type="button"
               onClick={openQualification}
-              className="group mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#0c0d0d] py-3.5 text-center text-[13px] font-bold text-white transition-transform active:scale-[0.98]"
+              className="group relative mt-5 block w-full overflow-hidden rounded-full p-[1px] transition-transform active:scale-[0.98]"
             >
-              {t.nav.cta}
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5"><ArrowUpRightIcon /></span>
+              <span
+                aria-hidden="true"
+                className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+                style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
+              />
+              <span className="relative flex items-center justify-center rounded-full bg-[#0c0d0d] py-3.5 text-center text-[13px] font-bold text-white transition-colors duration-300 group-hover:bg-gradient-to-r group-hover:from-[#B597FF] group-hover:to-[#38E3FF] group-hover:text-[#0c0d0d]">
+                {t.nav.cta}
+              </span>
             </button>
           </div>
         </motion.div>
