@@ -15,6 +15,8 @@ export function LiaPopup() {
   const [isTyping, setIsTyping] = useState(false);
   const [qualificationStep, setQualificationStep] = useState(0);
   const [leadName, setLeadName] = useState("");
+  const [typingBotText, setTypingBotText] = useState<string | null>(null);
+  const [typedCharacters, setTypedCharacters] = useState(0);
   // Mostrado enquanto espera a resposta real da API, antes do "digitando"
   // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
   const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
@@ -104,6 +106,24 @@ export function LiaPopup() {
     setStatus(isTyping ? t.liaPopup.typing : t.liaPopup.online);
   }, [t, isTyping]);
 
+  useEffect(() => {
+    if (!typingBotText) return;
+
+    if (typedCharacters < typingBotText.length) {
+      const timeout = window.setTimeout(() => setTypedCharacters((count) => count + 1), 14);
+      return () => window.clearTimeout(timeout);
+    }
+
+    const timeout = window.setTimeout(() => {
+      setMessages((previous) => [...previous, { role: "bot", text: typingBotText, type: "text" }]);
+      setTypingBotText(null);
+      setTypedCharacters(0);
+      setIsTyping(false);
+      setStatus(t.liaPopup.online);
+    }, 180);
+    return () => window.clearTimeout(timeout);
+  }, [typedCharacters, t.liaPopup.online, typingBotText]);
+
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -171,6 +191,8 @@ export function LiaPopup() {
     setIsTyping(false);
     setQualificationStep(0);
     setLeadName("");
+    setTypingBotText(null);
+    setTypedCharacters(0);
     setReasoningLabel(null);
     setStatus(t.liaPopup.online);
     trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
@@ -178,7 +200,9 @@ export function LiaPopup() {
 
   const beginQualification = () => {
     setQualificationStep(1);
-    setMessages([{ role: "bot", text: t.leadQualify.initialMsg, type: "text" }]);
+    setIsTyping(true);
+    setTypingBotText(t.leadQualify.initialMsg);
+    setTypedCharacters(0);
     trackFunnelEvent("start_lead_form", { cta_source: "igor_chat" });
   };
 
@@ -218,9 +242,8 @@ export function LiaPopup() {
 
     window.setTimeout(() => {
       setReasoningLabel(null);
-      setIsTyping(false);
-      setStatus(t.liaPopup.online);
-      setMessages(prev => [...prev, { role: "bot", text: nextMessage, type: "text" }]);
+      setTypingBotText(nextMessage);
+      setTypedCharacters(0);
       setQualificationStep((step) => Math.min(step + 1, 7));
     }, 850);
   };
@@ -379,7 +402,7 @@ export function LiaPopup() {
               {/* Scrollable Content */}
               <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10">
                 
-                {messages.length === 0 ? (
+                {messages.length === 0 && !typingBotText ? (
                   <div className="flex-1 flex flex-col pt-1 pb-6">
                     <div className="mb-5 mt-1">
                       <h2 className="text-xl font-black bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent mb-1 tracking-tight">Vamos entender sua operação</h2>
@@ -459,7 +482,21 @@ export function LiaPopup() {
                       </div>
                     )}
 
-                    {isTyping && (
+                    {typingBotText && (
+                      <div className="flex items-start gap-2">
+                        <div className="w-8 h-8 shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden mt-1">
+                            <img src="/team/igor-avatar.png" alt="Igor" className="w-full h-full object-cover" />
+                          </div>
+                        </div>
+                        <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] p-3.5 text-[13px] font-semibold leading-relaxed text-zinc-100">
+                          <FormattedMessage text={typingBotText.slice(0, typedCharacters)} />
+                          <span className="ml-0.5 inline-block h-3 w-0.5 animate-pulse bg-[#38E3FF] align-middle" />
+                        </div>
+                      </div>
+                    )}
+
+                    {isTyping && !typingBotText && (
                       <div className="flex items-start gap-2">
                          <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
                            <img
@@ -493,7 +530,7 @@ export function LiaPopup() {
                 )}
               </div>
 
-              <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
+              {qualificationStep > 0 && !typingBotText && <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-1.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
@@ -527,7 +564,7 @@ export function LiaPopup() {
                  }`}>
                    {t.liaPopup.errorWarning}
                  </p>
-              </div>
+              </div>}
             </div>
           </motion.div>
         )}
