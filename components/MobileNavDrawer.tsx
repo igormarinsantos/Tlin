@@ -1,22 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { CountryFlag } from "@/components/CountryFlag";
 import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION, SparkleIcon } from "./navData";
-
-function CloseIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M6 6l12 12M18 6L6 18" />
-    </svg>
-  );
-}
 
 const LANGUAGES: { code: Lang; flag: string }[] = [
   { code: "PT", flag: "br" },
@@ -33,15 +23,6 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
   const { t, lang, setLang } = useLanguage();
   const pathname = usePathname();
   const sectionHref = (id: string) => (PAGES_WITH_FEATURES_SECTION.includes(pathname) ? `#${id}` : `/#${id}`);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
 
   const trackAndClose = (eventName: string, data: Record<string, string>) => {
     trackFunnelEvent(eventName, { ...data, cta_source: "mobile_nav_drawer" });
@@ -64,26 +45,13 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] overflow-y-auto bg-[#0c0d0d]/20 p-3 backdrop-blur-sm"
+          className="pointer-events-auto absolute left-0 right-0 top-full z-[110] mt-3 max-h-[calc(100svh-7rem)] overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white shadow-xl"
         >
-          <motion.div initial={{ opacity: 0, y: 12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: 0.2 }} className="min-h-full rounded-[2rem] border border-white/70 bg-white shadow-2xl">
-          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
-            <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={76} height={26} className="h-auto w-[76px]" />
-            <button
-              type="button"
-              aria-label="Fechar menu"
-              onClick={onClose}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 text-[#0c0d0d] transition-colors hover:bg-zinc-100"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-
-          <div className="px-5 pb-6">
+          <div className="px-5 pb-6 pt-1">
             <p className="mb-3 mt-6 px-1 text-[11px] font-bold uppercase tracking-wide text-zinc-400">{t.nav.solutions}</p>
             <div className="grid grid-cols-2 gap-2 mb-6">
               {SOLUTIONS.map((s) => (
@@ -151,7 +119,6 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
               {t.nav.cta}
             </button>
           </div>
-          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
