@@ -417,14 +417,6 @@ export function LiaPopup() {
                 </div>
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={resetChat}
-                    className="h-9 px-3 flex items-center justify-center rounded-full hover:bg-white/10 text-[11px] font-black text-zinc-500 hover:text-white transition-all"
-                    aria-label={t.liaPopup.newChat}
-                    title={t.liaPopup.newChat}
-                  >
-                    {t.liaPopup.newChat}
-                  </button>
-                  <button
                     onClick={() => setIsOpen(false)}
                     className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-500 hover:text-white transition-all"
                     aria-label={t.liaPopup.close}
