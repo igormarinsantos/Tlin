@@ -258,7 +258,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
       cta: t.pricing.scaleCta,
       highlight: true,
       badge: t.pricing.scaleBadge,
-      badgeColor: "bg-[#0c0d0d]",
+      badgeColor: "bg-gradient-to-r from-[#B597FF] to-[#38E3FF]",
       features: [
         t.pricing.scaleF1,
         t.pricing.scaleF2,
@@ -449,7 +449,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                     `}
                   >
                     {plan.badge && (
-                        <div className="relative z-20 w-full whitespace-nowrap py-3 text-center text-[11px] font-bold tracking-wide text-white uppercase">
+                        <div className="relative z-20 w-full whitespace-nowrap py-3 text-center text-[11px] font-bold tracking-wide text-[#0c0d0d] uppercase">
                            {plan.badge}
                         </div>
                     )}
