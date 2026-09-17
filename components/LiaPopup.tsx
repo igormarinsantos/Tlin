@@ -538,7 +538,7 @@ export function LiaPopup() {
                             key={option}
                             type="button"
                             onClick={() => handleSendMessage(option)}
-                            className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-[12px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]"
+                            className={`rounded-2xl px-4 py-3 text-left text-[12px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
                           >
                             {option}
                           </button>
