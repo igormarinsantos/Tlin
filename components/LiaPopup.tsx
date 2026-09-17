@@ -584,7 +584,7 @@ export function LiaPopup() {
 
               {qualificationStep > 0 && qualificationStep < 7 && !isTyping && !reasoningLabel && !currentOptions && <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
-                   messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-2.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
+                   messages.length > 0 ? `flex-row ${qualificationStep === 2 ? 'items-center' : 'items-end'} gap-1.5 rounded-[1.25rem] p-2.5` : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
                    {qualificationStep === 2 && <div className="relative shrink-0">
                      <button
@@ -619,7 +619,7 @@ export function LiaPopup() {
                      maxLength={qualificationStep === 2 ? 15 : qualificationStep === 6 ? 160 : 80}
                      placeholder={inputPlaceholder}
                      className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full px-2 font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
+                       qualificationStep === 2 ? 'h-9 min-h-9 py-0 leading-9 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
