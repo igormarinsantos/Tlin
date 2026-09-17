@@ -4,6 +4,8 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
+import { CountryFlag } from "@/components/CountryFlag";
+import { COUNTRIES } from "@/components/lead-qualification/constants";
 
 export function LiaPopup() {
   const { t } = useLanguage();
@@ -15,6 +17,8 @@ export function LiaPopup() {
   const [isTyping, setIsTyping] = useState(false);
   const [qualificationStep, setQualificationStep] = useState(0);
   const [leadName, setLeadName] = useState("");
+  const [countryCode, setCountryCode] = useState("+55");
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   // Mostrado enquanto espera a resposta real da API, antes do "digitando"
   // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
   const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
@@ -171,6 +175,8 @@ export function LiaPopup() {
     setIsTyping(false);
     setQualificationStep(0);
     setLeadName("");
+    setCountryCode("+55");
+    setIsCountryDropdownOpen(false);
     setReasoningLabel(null);
     setStatus(t.liaPopup.online);
     trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
@@ -204,6 +210,7 @@ export function LiaPopup() {
 
   const formatBrazilianPhone = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (countryCode !== "+55") return value.replace(/\D/g, "").slice(0, 15);
     if (digits.length > 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
     if (digits.length > 6) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
     if (digits.length > 2) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
@@ -222,7 +229,7 @@ export function LiaPopup() {
     if (qualificationStep === 1) return inputValue.trim().length >= 2;
     if (qualificationStep === 2) {
       const digits = inputValue.replace(/\D/g, "");
-      return digits.length >= 10 && digits.length <= 11;
+      return countryCode === "+55" ? digits.length >= 10 && digits.length <= 11 : digits.length >= 8;
     }
     if (qualificationStep === 6) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue.trim());
     return inputValue.trim().length > 0;
@@ -251,7 +258,8 @@ export function LiaPopup() {
       message_length: userMsg.length,
       previous_messages: messages.length,
     });
-    setMessages(prev => [...prev, { role: 'user', text: userMsg, type: 'text' }]);
+    const displayUserMessage = qualificationStep === 2 ? `${countryCode} ${userMsg}` : userMsg;
+    setMessages(prev => [...prev, { role: 'user', text: displayUserMessage, type: 'text' }]);
     setInputValue("");
     clearReasoningCycle();
     const thoughts = [
@@ -272,7 +280,7 @@ export function LiaPopup() {
     const nextMessage = isCorrectingPhone ? t.leadQualify.step2.replace("{name}", name) : [
       "",
       t.leadQualify.step2.replace("{name}", name),
-      t.leadQualify.step3.replace("{name}", name).replace("{phone}", userMsg),
+      t.leadQualify.step3.replace("{name}", name).replace("{phone}", `${countryCode} ${userMsg}`),
       t.leadQualify.step4.replace("{name}", name),
       t.leadQualify.step5.replace("{name}", name),
       t.leadQualify.step6.replace("{name}", name),
@@ -446,7 +454,7 @@ export function LiaPopup() {
                       <div className="mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-zinc-800">
                         <img src="/team/igor-avatar.png" alt="Igor" className="h-full w-full object-cover" />
                       </div>
-                      <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[13px] font-semibold text-zinc-100">
+                      <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[14px] font-semibold text-zinc-100">
                         Olá, tudo bem?
                       </div>
                     </div>
@@ -498,7 +506,7 @@ export function LiaPopup() {
                           {msg.type === 'handoff' ? (
                             <WhatsAppHandoff />
                           ) : (
-                            <div className={`max-w-[82%] p-3.5 rounded-2xl text-[13px] font-semibold leading-relaxed transition-all ${
+                            <div className={`max-w-[82%] p-3.5 rounded-2xl text-[14px] sm:text-[15px] font-semibold leading-relaxed transition-all ${
                               msg.role === 'user'
                                 ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${isFirstInBlock ? 'rounded-tr-none' : ''}`
                                 : `bg-white/[0.06] text-zinc-100 border border-white/10 ${isFirstInBlock ? 'rounded-tl-none' : ''}`
@@ -549,7 +557,7 @@ export function LiaPopup() {
                             key={option}
                             type="button"
                             onClick={() => handleSendMessage(option)}
-                            className={`rounded-2xl px-4 py-3 text-left text-[12px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
+                            className={`rounded-2xl px-4 py-3 text-left text-[13px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
                           >
                             {option}
                           </button>
@@ -578,6 +586,28 @@ export function LiaPopup() {
                  <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-2.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
+                   {qualificationStep === 2 && <div className="relative shrink-0">
+                     <button
+                       type="button"
+                       onClick={() => setIsCountryDropdownOpen((open) => !open)}
+                       className="flex h-9 items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-2 text-[12px] font-bold text-zinc-200 transition-colors hover:bg-white/10"
+                       aria-label="Selecionar DDI"
+                       aria-expanded={isCountryDropdownOpen}
+                     >
+                       <CountryFlag country={COUNTRIES.find((country) => country.code === countryCode)?.flag || "br"} size={18} />
+                       {countryCode}
+                       <svg viewBox="0 0 24 24" className={`h-3 w-3 text-zinc-500 transition-transform ${isCountryDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                     </button>
+                     <AnimatePresence>
+                       {isCountryDropdownOpen && <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} className="absolute bottom-full left-0 z-30 mb-2 w-44 overflow-hidden rounded-2xl border border-white/10 bg-[#171717] py-1 shadow-2xl">
+                         {COUNTRIES.map((country) => <button key={country.code} type="button" onClick={() => { setCountryCode(country.code); setInputValue(""); setIsCountryDropdownOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[12px] font-semibold text-zinc-300 transition-colors hover:bg-white/10 hover:text-white">
+                           <CountryFlag country={country.flag} size={18} />
+                           <span className="flex-1">{country.name}</span>
+                           <span className="text-zinc-500">{country.code}</span>
+                         </button>)}
+                       </motion.div>}
+                     </AnimatePresence>
+                   </div>}
                    <textarea
                      ref={textareaRef}
                      aria-label="Mensagem para Igor"
@@ -589,7 +619,7 @@ export function LiaPopup() {
                      maxLength={qualificationStep === 2 ? 15 : qualificationStep === 6 ? 160 : 80}
                      placeholder={inputPlaceholder}
                      className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full px-2 font-semibold leading-relaxed transition-all duration-300 ${
-                       messages.length > 0 ? 'min-h-8 py-1.5 text-[13px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-sm'
+                       messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
