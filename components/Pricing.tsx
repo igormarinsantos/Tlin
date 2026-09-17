@@ -105,7 +105,18 @@ function MarketComparison() {
     <div className="mt-10 md:hidden">
       <div className="space-y-3">{columns.map((column) => <article key={column.key} className={`overflow-hidden rounded-3xl border bg-white ${column.key === "tlin" ? "border-[#38E3FF]/60" : "border-zinc-200"}`}><div className={`flex h-14 items-center px-5 ${column.key === "tlin" ? "bg-[#F3FDFF]" : ""}`}>{column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={66} height={24} className="h-6 w-auto" /> : <div className="flex items-center gap-2.5"><HeaderIcon column={column.key} /><p className="text-base font-bold text-[#0c0d0d]">{column.label}</p></div>}</div><div className="grid grid-cols-2 border-t border-zinc-100">{COMPARISON_ROWS.map((row) => <div key={row.label} className="flex min-h-14 items-center gap-2 border-b border-r border-zinc-100 px-3 py-2 text-[11px] font-semibold leading-snug text-zinc-600"><StatusMark enabled={row[column.key]} /><span>{row.label}</span></div>)}</div></article>)}</div>
     </div>
-    <div className="mt-12 hidden overflow-hidden rounded-[2rem] border border-zinc-200 bg-white md:block"><div className="grid grid-cols-[1.9fr_repeat(4,1fr)] border-b border-zinc-100">{columns.map((column, index) => <div key={column.key} className={`flex min-h-[76px] items-center justify-center px-2 py-4 text-center ${index === 0 ? "col-start-2" : ""} ${column.key === "tlin" ? "bg-[#F3FDFF]" : "bg-[#FCFCFD]"}`}>{column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={70} height={26} className="h-6 w-auto" /> : <div className="flex items-center gap-1.5 text-left"><HeaderIcon column={column.key} /><p className="whitespace-nowrap text-[12px] font-bold leading-tight tracking-tight text-[#0c0d0d]">{column.label}</p></div>}</div>)}</div>{COMPARISON_ROWS.map((row, index) => <div key={row.label} className={`grid grid-cols-[1.9fr_repeat(4,1fr)] ${index < COMPARISON_ROWS.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "tlin" ? "bg-[#38E3FF]/[0.06]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}</div>
+    <div className="mt-12 hidden md:block">
+      <div className="ml-[32.203%] grid grid-cols-4 overflow-hidden rounded-t-[2rem] border border-b-0 border-zinc-200">
+        {columns.map((column) => (
+          <div key={column.key} className={`flex min-h-[76px] items-center justify-center px-2 py-4 text-center ${column.key === "tlin" ? "bg-[#F3FDFF]" : "bg-[#FCFCFD]"}`}>
+            {column.key === "tlin" ? <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={70} height={26} className="h-6 w-auto" /> : <div className="flex items-center gap-1.5 text-left"><HeaderIcon column={column.key} /><p className="whitespace-nowrap text-[12px] font-bold leading-tight tracking-tight text-[#0c0d0d]">{column.label}</p></div>}
+          </div>
+        ))}
+      </div>
+      <div className="overflow-hidden rounded-b-[2rem] border border-zinc-200 bg-white">
+        {COMPARISON_ROWS.map((row, index) => <div key={row.label} className={`grid grid-cols-[1.9fr_repeat(4,1fr)] ${index < COMPARISON_ROWS.length - 1 ? "border-b border-zinc-100" : ""}`}><div className="flex items-center px-7 py-4 text-sm font-semibold leading-snug text-[#0c0d0d]">{row.label}</div>{columns.map((column) => <div key={column.key} className={`flex items-center justify-center ${column.key === "tlin" ? "bg-[#38E3FF]/[0.06]" : ""}`}><StatusMark enabled={row[column.key]} /></div>)}</div>)}
+      </div>
+    </div>
   </section>;
 }
 
