@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { CountryFlag } from "@/components/CountryFlag";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
@@ -71,47 +72,36 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="w-full bg-white text-[#0c0d0d] py-20 px-10 md:px-20">
-      <div className="max-w-[1440px] mx-auto">
-        {/* Top Section -- 3 colunas: marca / Solucoes / Institucional, mesmo
-            padrao de eyebrow (uppercase, text-zinc-400) ja usado no megamenu
-            do Header pra rotular grupos de link. */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr] gap-x-8 gap-y-12 mb-20">
-          <div className="flex flex-col gap-2 max-w-sm">
-            <h3 className="text-2xl font-medium tracking-tight">{t.footer.title}</h3>
-            <p className="text-zinc-400 text-sm font-medium">{t.footer.subtitle}</p>
+    <footer className="w-full bg-white px-5 py-14 text-[#0c0d0d] md:px-12 md:py-16">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-12 border-t border-zinc-200 pt-10 md:grid-cols-[minmax(0,1fr)_auto] md:gap-20 md:pt-12">
+          <div className="flex max-w-sm flex-col items-start">
+            <Image src="/Logo%20Horizontal.svg" alt="Tlin.ai" width={88} height={30} className="h-auto w-[88px]" />
+            <h3 className="mt-6 text-xl font-bold tracking-tight">{t.footer.title}</h3>
+            <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-500">{t.footer.subtitle}</p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-wide">{t.footer.solutionsTitle}</h4>
-            <Link href="/ia-whatsapp" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink1}</Link>
-            <Link href="/recuperacao-de-leads" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink2}</Link>
-            <Link href="/crm-com-ia" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink3}</Link>
-            <Link href="/infoprodutores" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink4}</Link>
-            <Link href="/agentes-de-ia" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.solutionsLink5}</Link>
-          </div>
+          <div className="grid grid-cols-2 gap-x-10 gap-y-10 sm:gap-x-16 md:gap-x-20">
+            <div className="flex flex-col gap-3">
+              <h4 className="text-[11px] font-bold tracking-wide text-zinc-400">{t.footer.solutionsTitle}</h4>
+              <Link href="/ia-whatsapp" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink1}</Link>
+              <Link href="/recuperacao-de-leads" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink2}</Link>
+              <Link href="/crm-com-ia" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink3}</Link>
+              <Link href="/infoprodutores" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink4}</Link>
+              <Link href="/agentes-de-ia" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink5}</Link>
+            </div>
 
-          <div className="flex flex-col gap-3">
-            <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-wide">{t.footer.companyTitle}</h4>
-            <Link href="/blog" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.nav.content}</Link>
-            <Link href="/legal?tab=termos" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.terms}</Link>
-            <Link href="/legal?tab=privacidade" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.privacy}</Link>
-            <Link href="/legal?tab=cookies" className="text-sm font-medium text-zinc-500 hover:text-[#0c0d0d] transition-colors">{t.footer.cookies}</Link>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-[11px] font-bold tracking-wide text-zinc-400">{t.footer.companyTitle}</h4>
+              <Link href="/blog" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.nav.content}</Link>
+              <Link href="/legal?tab=termos" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.terms}</Link>
+              <Link href="/legal?tab=privacidade" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.privacy}</Link>
+              <Link href="/legal?tab=cookies" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.cookies}</Link>
+            </div>
           </div>
         </div>
 
-        {/* Huge Brand Text */}
-        <div className="relative w-full overflow-hidden mb-10 md:mb-20 select-none">
-          <h2 className="text-[25vw] md:text-[22vw] font-black tracking-tighter leading-[0.8] text-[#0c0d0d] -ml-[0.05em]">
-            tlin.ai
-          </h2>
-        </div>
-
-        {/* Linha de baixo -- so metadado (CNPJ/pais) + idioma, os links ja
-            moraram pras colunas Solucoes/Institucional acima. Divisor fino
-            (border-zinc-100, mesmo tom usado em cards/dropdowns no resto do
-            site) separa do wordmark em vez de mais uma fileira de links. */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pt-8 border-t border-zinc-100">
+        <div className="mt-12 flex flex-col items-start justify-between gap-5 border-t border-zinc-200 pt-5 md:mt-16 md:flex-row md:items-center">
           <span className="text-sm font-medium text-zinc-400">
             CNPJ 66.798.512/0001-53 · {t.footer.country}
           </span>
