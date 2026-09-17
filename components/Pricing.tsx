@@ -153,9 +153,9 @@ function PlanTierComparison({
         <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white">
           <div className="grid grid-cols-3 border-b border-zinc-100">
             {columns.map((column) => (
-              <div key={column.key} className={`min-h-[96px] px-2 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-                <p className="mt-2 text-[15px] font-bold">{column.name}</p>
-                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-3.5 py-2 text-[11px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
+              <div key={column.key} className={`min-h-[88px] px-2 py-3 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+                <p className="mt-1 whitespace-nowrap text-[14px] font-bold">{column.name}</p>
+                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-2 whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
               </div>
             ))}
           </div>
@@ -179,11 +179,11 @@ function PlanTierComparison({
 
       <div className="mt-12 hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
         <div className="sticky top-0 z-[110] grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 backdrop-blur">
-          <div className="flex items-end px-8 pb-5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
+          <div className="flex min-h-[88px] items-center justify-center px-8 py-3 text-center text-[11px] font-bold tracking-[0.08em] text-zinc-400">funcionalidades incluídas</div>
           {columns.map((column) => (
-            <div key={column.key} className={`min-h-[104px] px-5 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-              <p className="text-lg font-bold">{column.name}</p>
-              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-5 py-2.5 text-[13px] font-bold transition-all hover:-translate-y-0.5 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+            <div key={column.key} className={`min-h-[88px] px-3 py-3 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+              <p className="whitespace-nowrap text-base font-bold">{column.name}</p>
+              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-2 whitespace-nowrap rounded-full px-4 py-2 text-[12px] font-bold transition-all hover:-translate-y-0.5 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
         </div>
