@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { HighlightText } from "./HighlightText";
 
 // Typewriter component with Mascot Cursor
-export const TypewriterQuestion = ({ text, light = false, bubble = false }: { text: string; light?: boolean; bubble?: boolean }) => {
+export const TypewriterQuestion = ({ text, light = false, bubble = false, onComplete }: { text: string; light?: boolean; bubble?: boolean; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
+  const onCompleteRef = useRef(onComplete);
   const rawText = text.replace(/\[|\]/g, "");
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     let i = 0;
@@ -15,7 +20,10 @@ export const TypewriterQuestion = ({ text, light = false, bubble = false }: { te
     const interval = setInterval(() => {
       i += charsPerTick;
       setDisplayedText(rawText.slice(0, i));
-      if (i >= rawText.length) clearInterval(interval);
+      if (i >= rawText.length) {
+        clearInterval(interval);
+        onCompleteRef.current?.();
+      }
     }, 32);
     return () => clearInterval(interval);
   }, [rawText]);

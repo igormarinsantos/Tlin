@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
+import { TypewriterQuestion } from "@/components/lead-qualification/TypewriterQuestion";
 
 export function LiaPopup() {
   const { t } = useLanguage();
@@ -16,7 +17,6 @@ export function LiaPopup() {
   const [qualificationStep, setQualificationStep] = useState(0);
   const [leadName, setLeadName] = useState("");
   const [typingBotText, setTypingBotText] = useState<string | null>(null);
-  const [typedCharacters, setTypedCharacters] = useState(0);
   // Mostrado enquanto espera a resposta real da API, antes do "digitando"
   // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
   const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
@@ -106,24 +106,6 @@ export function LiaPopup() {
     setStatus(isTyping ? t.liaPopup.typing : t.liaPopup.online);
   }, [t, isTyping]);
 
-  useEffect(() => {
-    if (!typingBotText) return;
-
-    if (typedCharacters < typingBotText.length) {
-      const timeout = window.setTimeout(() => setTypedCharacters((count) => count + 1), 14);
-      return () => window.clearTimeout(timeout);
-    }
-
-    const timeout = window.setTimeout(() => {
-      setMessages((previous) => [...previous, { role: "bot", text: typingBotText, type: "text" }]);
-      setTypingBotText(null);
-      setTypedCharacters(0);
-      setIsTyping(false);
-      setStatus(t.liaPopup.online);
-    }, 180);
-    return () => window.clearTimeout(timeout);
-  }, [typedCharacters, t.liaPopup.online, typingBotText]);
-
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -192,7 +174,6 @@ export function LiaPopup() {
     setQualificationStep(0);
     setLeadName("");
     setTypingBotText(null);
-    setTypedCharacters(0);
     setReasoningLabel(null);
     setStatus(t.liaPopup.online);
     trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
@@ -202,9 +183,26 @@ export function LiaPopup() {
     setQualificationStep(1);
     setIsTyping(true);
     setTypingBotText(t.leadQualify.initialMsg);
-    setTypedCharacters(0);
     trackFunnelEvent("start_lead_form", { cta_source: "igor_chat" });
   };
+
+  const finishBotTyping = () => {
+    if (!typingBotText) return;
+    setMessages((previous) => [...previous, { role: "bot", text: typingBotText, type: "text" }]);
+    setTypingBotText(null);
+    setIsTyping(false);
+    setStatus(t.liaPopup.online);
+  };
+
+  const inputPlaceholder = [
+    "",
+    "Digite seu nome aqui",
+    "Digite seu WhatsApp com DDD",
+    "Digite sim ou não",
+    "Conte seu volume mensal de leads",
+    "Digite o tamanho da sua equipe",
+    "Digite seu melhor e-mail",
+  ][qualificationStep] || "Digite sua resposta";
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -243,7 +241,6 @@ export function LiaPopup() {
     window.setTimeout(() => {
       setReasoningLabel(null);
       setTypingBotText(nextMessage);
-      setTypedCharacters(0);
       setQualificationStep((step) => Math.min(step + 1, 7));
     }, 850);
   };
@@ -322,7 +319,7 @@ export function LiaPopup() {
     if (!text) return null;
     
     // Split by strategic tags [strategic:...] and bold **...**
-    const parts = text.split(/(\[strategic:.*?\]|\*\*.*?\*\*)/g);
+    const parts = text.split(/(\[strategic:.*?\]|\[.*?\]|\*\*.*?\*\*)/g);
     
     return (
       <>
@@ -334,6 +331,9 @@ export function LiaPopup() {
                 {content}
               </span>
             );
+          }
+          if (part.startsWith('[') && part.endsWith(']')) {
+            return <span key={i} className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text font-black text-transparent">{part.slice(1, -1)}</span>;
           }
           if (part.startsWith('**') && part.endsWith('**')) {
             const content = part.slice(2, -2);
@@ -489,9 +489,8 @@ export function LiaPopup() {
                             <img src="/team/igor-avatar.png" alt="Igor" className="w-full h-full object-cover" />
                           </div>
                         </div>
-                        <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] p-3.5 text-[13px] font-semibold leading-relaxed text-zinc-100">
-                          <FormattedMessage text={typingBotText.slice(0, typedCharacters)} />
-                          <span className="ml-0.5 inline-block h-3 w-0.5 animate-pulse bg-[#38E3FF] align-middle" />
+                        <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] p-3.5 text-[13px] font-semibold leading-relaxed text-zinc-100 [&>div]:text-[13px]">
+                          <TypewriterQuestion key={typingBotText} text={typingBotText} bubble onComplete={finishBotTyping} />
                         </div>
                       </div>
                     )}
@@ -541,7 +540,7 @@ export function LiaPopup() {
                      onChange={(e) => setInputValue(e.target.value)}
                      onFocus={keepInputVisible}
                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
-                     placeholder={messages.length === 0 ? placeholder : ""}
+                     placeholder={inputPlaceholder}
                      className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full font-semibold leading-relaxed transition-all duration-300 ${
                        messages.length > 0 ? 'min-h-8 py-1.5 text-[13px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-sm'
                      }`}
@@ -559,11 +558,6 @@ export function LiaPopup() {
                      </button>
                    </div>
                  </div>
-                 <p className={`text-center text-[10px] text-zinc-500 font-medium opacity-60 transition-all duration-300 ${
-                   messages.length > 0 ? 'mt-2' : 'mt-4'
-                 }`}>
-                   {t.liaPopup.errorWarning}
-                 </p>
               </div>}
             </div>
           </motion.div>
