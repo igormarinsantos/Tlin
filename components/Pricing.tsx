@@ -218,6 +218,7 @@ function PlanTierComparison({
 
 export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hideEyebrow?: boolean; comparisonMode?: "market" | "plans" }) {
   const { t } = useLanguage();
+  const [pricingTitleLead, ...pricingTitleHighlight] = t.pricing.title.split(" ");
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
@@ -386,7 +387,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                    </div>
                 </div>}
                 <h2 className={`text-3xl font-bold tracking-tight text-[#0c0d0d] md:text-5xl ${hideEyebrow ? "mb-7 leading-[1.12] md:mb-8" : "mb-4"}`}>
-                   {t.pricing.title}
+                   {pricingTitleLead} <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">{pricingTitleHighlight.join(" ")}</span>
                 </h2>
              </div>
              
@@ -497,7 +498,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                              event.stopPropagation();
                              openPlanQualification(plan.name, "pricing_button");
                            }}
-                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-white hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
                        >
                           {plan.cta}
                        </button>
