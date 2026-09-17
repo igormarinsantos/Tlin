@@ -5,10 +5,11 @@ import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 import { CountryFlag } from "@/components/CountryFlag";
-import { COUNTRIES } from "@/components/lead-qualification/constants";
+import { AvailabilityCalendar } from "@/components/lead-qualification/AvailabilityCalendar";
+import { COUNTRIES, type DemoDay, type DemoSlot } from "@/components/lead-qualification/constants";
 
 export function LiaPopup() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [canShow, setCanShow] = useState(false);
@@ -19,6 +20,11 @@ export function LiaPopup() {
   const [leadName, setLeadName] = useState("");
   const [countryCode, setCountryCode] = useState("+55");
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [availabilityDays, setAvailabilityDays] = useState<DemoDay[] | null>(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
+  const [scheduleStage, setScheduleStage] = useState<"day" | "slot" | "complete">("day");
   // Mostrado enquanto espera a resposta real da API, antes do "digitando"
   // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
   const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
@@ -177,6 +183,11 @@ export function LiaPopup() {
     setLeadName("");
     setCountryCode("+55");
     setIsCountryDropdownOpen(false);
+    setAvailabilityDays(null);
+    setAvailabilityLoading(false);
+    setAvailabilityError(null);
+    setSelectedDay(null);
+    setScheduleStage("day");
     setReasoningLabel(null);
     setStatus(t.liaPopup.online);
     trackFunnelEvent("lia_chat_reset", { cta_source: "lia_popup" });
@@ -296,6 +307,54 @@ export function LiaPopup() {
         setStatus(t.liaPopup.online);
         setQualificationStep((step) => isCorrectingPhone ? 2 : Math.min(step + 1, 7));
       }, getHumanTypingDelay(nextMessage));
+    }, 850);
+  };
+
+  useEffect(() => {
+    if (qualificationStep !== 7 || availabilityDays || availabilityLoading) return;
+
+    setAvailabilityLoading(true);
+    setAvailabilityError(null);
+    fetch(`/api/public/demo/availability?diasAFrente=21&lang=${lang}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data?.success) throw new Error(data?.error || "Falha ao consultar horários");
+        setAvailabilityDays(data.days || []);
+      })
+      .catch(() => setAvailabilityError(t.leadQualify.noSlotsAvailable))
+      .finally(() => setAvailabilityLoading(false));
+  }, [availabilityDays, availabilityLoading, lang, qualificationStep, t.leadQualify.noSlotsAvailable]);
+
+  const handleSelectDay = (day: DemoDay) => {
+    if (isTyping || reasoningLabel) return;
+    setSelectedDay(day);
+    setMessages((previous) => [...previous, { role: "user", text: day.label, type: "text" }]);
+    setReasoningLabel(t.leadQualify.thinking8);
+    window.setTimeout(() => {
+      setReasoningLabel(null);
+      setIsTyping(true);
+      const message = t.leadQualify.step8.replace("{name}", leadName).replace("{day}", day.label);
+      window.setTimeout(() => {
+        setMessages((previous) => [...previous, { role: "bot", text: message, type: "text" }]);
+        setScheduleStage("slot");
+        setIsTyping(false);
+      }, getHumanTypingDelay(message));
+    }, 850);
+  };
+
+  const handleSelectSlot = (slot: DemoSlot) => {
+    if (isTyping || reasoningLabel) return;
+    setMessages((previous) => [...previous, { role: "user", text: slot.when, type: "text" }]);
+    setReasoningLabel(t.leadQualify.thinking9);
+    window.setTimeout(() => {
+      setReasoningLabel(null);
+      setIsTyping(true);
+      const message = `Perfeito, ${leadName}. Recebi sua preferência para ${slot.when}. Vou confirmar sua demonstração com a equipe`;
+      window.setTimeout(() => {
+        setMessages((previous) => [...previous, { role: "bot", text: message, type: "text" }]);
+        setScheduleStage("complete");
+        setIsTyping(false);
+      }, getHumanTypingDelay(message));
     }, 850);
   };
 
@@ -564,19 +623,17 @@ export function LiaPopup() {
                         ))}
                       </div>
                     )}
-                    {qualificationStep === 7 && !isTyping && (
-                      <motion.button
-                        type="button"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={() => {
-                          trackFunnelEvent("igor_chat_schedule", { cta_source: "igor_chat" });
-                          window.location.assign("/comece");
-                        }}
-                        className="ml-10 mt-1 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[12px] font-bold text-[#0c0d0d]"
-                      >
-                        Escolher horário para a demo
-                      </motion.button>
+                    {qualificationStep === 7 && scheduleStage === "day" && !isTyping && !reasoningLabel && (
+                      <div className="ml-10 mt-1 max-w-[82%] rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                        {availabilityLoading && <p className="py-3 text-center text-[12px] font-medium text-zinc-500">Carregando horários</p>}
+                        {availabilityError && <p className="py-3 text-center text-[12px] font-medium text-zinc-500">{availabilityError}</p>}
+                        {!availabilityLoading && !availabilityError && availabilityDays && <AvailabilityCalendar days={availabilityDays} onSelectDay={handleSelectDay} lang={lang} isLight={false} />}
+                      </div>
+                    )}
+                    {qualificationStep === 7 && scheduleStage === "slot" && selectedDay && !isTyping && !reasoningLabel && (
+                      <div className="ml-10 mt-1 grid max-w-[82%] grid-cols-2 gap-2">
+                        {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[13px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
+                      </div>
                     )}
                   </div>
                 )}
