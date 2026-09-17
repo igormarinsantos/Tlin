@@ -74,11 +74,9 @@ export function Footer() {
   return (
     <footer className="w-full bg-white px-5 py-14 text-[#0c0d0d] md:px-12 md:py-16">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-12 border-t border-zinc-200 pt-10 md:grid-cols-[minmax(0,1fr)_auto] md:gap-20 md:pt-12">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_auto] md:gap-20">
           <div className="flex max-w-sm flex-col items-start">
             <Image src="/Logo%20Horizontal.svg" alt="Tlin.ai" width={88} height={30} className="h-auto w-[88px]" />
-            <h3 className="mt-6 text-xl font-bold tracking-tight">{t.footer.title}</h3>
-            <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-500">{t.footer.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-x-10 gap-y-10 sm:gap-x-16 md:gap-x-20">
@@ -101,7 +99,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-5 border-t border-zinc-200 pt-5 md:mt-16 md:flex-row md:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-5 md:mt-16 md:flex-row md:items-center">
           <span className="text-sm font-medium text-zinc-400">
             CNPJ 66.798.512/0001-53 · {t.footer.country}
           </span>
