@@ -36,13 +36,24 @@ type LeadQualificationPopupProps = {
   onClose: () => void;
   planName: string | null;
   embedded?: boolean;
+  darkTheme?: boolean;
+  fullScreenMobile?: boolean;
+  forceProgressHeader?: boolean;
 };
 
-export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = false }: LeadQualificationPopupProps) {
+export function LeadQualificationPopup({
+  isOpen,
+  onClose,
+  planName,
+  embedded = false,
+  darkTheme = false,
+  fullScreenMobile = false,
+  forceProgressHeader,
+}: LeadQualificationPopupProps) {
   const { lang, t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
-  const showProgressHeader = pathname === "/comece" || pathname === "/demo";
+  const showProgressHeader = forceProgressHeader ?? (pathname === "/comece" || pathname === "/demo");
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
@@ -869,7 +880,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   // conversa; o popup da index mantem o tema escuro, so vira claro na tela de
   // sucesso -- a estrutura da conversa (header, baloes, calendario) e a mesma
   // nos dois, so o tema de cor muda.
-  const isLight = embedded || currentStep === SUCCESS_STEP;
+  const isLight = !darkTheme && (embedded || currentStep === SUCCESS_STEP);
   // "TLIN" e o plano generico usado pelos CTAs que nao vem de um card de
   // plano especifico (hero, header, footer) -- so conta como "plano
   // selecionado" quando veio de um card de verdade (Pricing).
@@ -899,7 +910,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
           onTouchMoveCapture={(event) => event.stopPropagation()}
           className={embedded
             ? "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden bg-white overscroll-none"
-            : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
+            : `fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden ${fullScreenMobile ? "p-0 sm:p-[10px]" : "p-2 sm:p-[10px]"} bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none`}
           >
             <Turnstile onTokenChange={setTurnstileToken} />
             <motion.div
@@ -907,7 +918,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${embedded ? "h-[var(--lead-popup-height,100dvh)] max-w-none" : "h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-16px)] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl rounded-2xl sm:rounded-[2.5rem] sm:shadow-2xl"} border overflow-hidden flex flex-col transition-colors duration-300 ${
+            className={`relative w-full ${embedded ? "h-[var(--lead-popup-height,100dvh)] max-w-none" : `h-full min-h-0 max-h-[calc(var(--lead-popup-height,100dvh)-${fullScreenMobile ? "0px" : "16px"})] sm:max-h-[calc(var(--lead-popup-height,100dvh)-20px)] max-w-5xl ${fullScreenMobile ? "rounded-none sm:rounded-[2.5rem]" : "rounded-2xl sm:rounded-[2.5rem]"} sm:shadow-2xl`} border overflow-hidden flex flex-col transition-colors duration-300 ${
               isLight
                 ? 'border-zinc-200'
                 : 'border-white/10'
