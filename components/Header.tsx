@@ -362,15 +362,6 @@ export function Header() {
             <div ref={floatingHeaderRef} className="pointer-events-auto flex w-max items-center justify-between gap-8 rounded-full border border-zinc-200 bg-white px-4 py-2">
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
-                  aria-expanded={isMobileMenuOpen}
-                  onClick={() => setIsMobileMenuOpen((open) => !open)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-[#0c0d0d] transition-colors hover:bg-zinc-100 lg:hidden"
-                >
-                  <MenuIcon isOpen={isMobileMenuOpen} />
-                </button>
                 <Link href="/" className="flex items-center gap-2" data-mascot-hide>
                    <Image src="/Logo%20Horizontal.svg" alt="Tlin" width={72} height={24} />
                 </Link>
@@ -395,7 +386,6 @@ export function Header() {
             <AnimatePresence>
               {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} variant="contained" containedWidth={floatingHeaderWidth} />}
             </AnimatePresence>
-            <MobileNavDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
           </motion.header>
         )}
       </AnimatePresence>
