@@ -183,7 +183,7 @@ export function LiaPopup() {
       setMessages([{ role: "bot", text: t.leadQualify.initialMsg, type: "text" }]);
       setIsTyping(false);
       setStatus(t.liaPopup.online);
-    }, 720);
+    }, getHumanTypingDelay(t.leadQualify.initialMsg));
     trackFunnelEvent("start_lead_form", { cta_source: "igor_chat" });
   };
 
@@ -196,6 +196,11 @@ export function LiaPopup() {
     "Digite o tamanho da sua equipe",
     "Digite seu melhor e-mail",
   ][qualificationStep] || "Digite sua resposta";
+
+  const getHumanTypingDelay = (text: string) => {
+    const characters = text.replace(/[\[\]]/g, "").length;
+    return Math.min(Math.max(characters * 22, 720), 2400);
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -238,7 +243,7 @@ export function LiaPopup() {
         setIsTyping(false);
         setStatus(t.liaPopup.online);
         setQualificationStep((step) => Math.min(step + 1, 7));
-      }, 720);
+      }, getHumanTypingDelay(nextMessage));
     }, 850);
   };
 
@@ -459,28 +464,19 @@ export function LiaPopup() {
                       );
                     })}
                     {reasoningLabel && (
-                      <div className="flex items-start gap-2">
-                         <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
-                           <img
-                             src="/team/igor-avatar.png"
-                             alt="Igor"
-                             className="w-full h-full object-cover"
-                           />
-                         </div>
-                        <div className="bg-white/[0.06] px-3 py-2.5 rounded-xl rounded-tl-none border border-white/10">
-                          <AnimatePresence mode="wait">
-                            <motion.span
-                              key={reasoningLabel}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="text-[12px] text-zinc-400 font-medium block"
-                            >
-                              {reasoningLabel}
-                            </motion.span>
-                          </AnimatePresence>
-                        </div>
+                      <div className="ml-10 pt-1">
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={reasoningLabel}
+                            initial={{ opacity: 0, y: 3 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -3 }}
+                            transition={{ duration: 0.2 }}
+                            className="text-[11px] font-medium text-zinc-500"
+                          >
+                            {reasoningLabel}
+                          </motion.span>
+                        </AnimatePresence>
                       </div>
                     )}
 
