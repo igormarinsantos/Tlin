@@ -134,7 +134,7 @@ function PlanTierComparison({
   const filteredRows = rows.filter((row) => row.label.toLocaleLowerCase("pt-BR").includes(normalizedQuery));
 
   return (
-    <section className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
+    <section data-suppress-floating-header className="mt-24 border-t border-zinc-100 pt-24 md:mt-32 md:pt-32">
       <div className="mx-auto max-w-3xl text-center">
         <div className="inline-flex rounded-full border border-[#B597FF]/20 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#B597FF]">✨ Compare os planos</div>
         <h2 className="mt-5 text-[26px] font-bold leading-[1.1] tracking-tight text-[#0c0d0d] md:text-5xl md:leading-tight">A estrutura certa para o <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent">seu volume de leads</span></h2>
@@ -153,9 +153,9 @@ function PlanTierComparison({
         <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white">
           <div className="grid grid-cols-3 border-b border-zinc-100">
             {columns.map((column) => (
-              <div key={column.key} className={`min-h-[96px] px-2 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+              <div key={column.key} className={`min-h-[96px] px-2 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
                 <p className="mt-2 font-bold text-[13px]">{column.name}</p>
-                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-2.5 py-1.5 text-[9px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
+                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-3.5 py-2 text-[10px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
               </div>
             ))}
           </div>
@@ -178,12 +178,12 @@ function PlanTierComparison({
       </div>
 
       <div className="mt-12 hidden rounded-[2.25rem] border border-zinc-200 bg-white md:block">
-        <div className="sticky top-0 z-[110] grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 shadow-[0_10px_20px_rgba(24,24,27,0.06)] backdrop-blur">
+        <div className="sticky top-0 z-[110] grid grid-cols-[2.15fr_repeat(3,1fr)] overflow-hidden rounded-t-[2.2rem] border-b border-zinc-200 bg-white/95 backdrop-blur">
           <div className="flex items-end px-8 pb-5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
           {columns.map((column) => (
-            <div key={column.key} className={`min-h-[96px] px-5 py-4 text-center ${column.key === "scale" ? "bg-gradient-to-br from-[#F3EBFF] via-[#F8F4FF] to-[#E7FBFF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
+            <div key={column.key} className={`min-h-[104px] px-5 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
               <p className="text-base font-bold">{column.name}</p>
-              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-4 py-1.5 text-[11px] font-bold transition-all hover:-translate-y-0.5 hover:shadow-sm ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-5 py-2.5 text-[12px] font-bold transition-all hover:-translate-y-0.5 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
         </div>
@@ -192,7 +192,7 @@ function PlanTierComparison({
             <motion.div key={row.label} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="group grid grid-cols-[2.15fr_repeat(3,1fr)] border-b border-zinc-100 bg-white last:border-b-0 transition-colors hover:bg-[#FCFCFD]">
               <div className="flex min-h-[68px] items-center px-8 py-4 text-sm font-semibold leading-snug text-[#27272a]">{row.label}</div>
               {columns.map((column) => (
-                <div key={column.key} className={`flex min-h-[68px] items-center justify-center border-l border-zinc-100 transition-colors ${column.key === "scale" ? "bg-gradient-to-b from-[#FCFAFF] to-[#F5FCFF] group-hover:from-[#F7F1FF] group-hover:to-[#EDFBFF]" : "bg-white"}`}>
+                <div key={column.key} className={`flex min-h-[68px] items-center justify-center border-l border-zinc-100 transition-colors ${column.key === "scale" ? "bg-[#FAF8FF] group-hover:bg-[#F5F1FF]" : "bg-white"}`}>
                   <StatusMark enabled={row[column.key]} />
                 </div>
               ))}

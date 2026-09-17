@@ -294,6 +294,19 @@ export function Header() {
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
+    const suppressedSection = document.querySelector("[data-suppress-floating-header]");
+    const isInsideSuppressedSection = suppressedSection
+      ? (() => {
+          const rect = suppressedSection.getBoundingClientRect();
+          return rect.top < 120 && rect.bottom > 120;
+        })()
+      : false;
+
+    if (isInsideSuppressedSection) {
+      setShowFloating(false);
+      return;
+    }
+
     if (latest < 150) {
       setShowFloating(false);
     } else if (latest < previous) {
