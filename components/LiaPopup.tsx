@@ -127,9 +127,6 @@ export function LiaPopup() {
 
   useEffect(() => {
     if (!isOpen) return;
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-    const lenis = (window as any).lenis;
 
     const updateViewportVars = () => {
       const viewport = window.visualViewport;
@@ -141,9 +138,6 @@ export function LiaPopup() {
       keepInputVisible();
     };
 
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-    lenis?.stop?.();
     updateViewportVars();
 
     window.visualViewport?.addEventListener("resize", updateViewportVars);
@@ -156,9 +150,6 @@ export function LiaPopup() {
       window.removeEventListener("resize", updateViewportVars);
       document.documentElement.style.removeProperty("--lia-popup-height");
       document.documentElement.style.removeProperty("--lia-popup-offset-top");
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      lenis?.start?.();
       clearScrollTimers();
     };
   }, [isOpen]);
@@ -466,7 +457,7 @@ export function LiaPopup() {
                   </div>
 
                 ) : (
-                  <div className="flex flex-col gap-3 py-4">
+                  <div className="flex flex-col gap-3 pb-8 pt-4">
                     {messages.map((msg, i) => {
                       const isFirstInBlock = i === 0 || messages[i-1].role !== msg.role;
                       return (
