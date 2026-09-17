@@ -226,9 +226,10 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
             style={{ position: "absolute", left: springX, top: springY, x: "15px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-            className="px-2 py-0.5 bg-zinc-950 rounded-full border border-white/10 shadow-xl whitespace-nowrap"
+            className="hidden overflow-hidden rounded-full p-[1px] shadow-xl md:block"
           >
-            <span className="text-[9px] font-bold text-white tracking-wide leading-none">{t.nav.demo}</span>
+            <span className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} />
+            <span className="relative block whitespace-nowrap rounded-full border border-white/10 bg-zinc-950 px-2 py-0.5 text-[9px] font-bold leading-none tracking-wide text-white">{t.hero.demoHover}</span>
           </motion.div>
         )}
       </AnimatePresence>

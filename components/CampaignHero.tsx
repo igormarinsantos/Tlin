@@ -6,6 +6,7 @@ import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { renderCampaignMotion, HERO_MOTION_BY_VARIANT } from "@/components/campaignMotion";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 // Envolve em degrade as palavras do titulo que baterem com highlightWords
 // (mesma logica de destaque do Hero padrao, sem a animacao de digitacao —
@@ -76,10 +77,11 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           </p>
 
           <div className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-4">
-            <button
-              onClick={() => openQualification("campaign_hero_primary")}
-              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
-            >
+            <DemoHoverPill>
+              <button
+                onClick={() => openQualification("campaign_hero_primary")}
+                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
+              >
               <div
                 className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
                 style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
@@ -89,7 +91,8 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
                 <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
               </div>
-            </button>
+              </button>
+            </DemoHoverPill>
 
             <button
               type="button"

@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { CARD_MOTION, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
 // Destaca em degrade o trecho marcado entre colchetes no titulo (mesmo
@@ -150,10 +151,11 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
             <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksCtaTitle)} />
           </p>
 
-          <button
-            onClick={() => openQualification("how_it_works_cta")}
-            className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer shrink-0"
-          >
+          <DemoHoverPill className="shrink-0">
+            <button
+              onClick={() => openQualification("how_it_works_cta")}
+              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
+            >
             <div
               className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
               style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
@@ -163,7 +165,8 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
               <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
             </div>
-          </button>
+            </button>
+          </DemoHoverPill>
         </motion.div>
       </div>
     </section>

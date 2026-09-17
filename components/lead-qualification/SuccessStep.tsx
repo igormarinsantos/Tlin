@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import type { DemoDay, DemoSlot } from "./constants";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 type LeadQualifyDictionary = {
   successTitle?: string;
@@ -66,7 +67,7 @@ export function SuccessStep({
 
       <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg justify-center items-stretch sm:items-center">
         {/* Botão Preto com Borda Animada estilo Hero */}
-        <div className="relative flex-1">
+        <DemoHoverPill className="flex-1">
           <button
             onClick={onWhatsAppRedirect}
             className="relative p-[1.5px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full"
@@ -80,7 +81,7 @@ export function SuccessStep({
               <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
             </div>
           </button>
-        </div>
+        </DemoHoverPill>
 
         {/* Botão Branco */}
         <div className="relative flex-1">

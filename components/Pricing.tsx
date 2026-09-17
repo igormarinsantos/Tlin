@@ -12,6 +12,7 @@ import { LeadQualificationPopup } from "./LeadQualificationPopup";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { Bot, Headset, Kanban } from "lucide-react";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -166,7 +167,9 @@ function PlanTierComparison({
             {columns.map((column) => (
               <div key={column.key} className={`min-h-[88px] px-2 py-3 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
                 <p className="mt-1 whitespace-nowrap text-[14px] font-bold">{column.name}</p>
-                <button type="button" onClick={(event) => { event.stopPropagation(); onSelectPlan(column.name); }} className={`relative z-10 mt-2 cursor-pointer whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold transition-transform active:scale-95 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
+                <DemoHoverPill enabled={column.key === "scale"} className="mt-2 inline-block">
+                  <button type="button" onClick={(event) => { event.stopPropagation(); onSelectPlan(column.name); }} className={`relative z-10 cursor-pointer whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold transition-transform active:scale-95 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
+                </DemoHoverPill>
               </div>
             ))}
           </div>
@@ -194,7 +197,9 @@ function PlanTierComparison({
           {columns.map((column) => (
             <div key={column.key} className={`min-h-[88px] px-3 py-3 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
               <p className="whitespace-nowrap text-base font-bold">{column.name}</p>
-              <button type="button" onClick={(event) => { event.stopPropagation(); onSelectPlan(column.name); }} className={`relative z-10 mt-2 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-[12px] font-bold transition-all hover:-translate-y-0.5 active:scale-95 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+              <DemoHoverPill enabled={column.key === "scale"} className="mt-2 inline-block">
+                <button type="button" onClick={(event) => { event.stopPropagation(); onSelectPlan(column.name); }} className={`relative z-10 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-[12px] font-bold transition-all hover:-translate-y-0.5 active:scale-95 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+              </DemoHoverPill>
             </div>
           ))}
         </div>
@@ -493,15 +498,17 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
 
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
-                        <button 
-                           onClick={(event) => {
+                        <DemoHoverPill className="w-full" enabled={!plan.highlight}>
+                          <button
+                            onClick={(event) => {
                              event.stopPropagation();
                              openPlanQualification(plan.name, "pricing_button");
                            }}
-                          className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
-                       >
-                          {plan.cta}
-                       </button>
+                            className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                          >
+                            {plan.cta}
+                          </button>
+                        </DemoHoverPill>
 
                        <div className="mt-auto">
                            <p className={`text-[11px] font-bold tracking-wide mb-6 ${plan.highlight ? 'text-zinc-600' : 'text-zinc-300'}`}>{t.pricing.deliveryLevel}</p>
