@@ -202,9 +202,42 @@ export function LiaPopup() {
     return Math.min(Math.max(characters * 22, 720), 2400);
   };
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-    const userMsg = inputValue.trim();
+  const formatBrazilianPhone = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length > 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    if (digits.length > 6) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    if (digits.length > 2) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return digits.length ? `(${digits}` : "";
+  };
+
+  const currentOptions = qualificationStep === 3
+    ? [t.leadQualify.yesCorrect, t.leadQualify.noCorrect]
+    : qualificationStep === 4
+      ? t.leadQualify.volumeOptions
+      : qualificationStep === 5
+        ? t.leadQualify.teamOptions
+        : null;
+
+  const isInputValid = () => {
+    if (qualificationStep === 1) return inputValue.trim().length >= 2;
+    if (qualificationStep === 2) {
+      const digits = inputValue.replace(/\D/g, "");
+      return digits.length >= 10 && digits.length <= 11;
+    }
+    if (qualificationStep === 6) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue.trim());
+    return inputValue.trim().length > 0;
+  };
+
+  const handleInputChange = (value: string) => {
+    if (qualificationStep === 2) return setInputValue(formatBrazilianPhone(value));
+    if (qualificationStep === 1) return setInputValue(value.slice(0, 80));
+    if (qualificationStep === 6) return setInputValue(value.slice(0, 160));
+    setInputValue(value);
+  };
+
+  const handleSendMessage = async (answer?: string) => {
+    const userMsg = (answer ?? inputValue).trim();
+    if (!userMsg) return;
     trackFunnelEvent("lia_message_sent", {
       message_length: userMsg.length,
       previous_messages: messages.length,
@@ -221,12 +254,13 @@ export function LiaPopup() {
       t.leadQualify.thinking7,
     ];
     setReasoningLabel(thoughts[Math.max(0, qualificationStep - 1)] || t.leadQualify.thinkingGeneric);
-    setStatus(t.liaPopup.typing);
-    setIsTyping(true);
+    setIsTyping(false);
+    setStatus(t.liaPopup.online);
 
     const name = qualificationStep === 1 ? userMsg : leadName;
     if (qualificationStep === 1) setLeadName(userMsg);
-    const nextMessage = [
+    const isCorrectingPhone = qualificationStep === 3 && userMsg === t.leadQualify.noCorrect;
+    const nextMessage = isCorrectingPhone ? t.leadQualify.step2.replace("{name}", name) : [
       "",
       t.leadQualify.step2.replace("{name}", name),
       t.leadQualify.step3.replace("{name}", name).replace("{phone}", userMsg),
@@ -238,11 +272,12 @@ export function LiaPopup() {
 
     window.setTimeout(() => {
       setReasoningLabel(null);
+      setIsTyping(true);
       window.setTimeout(() => {
         setMessages((previous) => [...previous, { role: "bot", text: nextMessage, type: "text" }]);
         setIsTyping(false);
         setStatus(t.liaPopup.online);
-        setQualificationStep((step) => Math.min(step + 1, 7));
+        setQualificationStep((step) => isCorrectingPhone ? 2 : Math.min(step + 1, 7));
       }, getHumanTypingDelay(nextMessage));
     }, 850);
   };
@@ -496,6 +531,20 @@ export function LiaPopup() {
                         </div>
                       </div>
                     )}
+                    {currentOptions && !reasoningLabel && !isTyping && (
+                      <div className="ml-10 flex max-w-[82%] flex-col gap-2 pt-1">
+                        {currentOptions.filter(Boolean).map((option) => (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => handleSendMessage(option)}
+                            className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-left text-[12px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]"
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     {qualificationStep === 7 && !isTyping && (
                       <motion.button
                         type="button"
@@ -514,7 +563,7 @@ export function LiaPopup() {
                 )}
               </div>
 
-              {qualificationStep > 0 && !isTyping && <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
+              {qualificationStep > 0 && qualificationStep < 7 && !isTyping && !reasoningLabel && !currentOptions && <div className="px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 bg-transparent shrink-0 z-10 mt-auto">
                  <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/50 focus-within:ring-4 ring-[#B597FF]/5 transition-all duration-300 ${
                    messages.length > 0 ? 'flex-row items-end gap-1.5 rounded-[1.25rem] p-2.5' : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
@@ -522,9 +571,11 @@ export function LiaPopup() {
                      ref={textareaRef}
                      aria-label="Mensagem para Igor"
                      value={inputValue}
-                     onChange={(e) => setInputValue(e.target.value)}
+                     onChange={(e) => handleInputChange(e.target.value)}
                      onFocus={keepInputVisible}
-                     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
+                     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && isInputValid() && (e.preventDefault(), handleSendMessage())}
+                     inputMode={qualificationStep === 2 ? "tel" : qualificationStep === 6 ? "email" : "text"}
+                     maxLength={qualificationStep === 2 ? 15 : qualificationStep === 6 ? 160 : 80}
                      placeholder={inputPlaceholder}
                      className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full px-2 font-semibold leading-relaxed transition-all duration-300 ${
                        messages.length > 0 ? 'min-h-8 py-1.5 text-[13px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-sm'
@@ -533,10 +584,10 @@ export function LiaPopup() {
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>
                      <button
                        aria-label="Enviar mensagem"
-                       onClick={handleSendMessage}
-                       disabled={!inputValue.trim()}
+                       onClick={() => handleSendMessage()}
+                       disabled={!isInputValid()}
                        className={`${messages.length > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full flex items-center justify-center transition-all ${
-                          inputValue.trim() ? 'bg-white text-zinc-950' : 'bg-white/10 text-zinc-500'
+                          isInputValid() ? 'bg-white text-zinc-950' : 'bg-white/10 text-zinc-500'
                        }`}
                      >
                         <svg width={messages.length > 0 ? 17 : 20} height={messages.length > 0 ? 17 : 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
