@@ -21,7 +21,6 @@ const CampaignComparison = dynamic(() => import("@/components/CampaignComparison
 // pro Google indexar sem depender de JS (âncoras #como-funciona/#agentes/#crm/#planos/#faq).
 const Features = dynamic(() => import("@/components/Features").then(mod => mod.Features));
 const RoiCalculator = dynamic(() => import("@/components/RoiCalculator").then(mod => mod.RoiCalculator), { ssr: false });
-const CaseStudy = dynamic(() => import("@/components/CaseStudy").then(mod => mod.CaseStudy));
 const Pricing = dynamic(() => import("@/components/Pricing").then(mod => mod.Pricing));
 const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials));
 const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
@@ -179,11 +178,11 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
         />
 
-        {/* IMPACT / URGENCY -- na home e a calculadora de ROI; nas LPs de
-            campanha, o case real (Daiane/Embarpet) entra no lugar dela,
-            no mesmo fundo preto */}
+        {/* IMPACT / URGENCY -- a calculadora de ROI tambem entra nas LPs de
+            campanha enquanto o case ainda nao tiver video e resultados
+            publicados. Assim, este espaco sempre entrega valor acionavel. */}
         <DeferredSection id="roi" className="section-to-blur" minHeight="min-h-[760px]">
-          {heroVariant ? <CaseStudy /> : <RoiCalculator />}
+          <RoiCalculator />
         </DeferredSection>
 
         {/* WHITE CURVED GRADIENT SECTION (Below ROI/Case) */}
