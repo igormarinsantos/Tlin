@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import Link from "next/link";
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
@@ -528,7 +529,7 @@ export function LiaPopup() {
                         Sim, começar agora
                         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13" /><path d="m13 6 6 6-6 6" /></svg>
                       </button>
-                      <p className="mt-3 text-[10px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <a href="/legal?tab=privacidade" className="text-[#64E5FA] hover:underline">Política de Privacidade</a></p>
+                      <p className="mt-3 text-[10px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <Link href="/legal?tab=privacidade" onNavigate={() => setIsOpen(false)} className="text-[#64E5FA] hover:underline">Política de Privacidade</Link></p>
                     </div>
                   </div>
 
