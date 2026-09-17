@@ -350,7 +350,7 @@ export function LiaPopup() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed inset-0 z-[150] h-[var(--lia-popup-height,100dvh)] overflow-hidden p-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))] sm:w-[420px] sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)] sm:rounded-[2.5rem] sm:p-[2px]"
+            className={`fixed inset-0 z-[150] h-[var(--lia-popup-height,100dvh)] overflow-hidden p-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[420px] sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)] sm:rounded-[2.5rem] sm:p-[2px] sm:transition-[height] sm:duration-500 sm:ease-out ${qualificationStep === 0 ? "sm:h-[min(370px,calc(var(--lia-popup-height,100dvh)-2rem))]" : "sm:h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))]"}`}
           >
             {/* Animated Gradient Border Layer */}
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] pointer-events-none"
@@ -418,7 +418,7 @@ export function LiaPopup() {
                         className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[12px] font-bold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
                       >
                         Sim, começar agora
-                        <span aria-hidden="true">→</span>
+                        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13" /><path d="m13 6 6 6-6 6" /></svg>
                       </button>
                       <p className="mt-3 text-[10px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <a href="/legal?tab=privacidade" className="text-[#64E5FA] hover:underline">Política de Privacidade</a></p>
                     </div>
