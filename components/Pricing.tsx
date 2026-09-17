@@ -154,8 +154,8 @@ function PlanTierComparison({
           <div className="grid grid-cols-3 border-b border-zinc-100">
             {columns.map((column) => (
               <div key={column.key} className={`min-h-[96px] px-2 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-                <p className="mt-2 font-bold text-[13px]">{column.name}</p>
-                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-3.5 py-2 text-[10px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
+                <p className="mt-2 text-[15px] font-bold">{column.name}</p>
+                <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-3.5 py-2 text-[11px] font-bold ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d]"}`}>Contratar</button>
               </div>
             ))}
           </div>
@@ -182,8 +182,8 @@ function PlanTierComparison({
           <div className="flex items-end px-8 pb-5 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400">Funcionalidades incluídas</div>
           {columns.map((column) => (
             <div key={column.key} className={`min-h-[104px] px-5 py-4 text-center ${column.key === "scale" ? "bg-[#F5F1FF] text-[#0c0d0d]" : "bg-[#FCFCFD] text-[#0c0d0d]"}`}>
-              <p className="text-base font-bold">{column.name}</p>
-              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-5 py-2.5 text-[12px] font-bold transition-all hover:-translate-y-0.5 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
+              <p className="text-lg font-bold">{column.name}</p>
+              <button type="button" onClick={() => onSelectPlan(column.name)} className={`mt-3 rounded-full px-5 py-2.5 text-[13px] font-bold transition-all hover:-translate-y-0.5 ${column.key === "scale" ? "bg-[#0c0d0d] text-white" : "border border-zinc-200 bg-white text-[#0c0d0d] hover:border-[#B597FF]"}`}>Contratar {column.name}</button>
             </div>
           ))}
         </div>
