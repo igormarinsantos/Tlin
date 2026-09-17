@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { CountryFlag } from "@/components/CountryFlag";
 import { trackFunnelEvent } from "@/lib/utm";
-import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
+import { SOLUTIONS } from "./navData";
 
 const LANGUAGES: { code: Lang; flag: string }[] = [
   { code: "PT", flag: "br" },
@@ -38,9 +37,7 @@ function ChevronIcon({ open = false }: { open?: boolean }) {
 // megamenu desktop, sem conteudo novo).
 export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { t, lang, setLang } = useLanguage();
-  const pathname = usePathname();
   const [isSolutionsExpanded, setIsSolutionsExpanded] = useState(false);
-  const sectionHref = (id: string) => (PAGES_WITH_FEATURES_SECTION.includes(pathname) ? `#${id}` : `/#${id}`);
 
   const trackAndClose = (eventName: string, data: Record<string, string>) => {
     trackFunnelEvent(eventName, { ...data, cta_source: "mobile_nav_drawer" });
@@ -113,7 +110,7 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
               </AnimatePresence>
 
               <a
-                href={sectionHref("como-funciona")}
+                href="/como-funciona"
                 onClick={() => trackAndClose("nav_link_click", { destination: "como-funciona" })}
                 className="flex items-center justify-between py-4 text-[15px] font-semibold text-[#0c0d0d] transition-colors"
               >
