@@ -400,22 +400,27 @@ export function LiaPopup() {
               <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10">
                 
                 {messages.length === 0 && !isTyping ? (
-                  <div className="flex-1 flex flex-col pt-1 pb-6">
-                    <div className="mb-5 mt-1">
-                      <h2 className="text-xl font-black bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent mb-1 tracking-tight">Vamos entender sua operação</h2>
-                      <p className="text-[12px] text-zinc-400 font-medium leading-tight">Em poucos minutos, o Igor prepara uma demonstração mais alinhada ao seu comercial</p>
+                  <div className="flex flex-1 flex-col gap-3 pt-2 pb-6">
+                    <div className="flex items-start gap-2">
+                      <div className="mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-zinc-800">
+                        <img src="/team/igor-avatar.png" alt="Igor" className="h-full w-full object-cover" />
+                      </div>
+                      <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[13px] font-semibold text-zinc-100">
+                        Olá, tudo bem?
+                      </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                      <div className="grid grid-cols-1 gap-2">
-                        <button
-                          onClick={beginQualification}
-                          className="flex items-center justify-between gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-[#B597FF]/40 transition-all text-left group px-4 sm:px-5"
-                        >
-                          <span className="text-[13px] text-zinc-100 font-bold leading-tight">Começar minha demonstração</span>
-                          <span className="text-[#38E3FF]">↗</span>
-                        </button>
-                      </div>
+                    <div className="ml-10 max-w-[82%] rounded-3xl rounded-tl-md border border-white/10 bg-white/[0.06] p-4">
+                      <p className="text-[14px] font-semibold leading-relaxed text-zinc-100">Vamos entender como a Tlin pode organizar seu comercial e preparar uma demonstração para a sua operação?</p>
+                      <button
+                        type="button"
+                        onClick={beginQualification}
+                        className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[12px] font-bold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
+                      >
+                        Sim, começar agora
+                        <span aria-hidden="true">→</span>
+                      </button>
+                      <p className="mt-3 text-[10px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <a href="/legal?tab=privacidade" className="text-[#64E5FA] hover:underline">Política de Privacidade</a></p>
                     </div>
                   </div>
 
