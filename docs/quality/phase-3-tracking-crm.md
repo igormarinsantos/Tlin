@@ -126,6 +126,32 @@ abandono ficam no GA4; não são apresentados como dados observados pelo Supabas
 
 ## Ativação pendente
 
+### Configuração de analytics verificada em 18/09
+
+- Conta GA `383539525`, propriedade **Tlin** `536371479`, fluxo web
+  `14820691976`, ID `G-9LQN3ZWCNS`. O painel informou coleta nas últimas 48 horas.
+- URL do fluxo corrigida de `https://tlin.cloud` para `https://tlin.ia.br`.
+- `demo_booked` cadastrado como evento principal enviado por código, contado
+  por evento e sem valor monetário padrão. Não foi disparada conversão de teste.
+- Pageviews automáticos por alteração de histórico e interações automáticas de
+  formulário desativados para evitar sobreposição com a instrumentação do site.
+  A coleta por carregamento permanece; o código da fase 3 usa `send_page_view: false`.
+- Dimensões de escopo Evento criadas: **Etapa do formulário** (`lead_step`) e
+  **Modo do formulário** (`form_mode`). Origem/mídia/campanha nativas permanecem
+  disponíveis nos relatórios de aquisição; a atribuição persistida está no Supabase.
+- GTM `GTM-NH79DSND`: espaço de trabalho inspecionado sem tags e sem alterações
+  pendentes. Responsável escolhido para a ativação: GA4 direto, com
+  `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
+  `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS`. Não carregar GTM em paralelo.
+- Os eventos principais antigos `qualify_lead` e `close_convert_lead` ainda
+  existem na propriedade. Retirar seu status de evento principal na transição
+  de produção; não interpretar o segundo como venda. Nenhuma regra de derivação
+  foi criada para transformar os eventos antigos em `demo_booked`.
+- Vercel solicitou login. Configuração de deploy, DebugView com a nova versão e
+  verificação operacional continuam pendentes. Analytics local permanece desligado.
+
+### Conexão e publicação
+
 Conferência local em 18/09: `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
 ainda ausentes. A confirmação na conversa não foi tratada como conexão concluída;
 o formulário temporário não confirmou gravação. Não enviar chaves na conversa.
