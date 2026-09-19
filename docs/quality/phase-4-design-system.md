@@ -29,5 +29,5 @@ identidade atual e reduzindo cópias de CTAs e superfícies em novas páginas.
 
 - `npm run typecheck` passou.
 - `npm run build` passou e incluiu a rota do catálogo.
-- A próxima entrega da fase amplia a migração nas páginas de maior conversão e
-  revisa teclado, mobile e idiomas antes de considerar a base consolidada.
+- A fundação está concluída. A fase 5 amplia a migração nas páginas de maior
+  conversão e revisa teclado, mobile e idiomas.

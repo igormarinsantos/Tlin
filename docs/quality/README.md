@@ -14,7 +14,7 @@ como concluídas as fases antigas de `.planning/`.
 | 1. Base de qualidade | Documentação atual, lint, checks automáticos e referência visual | Implementada localmente; publicação/CI remoto pendentes |
 | 2. Funil confiável | CTAs globais, token, captura/retry, identidade, retomada e confirmação | Implementada localmente; integrações reais/publicação pendentes |
 | 3. Tracking e CRM | Contrato de eventos, atribuição, correlação, deduplicação, contas e painel | Implementada localmente; banco e etapas preparados, ativação pendente |
-| 4. Fundação do design system | Tokens, componentes oficiais e catálogo real | Em implementação |
+| 4. Fundação do design system | Tokens, componentes oficiais e catálogo real | Implementada localmente; migração gradual na fase 5 |
 | 5. Aplicação e consistência | Migração gradual, teclado, acessibilidade, idiomas e mobile | Planejada |
 | 6. Otimização de conversão | Experimentos de mensagem, CTA, prova e fricção | Planejada |
 
