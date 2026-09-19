@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanAnalyticsParams, emitAnalytics } from "../lib/analytics-events";
-import { captureUtms, getFirstTouch, getLastTouch, parseUtmFromUrl } from "../lib/utm";
+import { captureUtms, getFirstTouch, getLastTouch, getUtmLeadPayload, parseUtmFromUrl } from "../lib/utm";
+import { getOrAssignHomeHeroCtaExperiment } from "../lib/conversion-experiments";
 
 afterEach(() => { vi.unstubAllEnvs(); localStorage.clear(); document.cookie = "tlin_first_utm=; max-age=0; path=/"; document.cookie = "tlin_last_utm=; max-age=0; path=/"; });
 describe("analytics and attribution", () => {
@@ -17,7 +18,12 @@ describe("analytics and attribution", () => {
     captureUtms("?utm_source=new"); expect(getFirstTouch().utm_source).toBe("new");
   });
   it("strips contact fields and query strings from analytics", () => {
-    expect(cleanAnalyticsParams({ email: "ana@example.test", phone: "11999999999", page_location: "https://tlin.ia.br/demo?email=ana@example.test#secret", last_utm_campaign: "ana@example.test", lead_step: 4 })).toEqual({ page_location: "https://tlin.ia.br/demo", last_utm_campaign: "[redacted]", lead_step: 4 });
+    expect(cleanAnalyticsParams({ email: "ana@example.test", phone: "11999999999", page_location: "https://tlin.ia.br/demo?email=ana@example.test#secret", last_utm_campaign: "ana@example.test", experiment_variant: "control", lead_step: 4 })).toEqual({ page_location: "https://tlin.ia.br/demo", last_utm_campaign: "[redacted]", experiment_variant: "control", lead_step: 4 });
+  });
+  it("keeps experiment attribution with the lead payload", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.1);
+    const experiment = getOrAssignHomeHeroCtaExperiment();
+    expect(getUtmLeadPayload()).toMatchObject(experiment);
   });
   it("queues early events for exactly one configured owner", () => {
     window.dataLayer = [];

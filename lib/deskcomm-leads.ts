@@ -41,7 +41,7 @@ export async function captureDeskcommLead(
     ...(input.status ? { status_lp: input.status } : {}),
     // The CRM inbound mapper discards nested objects. Keep attribution scalar.
     ...Object.fromEntries(Object.entries(input.utm || {}).filter(([key, value]) =>
-      /^(first_|last_)?(utm_(source|medium|campaign|term|content)|landing_page|current_page|referrer|referrer_host|gclid|fbclid)$/.test(key)
+      /^(first_|last_)?(utm_(source|medium|campaign|term|content)|landing_page|current_page|referrer|referrer_host|gclid|fbclid)$|^experiment_(id|variant)$/.test(key)
       && typeof value === "string")),
   };
 

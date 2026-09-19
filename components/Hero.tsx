@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
+import { getOrAssignHomeHeroCtaExperiment, type ExperimentAttribution } from "@/lib/conversion-experiments";
 import { TlinButton } from "@/components/ui/tlin";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
@@ -66,11 +67,18 @@ export function Hero() {
   const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
 
   const [isDesktop, setIsDesktop] = useState(true);
+  const [heroExperiment, setHeroExperiment] = useState<ExperimentAttribution | null>(null);
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const experiment = getOrAssignHomeHeroCtaExperiment();
+    setHeroExperiment(experiment);
+    trackFunnelEvent("experiment_exposed", experiment);
   }, []);
 
   const title = withoutClosingPeriod((isDesktop ? t.hero.title : t.hero.mobileTitle).replace(/\s*\{stars\}/g, ""));
@@ -335,6 +343,7 @@ export function Hero() {
                 trackFunnelEvent("click_pricing_cta", {
                   cta_source: "hero_primary",
                   plan_name: "TLIN",
+                  ...heroExperiment,
                 });
                 window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
               }}
@@ -352,7 +361,7 @@ export function Hero() {
                  uiMouseX.set(e.clientX - rect.left);
                  uiMouseY.set(e.clientY - rect.top);
               }}
-            >{t.hero.cta}</TlinButton>
+            >{heroExperiment?.experiment_variant === "demo_clarity" ? t.hero.ctaDemoClarity : t.hero.cta}</TlinButton>
             <AnimatePresence>
               {isCtaHovered && (
                 <m.div

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { TlinButton, TlinCard, TlinField } from "@/components/ui/tlin";
 
 type Cohort = { source: string; campaign: string; leads: number; demos: number; qualified_demos: number; attended_demos: number; won: number; awaiting_qualification: number };
-type Report = { campaigns: Cohort[]; pending_operations: number; unmatched_events: number; mapped_stages: number };
+type ExperimentCohort = Omit<Cohort, "source" | "campaign"> & { experiment_id: string; experiment_variant: string };
+type Report = { campaigns: Cohort[]; experiments: ExperimentCohort[]; pending_operations: number; unmatched_events: number; mapped_stages: number };
 const keys = ["leads", "demos", "qualified_demos", "attended_demos", "won", "awaiting_qualification"] as const;
 const labels = ["Captações", "Demos agendadas", "Demos qualificadas", "Demos realizadas", "Vendas ganhas", "Sem avaliação"];
 
@@ -44,6 +45,7 @@ export function FunnelReport() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">{keys.map((key, index) => <TlinCard key={key} className="p-4"><p className="text-sm text-tlin-muted">{labels[index]}</p><p className="mt-2 text-3xl font-semibold">{totals[key]}</p></TlinCard>)}</div>
         <p>Captação → demo: <strong>{rate(totals.demos, totals.leads)}</strong> · Demos qualificadas / agendadas: <strong>{rate(totals.qualified_demos, totals.demos)}</strong></p>
         <div className="overflow-x-auto"><table className="w-full text-left text-sm"><caption className="mb-3 text-left font-semibold">Origem e campanha do último toque</caption><thead><tr>{["Origem", "Campanha", ...labels].map(label => <th key={label} className="border-b p-3">{label}</th>)}</tr></thead><tbody>{report.campaigns.map(row => <tr key={`${row.source}:${row.campaign}`}><td className="border-b p-3">{row.source}</td><td className="border-b p-3">{row.campaign}</td>{keys.map(key => <td key={key} className="border-b p-3">{row[key]}</td>)}</tr>)}</tbody></table>{!report.campaigns.length && <p className="p-4">Nenhuma captação no período. Ausência de dados não significa tracking validado.</p>}</div>
+        <div className="overflow-x-auto"><table className="w-full text-left text-sm"><caption className="mb-3 text-left font-semibold">Experimentos de conversão</caption><thead><tr>{["Experimento", "Variante", ...labels].map(label => <th key={label} className="border-b p-3">{label}</th>)}</tr></thead><tbody>{report.experiments.map(row => <tr key={`${row.experiment_id}:${row.experiment_variant}`}><td className="border-b p-3">{row.experiment_id}</td><td className="border-b p-3">{row.experiment_variant}</td>{keys.map(key => <td key={key} className="border-b p-3">{row[key]}</td>)}</tr>)}</tbody></table>{!report.experiments.length && <p className="p-4">Nenhum experimento atribuído no período.</p>}</div>
         <TlinCard tone="muted" className="p-4 text-sm">Saúde da integração: {report.pending_operations} operações aguardando conferência · {report.unmatched_events} eventos sem vínculo · {report.mapped_stages} etapas mapeadas. Esses totais cobrem todo o histórico.</TlinCard>
         <p className="text-sm text-slate-500">Captações são solicitações distintas; uma pessoa pode retornar. Agendamentos repetidos para o mesmo contato e horário contam uma vez. Visitas e abandono são medidos no GA4. Custo por demo: indisponível até conectar os gastos de mídia.</p>
       </>}
