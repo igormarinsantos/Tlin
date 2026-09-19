@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { operationKey, runOnce } from "@/lib/funnel-store";
 import nodemailer from "nodemailer";
 import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
 import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/lib/deskcomm-mcp";
@@ -13,7 +14,10 @@ type DemoBookingOutcome = {
   attempted: boolean;
   booked: boolean;
   pendingConfirmation?: boolean;
+  slotUnavailable?: boolean;
   error?: string;
+  leadCaptureId?: string;
+  contactId?: string;
 };
 
 function isValidLead(data: unknown): data is Record<string, any> {
@@ -29,8 +33,7 @@ function isValidLead(data: unknown): data is Record<string, any> {
   }
 
   const startsAt = (lead.demoSlot as { starts_at?: unknown } | undefined)?.starts_at;
-  return typeof startsAt === "undefined"
-    || (typeof startsAt === "string" && !Number.isNaN(Date.parse(startsAt)));
+  return typeof startsAt === "string" && Date.parse(startsAt) > Date.now();
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,7 +47,8 @@ async function findContactWithRetry(fullPhone: string, attempts = 4, delayMs = 7
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     const result = await searchContactByPhone(fullPhone);
     if (result.ok === false) return result;
-    if (result.data.contacts.length > 0) return result;
+    const contacts = result.data.contacts.filter(contact => contact.phone?.replace(/\D/g, "") === fullPhone.replace(/\D/g, ""));
+    if (contacts.length > 0) return { ok: true as const, data: { contacts } };
     if (attempt < attempts) await sleep(delayMs);
   }
   return { ok: true as const, data: { contacts: [] as DeskcommContact[] } };
@@ -77,13 +81,16 @@ async function bookDemoInDeskcomm(input: {
   });
 
   if (bookResult.ok === false) {
-    return { attempted: true, booked: false, error: bookResult.error };
+    return { attempted: true, booked: false, pendingConfirmation: true, error: bookResult.error };
   }
-  if (!bookResult.data.marcado) {
-    return { attempted: true, booked: false, error: bookResult.data.mensagem || bookResult.data.motivo };
+  if (bookResult.data.marcado === false) {
+    return { attempted: true, booked: false, slotUnavailable: true, error: bookResult.data.mensagem || bookResult.data.motivo };
+  }
+  if (bookResult.data.marcado !== true) {
+    return { attempted: true, booked: false, pendingConfirmation: true, error: "Resposta de agendamento invalida." };
   }
 
-  return { attempted: true, booked: true };
+  return { attempted: true, booked: true, contactId };
 }
 
 export async function POST(req: NextRequest) {
@@ -93,8 +100,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Dados enviados são grandes demais." }, { status: 413 });
   }
 
+  let demoBooking: DemoBookingOutcome = { attempted: false, booked: false };
   try {
-    const data = await req.json();
+    const data = await req.json().catch(() => null);
     if (!isValidLead(data)) {
       return NextResponse.json({ success: false, error: "Dados de contato inválidos." }, { status: 400 });
     }
@@ -102,7 +110,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Não foi possível validar o envio. Tente novamente." }, { status: 403 });
     }
     const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm, demoSlot } = data;
-    const leadCaptureId = typeof data.leadCaptureId === "string" && data.leadCaptureId.length <= 128
+    const leadCaptureId = typeof data.leadCaptureId === "string" && data.leadCaptureId.length > 0 && data.leadCaptureId.length <= 128
       ? data.leadCaptureId
       : crypto.randomUUID();
     const fullPhone = `+${String(countryCode || "+55").replace(/\D/g, "")}${String(phone || "").replace(/\D/g, "")}`;
@@ -120,7 +128,12 @@ export async function POST(req: NextRequest) {
       utm,
     });
 
-    const supabaseResult = await saveLeadSubmission({
+    let supabaseResult = await saveLeadSubmission({
+      leadCaptureId,
+      deskcommLeadId: deskcommCapture.ok ? deskcommCapture.leadId : undefined,
+      deskcommContactId: deskcommCapture.ok ? deskcommCapture.contactId : undefined,
+      contactKey: operationKey("contact", fullPhone),
+      capturedAt: deskcommCapture.ok ? new Date().toISOString() : undefined,
       name,
       phone,
       countryCode,
@@ -131,15 +144,31 @@ export async function POST(req: NextRequest) {
       lead_score,
       lead_quality,
       utm,
-      payload: data,
+      payload: { ...data, turnstileToken: undefined },
     });
     const supabaseLeadId = Array.isArray(supabaseResult.row)
       ? (supabaseResult.row[0] as any)?.id || null
       : (supabaseResult.row as any)?.id || null;
 
-    let demoBooking: DemoBookingOutcome = { attempted: false, booked: false };
     if (deskcommCapture.ok && demoSlot?.starts_at) {
-      demoBooking = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
+      demoBooking = { attempted: true, booked: false, pendingConfirmation: true };
+      const bookingKey = operationKey("booking", fullPhone + ":" + new Date(demoSlot.starts_at).toISOString());
+      const guarded = await runOnce<DemoBookingOutcome>(bookingKey, async () => {
+        const result = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
+        result.leadCaptureId = leadCaptureId;
+        return { result, definitive: !result.pendingConfirmation, retryable: !result.booked && !result.pendingConfirmation };
+      });
+      demoBooking = guarded.state === "done" ? guarded.result : {
+        attempted: guarded.state === "pending", booked: false,
+        pendingConfirmation: guarded.state === "pending", error: "Booking coordination unavailable",
+      };
+      if (demoBooking.booked) {
+        supabaseResult = await saveLeadSubmission({
+          leadCaptureId: demoBooking.leadCaptureId || leadCaptureId, payload: {},
+          contactKey: operationKey("contact", fullPhone), capturedAt: new Date().toISOString(),
+          bookedAt: new Date().toISOString(), bookingKey, bookingStartsAt: demoSlot.starts_at,
+        });
+      }
     }
 
     // Notifications are email-only; Evolution delivery has been removed.
@@ -153,6 +182,9 @@ export async function POST(req: NextRequest) {
         host: process.env.SMTP_HOST || "smtp.resend.com",
         port: Number(process.env.SMTP_PORT || 465),
         secure: true,
+        connectionTimeout: 5_000,
+        greetingTimeout: 5_000,
+        socketTimeout: 10_000,
         auth: {
           user: smtpUser,
           pass: smtpPass,
@@ -188,12 +220,15 @@ export async function POST(req: NextRequest) {
 
       try {
         console.log(`Tentando enviar e-mail via Resend SMTP direto pelo código para: ${mailOptions.to}...`);
+        const delivered = await runOnce(operationKey("notification", leadCaptureId), async () => {
         const internalInfo = await transporter.sendMail(internalMailOptions);
         console.log("Notificacao interna enviada com sucesso! Resposta SMTP:", internalInfo.response);
 
         const info = await transporter.sendMail(mailOptions);
         console.log("E-mail enviado com sucesso! Resposta SMTP:", info.response);
-        emailSent = true;
+        return { result: true, definitive: true };
+        });
+        emailSent = delivered.state === "done";
       } catch (err) {
         console.error("Erro ao enviar e-mail via Nodemailer/Resend:", err);
         emailError = formatErrorMessage(err);
@@ -203,7 +238,7 @@ export async function POST(req: NextRequest) {
       emailError = "Variáveis SMTP_USER ou SMTP_PASS ausentes";
     }
 
-    const success = deskcommCapture.ok;
+    const success = deskcommCapture.ok && demoBooking.booked;
     const notificationResult = {
       success,
       whatsappTriggered: false,
@@ -239,7 +274,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Erro no endpoint /api/notify:", error);
-    return NextResponse.json({ success: false, error: "Não foi possível registrar o contato agora." }, { status: 500 });
+    return NextResponse.json({ success: demoBooking.booked, demoBooking, error: "Não foi possível concluir todas as etapas agora." }, { status: demoBooking.booked ? 200 : 500 });
   }
 }
 

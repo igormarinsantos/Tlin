@@ -29,6 +29,9 @@ import { ResumeSessionOverlay } from "@/components/lead-qualification/ResumeSess
 import { FieldEditOverlay } from "@/components/lead-qualification/FieldEditOverlay";
 import { SuccessStep } from "@/components/lead-qualification/SuccessStep";
 import { Turnstile } from "@/components/Turnstile";
+import { useQualificationRequest } from "@/components/lead-qualification/useQualificationRequest";
+import { saveDemoConfirmation } from "@/lib/qualification-request";
+import { parseQualificationProgress, type QualificationProgress } from "@/components/lead-qualification/session";
 // confetti is dynamically imported
 
 type LeadQualificationPopupProps = {
@@ -64,14 +67,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const scrollFrameRef = useRef<number | null>(null);
   const hasTrackedQualifiedLeadRef = useRef(false);
   const hasInitializedCountryCodeRef = useRef(false);
-  const leadCaptureIdRef = useRef<string | null>(null);
-  const hasCapturedPhoneRef = useRef(false);
+  const { request, turnstileRef, capture, submit, reset: resetRequest, busy, busyRef, uncertain } = useQualificationRequest();
+  const confirmingRef = useRef(false);
+  const [confirming, setConfirming] = useState(false);
 
   // Estados e Referências adicionadas para controle de Edição Direta e Fechamento Automático
   const [editingField, setEditingField] = useState<keyof typeof formData | null>(null);
   const hasAutoClosed = useRef(false);
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
-  const [savedState, setSavedState] = useState<any>(null);
+  const [savedState, setSavedState] = useState<QualificationProgress | null>(null);
 
   // Tanto o embedded (/demo, /comece) quanto o popup da index comecam com a
   // mesma boas-vindas dentro do proprio chat + "Vamos comecar".
@@ -84,7 +88,13 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<DemoSlot | null>(null);
   const [demoPendingConfirmation, setDemoPendingConfirmation] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [availabilityVersion, setAvailabilityVersion] = useState(0);
+
+  useEffect(() => {
+    if (hasStarted && currentStep >= 4 && currentStep <= 9 && !showResumeOverlay && !editingField) {
+      capture({ ...formData, utm: getUtmLeadPayload() });
+    }
+  }, [capture, hasStarted, currentStep, formData, showResumeOverlay, editingField]);
 
   const clearPendingAdvance = () => {
     if (pendingAdvanceTimeoutRef.current) {
@@ -290,8 +300,8 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       const saved = localStorage.getItem("tlin_lead_qualify_state");
       if (!saved) return;
 
-      const parsed = JSON.parse(saved);
-      if (parsed?.currentStep && parsed?.currentStep > 1 && parsed?.currentStep < SUCCESS_STEP) {
+      const parsed = parseQualificationProgress(JSON.parse(saved));
+      if (parsed) {
         const localizedData = localizeFormData(parsed.formData || FALLBACK_FORM_DATA, parsed.lang || lang);
         if (parsed.selectedDay) setSelectedDay(parsed.selectedDay);
         if (parsed.selectedSlot) setSelectedSlot(parsed.selectedSlot);
@@ -311,14 +321,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   useEffect(() => {
     if (!t?.leadQualify) return;
 
-    if (previousLangRef.current !== lang) {
+    if (previousLangRef.current !== lang && !confirmingRef.current && !busyRef.current) {
       clearPendingAdvance();
       setIsTyping(false);
       setReasoningText(null);
       const localizedData = localizeFormData(formData, previousLangRef.current);
       setFormData(localizedData);
       setChatHistory(buildLocalizedHistory(currentStep, localizedData));
-      setSavedState((prev: any) => {
+      setSavedState((prev) => {
         if (!prev) return prev;
         const resumeData = localizeFormData(prev.formData || FALLBACK_FORM_DATA, prev.lang || previousLangRef.current);
         return {
@@ -477,6 +487,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   }, [isOpen]); // Removido currentStep da dependência para não disparar o overlay de boas-vindas no meio da conversa
 
   const resetForm = () => {
+    if (confirmingRef.current || !resetRequest()) return;
     clearPendingAdvance();
     setReasoningText(null);
     isLiveSession.current = false;
@@ -496,13 +507,14 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     setAvailabilityDays(null);
     setAvailabilityError(null);
     setDemoPendingConfirmation(false);
-    setTurnstileToken(null);
+
     try {
       localStorage.removeItem("tlin_lead_qualify_state");
     } catch (e) {}
   };
 
   const closePopup = () => {
+    if (confirmingRef.current || busyRef.current) return;
     clearPendingAdvance();
     clearScrollTimers();
     if (currentStep > 1 && currentStep < SUCCESS_STEP) {
@@ -525,7 +537,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       wentToWhatsApp: true,
     });
 
-    trackConversion('close_convert_lead', {
+    trackConversion('click_whatsapp', {
       plan_name: planName || 'not_selected',
       lead_volume: data.volume || 'not_set',
       team_size: data.team || 'not_set',
@@ -593,6 +605,12 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   };
 
   const advanceChat = (userValue: string, field?: keyof typeof formData) => {
+    if (confirmingRef.current || busyRef.current || uncertain || isTyping || reasoningText) return;
+    if (currentStep === 9) {
+      if (!selectedDay || !selectedSlot) return;
+      confirmingRef.current = true;
+      setConfirming(true);
+    }
     clearPendingAdvance();
 
     if (t?.leadQualify && currentStep === 3 && userValue === t?.leadQualify?.noCorrect) {
@@ -613,21 +631,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     const updatedData = { ...formData };
     if (field) updatedData[field] = userValue;
     setFormData(updatedData);
-    if (field === 'phone' && turnstileToken && !hasCapturedPhoneRef.current) {
-      hasCapturedPhoneRef.current = true;
-      void fetch('/api/leads/capture', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: updatedData.name,
-          phone: updatedData.phone,
-          countryCode: updatedData.countryCode,
-          leadCaptureId: leadCaptureIdRef.current ??= crypto.randomUUID(),
-          utm: getUtmLeadPayload(),
-          turnstileToken,
-        }),
-      }).catch(() => { hasCapturedPhoneRef.current = false; });
-    }
     trackFunnelEvent('lead_step_completed', {
       lead_step: currentStep,
       field_name: field || `step_${currentStep}`,
@@ -651,68 +654,44 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             team: updatedData.team,
           });
 
-          if (!hasTrackedQualifiedLeadRef.current) {
-            hasTrackedQualifiedLeadRef.current = true;
-            trackConversion('qualify_lead', {
-              plan_name: planName || 'not_selected',
-              lead_volume: updatedData.volume || 'not_set',
-              team_size: updatedData.team || 'not_set',
-              lead_country_code: updatedData.countryCode || '+55',
-              ...score,
-            });
-          }
-
           try {
-            const response = await fetch('/api/notify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ...updatedData,
-                leadCaptureId: leadCaptureIdRef.current ??= crypto.randomUUID(),
-                planName,
-                ...score,
-                utm: getUtmLeadPayload(),
-                demoSlot: selectedSlot ? { starts_at: selectedSlot.startsAt } : undefined,
-                turnstileToken,
-              })
+            const outcome = await submit({
+              ...updatedData, planName, ...score, utm: getUtmLeadPayload(),
+              demoSlot: { starts_at: selectedSlot!.startsAt },
             });
-            const notifyResult = await response.json();
-
-            if (selectedSlot && notifyResult?.demoBooking?.attempted && !notifyResult.demoBooking?.booked) {
-              // O horario escolhido nao pode mais ser confirmado (provavelmente foi ocupado
-              // entre a consulta e a confirmacao) — manda a pessoa escolher outro em vez de
-              // seguir para a tela de sucesso com uma demo que nao foi de fato marcada.
-              console.error("Falha ao marcar a demo no Deskcomm:", notifyResult.demoBooking?.error);
-              setSelectedSlot(null);
-              setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.slotUnavailable || "" }]);
-              setCurrentStep(8);
-              return;
-            }
-
-            // Com demo já marcada de fato, uma falha à parte (ex.: e-mail interno) não deve
-            // esconder da pessoa que a reunião foi confirmada — o compromisso já existe.
-            const demoAlreadyBooked = Boolean(selectedSlot && notifyResult?.demoBooking?.booked);
-            if ((!response.ok || !notifyResult?.success) && !demoAlreadyBooked) {
-              throw new Error(notifyResult?.crmError || notifyResult?.emailError || "Falha ao notificar API");
-            }
-            setDemoPendingConfirmation(Boolean(notifyResult.demoBooking?.pendingConfirmation));
-
-            if (demoAlreadyBooked && selectedDay && selectedSlot) {
-              sessionStorage.setItem("tlin_demo_confirmation", JSON.stringify({
-                day: selectedDay.label,
-                time: selectedSlot.when,
-              }));
+            if (outcome === "booked") {
+              saveDemoConfirmation({
+                requestId: request.state.id, day: selectedDay!.label,
+                time: selectedSlot!.when, startsAt: selectedSlot!.startsAt,
+              });
+              try { localStorage.removeItem("tlin_lead_qualify_state"); } catch { /* Optional storage. */ }
+              if (!hasTrackedQualifiedLeadRef.current) {
+                hasTrackedQualifiedLeadRef.current = true;
+                trackConversion('demo_booked', {
+                  plan_name: planName || 'not_selected', lead_volume: updatedData.volume || 'not_set',
+                  team_size: updatedData.team || 'not_set', lead_country_code: updatedData.countryCode || '+55', ...score,
+                });
+              }
               trackFunnelEvent("demo_thank_you_opened", { plan_name: planName || "not_selected" });
               router.push("/obrigado");
               return;
             }
-
-            console.log("Status do envio:", notifyResult);
-          } catch (err) {
-            console.error("Erro ao notificar API:", err);
-            setChatHistory(prev => [...prev, { role: 'bot', text: t?.leadQualify?.sendError || "" }]);
-            return;
+            if (outcome === "slots") {
+              setSelectedSlot(null);
+              setSelectedDay(null);
+              setAvailabilityDays(null);
+              setAvailabilityVersion(value => value + 1);
+              setCurrentStep(7);
+              setChatHistory(prev => [...prev, { role: 'bot', text: t.leadQualify.slotUnavailable }]);
+              return;
+            }
+            setChatHistory(prev => [...prev, { role: 'bot', text: outcome === "unknown"
+              ? t.leadQualify.bookingUncertain : t.leadQualify.sendError }]);
+          } finally {
+            confirmingRef.current = false;
+            setConfirming(false);
           }
+          return;
         }
 
         setChatHistory(prev => [...prev, { role: 'bot', text: nextQ }]);
@@ -722,6 +701,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
   };
 
   const handleBack = () => {
+    if (confirmingRef.current || busyRef.current || uncertain) return;
     if (currentStep > 1 && !isTyping && !reasoningText && currentStep < SUCCESS_STEP) {
       clearPendingAdvance();
       // Bloqueia a ação de voltar se estiver no overlay de boas-vindas para evitar dessincronização
@@ -801,27 +781,28 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
     return Math.max(600, base + readingTime + jitter);
   };
 
-  // Busca os dias/horarios reais do Deskcomm assim que a etapa de agendamento é alcançada.
+  // One availability request per visit/retry, cancelled on step or language change.
   useEffect(() => {
-    if (currentStep !== 7 || availabilityDays || availabilityLoading) return;
-
+    if (currentStep !== 7) return;
+    const controller = new AbortController();
+    let active = true;
     setAvailabilityLoading(true);
     setAvailabilityError(null);
-    fetch(`/api/public/demo/availability?diasAFrente=21&lang=${lang}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data?.success) throw new Error(data?.error || "Falha ao consultar horarios");
-        setAvailabilityDays(data.days || []);
+    setAvailabilityDays(null);
+    fetch(`/api/public/demo/availability?diasAFrente=21&lang=${lang}`, { signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Availability unavailable");
+        const data = await res.json();
+        if (!data?.success || !Array.isArray(data.days)) throw new Error("Invalid availability");
+        if (active) setAvailabilityDays(data.days);
       })
-      .catch((err) => {
-        console.error("Erro ao consultar disponibilidade da demo:", err);
-        setAvailabilityError(t?.leadQualify?.noSlotsAvailable || "");
-      })
-      .finally(() => setAvailabilityLoading(false));
-  }, [currentStep, availabilityDays, availabilityLoading, lang, t]);
+      .catch(() => { if (active) setAvailabilityError(t.leadQualify.noSlotsAvailable); })
+      .finally(() => { if (active) setAvailabilityLoading(false); });
+    return () => { active = false; controller.abort(); };
+  }, [currentStep, lang, t.leadQualify.noSlotsAvailable, availabilityVersion]);
 
   const handleSelectDay = (day: DemoDay) => {
-    if (isTyping || reasoningText) return;
+    if (isTyping || reasoningText || confirmingRef.current || busyRef.current || uncertain) return;
     setSelectedDay(day);
     setChatHistory(prev => [...prev, { role: 'user', text: day.label }]);
     trackFunnelEvent('lead_step_completed', { lead_step: 7, field_name: 'demo_day', plan_name: planName || 'not_selected' });
@@ -901,7 +882,15 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
             ? "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden bg-white overscroll-none"
             : "fixed inset-x-0 top-[var(--lead-popup-offset-top,0px)] h-[var(--lead-popup-height,100dvh)] w-full z-[300] flex flex-col items-center justify-center overflow-hidden p-2 sm:p-[10px] bg-black/70 sm:bg-black/60 sm:backdrop-blur-md overscroll-none"}
           >
-            <Turnstile onTokenChange={setTurnstileToken} />
+            <div className="absolute left-1/2 top-1/2 z-[200] -translate-x-1/2 -translate-y-1/2">
+              <Turnstile ref={turnstileRef} />
+            </div>
+            {(confirming || busy || uncertain) && (
+              <div role="status" className="absolute inset-x-4 top-16 z-[150] mx-auto max-w-lg rounded-2xl border border-zinc-200 bg-white p-4 text-center text-sm text-zinc-800 shadow-lg">
+                {uncertain ? t.leadQualify.bookingUncertain : t.leadQualify.sendingRequest}
+                {uncertain && <a className="mt-3 block font-bold underline" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t.leadQualify.bookingSupportMessage + ' ' + request.state.id)}`} target="_blank" rel="noreferrer">{t.leadQualify.bookingSupport}</a>}
+              </div>
+            )}
             <motion.div
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -929,7 +918,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               )}
             </AnimatePresence>
             <ResumeSessionOverlay
-              show={showResumeOverlay && !!savedState}
+              show={showResumeOverlay && !!savedState && !uncertain}
               isLight={isLight}
               embedded={embedded}
               t={t?.leadQualify}
@@ -990,6 +979,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 embedded={embedded}
                 t={t?.leadQualify}
                 onStart={() => {
+                  trackFunnelEvent("start_lead_form", { form_mode: embedded ? "embedded" : "modal" });
+                  if (uncertain || busyRef.current || confirmingRef.current) return;
+                  if (request.state.submission === "booked") resetRequest();
                   setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);
                   setHasStarted(true);
                   runThinkingThenType([t?.leadQualify?.thinkingGeneric, t?.leadQualify?.thinkingWelcome], getTypingDelay(1200), () => {
@@ -1057,7 +1049,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                             {currentStep === 9 && (
                               <div className={`mb-4 sm:mb-6 p-3 sm:p-5 rounded-2xl sm:rounded-3xl border space-y-2 sm:space-y-3 text-left ${isLight ? "bg-zinc-50 border-zinc-200" : "bg-white/5 border-white/10"}`}>
                                 <button
-                                  onClick={() => setEditingField('name')}
+                                  onClick={() => !confirmingRef.current && !busyRef.current && !uncertain && setEditingField('name')}
                                   className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.company || "Empresa"}:</span>
@@ -1066,7 +1058,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   </span>
                                 </button>
                                 <button
-                                  onClick={() => setEditingField('phone')}
+                                  onClick={() => !confirmingRef.current && !busyRef.current && !uncertain && setEditingField('phone')}
                                   className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.whatsapp || "WhatsApp"}:</span>
@@ -1075,7 +1067,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   </span>
                                 </button>
                                 <button
-                                  onClick={() => setEditingField('volume')}
+                                  onClick={() => !confirmingRef.current && !busyRef.current && !uncertain && setEditingField('volume')}
                                   className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.volume || "Volume"}:</span>
@@ -1084,7 +1076,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   </span>
                                 </button>
                                 <button
-                                  onClick={() => setEditingField('team')}
+                                  onClick={() => !confirmingRef.current && !busyRef.current && !uncertain && setEditingField('team')}
                                   className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.team || "Equipe"}:</span>
@@ -1093,7 +1085,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                   </span>
                                 </button>
                                 <button
-                                  onClick={() => setEditingField('email')}
+                                  onClick={() => !confirmingRef.current && !busyRef.current && !uncertain && setEditingField('email')}
                                   className={`w-full flex justify-between items-center text-xs sm:text-sm p-2 rounded-xl transition-colors group/edit ${isLight ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
                                 >
                                   <span className="text-zinc-500">{t?.leadQualify?.fields?.email || "E-mail"}:</span>
@@ -1129,6 +1121,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                                 )}
                                 {!availabilityLoading && !availabilityError && availabilityDays?.length === 0 && (
                                   <p className="text-sm text-zinc-500">{t?.leadQualify?.noSlotsAvailable || ""}</p>
+                                )}
+                                {!availabilityLoading && (availabilityError || availabilityDays?.length === 0) && (
+                                  <button type="button" className="rounded-2xl border border-zinc-300 px-4 py-3 text-sm font-bold text-zinc-500" onClick={() => setAvailabilityVersion(value => value + 1)}>{t.leadQualify.retryAvailability}</button>
                                 )}
                                 {!availabilityLoading && availabilityDays && availabilityDays.length > 0 && (
                                   <AvailabilityCalendar
@@ -1225,7 +1220,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 pergunta e outra -- fica reservado o espaco, sem pulo de layout. */}
             <div className="shrink-0 min-h-[76px] sm:min-h-[92px] px-4 sm:px-12 pt-2 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-10 z-20">
                 <AnimatePresence mode="wait">
-                  {!isTyping && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
+                  {!isTyping && !confirming && !busy && !uncertain && chatHistory[chatHistory.length - 1]?.role === 'bot' && !isAskingToContinue && (
                     <>
                       {currentStep === 1 && (
                         <motion.div

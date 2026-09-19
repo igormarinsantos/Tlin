@@ -7,7 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "lint:check": "node scripts/check-lint.mjs",
+    "lint:baseline": "node scripts/check-lint.mjs --update-baseline",
+    "typecheck": "next typegen && tsc --noEmit --incremental false",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint:check && npm test && npm run build",
     "test:lead-capture": "vitest run tests/deskcomm-leads.test.ts"
+  },
+  "engines": {
+    "node": "24.x"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -29,6 +37,8 @@
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
@@ -36,6 +46,7 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "jsdom": "^29.1.1",
     "postcss": "8.5.24",
     "tailwindcss": "4.2.2",
     "typescript": "^5",

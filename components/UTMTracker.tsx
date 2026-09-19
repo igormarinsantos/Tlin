@@ -8,21 +8,28 @@ import { captureUtms, sendUtmToGA, injectUtmsIntoForms } from "@/lib/utm";
 const scheduleIdle = (cb: () => void, timeout = 2000) => {
   if (typeof window === "undefined") return;
   if ("requestIdleCallback" in window) {
-    (window as Window & typeof globalThis & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void })
-      .requestIdleCallback(cb, { timeout });
+    const id = window.requestIdleCallback(cb, { timeout });
+    return () => window.cancelIdleCallback(id);
   } else {
-    setTimeout(cb, 200);
+    const id = setTimeout(cb, 200);
+    return () => clearTimeout(id);
   }
 };
 
 function UTMTrackerInner() {
   const pathname     = usePathname();
   const searchParams = useSearchParams();
+  const lastPage = useRef("");
   const observerRef  = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
+    if (pathname.startsWith("/internal/")) return;
     // ── 1. Capture UTMs synchronously (fast, just reads URL + localStorage)
     captureUtms(window.location.search);
+    if (lastPage.current !== pathname) {
+      lastPage.current = pathname;
+      sendUtmToGA("page_view", { page_location: window.location.origin + pathname, page_referrer: document.referrer });
+    }
 
     // ── 2. Send to GA and inject into forms during browser idle time
     //    This keeps the Main Thread free on initial load.
@@ -56,12 +63,7 @@ function UTMTrackerInner() {
     });
 
     return () => {
-      if (typeof idleHandle === "number") {
-        if ("cancelIdleCallback" in window) {
-          (window as Window & { cancelIdleCallback: (id: number) => void })
-            .cancelIdleCallback(idleHandle);
-        }
-      }
+      idleHandle?.();
       if (debounceTimer) clearTimeout(debounceTimer);
       observerRef.current?.disconnect();
     };

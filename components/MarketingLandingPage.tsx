@@ -9,8 +9,6 @@ import { TrustedBy } from "@/components/TrustedBy";
 import { ScrollBgWrapper } from "@/components/ScrollBgWrapper";
 import { GlobalBackground } from "@/components/GlobalBackground";
 
-import { trackFunnelEvent } from "@/lib/utm";
-
 const TextReveal = dynamic(() => import("@/components/TextReveal").then(mod => mod.TextReveal), { ssr: false });
 // SSR ligado (sem ssr:false): e conteudo textual relevante pra SEO/GEO das
 // paginas de campanha, igual Features/Pricing/Testimonials/Faq abaixo.
@@ -30,7 +28,6 @@ const Faq = dynamic(() => import("@/components/Faq").then(mod => mod.Faq));
 // crm/planos/faq), então manter client-only é seguro aqui.
 const FooterBanner = dynamic(() => import("@/components/FooterBanner").then(mod => mod.FooterBanner), { ssr: false });
 const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer));
-const LeadQualificationPopup = dynamic(() => import("@/components/LeadQualificationPopup").then(mod => mod.LeadQualificationPopup), { ssr: false });
 
 function DeferredSection({
   children,
@@ -83,36 +80,6 @@ function DeferredSection({
   return (
     <div id={id} ref={ref} className={`${className} ${shouldRender ? "" : minHeight}`}>
       {shouldRender ? children : null}
-    </div>
-  );
-}
-
-function QualificationController() {
-  const [qualifyPlan, setQualifyPlan] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleOpen = (e: any) => {
-      const plan = e.detail?.plan || "TLIN";
-      setQualifyPlan(plan);
-      trackFunnelEvent("start_lead_form", {
-        plan_name: plan,
-        cta_source: e.detail?.source || "unknown",
-      });
-    };
-
-    window.addEventListener("open-qualification", handleOpen);
-    return () => window.removeEventListener("open-qualification", handleOpen);
-  }, []);
-
-  return (
-    <div className="no-blur">
-      {qualifyPlan && (
-        <LeadQualificationPopup
-          isOpen={!!qualifyPlan}
-          onClose={() => setQualifyPlan(null)}
-          planName={qualifyPlan}
-        />
-      )}
     </div>
   );
 }
@@ -223,8 +190,6 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           <Footer />
         </div>
 
-        {/* Lead Qualification Global State */}
-        <QualificationController />
       </ScrollBgWrapper>
     </main>
   );

@@ -534,6 +534,11 @@ export const ptBR = {
     successMessageHigh: "Com o volume que {name} atende, cada minuto conta. Já priorizamos o perfil e entraremos em contato em breve via WhatsApp.",
     talkToTeam: "Falar com a equipe",
     saveChange: "Salvar alteração",
+    sendingRequest: "Enviando sua solicitação. Aguarde a confirmação.",
+    bookingUncertain: "A resposta do agendamento não chegou. Para evitar outra reserva, confira com a equipe antes de tentar novamente.",
+    bookingSupport: "Verificar com a equipe",
+    bookingSupportMessage: "Olá! Preciso verificar se minha demo foi agendada. Referência:",
+    retryAvailability: "Consultar horários novamente",
     sendError: "Não consegui enviar sua solicitação agora. Tente confirmar novamente em alguns instantes.",
     volumeOptions: ["Até 40", "40 a 150", "150 a 500", "500 a 1.5k", "Mais de 5k"],
     teamOptions: ["1 a 3", "4 a 10", "11 a 50", "Mais de 50"]

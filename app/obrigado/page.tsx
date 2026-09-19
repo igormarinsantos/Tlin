@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 
-type Confirmation = { day: string; time: string };
+import { readDemoConfirmation, type DemoConfirmation } from "@/lib/qualification-request";
 
 const content = {
   PT: {
@@ -34,24 +34,17 @@ const content = {
 export default function ObrigadoPage() {
   const router = useRouter();
   const { lang } = useLanguage();
-  const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [confirmation, setConfirmation] = useState<DemoConfirmation | null>(null);
   const copy = content[lang];
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("tlin_demo_confirmation");
-      if (!raw && process.env.NODE_ENV !== "development") return router.replace("/demo");
-      const parsed = raw ? JSON.parse(raw) as Confirmation : { day: "Quarta-feira", time: "14:30" };
-      if (!parsed.day || !parsed.time) return router.replace("/demo");
-      const timer = window.setTimeout(() => {
-        setConfirmation(parsed);
-        sessionStorage.removeItem("tlin_demo_confirmation");
-        trackFunnelEvent("demo_thank_you_viewed");
-      }, 0);
-      return () => window.clearTimeout(timer);
-    } catch {
-      router.replace("/demo");
-    }
+    const parsed = readDemoConfirmation();
+    if (!parsed) return router.replace("/demo");
+    const timer = window.setTimeout(() => {
+      setConfirmation(parsed);
+      trackFunnelEvent("demo_thank_you_viewed");
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [router]);
 
   if (!confirmation) return <main className="min-h-screen bg-[#0c0d0d]" aria-busy="true" />;
