@@ -147,14 +147,16 @@ abandono ficam no GA4; não são apresentados como dados observados pelo Supabas
   existem na propriedade. Retirar seu status de evento principal na transição
   de produção; não interpretar o segundo como venda. Nenhuma regra de derivação
   foi criada para transformar os eventos antigos em `demo_booked`.
-- Vercel solicitou login. Configuração de deploy, DebugView com a nova versão e
+- Na Vercel, as configurações públicas `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
+  `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS` foram adicionadas para Production.
+  Elas só terão efeito depois de um novo deploy. DebugView com a nova versão e a
   verificação operacional continuam pendentes. Analytics local permanece desligado.
 
 ### Conexão e publicação
 
-Conferência local em 18/09: `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
-ainda ausentes. A confirmação na conversa não foi tratada como conexão concluída;
-o formulário temporário não confirmou gravação. Não enviar chaves na conversa.
+Conferência local em 19/09: `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
+foram salvas em `.env.local`. A chamada de leitura à RPC `read_funnel_report`
+respondeu `200`; a credencial não entra no Git nem foi impressa.
 
 1. Salvar a chave de serviço e URL do Supabase no ambiente e verificar a RPC
    `read_funnel_report` somente com leitura. Segredos nunca entram no Git.
