@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
 import { MobileNavDrawer } from "./MobileNavDrawer";
+import { TlinButton } from "@/components/ui/tlin";
 
 function MenuIcon({ isOpen = false }: { isOpen?: boolean }) {
   return (
@@ -98,18 +99,14 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: 
             <p className="text-white font-bold text-base leading-snug">{t.nav.solutionsCtaTitle}</p>
             <p className="text-zinc-400 text-sm mt-2 leading-relaxed">{t.nav.solutionsCtaDesc}</p>
           </div>
-          <button
+          <TlinButton
             onClick={openQualification}
-            className="relative mt-4 p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
+            variant="secondary"
+            size="sm"
+            className="mt-4 self-start"
           >
-            <div
-              className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-              style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
-            />
-            <div className="relative px-4 py-2.5 rounded-full bg-white text-[#0c0d0d] text-sm font-bold text-center">
-              {t.nav.solutionsCtaButton}
-            </div>
-          </button>
+            {t.nav.solutionsCtaButton}
+          </TlinButton>
         </div>
       </div>
     </motion.div>
@@ -187,7 +184,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
 
   return (
     <div className="relative">
-      <button 
+      <TlinButton
         onClick={() => {
           trackFunnelEvent("click_pricing_cta", {
             cta_source: "header",
@@ -195,7 +192,9 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
           });
           window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "header" } }));
         }}
-        className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isHovered ? 'z-[100]' : 'z-10'} block w-full`}
+        fullWidth
+        className={isHovered ? "z-[100]" : "z-10"}
+        contentClassName={`${padding} text-[13px]`}
         onMouseEnter={(e) => {
            const rect = e.currentTarget.getBoundingClientRect();
            mouseX.set(e.clientX - rect.left);
@@ -208,16 +207,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
            mouseX.set(e.clientX - rect.left);
            mouseY.set(e.clientY - rect.top);
         }}
-      >
-        <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-          style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 180deg, transparent 240deg 360deg)` }}
-        />
-        <div className={`relative ${padding} rounded-full bg-[#0c0d0d] text-[13px] font-bold text-white transition-all z-10 flex items-center justify-center text-center group-hover/btn:text-[#0c0d0d]`}>
-          <span className="relative z-10">{t.nav.cta}</span>
-          <div className="absolute inset-0 rounded-full bg-[#0c0d0d] transition-opacity duration-300 group-hover/btn:opacity-0" />
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
-        </div>
-      </button>
+      >{t.nav.cta}</TlinButton>
       
       <AnimatePresence>
         {isHovered && (

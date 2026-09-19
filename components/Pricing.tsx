@@ -13,6 +13,7 @@ import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { Bot, Headset, Kanban } from "lucide-react";
 import { DemoHoverPill } from "@/components/DemoHoverPill";
+import { TlinButton } from "@/components/ui/tlin";
 
 function RollingNumber({ value, highlight }: { value: string; highlight: boolean }) {
   const characters = value.split("");
@@ -499,15 +500,19 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
                         <DemoHoverPill className="w-full" enabled={!plan.highlight}>
-                          <button
+                          <TlinButton
                             onClick={(event) => {
                              event.stopPropagation();
                              openPlanQualification(plan.name, "pricing_button");
                            }}
-                            className={`w-full py-4 rounded-2xl text-sm font-bold transition-all duration-300 mb-10 active:scale-95 cursor-pointer hover:scale-[1.02] ${plan.highlight ? 'bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:opacity-90' : 'bg-[#0c0d0d] text-white hover:bg-zinc-800'}`}
+                            variant={plan.highlight ? "gradient" : "primary"}
+                            shape="soft"
+                            fullWidth
+                            className="mb-10 py-4 text-sm hover:scale-[1.02]"
+                            contentClassName="py-4 text-sm"
                           >
                             {plan.cta}
-                          </button>
+                          </TlinButton>
                         </DemoHoverPill>
 
                        <div className="mt-auto">

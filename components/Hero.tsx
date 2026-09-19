@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
+import { TlinButton } from "@/components/ui/tlin";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
   char: string; 
@@ -329,7 +330,7 @@ export function Hero() {
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
           <div className="relative">
-            <button
+            <TlinButton
               onClick={() => {
                 trackFunnelEvent("click_pricing_cta", {
                   cta_source: "hero_primary",
@@ -337,7 +338,8 @@ export function Hero() {
                 });
                 window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
               }}
-              className={`relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer ${isCtaHovered ? 'z-[100]' : 'z-10'} block w-full`}
+              className={isCtaHovered ? "z-[100]" : "z-10"}
+              contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
               onMouseEnter={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
                  uiMouseX.set(e.clientX - rect.left);
@@ -350,16 +352,7 @@ export function Hero() {
                  uiMouseX.set(e.clientX - rect.left);
                  uiMouseY.set(e.clientY - rect.top);
               }}
-            >
-              <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-                style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
-              />
-              <div className="relative px-6 md:px-10 py-3.5 rounded-full font-bold text-[14px] md:text-[15px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
-                <span className="relative z-10">{t.hero.cta}</span>
-                <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
-              </div>
-            </button>
+            >{t.hero.cta}</TlinButton>
             <AnimatePresence>
               {isCtaHovered && (
                 <m.div
@@ -381,8 +374,7 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <button
-            type="button"
+          <TlinButton
             onClick={() => {
               trackFunnelEvent("click_pricing_cta", {
                 cta_source: "hero_secondary",
@@ -390,7 +382,8 @@ export function Hero() {
               });
               window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_secondary" } }));
             }}
-            className="relative cursor-pointer"
+            variant="secondary"
+            className="whitespace-nowrap"
             onMouseEnter={(e) => {
                const rect = e.currentTarget.getBoundingClientRect();
                uiMouseX.set(e.clientX - rect.left);
@@ -403,11 +396,7 @@ export function Hero() {
                uiMouseX.set(e.clientX - rect.left);
                uiMouseY.set(e.clientY - rect.top);
             }}
-          >
-            <div className="px-6 md:px-10 py-3.5 rounded-full bg-white border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-zinc-50 transition-all flex items-center gap-2 whitespace-nowrap">
-              {t.hero.watchDemo}
-            </div>
-          </button>
+          >{t.hero.watchDemo}</TlinButton>
         </m.div>
 
         {/* Mascot Follower (PC Only) - Desmontado no Mobile para poupar CPU/GPU */}

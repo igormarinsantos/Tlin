@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
@@ -12,11 +12,22 @@ const HOLE_RADIUS = 60; // Base radius in CSS pixels
 function RotatingWords({ words }: { words: string[] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref);
-  const reducedMotion = useReducedMotion();
+  // A preferência só é conhecida no navegador. Começar com `false` evita que
+  // o HTML inicial diverja entre SSR e hidratação; o efeito ajusta antes da
+  // animação iniciar para quem prefere menos movimento.
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [index, setIndex] = useState(0);
   const [count, setCount] = useState(0);
   const [erasing, setErasing] = useState(false);
   const word = words[index % words.length];
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (!inView || reducedMotion) return;
@@ -56,10 +67,7 @@ export function FooterBanner() {
   const isHoveredRef = useRef(false);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const timeRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(max-width: 767px)").matches;
-  });
+  const [isMobile, setIsMobile] = useState(false);
   
   const isInView = useInView(containerRef, { margin: "200px" });
   const isInViewRef = useRef(isInView);

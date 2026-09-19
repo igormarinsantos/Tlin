@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary" | "gradient" | "quiet";
 type ButtonSize = "sm" | "md" | "lg";
+type ButtonShape = "pill" | "soft";
 
 const buttonSizes: Record<ButtonSize, string> = {
   sm: "px-4 py-2 text-xs",
@@ -19,16 +20,22 @@ export function TlinButton({
   className,
   variant = "primary",
   size = "md",
+  shape = "pill",
   fullWidth = false,
+  contentClassName,
   type = "button",
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  shape?: ButtonShape;
   fullWidth?: boolean;
+  contentClassName?: string;
 }) {
+  const radius = shape === "pill" ? "rounded-tlin-control" : "rounded-2xl";
   const shared = cn(
-    "relative inline-flex items-center justify-center overflow-hidden rounded-tlin-control font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+    "relative inline-flex items-center justify-center overflow-hidden font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+    radius,
     buttonSizes[size],
     fullWidth && "w-full",
     className,
@@ -36,16 +43,16 @@ export function TlinButton({
 
   if (variant === "primary") {
     return (
-      <button type={type} className={cn("relative inline-flex overflow-hidden rounded-tlin-control p-px font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50", fullWidth && "w-full", className, "group/btn cursor-pointer text-white")} {...props}>
+      <button type={type} className={cn("relative inline-flex overflow-hidden p-px font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50", radius, fullWidth && "w-full", className, "group/btn cursor-pointer text-white")} {...props}>
         <span
           aria-hidden="true"
           className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
           style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
         />
-        <span className={cn("relative z-10 block w-full rounded-tlin-control bg-tlin-ink text-center transition-colors duration-300 group-hover/btn:text-tlin-ink", buttonSizes[size])}>
+        <span className={cn("relative z-10 block w-full bg-tlin-ink text-center transition-colors duration-300 group-hover/btn:text-tlin-ink", radius, buttonSizes[size], contentClassName)}>
           <span className="relative z-10">{children}</span>
-          <span aria-hidden="true" className="absolute inset-0 rounded-tlin-control bg-tlin-ink transition-opacity duration-500 group-hover/btn:opacity-0" />
-          <span aria-hidden="true" className="absolute inset-0 rounded-tlin-control bg-gradient-to-r from-tlin-purple to-tlin-blue opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
+          <span aria-hidden="true" className={cn("absolute inset-0 bg-tlin-ink transition-opacity duration-500 group-hover/btn:opacity-0", radius)} />
+          <span aria-hidden="true" className={cn("absolute inset-0 bg-gradient-to-r from-tlin-purple to-tlin-blue opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100", radius)} />
         </span>
       </button>
     );
