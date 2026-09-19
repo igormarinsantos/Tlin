@@ -1,8 +1,9 @@
 # Fase 3 — tracking e CRM
 
-Implementação na branch `codex/fase-3-tracking-crm`, sobre a fase 2 (`e8f6001`).
-Decisão do Igor: qualificação confirmada pela equipe no CRM; Supabase do site
-como banco de tracking. Não houve push, merge, deploy ou teste com lead real.
+Implementação entregue em `main` pelo commit `101a164` em 19/09/2026, sobre a
+fase 2 (`e8f6001`). Decisão do Igor: qualificação confirmada pela equipe no CRM;
+Supabase do site como banco de tracking. A versão foi publicada em `tlin.ia.br`.
+Não houve teste com lead, e-mail ou agenda reais.
 
 ## Contrato comercial
 
