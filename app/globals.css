@@ -30,7 +30,19 @@ body {
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0c0d0d;
+  --tlin-ink: #0c0d0d;
+  --tlin-surface: #ffffff;
+  --tlin-surface-muted: #f7f7fb;
+  --tlin-border: #e4e4e7;
+  --tlin-text-muted: #71717a;
+  --tlin-purple: #b597ff;
+  --tlin-cyan: #38e3ff;
+  --tlin-gradient: linear-gradient(90deg, var(--tlin-purple) 0%, var(--tlin-cyan) 100%);
+  --tlin-radius-control: 999px;
+  --tlin-radius-card: 1.5rem;
+  --tlin-radius-panel: 2rem;
+  --tlin-shadow-focus: 0 0 0 4px rgb(181 151 255 / 0.12);
 }
 
 @theme inline {
@@ -42,6 +54,14 @@ body {
   --color-tlin-blue: #38E3FF;
   --color-tlin-purple: #B597FF;
   --color-carbon: #1a1a1a;
+  --color-tlin-ink: var(--tlin-ink);
+  --color-tlin-surface: var(--tlin-surface);
+  --color-tlin-surface-muted: var(--tlin-surface-muted);
+  --color-tlin-border: var(--tlin-border);
+  --color-tlin-muted: var(--tlin-text-muted);
+  --radius-tlin-control: var(--tlin-radius-control);
+  --radius-tlin-card: var(--tlin-radius-card);
+  --radius-tlin-panel: var(--tlin-radius-panel);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,6 +78,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--tlin-purple);
+  outline-offset: 3px;
 }
 
 ::selection {

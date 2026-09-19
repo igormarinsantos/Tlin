@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 import { DemoHoverPill } from "@/components/DemoHoverPill";
+import { TlinButton } from "@/components/ui/tlin";
 
 const HOLE_RADIUS = 60; // Base radius in CSS pixels
 
@@ -349,7 +350,7 @@ export function FooterBanner() {
 
            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0">
               <DemoHoverPill className="w-full md:w-auto">
-                <button
+                <TlinButton
                   onClick={() => {
                   trackFunnelEvent("click_pricing_cta", {
                     cta_source: "footer_banner",
@@ -357,17 +358,11 @@ export function FooterBanner() {
                   });
                   window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "footer_banner" } }));
                 }}
-                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer z-10 block w-full md:w-auto"
-              >
-                <div className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-                  style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
-                />
-                <div className="relative px-2 md:px-10 py-4 rounded-full font-bold text-[14px] z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center bg-[#0c0d0d]">
-                  <span className="relative z-10">{t.footerBanner.cta1}</span>
-                  <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
-                </div>
-                </button>
+                  fullWidth
+                  className="md:w-auto"
+                >
+                  {t.footerBanner.cta1}
+                </TlinButton>
               </DemoHoverPill>
               <a 
                 href="https://wa.me/5511916248604" 

@@ -8,6 +8,7 @@ import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { DemoHoverPill } from "@/components/DemoHoverPill";
+import { TlinButton, TlinCard } from "@/components/ui/tlin";
 import { CARD_MOTION, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
 // Destaca em degrade o trecho marcado entre colchetes no titulo (mesmo
@@ -145,28 +146,19 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full rounded-3xl bg-[#F7F7FB] border border-zinc-100 px-6 md:px-10 py-7 md:py-9 mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-between gap-6"
+          className="mt-6 w-full md:mt-8"
         >
-          <p className="text-xl md:text-2xl font-bold text-[#0c0d0d] text-center md:text-left">
-            <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksCtaTitle)} />
-          </p>
+          <TlinCard tone="muted" className="flex flex-col items-center justify-between gap-6 px-6 py-7 md:flex-row md:px-10 md:py-9">
+            <p className="text-center text-xl font-bold text-tlin-ink md:text-left md:text-2xl">
+              <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksCtaTitle)} />
+            </p>
 
-          <DemoHoverPill className="shrink-0">
-            <button
-              onClick={() => openQualification("how_it_works_cta")}
-              className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
-            >
-            <div
-              className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-              style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
-            />
-            <div className="relative px-8 md:px-10 py-3.5 rounded-full font-bold text-[14px] md:text-[15px] z-10 text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center whitespace-nowrap">
-              <span className="relative z-10">{t.hero.cta}</span>
-              <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
-            </div>
-            </button>
-          </DemoHoverPill>
+            <DemoHoverPill className="shrink-0">
+              <TlinButton onClick={() => openQualification("how_it_works_cta")} className="whitespace-nowrap">
+                {t.hero.cta}
+              </TlinButton>
+            </DemoHoverPill>
+          </TlinCard>
         </motion.div>
       </div>
     </section>

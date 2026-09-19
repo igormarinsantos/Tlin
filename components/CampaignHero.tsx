@@ -7,6 +7,7 @@ import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { renderCampaignMotion, HERO_MOTION_BY_VARIANT } from "@/components/campaignMotion";
 import { DemoHoverPill } from "@/components/DemoHoverPill";
+import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
 
 // Envolve em degrade as palavras do titulo que baterem com highlightWords
 // (mesma logica de destaque do Hero padrao, sem a animacao de digitacao —
@@ -24,9 +25,9 @@ function HighlightedTitle({ title, highlightWords }: { title: string; highlightW
             return (
               <span key={wordIdx}>
                 {isHighlighted ? (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B597FF] to-[#38E3FF]">
+                  <TlinGradientText>
                     {word}
-                  </span>
+                  </TlinGradientText>
                 ) : (
                   word
                 )}
@@ -78,29 +79,21 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
 
           <div className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-4">
             <DemoHoverPill>
-              <button
+              <TlinButton
                 onClick={() => openQualification("campaign_hero_primary")}
-                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer"
+                size="md"
               >
-              <div
-                className="absolute inset-[-150%] opacity-100 transition-opacity animate-[spin_3s_linear_infinite]"
-                style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
-              />
-              <div className="relative px-6 md:px-10 py-3.5 rounded-full font-bold text-[14px] md:text-[15px] z-10 text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center whitespace-nowrap">
-                <span className="relative z-10">{t.hero.cta}</span>
-                <div className="absolute inset-0 bg-[#0c0d0d] rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
-              </div>
-              </button>
+                {t.hero.cta}
+              </TlinButton>
             </DemoHoverPill>
 
-            <button
-              type="button"
+            <TlinButton
               onClick={() => openQualification("campaign_hero_secondary")}
-              className="px-6 md:px-10 py-3.5 rounded-full bg-transparent border border-zinc-200 text-[#0c0d0d] font-bold text-[14px] md:text-[15px] hover:bg-black/5 transition-all whitespace-nowrap"
+              variant="secondary"
+              className="whitespace-nowrap"
             >
               {t.hero.watchDemo}
-            </button>
+            </TlinButton>
           </div>
         </motion.div>
 

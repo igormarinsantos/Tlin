@@ -140,6 +140,30 @@ className="relative w-full min-h-[100svh] pt-40 pb-12 px-4 flex flex-col items-c
 
 ## 5. Componentes
 
+### Implementação oficial
+
+Os primitivos de código vivem em `components/ui/tlin.tsx`. Eles são a fonte
+para novas telas e para migrações graduais, sem substituir componentes de
+produto que carregam comportamento próprio.
+
+| Componente | Papel |
+| --- | --- |
+| `TlinButton` | CTA primário com borda em movimento, secundário, gradiente e ação discreta |
+| `TlinCard` | Superfícies claras, suaves ou escuras |
+| `TlinField` | Campo com borda, foco e contraste consistentes |
+| `TlinEyebrow` | Etiqueta de contexto e seção |
+| `TlinGradientText` | Destaque de marca em títulos e trechos curtos |
+
+O catálogo vivo fica em `/internal/design-system` e é bloqueado de indexação.
+Ele usa os componentes reais; não é uma cópia estática da documentação.
+
+Tokens CSS semânticos estão em `app/globals.css`: `--tlin-ink`,
+`--tlin-surface`, `--tlin-surface-muted`, `--tlin-border`,
+`--tlin-text-muted`, `--tlin-purple`, `--tlin-cyan` e as escalas de raio e
+foco. Prefira as utilidades Tailwind `text-tlin-ink`, `bg-tlin-surface-muted`,
+`border-tlin-border`, `text-tlin-muted`, `from-tlin-purple` e
+`to-tlin-blue` nas novas interfaces.
+
 ### Badge de secao
 
 Usado em FAQ, Pricing, Testimonials e secoes institucionais.
