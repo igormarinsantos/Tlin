@@ -149,8 +149,13 @@ abandono ficam no GA4; não são apresentados como dados observados pelo Supabas
   foi criada para transformar os eventos antigos em `demo_booked`.
 - Na Vercel, as configurações públicas `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
   `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS` foram adicionadas para Production.
-  Elas só terão efeito depois de um novo deploy. DebugView com a nova versão e a
-  verificação operacional continuam pendentes. Analytics local permanece desligado.
+  Os segredos `FUNNEL_REPORT_TOKEN`, `DESKCOMM_MCP_URL`, `DESKCOMM_API_TOKEN` e
+  `DESKCOMM_WEBHOOK_SECRET` foram salvos como Secret em Production e Preview.
+  As variáveis existentes `DESKCOMM_WEBHOOK_URL`,
+  `DESKCOMM_STATUS_WEBHOOK_SECRET`, `SUPABASE_URL` e
+  `SUPABASE_SERVICE_ROLE_KEY` não foram sobrescritas. Tudo só terá efeito depois
+  de um novo deploy. DebugView com a nova versão e a verificação operacional
+  continuam pendentes. Analytics local permanece desligado.
 
 ### Conexão e publicação
 
@@ -158,18 +163,13 @@ Conferência local em 19/09: `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
 foram salvas em `.env.local`. A chamada de leitura à RPC `read_funnel_report`
 respondeu `200`; a credencial não entra no Git nem foi impressa.
 
-1. Salvar a chave de serviço e URL do Supabase no ambiente e verificar a RPC
-   `read_funnel_report` somente com leitura. Segredos nunca entram no Git.
-2. Usar no site exatamente o segredo já salvo na automação de retorno. O segredo
-   local recém-gerado ainda não foi alinhado ao CRM; não presumir HMAC operacional.
-3. Configurar as mesmas variáveis server-side no ambiente de publicação. Conferir
-   `DESKCOMM_WEBHOOK_URL`, `DESKCOMM_WEBHOOK_SECRET`, `DESKCOMM_API_TOKEN`,
-   `DESKCOMM_STATUS_WEBHOOK_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
-   `FUNNEL_REPORT_TOKEN` e o responsável único por analytics.
-4. Configurar e validar GA/GTM com os novos nomes, dimensões de origem/campanha e
+1. Confirmar, depois do deploy autorizado, que a automação do Deskcomm usa o
+   mesmo segredo de retorno já salvo em `DESKCOMM_STATUS_WEBHOOK_SECRET`.
+   Não presumir HMAC operacional sem essa verificação.
+2. Configurar e validar GA/GTM com os novos nomes, dimensões de origem/campanha e
    exploração de etapas. O banco é a fonte de verdade para demos qualificadas;
    bloqueadores, consentimento e falhas de rede podem impedir eventos do browser.
-5. Publicar somente após autorização explícita do Igor. A validação operacional
+3. Publicar somente após autorização explícita do Igor. A validação operacional
    com captação, agenda e e-mail reais exige ambiente/teste autorizado separado.
 
 Para operação incerta, consultar `funnel_operations` e conferir no CRM/SMTP antes
