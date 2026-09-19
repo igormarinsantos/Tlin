@@ -4,6 +4,7 @@ import { POST } from "../app/api/notify/route";
 import { POST as capturePost } from "../app/api/leads/capture/route";
 
 const mocks = vi.hoisted(() => ({ capture: vi.fn(), search: vi.fn(), book: vi.fn(), save: vi.fn(), update: vi.fn(), verify: vi.fn(), mail: vi.fn() }));
+vi.mock("@/lib/funnel-store", () => ({ operationKey: (kind: string, key: string) => kind + key, runOnce: async (_key: string, execute: () => Promise<{ result: unknown }>) => { try { return { state: "done", result: (await execute()).result }; } catch { return { state: "pending" }; } } }));
 vi.mock("@/lib/deskcomm-leads", () => ({ captureDeskcommLead: mocks.capture }));
 vi.mock("@/lib/deskcomm-mcp", () => ({ bookAppointment: mocks.book, searchContactByPhone: mocks.search }));
 vi.mock("@/lib/supabase-leads", () => ({ saveLeadSubmission: mocks.save, updateLeadSubmissionNotification: mocks.update }));

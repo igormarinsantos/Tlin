@@ -6,6 +6,7 @@ type RequestState = {
   id: string;
   updatedAt: number;
   capturedContact: string | null;
+  identityPhone?: string;
   submission: "idle" | "pending" | "unknown" | "booked";
 };
 
@@ -61,6 +62,12 @@ export class QualificationRequest {
     try { this.storage?.setItem(REQUEST_KEY, JSON.stringify(this.state)); } catch { /* In-memory state remains usable. */ }
   }
   reset() { this.state = this.fresh(); this.persist(); }
+  identifyPhone(phone: string) {
+    if (this.state.submission !== "idle") return;
+    if (this.state.identityPhone && this.state.identityPhone !== phone) this.reset();
+    this.state.identityPhone = phone;
+    this.persist();
+  }
   captured(contact: string) { this.state.capturedContact = contact; this.persist(); }
   mark(submission: RequestState["submission"]) { this.state.submission = submission; this.persist(); }
 }

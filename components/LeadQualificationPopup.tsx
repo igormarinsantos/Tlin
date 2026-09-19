@@ -537,7 +537,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       wentToWhatsApp: true,
     });
 
-    trackConversion('close_convert_lead', {
+    trackConversion('click_whatsapp', {
       plan_name: planName || 'not_selected',
       lead_volume: data.volume || 'not_set',
       team_size: data.team || 'not_set',
@@ -667,7 +667,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               try { localStorage.removeItem("tlin_lead_qualify_state"); } catch { /* Optional storage. */ }
               if (!hasTrackedQualifiedLeadRef.current) {
                 hasTrackedQualifiedLeadRef.current = true;
-                trackConversion('qualify_lead', {
+                trackConversion('demo_booked', {
                   plan_name: planName || 'not_selected', lead_volume: updatedData.volume || 'not_set',
                   team_size: updatedData.team || 'not_set', lead_country_code: updatedData.countryCode || '+55', ...score,
                 });
@@ -979,6 +979,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                 embedded={embedded}
                 t={t?.leadQualify}
                 onStart={() => {
+                  trackFunnelEvent("start_lead_form", { form_mode: embedded ? "embedded" : "modal" });
                   if (uncertain || busyRef.current || confirmingRef.current) return;
                   if (request.state.submission === "booked") resetRequest();
                   setChatHistory(prev => [...prev, { role: 'user', text: t?.leadQualify?.startChat || t?.leadQualify?.start || "Vamos começar" }]);

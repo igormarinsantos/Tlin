@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { bookingOutcome, contactFingerprint, QualificationRequest } from "@/lib/qualification-request";
+import { trackFunnelEvent } from "@/lib/utm";
 import type { TurnstileHandle } from "@/components/Turnstile";
 
 function browserStorage() {
@@ -27,6 +28,7 @@ export function useQualificationRequest() {
     const key = contactFingerprint(data);
     if (busyRef.current || request.state.submission !== "idle" || captureRef.current
       || request.state.capturedContact === key || captureAttemptRef.current === key) return;
+    request.identifyPhone(data.countryCode.replace(/\D/g, "") + data.phone.replace(/\D/g, ""));
     captureAttemptRef.current = key;
     const id = request.state.id;
     captureRef.current = (async () => {
@@ -40,7 +42,10 @@ export function useQualificationRequest() {
           signal: AbortSignal.timeout(15_000),
         });
         const result = await response.json();
-        if (response.ok && result.success === true && activeRef.current && request.state.id === id) request.captured(key);
+        if (response.ok && result.success === true && activeRef.current && request.state.id === id) {
+          request.captured(key);
+          trackFunnelEvent("generate_lead", { event_id: id });
+        }
       } catch {
         // Final submission retries capture with the same identity and the latest fields.
       } finally { captureRef.current = null; }
@@ -56,6 +61,9 @@ export function useQualificationRequest() {
     let dispatched = false;
     try {
       await captureRef.current;
+      if (typeof payload.phone === "string" && payload.phone) {
+        request.identifyPhone(String(payload.countryCode || "+55").replace(/\D/g, "") + payload.phone.replace(/\D/g, ""));
+      }
       if (!turnstileRef.current) return "retry" as const;
       const token = await turnstileRef.current.takeToken();
       request.mark("pending");
@@ -65,7 +73,12 @@ export function useQualificationRequest() {
         body: JSON.stringify({ ...payload, leadCaptureId: request.state.id, turnstileToken: token }),
         signal: AbortSignal.timeout(60_000),
       });
-      const outcome = bookingOutcome(response.status, await response.json().catch(() => null));
+      const result = await response.json().catch(() => null);
+      const outcome = bookingOutcome(response.status, result);
+      if (result?.crmCaptured === true && !request.state.capturedContact) {
+        request.captured(contactFingerprint(payload as { name: string; phone: string; countryCode: string }));
+        trackFunnelEvent("generate_lead", { event_id: request.state.id });
+      }
       request.mark(outcome === "booked" ? "booked" : outcome === "unknown" ? "unknown" : "idle");
       setUncertain(outcome === "unknown");
       return outcome;

@@ -1,8 +1,8 @@
 # Base de qualidade e evolução
 
 Plano definido com Igor em 17/09/2026. Métrica principal: **demos confirmadas
-com leads qualificados**. A definição operacional de qualificação será fechada
-na fase 3; score do formulário não comprova qualificação comercial.
+com leads qualificados**. A qualificação é confirmada pela equipe no CRM;
+score do formulário não comprova qualificação comercial.
 
 ## Sequência de fases
 
@@ -13,7 +13,7 @@ como concluídas as fases antigas de `.planning/`.
 | --- | --- | --- |
 | 1. Base de qualidade | Documentação atual, lint, checks automáticos e referência visual | Implementada localmente; publicação/CI remoto pendentes |
 | 2. Funil confiável | CTAs globais, token, captura/retry, identidade, retomada e confirmação | Implementada localmente; integrações reais/publicação pendentes |
-| 3. Tracking e CRM | Contrato de eventos, atribuição, correlação, deduplicação, contas e painel | Planejada |
+| 3. Tracking e CRM | Contrato de eventos, atribuição, correlação, deduplicação, contas e painel | Implementada localmente; banco e etapas preparados, ativação pendente |
 | 4. Fundação do design system | Tokens, componentes oficiais e catálogo real | Planejada |
 | 5. Aplicação e consistência | Migração gradual, teclado, acessibilidade, idiomas e mobile | Planejada |
 | 6. Otimização de conversão | Experimentos de mensagem, CTA, prova e fricção | Planejada |
@@ -108,3 +108,7 @@ Checks finais e limitações desta entrega estão em [phase-1-verification.md](p
 
 Contrato, verificações e limites de retry em [phase-2-verification.md](phase-2-verification.md).
 Testes de interface usam React Testing Library e jsdom apenas como dependências de desenvolvimento.
+
+## Evidências da fase 3
+
+Contrato, configuração externa e pendências em [phase-3-tracking-crm.md](phase-3-tracking-crm.md).

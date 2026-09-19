@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { operationKey, runOnce } from "@/lib/funnel-store";
 import nodemailer from "nodemailer";
 import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
 import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/lib/deskcomm-mcp";
@@ -15,6 +16,8 @@ type DemoBookingOutcome = {
   pendingConfirmation?: boolean;
   slotUnavailable?: boolean;
   error?: string;
+  leadCaptureId?: string;
+  contactId?: string;
 };
 
 function isValidLead(data: unknown): data is Record<string, any> {
@@ -87,7 +90,7 @@ async function bookDemoInDeskcomm(input: {
     return { attempted: true, booked: false, pendingConfirmation: true, error: "Resposta de agendamento invalida." };
   }
 
-  return { attempted: true, booked: true };
+  return { attempted: true, booked: true, contactId };
 }
 
 export async function POST(req: NextRequest) {
@@ -125,7 +128,12 @@ export async function POST(req: NextRequest) {
       utm,
     });
 
-    const supabaseResult = await saveLeadSubmission({
+    let supabaseResult = await saveLeadSubmission({
+      leadCaptureId,
+      deskcommLeadId: deskcommCapture.ok ? deskcommCapture.leadId : undefined,
+      deskcommContactId: deskcommCapture.ok ? deskcommCapture.contactId : undefined,
+      contactKey: operationKey("contact", fullPhone),
+      capturedAt: deskcommCapture.ok ? new Date().toISOString() : undefined,
       name,
       phone,
       countryCode,
@@ -144,7 +152,23 @@ export async function POST(req: NextRequest) {
 
     if (deskcommCapture.ok && demoSlot?.starts_at) {
       demoBooking = { attempted: true, booked: false, pendingConfirmation: true };
-      demoBooking = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
+      const bookingKey = operationKey("booking", fullPhone + ":" + new Date(demoSlot.starts_at).toISOString());
+      const guarded = await runOnce<DemoBookingOutcome>(bookingKey, async () => {
+        const result = await bookDemoInDeskcomm({ fullPhone, startsAt: demoSlot.starts_at, name });
+        result.leadCaptureId = leadCaptureId;
+        return { result, definitive: !result.pendingConfirmation, retryable: !result.booked && !result.pendingConfirmation };
+      });
+      demoBooking = guarded.state === "done" ? guarded.result : {
+        attempted: guarded.state === "pending", booked: false,
+        pendingConfirmation: guarded.state === "pending", error: "Booking coordination unavailable",
+      };
+      if (demoBooking.booked) {
+        supabaseResult = await saveLeadSubmission({
+          leadCaptureId: demoBooking.leadCaptureId || leadCaptureId, payload: {},
+          contactKey: operationKey("contact", fullPhone), capturedAt: new Date().toISOString(),
+          bookedAt: new Date().toISOString(), bookingKey, bookingStartsAt: demoSlot.starts_at,
+        });
+      }
     }
 
     // Notifications are email-only; Evolution delivery has been removed.
@@ -196,12 +220,15 @@ export async function POST(req: NextRequest) {
 
       try {
         console.log(`Tentando enviar e-mail via Resend SMTP direto pelo código para: ${mailOptions.to}...`);
+        const delivered = await runOnce(operationKey("notification", leadCaptureId), async () => {
         const internalInfo = await transporter.sendMail(internalMailOptions);
         console.log("Notificacao interna enviada com sucesso! Resposta SMTP:", internalInfo.response);
 
         const info = await transporter.sendMail(mailOptions);
         console.log("E-mail enviado com sucesso! Resposta SMTP:", info.response);
-        emailSent = true;
+        return { result: true, definitive: true };
+        });
+        emailSent = delivered.state === "done";
       } catch (err) {
         console.error("Erro ao enviar e-mail via Nodemailer/Resend:", err);
         emailError = formatErrorMessage(err);

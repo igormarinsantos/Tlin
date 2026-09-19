@@ -98,8 +98,8 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-9LQN3ZWCNS";
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-NH79DSND";
+const GA_ID = process.env.NEXT_PUBLIC_ANALYTICS_OWNER === "ga4" && /^G-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "") ? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID : "";
+const GTM_ID = process.env.NEXT_PUBLIC_ANALYTICS_OWNER === "gtm" && /^GTM-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GTM_ID || "") ? process.env.NEXT_PUBLIC_GTM_ID : "";
 
 export default function RootLayout({
   children,
@@ -151,13 +151,15 @@ export default function RootLayout({
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
               strategy="afterInteractive"
             />
-            <Script id="ga4-init" strategy="afterInteractive">
+            <Script id="ga4-init" strategy="beforeInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${GA_ID}', {
-                  send_page_view: true,
+                  send_page_view: false,
+                  page_location: window.location.origin + window.location.pathname,
+                  page_referrer: document.referrer ? new URL(document.referrer).origin : '',
                   cookie_flags: 'SameSite=Lax;Secure',
                 });
               `}

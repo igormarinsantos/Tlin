@@ -16,6 +16,14 @@ function setup() {
 }
 
 describe("qualification request lifecycle", () => {
+  it("uses a new CRM identity after a phone correction, including after reload", () => {
+    const first = new QualificationRequest(localStorage);
+    first.identifyPhone("5511999999999"); first.captured("contact");
+    const resumed = new QualificationRequest(localStorage);
+    resumed.identifyPhone("5511999999999"); expect(resumed.state.id).toBe(first.state.id);
+    resumed.identifyPhone("5511888888888"); expect(resumed.state.id).not.toBe(first.state.id);
+    expect(resumed.state.capturedContact).toBeNull();
+  });
   it("keeps identity/capture on reload, isolates new requests, and restores an interrupted send as uncertain", () => {
     const first = new QualificationRequest(localStorage);
     first.captured("contact");

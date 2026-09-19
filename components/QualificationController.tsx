@@ -18,7 +18,7 @@ export function QualificationController() {
       const nextPlan = typeof detail?.plan === "string" ? detail.plan || "TLIN" : "TLIN";
       openRef.current = true;
       setPlan(nextPlan);
-      trackFunnelEvent("start_lead_form", {
+      trackFunnelEvent("lead_form_opened", {
         plan_name: nextPlan,
         cta_source: typeof detail?.source === "string" ? detail.source : "unknown",
       });

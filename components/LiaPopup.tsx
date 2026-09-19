@@ -202,7 +202,7 @@ export function LiaPopup() {
       setIsTyping(false);
       setStatus(t.liaPopup.online);
     }, getHumanTypingDelay(t.leadQualify.initialMsg));
-    trackFunnelEvent("start_lead_form", { cta_source: "igor_chat" });
+    trackFunnelEvent("lia_chat_started", { cta_source: "igor_chat" });
   };
 
   const inputPlaceholder = [

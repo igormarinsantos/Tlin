@@ -25,7 +25,7 @@ describe("global qualification entry", () => {
     expect(screen.getAllByRole("dialog")).toHaveLength(1);
     expect(screen.getByText("Scale")).toBeTruthy();
     expect(state.track).toHaveBeenCalledTimes(1);
-    expect(state.track).toHaveBeenCalledWith("start_lead_form", { plan_name: "Scale", cta_source: "header" });
+    expect(state.track).toHaveBeenCalledWith("lead_form_opened", { plan_name: "Scale", cta_source: "header" });
     fireEvent.click(screen.getByText("Close"));
     expect(screen.queryByRole("dialog")).toBeNull();
     act(open);

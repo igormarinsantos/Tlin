@@ -1,4 +1,14 @@
+import { funnelRpc } from "./funnel-store";
+
 type LeadSubmissionInput = {
+  leadCaptureId: string;
+  deskcommLeadId?: string;
+  deskcommContactId?: string;
+  contactKey?: string;
+  capturedAt?: string;
+  bookedAt?: string;
+  bookingKey?: string;
+  bookingStartsAt?: string;
   name?: string;
   phone?: string;
   countryCode?: string;
@@ -18,10 +28,7 @@ type LeadSubmissionResult = {
   row: unknown;
 };
 
-const DEFAULT_SUPABASE_URL = "https://nhclqbnygvkyjcxscrgt.supabase.co";
-
 export async function saveLeadSubmission(input: LeadSubmissionInput): Promise<LeadSubmissionResult> {
-  const supabaseUrl = (process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, "");
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
   if (!serviceRoleKey) {
@@ -33,39 +40,16 @@ export async function saveLeadSubmission(input: LeadSubmissionInput): Promise<Le
   }
 
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/lead_form_submissions`, {
-      method: "POST",
-      headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify({
-        company_name: input.name || null,
-        phone: input.phone || null,
-        country_code: input.countryCode || null,
-        email: input.email || null,
-        lead_volume: input.volume || null,
-        team_size: input.team || null,
-        plan_name: input.planName || null,
-        lead_score: input.lead_score ?? null,
-        lead_quality: input.lead_quality || null,
-        utm: input.utm || {},
-        payload: input.payload || {},
-      }),
-    });
-
-    const responseText = await response.text();
-    const row = responseText ? JSON.parse(responseText) : null;
-
-    if (!response.ok) {
-      return {
-        saved: false,
-        error: `Supabase retornou HTTP ${response.status}: ${responseText}`,
-        row,
-      };
-    }
+    const row = await funnelRpc("record_funnel_lead", { p_lead: {
+      lead_capture_id: input.leadCaptureId, contact_key: input.contactKey || null,
+      deskcomm_lead_id: input.deskcommLeadId || null, deskcomm_contact_id: input.deskcommContactId || null,
+      captured_at: input.capturedAt || null, booked_at: input.bookedAt || null,
+      booking_key: input.bookingKey || null, booking_starts_at: input.bookingStartsAt || null,
+      company_name: input.name || null, phone: input.phone || null, country_code: input.countryCode || null,
+      email: input.email || null, lead_volume: input.volume || null, team_size: input.team || null,
+      plan_name: input.planName || null, lead_score: input.lead_score ?? null, lead_quality: input.lead_quality || null,
+      utm: input.utm || {}, payload: input.payload || {},
+    } });
 
     return {
       saved: true,
@@ -82,14 +66,15 @@ export async function saveLeadSubmission(input: LeadSubmissionInput): Promise<Le
 }
 
 export async function updateLeadSubmissionNotification(id: string | null, notificationResult: Record<string, unknown>) {
-  const supabaseUrl = (process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, "");
+  const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-  if (!id || !serviceRoleKey) return;
+  if (!id || !serviceRoleKey || !supabaseUrl) return;
 
   try {
-    await fetch(`${supabaseUrl}/rest/v1/lead_form_submissions?id=eq.${encodeURIComponent(id)}`, {
+    const response = await fetch(`${supabaseUrl}/rest/v1/lead_form_submissions?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
+      signal: AbortSignal.timeout(8_000),
       headers: {
         apikey: serviceRoleKey,
         Authorization: `Bearer ${serviceRoleKey}`,
@@ -99,6 +84,7 @@ export async function updateLeadSubmissionNotification(id: string | null, notifi
         notification_result: notificationResult,
       }),
     });
+    if (!response.ok) console.warn("[funnel] Notification projection failed", response.status);
   } catch (error) {
     console.error("Erro ao atualizar notificacao do lead no Supabase:", error);
   }
@@ -107,14 +93,7 @@ export async function updateLeadSubmissionNotification(id: string | null, notifi
 export async function projectDeskcommStatusEvent(event: {
   eventId: string; leadCaptureId?: string; leadId?: string; contactId?: string; status: string; occurredAt: string; payload: Record<string, unknown>;
 }) {
-  const supabaseUrl = (process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  if (!key) return { saved: false, duplicate: false };
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates" };
   try {
-    const inserted = await fetch(`${supabaseUrl}/rest/v1/deskcomm_status_events`, { method: "POST", headers, body: JSON.stringify({ external_event_id: event.eventId, lead_capture_id: event.leadCaptureId || null, deskcomm_lead_id: event.leadId || null, deskcomm_contact_id: event.contactId || null, status: event.status, occurred_at: event.occurredAt, payload: event.payload }) });
-    if (!inserted.ok) return { saved: false, duplicate: false };
-    if (event.leadCaptureId) await fetch(`${supabaseUrl}/rest/v1/lead_form_submissions?lead_capture_id=eq.${encodeURIComponent(event.leadCaptureId)}`, { method: "PATCH", headers, body: JSON.stringify({ deskcomm_lead_id: event.leadId || null, deskcomm_contact_id: event.contactId || null, crm_status: event.status, crm_status_at: event.occurredAt }) });
-    return { saved: true, duplicate: false };
-  } catch { return { saved: false, duplicate: false }; }
+    return await funnelRpc<{ saved: boolean; duplicate: boolean; projected: boolean }>("apply_funnel_crm_event", { p_event: event });
+  } catch { return { saved: false, duplicate: false, projected: false }; }
 }

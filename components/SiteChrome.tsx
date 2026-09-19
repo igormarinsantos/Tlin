@@ -10,7 +10,7 @@ import { QualificationController } from "@/components/QualificationController";
 // Rotas de conversão são experiências próprias, sem a navegação da LP.
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isStandaloneFlow = pathname === "/comece" || pathname === "/demo";
+  const isStandaloneFlow = pathname === "/comece" || pathname === "/demo" || pathname.startsWith("/internal/");
 
   if (isStandaloneFlow) return <>{children}</>;
 

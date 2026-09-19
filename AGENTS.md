@@ -192,10 +192,12 @@ horários expirados voltam ao calendário. Nunca persista tokens de segurança.
 confirma `marcado === true`; erros secundários preservam uma reserva já confirmada.
 `/obrigado` usa recibo versionado por até 24 horas em sessionStorage, sem removê-lo
 no refresh. Recibos são estado de UI, nunca autorização para operações no servidor.
-`qualify_lead` só dispara após confirmação no formulário, mas score e reserva ainda
-não comprovam qualificação comercial. `close_convert_lead` continua sendo clique
-no WhatsApp, não venda. Correlação, idempotência durável e contrato de métricas
-são fase 3; `POST /api/webhooks/deskcomm` mantém a projeção HMAC existente.
+Na fase 3, `demo_booked` substitui `qualify_lead` e `click_whatsapp` substitui
+`close_convert_lead`. Só a etapa de avaliação no CRM qualifica comercialmente.
+Supabase também coordena reservas com locks persistentes; sem banco, não agenda.
+O painel `/internal/funnel` exige token. Retorno HMAC só acusa recebimento após
+persistir o evento. Configuração externa, limites e ativação pendente estão em
+`docs/quality/phase-3-tracking-crm.md`.
 Leia `docs/quality/phase-2-verification.md` para limites e testes.
 
 A validação real de ponta a ponta Deskcomm/Supabase foi adiada no ciclo anterior;

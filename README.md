@@ -8,7 +8,7 @@ Site comercial da tlin.ai: uma operação de vendas com IA para WhatsApp, CRM, f
 Prioridade comercial: **demos confirmadas com leads qualificados**. As fases 1 e 2 do
 [plano de qualidade](docs/quality/README.md) estabelecem checks locais/CI, referência
 visual e um fluxo de demo com retomada e tratamento de falhas. Integrações reais e
-qualificação comercial ainda precisam da validação operacional da fase 3.
+qualificação comercial seguem o [contrato da fase 3](docs/quality/phase-3-tracking-crm.md), com ativação e validação operacional pendentes.
 
 ## Para uma IA que vai continuar o trabalho
 
@@ -124,7 +124,7 @@ abre `/obrigado`; o recibo permanece na sessão por até 24 horas, inclusive no 
 Horários recusados levam a uma nova consulta. Falhas conhecidas permitem retry;
 respostas incertas bloqueiam outra reserva e oferecem contato com a equipe.
 Deskcomm continua sendo a fonte operacional; Supabase é a projeção de backup.
-O bloqueio do cliente não substitui idempotência durável no CRM. Veja o
+Na fase 3, o Supabase também coordena a deduplicação durável das reservas; indisponibilidade do banco bloqueia novas reservas. Veja o
 [contrato e limites da fase 2](docs/quality/phase-2-verification.md).
 
 ## Stack e comandos
@@ -219,3 +219,7 @@ por este repositório.
 - [Plano das landing pages](plano-landing-pages.md)
 - [Variáveis de ambiente](.env.local.example)
 
+
+## Tracking e resultados comerciais
+
+A fase 3 distingue captura, agendamento e qualificação humana. O painel restrito está em `/internal/funnel`; o contrato de eventos, migrações, variáveis e pendências de ativação estão em [phase-3-tracking-crm.md](docs/quality/phase-3-tracking-crm.md). Use [.env.example](.env.example) como referência. `NEXT_PUBLIC_ANALYTICS_OWNER` seleciona GA4, GTM ou desligado; não há IDs de analytics ativados por padrão.

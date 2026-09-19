@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { saveLeadSubmission } from "@/lib/supabase-leads";
+import { operationKey } from "@/lib/funnel-store";
 import { captureDeskcommLead } from "@/lib/deskcomm-leads";
 import { checkRateLimit, rateLimitedResponse, requestIsTooLarge } from "@/lib/rate-limit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
@@ -21,12 +23,16 @@ export async function POST(req: NextRequest) {
   if (!(await verifyTurnstileToken(data.turnstileToken, req))) {
     return NextResponse.json({ success: false, error: "Validação necessária." }, { status: 403 });
   }
+  const leadCaptureId = typeof data.leadCaptureId === "string" && data.leadCaptureId.length > 0 && data.leadCaptureId.length <= 128 ? data.leadCaptureId : crypto.randomUUID();
   const result = await captureDeskcommLead({
-    leadCaptureId: typeof data.leadCaptureId === "string" && data.leadCaptureId.length > 0 && data.leadCaptureId.length <= 128 ? data.leadCaptureId : crypto.randomUUID(),
+    leadCaptureId,
     name,
     phone: `+${countryCode}${phone}`,
     status: "novo",
     utm: typeof data.utm === "object" && data.utm ? data.utm : undefined,
   });
-  return NextResponse.json({ success: result.ok }, { status: result.ok ? 200 : 502 });
+  if (result.ok) await saveLeadSubmission({ leadCaptureId, name, phone, countryCode, utm: data.utm,
+    deskcommLeadId: result.leadId, deskcommContactId: result.contactId,
+    contactKey: operationKey("contact", `+${countryCode}${phone}`), capturedAt: new Date().toISOString(), payload: {} });
+  return NextResponse.json({ success: result.ok, leadCaptureId }, { status: result.ok ? 200 : 502 });
 }

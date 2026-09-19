@@ -1,3 +1,4 @@
+import { emitAnalytics, safePageUrl } from "./analytics-events";
 /**
  * UTM Tracking System — Tlin.ai
  * Handles capture, persistence (first/last touch), GA4 integration and form injection.
@@ -29,10 +30,7 @@ const COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
 // Debug: set NEXT_PUBLIC_UTM_DEBUG=true OR localStorage.setItem('utm_debug','true')
 function isDebug(): boolean {
   if (typeof window === 'undefined') return false;
-  return (
-    process.env.NEXT_PUBLIC_UTM_DEBUG === 'true' ||
-    localStorage.getItem('utm_debug') === 'true'
-  );
+  try { return process.env.NEXT_PUBLIC_UTM_DEBUG === "true" || localStorage.getItem("utm_debug") === "true"; } catch { return false; }
 }
 
 function log(...args: unknown[]) {
@@ -47,8 +45,8 @@ function log(...args: unknown[]) {
  */
 export function parseUtmFromUrl(search: string = ''): UtmParams | null {
   const params = new URLSearchParams(search);
-  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
-  const referrer = typeof document !== 'undefined' ? document.referrer : '';
+  const locationHref = typeof window !== 'undefined' ? safePageUrl(window.location.href) : '';
+  const referrer = typeof document !== 'undefined' ? safePageUrl(document.referrer) : '';
   const referrerHost = getReferrerHost(referrer);
 
   const source   = params.get('utm_source');
@@ -60,11 +58,11 @@ export function parseUtmFromUrl(search: string = ''): UtmParams | null {
   const fbclid   = params.get('fbclid')  || undefined;
 
   // No tracking params found
-  if (!source && !gclid && !fbclid) return null;
+  if (!source && !medium && !campaign && !term && !content && !gclid && !fbclid) return null;
 
   return {
-    utm_source:   gclid  ? 'google'   : fbclid ? 'facebook' : (source   || 'direct'),
-    utm_medium:   gclid  ? 'cpc'      : fbclid ? 'social'   : (medium   || 'none'),
+    utm_source:   source || (gclid ? 'google' : fbclid ? 'facebook' : 'direct'),
+    utm_medium:   medium || (gclid ? 'cpc' : fbclid ? 'social' : 'none'),
     utm_campaign: campaign || '(not set)',
     utm_term:     term,
     utm_content:  content,
@@ -80,8 +78,8 @@ export function parseUtmFromUrl(search: string = ''): UtmParams | null {
 
 /** Default fallback for direct/untracked traffic */
 export function getFallbackUtm(): UtmParams {
-  const locationHref = typeof window !== 'undefined' ? window.location.href : '';
-  const referrer = typeof document !== 'undefined' ? document.referrer : '';
+  const locationHref = typeof window !== 'undefined' ? safePageUrl(window.location.href) : '';
+  const referrer = typeof document !== 'undefined' ? safePageUrl(document.referrer) : '';
   const referrerHost = getReferrerHost(referrer);
 
   return {
@@ -122,7 +120,7 @@ function setCookie(name: string, value: string, maxAge = COOKIE_MAX_AGE): void {
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[1]) : null;
+  try { return match ? decodeURIComponent(match[1]) : null; } catch { return null; }
 }
 
 // ─── Storage Manager ──────────────────────────────────────────────────────────
@@ -133,16 +131,22 @@ function saveUtm(key: string, utm: UtmParams): void {
   setCookie(key, json);
 }
 
+function validStoredUtm(value: UtmParams): UtmParams | null {
+  const time = Date.parse(value?.captured_at || "");
+  if (!Number.isFinite(time) || time > Date.now() || Date.now() - time > COOKIE_MAX_AGE * 1000 || typeof value.utm_source !== "string") return null;
+  return { ...value, landing_page: safePageUrl(value.landing_page || ""), current_page: safePageUrl(value.current_page || ""), referrer: safePageUrl(value.referrer || "") };
+}
+
 function loadUtm(key: string): UtmParams | null {
   // Prefer localStorage, fall back to cookie
   try {
     const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) return validStoredUtm(JSON.parse(raw));
   } catch { /* parse error */ }
 
   const cookie = getCookie(key);
   if (cookie) {
-    try { return JSON.parse(cookie); } catch { /* parse error */ }
+    try { return validStoredUtm(JSON.parse(cookie)); } catch { /* parse error */ }
   }
   return null;
 }
@@ -249,19 +253,12 @@ function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
  * @param eventName - GA4 event name (default: 'utm_capture')
  */
 export function sendUtmToGA(eventName = 'utm_capture', extraData: Record<string, EventParam> = {}): void {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
-    log('gtag not available yet, skipping GA send');
-    return;
-  }
-
-  const payload = getUtmEventPayload(extraData);
-
-  window.gtag('event', eventName, payload);
-  log('Sent to GA4:', eventName, payload);
+  emitAnalytics(eventName, getUtmEventPayload(extraData));
 }
 
 export function getUtmLeadPayload() {
-  return getUtmEventPayload();
+  const first = getFirstTouch(); const last = getLastTouch();
+  return { ...getUtmEventPayload(), first_gclid: first.gclid, last_gclid: last.gclid, first_fbclid: first.fbclid, last_fbclid: last.fbclid };
 }
 
 export function trackFunnelEvent(eventName: string, extraData: Record<string, EventParam> = {}): void {
@@ -356,7 +353,7 @@ export function injectUtmsIntoForms(): void {
  * Call this when a lead converts (form submit, CTA click, etc).
  * Sends a 'form_submit' event to GA4 with full UTM context.
  */
-export function trackConversion(eventName = 'qualify_lead', extraData: Record<string, EventParam> = {}): void {
+export function trackConversion(eventName: 'demo_booked' | 'click_whatsapp', extraData: Record<string, EventParam> = {}): void {
   sendUtmToGA(eventName, extraData);
   if (extraData) {
     log('Conversion extra data:', extraData);
