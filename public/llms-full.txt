@@ -44,6 +44,24 @@ A tlin.ai organiza etapas do funil comercial com inteligência artificial treina
 - Pré-vendas para empresas com alto volume de mensagens.
 - Operações que precisam responder leads fora do horário comercial.
 
+## Soluções por segmento
+
+### Clínicas
+
+A página https://tlin.ia.br/ia-para-clinicas descreve o uso da Tlin para responder novos pacientes no WhatsApp, identificar o interesse inicial, organizar oportunidades no CRM nativo e encaminhar contatos para o próximo passo da clínica. A IA apoia o atendimento comercial e não substitui avaliação clínica ou orientação de profissionais de saúde.
+
+### Escolas
+
+A página https://tlin.ia.br/ia-para-escolas descreve o uso da Tlin para atender famílias no WhatsApp, organizar interesses de matrícula, explicar próximos passos e encaminhar famílias interessadas para visitas com a equipe da escola.
+
+### Assessorias
+
+A página https://tlin.ia.br/ia-para-assessorias descreve o uso da Tlin para responder novos contatos, reunir contexto comercial, qualificar oportunidades de acordo com o playbook e agendar conversas com especialistas da assessoria.
+
+### Advocacia
+
+A página https://tlin.ia.br/ia-para-advocacia descreve o uso da Tlin para organizar o primeiro atendimento no WhatsApp, reunir informações iniciais e distribuir contatos para a equipe responsável. A IA não presta orientação jurídica nem substitui a análise de um profissional habilitado.
+
 ## Público ideal
 
 - Empresas com geração constante de leads.
@@ -74,4 +92,8 @@ Os agentes são configurados para operar dentro das regras do cliente. Quando um
 - Sistema: https://app.tlin.ia.br/
 - Sitemap: https://tlin.ia.br/sitemap.xml
 - Termos, privacidade, cookies e glossário: https://tlin.ia.br/legal
+- IA para clínicas: https://tlin.ia.br/ia-para-clinicas
+- IA para escolas: https://tlin.ia.br/ia-para-escolas
+- IA para assessorias: https://tlin.ia.br/ia-para-assessorias
+- IA para advocacia: https://tlin.ia.br/ia-para-advocacia
 - Contato comercial: contato@tlin.ia.br

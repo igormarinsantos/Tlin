@@ -26,6 +26,13 @@
 - Diferenciais: IA treinada no playbook comercial do cliente, guardrails para evitar respostas fora de regra, CRM nativo, follow-up automático com leads parados, agendamento automático de reuniões e métricas de funil.
 - Região: Brasil, com atendimento em português do Brasil.
 
+## Soluções por segmento
+
+- Clínicas: atendimento inicial de pacientes, organização de oportunidades e encaminhamento para agenda — https://tlin.ia.br/ia-para-clinicas
+- Escolas: atendimento de famílias, organização de interesses de matrícula e agendamento de visitas — https://tlin.ia.br/ia-para-escolas
+- Assessorias: resposta, qualificação, follow-up e agendamento de diagnósticos comerciais — https://tlin.ia.br/ia-para-assessorias
+- Advocacia: organização do primeiro atendimento e do contexto inicial, sem substituir orientação jurídica — https://tlin.ia.br/ia-para-advocacia
+
 ## Planos
 
 - Starter: 1 agente IA 24/7 para WhatsApp, dashboard de métricas, transferência para humano e suporte especializado.
