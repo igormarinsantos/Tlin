@@ -85,6 +85,8 @@ function DeferredSection({
 }
 
 export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVariant }) {
+  const isSegmentCampaign = heroVariant && ["clinicas", "escolas", "assessorias", "advocacia"].includes(heroVariant);
+
   return (
     <main className="flex min-h-[100svh] flex-col text-[#0c0d0d] bg-white">
       <GlobalBackground />
@@ -97,7 +99,11 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           <div className="relative isolate">
             <div
               className="absolute inset-0 -z-10"
-              style={{ background: "linear-gradient(to bottom, rgba(234,251,255,0.5) 0%, rgba(234,251,255,0.5) 88%, transparent 98%)" }}
+              style={{
+                background: isSegmentCampaign
+                  ? "linear-gradient(to bottom, rgba(245,240,255,0.72) 0%, rgba(245,240,255,0.72) 88%, transparent 98%)"
+                  : "linear-gradient(to bottom, rgba(234,251,255,0.5) 0%, rgba(234,251,255,0.5) 88%, transparent 98%)",
+              }}
             />
             <div className="section-to-blur"><CampaignHero variant={heroVariant} /></div>
             <div className="section-to-blur"><TrustedBy transparentBg /></div>

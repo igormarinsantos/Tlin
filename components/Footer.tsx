@@ -79,7 +79,7 @@ export function Footer() {
             <Image src="/Logo%20Horizontal.svg" alt="Tlin.ai" width={88} height={30} className="h-auto w-[88px]" />
           </div>
 
-          <div className="grid grid-cols-2 gap-x-10 gap-y-10 sm:gap-x-16 md:gap-x-20">
+          <div className="grid grid-cols-2 gap-x-10 gap-y-10 sm:grid-cols-3 sm:gap-x-16 md:gap-x-20">
             <div className="flex flex-col gap-3">
               <h4 className="text-[11px] font-bold tracking-wide text-zinc-400">{t.footer.solutionsTitle}</h4>
               <Link href="/ia-whatsapp" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink1}</Link>
@@ -87,6 +87,14 @@ export function Footer() {
               <Link href="/crm-com-ia" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink3}</Link>
               <Link href="/infoprodutores" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink4}</Link>
               <Link href="/agentes-de-ia" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.solutionsLink5}</Link>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h4 className="text-[11px] font-bold tracking-wide text-zinc-400">{t.footer.segmentsTitle}</h4>
+              <Link href="/ia-para-clinicas" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.segmentsLink1}</Link>
+              <Link href="/ia-para-escolas" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.segmentsLink2}</Link>
+              <Link href="/ia-para-assessorias" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.segmentsLink3}</Link>
+              <Link href="/ia-para-advocacia" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.segmentsLink4}</Link>
             </div>
 
             <div className="flex flex-col gap-3">
