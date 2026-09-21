@@ -9,7 +9,7 @@ async function rpc(name: string, params: unknown[]) {
 }
 beforeAll(async () => {
   await db.exec("create role anon; create role authenticated; create role service_role bypassrls;");
-  for (const file of ["20260602210412_create_lead_form_submissions.sql", "20260915_deskcomm_backup_projection.sql", "20260917_funnel_reliability.sql", "20260919_conversion_experiment_report.sql"]) {
+  for (const file of ["20260602210412_create_lead_form_submissions.sql", "20260915_deskcomm_backup_projection.sql", "20260917_funnel_reliability.sql"]) {
     await db.exec(readFileSync(`supabase/migrations/${file}`, "utf8"));
   }
   await db.exec("insert into funnel_stage_mapping(stage_id,label,qualified,attended,won) values ('qualified','Qualified',true,false,false),('rejected','Rejected',false,false,false),('attended','Attended',null,true,false),('won','Won',null,false,true)");
@@ -66,18 +66,5 @@ describe("durable funnel in PostgreSQL", () => {
     const report = await rpc("read_funnel_report", ["2020-01-01", "2100-01-01"]);
     const campaigns = report.campaigns as { demos: number }[];
     expect(campaigns.reduce((sum, row) => sum + row.demos, 0)).toBe(2);
-  });
-
-  it("reports qualified outcomes by conversion experiment", async () => {
-    await rpc("record_funnel_lead", [{
-      lead_capture_id: "experiment-control", deskcomm_lead_id: "crm-experiment", captured_at: "2026-09-18T10:00:00Z",
-      booked_at: "2026-09-18T11:00:00Z", booking_key: "experiment-booking",
-      utm: { experiment_id: "home_hero_cta_v1", experiment_variant: "control" },
-    }]);
-    await rpc("apply_funnel_crm_event", [{ eventId: "experiment-qualified", leadCaptureId: "experiment-control", status: "qualified", occurredAt: "2026-09-18T12:00:00Z", payload: {} }]);
-    const report = await rpc("read_funnel_report", ["2020-01-01", "2100-01-01"]);
-    expect(report.experiments).toContainEqual(expect.objectContaining({
-      experiment_id: "home_hero_cta_v1", experiment_variant: "control", demos: 1, qualified_demos: 1,
-    }));
   });
 });

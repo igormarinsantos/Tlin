@@ -12,7 +12,7 @@ export function analyticsOwner() {
 }
 
 // Explicit parameters only: contact details, message text and click IDs never go to GA.
-const allowed = /^(first_|last_)?utm_(source|medium|campaign|term|content)$|^(event_category|lead_step|field_name|plan_name|lead_score|lead_quality|lead_volume|team_size|form_mode|cta_source|cta_location|cta_text|source|destination|solution|page_location|page_referrer|page_path|event_id|experiment_id|experiment_variant)$/;
+const allowed = /^(first_|last_)?utm_(source|medium|campaign|term|content)$|^(event_category|lead_step|field_name|plan_name|lead_score|lead_quality|lead_volume|team_size|form_mode|cta_source|cta_location|cta_text|source|destination|solution|page_location|page_referrer|page_path|event_id)$/;
 export function cleanAnalyticsParams(params: Params): Params {
   return Object.fromEntries(Object.entries(params).filter(([key, value]) => allowed.test(key) && value !== undefined).map(([key, value]) => {
     if (typeof value !== "string") return [key, value];

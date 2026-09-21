@@ -67,19 +67,6 @@ describe("captureDeskcommLead", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("forwards only the scalar experiment attribution to the CRM", async () => {
-    process.env.DESKCOMM_WEBHOOK_URL = "https://crm.example.test/webhook";
-    const fetchMock = vi.fn().mockResolvedValue(new Response('{"data":{"lead_id":"crm-lead"}}', { status: 201 }));
-    vi.stubGlobal("fetch", fetchMock);
-    await captureDeskcommLead({ leadCaptureId: "experiment-one", name: "Ana", phone: "+5511999999999", utm: {
-      experiment_id: "home_hero_cta_v1", experiment_variant: "control", ignored: "contact text",
-    } });
-    expect(JSON.parse(String(fetchMock.mock.calls[0][1].body))).toMatchObject({
-      experiment_id: "home_hero_cta_v1", experiment_variant: "control",
-    });
-    expect(JSON.parse(String(fetchMock.mock.calls[0][1].body))).not.toHaveProperty("ignored");
-  });
-
   it("does not count a malformed success response as a captured lead", async () => {
     process.env.DESKCOMM_WEBHOOK_URL = "https://crm.example.test/webhook";
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ received: true })));

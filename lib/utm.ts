@@ -1,5 +1,4 @@
 import { emitAnalytics, safePageUrl } from "./analytics-events";
-import { getExperimentAttribution } from "./conversion-experiments";
 /**
  * UTM Tracking System — Tlin.ai
  * Handles capture, persistence (first/last touch), GA4 integration and form injection.
@@ -240,7 +239,6 @@ function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
     last_current_page:  last.current_page || '',
     last_referrer:      last.referrer || '',
     last_referrer_host: last.referrer_host || '',
-    ...getExperimentAttribution(),
   };
 
   Object.entries(extraData).forEach(([key, value]) => {

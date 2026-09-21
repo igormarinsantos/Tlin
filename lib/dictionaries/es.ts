@@ -33,7 +33,6 @@ export const esES: TranslationDictionary = {
     subtitle: "Sistema de ventas con IA en WhatsApp y CRM para escalar tu operación comercial 24/7, con agentes que atienden, califican y venden solos.",
     mobileSubtitle: "Escala ventas con WhatsApp y CRM.\nAgentes atienden, califican y venden 24/7.",
     cta: "Empezar Gratis",
-    ctaDemoClarity: "Agenda una demo gratis",
     demoHover: "Demo 100% gratis",
     watchDemo: "Agendar demo",
     demoSoon: "Demo próximamente"

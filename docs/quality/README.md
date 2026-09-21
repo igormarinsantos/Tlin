@@ -16,7 +16,7 @@ como concluídas as fases antigas de `.planning/`.
 | 3. Tracking e CRM | Contrato de eventos, atribuição, correlação, deduplicação, contas e painel | Implementada localmente; banco e etapas preparados, ativação pendente |
 | 4. Fundação do design system | Tokens, componentes oficiais e catálogo real | Implementada localmente; migração gradual na fase 5 |
 | 5. Aplicação e consistência | Migração gradual, teclado, acessibilidade, idiomas e mobile | Implementada localmente nas rotas de maior conversão |
-| 6. Otimização de conversão | Experimentos de mensagem, CTA, prova e fricção | Implementada localmente; ativação externa pendente |
+| 6. Otimização de conversão | Experimentos de mensagem, CTA, prova e fricção | Planejada |
 
 As evidências e riscos de cada frente estão na
 [auditoria inicial](../auditoria-padroes-conversao-2026-09-17.md).
