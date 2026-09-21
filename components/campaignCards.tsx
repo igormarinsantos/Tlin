@@ -36,4 +36,8 @@ export const HOW_IT_WORKS_ICONS: Record<HeroVariant, CardIconKey[]> = {
   crmComIa: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
   infoprodutores: ["capture", "whatsapp", "agent", "crm", "cart", "funnel"],
   agentesDeIa: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
+  clinicas: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
+  escolas: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
+  assessorias: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
+  advocacia: ["capture", "whatsapp", "agent", "crm", "schedule", "funnel"],
 };

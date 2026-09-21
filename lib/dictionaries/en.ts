@@ -1,4 +1,5 @@
 import type { TranslationDictionary } from "./pt";
+import { enSegmentCampaigns } from "./segmentCampaigns";
 
 export const enUS: TranslationDictionary = {
   nav: {
@@ -199,7 +200,8 @@ export const enUS: TranslationDictionary = {
         { old: "Hiring and training a new rep takes months.", new: "The AI agent shows up ready, trained on your script." },
         { old: "A rep's day off means support stops.", new: "The AI agent never takes a day off." }
       ]
-    }
+    },
+    ...enSegmentCampaigns,
   },
   trusted: {
     title: "Trust to scale",

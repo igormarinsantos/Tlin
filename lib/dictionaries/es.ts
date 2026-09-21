@@ -1,4 +1,5 @@
 import type { TranslationDictionary } from "./pt";
+import { esSegmentCampaigns } from "./segmentCampaigns";
 
 export const esES: TranslationDictionary = {
   nav: {
@@ -199,7 +200,8 @@ export const esES: TranslationDictionary = {
         { old: "Contratar y entrenar un vendedor nuevo tarda meses.", new: "El agente de IA ya sale listo, entrenado en tu guion." },
         { old: "El día libre del vendedor significa atención parada.", new: "El agente de IA nunca tiene día libre." }
       ]
-    }
+    },
+    ...esSegmentCampaigns,
   },
   trusted: {
     title: "Confianza para",

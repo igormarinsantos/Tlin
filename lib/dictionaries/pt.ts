@@ -1,3 +1,5 @@
+import { ptSegmentCampaigns } from "./segmentCampaigns";
+
 export const ptBR = {
   nav: {
     product: "Produto",
@@ -197,7 +199,8 @@ export const ptBR = {
         { old: "Contratar e treinar vendedor novo demora meses.", new: "Agente de IA já sai pronto, treinado no seu script." },
         { old: "Vendedor de folga é atendimento parado.", new: "Agente de IA nunca tira folga." }
       ]
-    }
+    },
+    ...ptSegmentCampaigns,
   },
   trusted: {
     title: "Confiança para",

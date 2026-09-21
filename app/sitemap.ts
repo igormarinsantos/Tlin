@@ -74,6 +74,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    ...["/ia-para-clinicas", "/ia-para-escolas", "/ia-para-assessorias", "/ia-para-advocacia"].map((path) => ({
+      url: absoluteUrl(path),
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     {
       url: absoluteUrl("/blog"),
       lastModified,

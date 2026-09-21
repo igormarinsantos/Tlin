@@ -48,7 +48,7 @@ const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, 
   );
 };
 
-export type HeroVariant = "iaWhatsapp" | "recuperacaoDeLeads" | "crmComIa" | "infoprodutores" | "agentesDeIa";
+export type HeroVariant = "iaWhatsapp" | "recuperacaoDeLeads" | "crmComIa" | "infoprodutores" | "agentesDeIa" | "clinicas" | "escolas" | "assessorias" | "advocacia";
 
 export function Hero() {
   const containerRef = useRef(null);

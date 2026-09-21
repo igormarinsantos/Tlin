@@ -34,4 +34,8 @@ export const HERO_MOTION_BY_VARIANT: Record<HeroVariant, CampaignMotion> = {
   crmComIa: "funnel",
   infoprodutores: "whatsapp",
   agentesDeIa: "agentObjection",
+  clinicas: "whatsapp",
+  escolas: "whatsapp",
+  assessorias: "funnel",
+  advocacia: "whatsapp",
 };
