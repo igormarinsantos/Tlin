@@ -11,10 +11,30 @@ import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
 
 const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
-  clinicas: ["1", "4", "7", "6"],
-  escolas: ["6", "1", "7", "4"],
-  assessorias: ["8", "3", "5", "9"],
-  advocacia: ["2", "8", "5", "3"],
+  clinicas: [
+    "/segments/avatars/clinicas-1.jpg",
+    "/segments/avatars/clinicas-2.jpg",
+    "/segments/avatars/clinicas-3.jpg",
+    "/segments/avatars/clinicas-4.jpg",
+  ],
+  escolas: [
+    "/segments/avatars/escolas-1.jpg",
+    "/segments/avatars/escolas-2.jpg",
+    "/segments/avatars/escolas-3.jpg",
+    "/segments/avatars/escolas-4.jpg",
+  ],
+  assessorias: [
+    "/segments/avatars/assessorias-1.jpg",
+    "/segments/avatars/assessorias-2.jpg",
+    "/segments/avatars/assessorias-3.jpg",
+    "/segments/avatars/assessorias-4.jpg",
+  ],
+  advocacia: [
+    "/segments/avatars/advocacia-1.jpg",
+    "/segments/avatars/advocacia-2.jpg",
+    "/segments/avatars/advocacia-3.jpg",
+    "/segments/avatars/advocacia-4.jpg",
+  ],
 };
 
 const SEGMENT_PROOF_SOURCES: Partial<Record<HeroVariant, string>> = {
@@ -47,10 +67,11 @@ function SegmentProofEyebrow({ variant, text }: { variant: HeroVariant; text: st
             style={{ zIndex: index + 1 }}
           >
             <Image
-              src={`/lotties/avatars/${avatar}_avatar.webp`}
+              src={avatar}
               alt=""
               width={36}
               height={36}
+              sizes="36px"
               className="h-full w-full rounded-full bg-white object-cover ring-2 ring-white saturate-[0.8]"
             />
           </motion.span>
