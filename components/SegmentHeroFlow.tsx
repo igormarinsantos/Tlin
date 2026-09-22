@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Database,
   MessageCircle,
+  Play,
   Sparkles,
   Zap,
 } from "lucide-react";
@@ -244,20 +245,27 @@ export function SegmentHeroFlow({ variant }: { variant: SegmentHeroFlowKey }) {
   const flow = useSegmentFlow(variant);
   const shouldReduceMotion = useReducedMotion();
   const hasMounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
+  const [motionOverride, setMotionOverride] = useState(false);
   const [step, setStep] = useState(0);
+  const motionEnabled = !shouldReduceMotion || motionOverride;
 
   useEffect(() => {
-    if (!hasMounted || shouldReduceMotion) return;
+    if (!hasMounted || !motionEnabled) return;
 
     const timeout = window.setTimeout(() => {
       setStep((current) => (current >= FINAL_STEP ? 0 : current + 1));
     }, STEP_DURATIONS[step]);
 
     return () => window.clearTimeout(timeout);
-  }, [hasMounted, shouldReduceMotion, step]);
+  }, [hasMounted, motionEnabled, step]);
 
-  const effectiveStep = hasMounted && shouldReduceMotion ? FINAL_STEP : step;
+  const effectiveStep = hasMounted && !motionEnabled ? FINAL_STEP : step;
   const showCrm = effectiveStep >= 3;
+
+  const playAnimation = () => {
+    setStep(0);
+    setMotionOverride(true);
+  };
 
   return (
     <div
@@ -266,6 +274,17 @@ export function SegmentHeroFlow({ variant }: { variant: SegmentHeroFlowKey }) {
     >
       <p className="sr-only">{flow.summary}</p>
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(181,151,255,0.18),transparent_38%),radial-gradient(circle_at_90%_80%,rgba(56,227,255,0.16),transparent_42%)]" />
+
+      {hasMounted && shouldReduceMotion && !motionOverride && (
+        <button
+          type="button"
+          onClick={playAnimation}
+          className="absolute right-4 top-4 z-50 flex items-center gap-1.5 rounded-full bg-[#0c0d0d] px-3 py-2 text-[9px] font-bold text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B597FF] focus-visible:ring-offset-2"
+        >
+          <Play className="size-3 fill-current" />
+          Ver animação
+        </button>
+      )}
 
       <LayoutGroup>
         <div aria-hidden="true" className={`relative z-10 grid h-full min-h-0 gap-2.5 ${showCrm ? "grid-rows-[104px_minmax(0,1fr)] md:grid-cols-[0.39fr_0.61fr] md:grid-rows-1" : "grid-cols-1"}`}>
