@@ -51,7 +51,7 @@ const esReviews = [
 export const ptSegmentCampaigns: SegmentCampaigns = {
   clinicas: {
     heroFlow: ptSegmentHeroFlows.clinicas,
-    socialProof: "Clínicas que atendem antes do paciente desistir",
+    socialProof: "66% dos médicos já usam IA na prática · AMA 2024",
     title: "Mais pacientes,\nmenos horários vazios.",
     subtitle: "A IA atende no WhatsApp, entende o interesse inicial e encaminha cada contato para o próximo passo da sua clínica.",
     highlightWords: ["pacientes", "horários"],
@@ -158,7 +158,7 @@ export const ptSegmentCampaigns: SegmentCampaigns = {
 export const enSegmentCampaigns: SegmentCampaigns = {
   clinicas: {
     heroFlow: enSegmentHeroFlows.clinicas,
-    socialProof: "Clinics that reply before patients lose interest",
+    socialProof: "66% of physicians already use AI in practice · AMA 2024",
     title: "More patients,\nfewer empty time slots.", subtitle: "AI answers on WhatsApp, understands initial interest, and directs each contact to your clinic's next step.", highlightWords: ["patients", "slots"], painHeadline: "When replies take too long, [the patient looks for another clinic].", painBody: "The first conversation decides whether interest reaches the schedule.", painBodyMobile: "Interest needs a reply.", reviews: enReviews,
     howItWorksCards: [{ title: "Capture interest", desc: "Every message or form arrives with the context your front desk needs." }, { title: "Answer on WhatsApp", desc: "AI answers initial questions quickly, even outside business hours." }, { title: "Understand intent", desc: "The conversation identifies the requested service without replacing your team's assessment." }, { title: "Organize in the native CRM", desc: "Every opportunity is recorded with history, stage, and next step." }, { title: "Book conversations", desc: "Interested contacts receive the right path to book with your team." }, { title: "Track funnel and metrics", desc: "See where contacts come from and where your operation can convert more." }],
     comparison: [{ old: "Patients wait for a reply and look for another clinic.", new: "The first contact receives a reply at the right time." }, { old: "The front desk switches between messages, calendars, and notes.", new: "Conversations and next steps stay organized in the CRM." }, { old: "Contacts reach the team with no context.", new: "The team receives the history before continuing service." }, { old: "Old opportunities get forgotten in WhatsApp.", new: "Follow-up helps resume conversations left open." }, { old: "It is unclear which channel produces bookings.", new: "The funnel shows each opportunity's path to the calendar." }],
@@ -189,7 +189,7 @@ export const enSegmentCampaigns: SegmentCampaigns = {
 export const esSegmentCampaigns: SegmentCampaigns = {
   clinicas: {
     heroFlow: esSegmentHeroFlows.clinicas,
-    socialProof: "Clínicas que responden antes de perder el interés del paciente",
+    socialProof: "El 66% de los médicos ya usa IA en su práctica · AMA 2024",
     title: "Más pacientes,\nmenos horarios vacíos.", subtitle: "La IA atiende en WhatsApp, entiende el interés inicial y dirige cada contacto al siguiente paso de tu clínica.", highlightWords: ["pacientes", "horarios"], painHeadline: "Cuando la respuesta demora, [el paciente busca otra clínica].", painBody: "La primera conversación decide si el interés llega a la agenda.", painBodyMobile: "El interés necesita respuesta.", reviews: esReviews,
     howItWorksCards: [{ title: "Captura el interés", desc: "Cada mensaje o formulario llega con el contexto que recepción necesita." }, { title: "Atiende en WhatsApp", desc: "La IA responde dudas iniciales con rapidez, incluso fuera del horario." }, { title: "Entiende la intención", desc: "La conversación identifica el servicio sin reemplazar la evaluación del equipo." }, { title: "Organiza en el CRM nativo", desc: "Cada oportunidad queda registrada con historial, etapa y próximo paso." }, { title: "Agenda conversaciones", desc: "Quien muestra interés recibe el camino correcto para agendar con tu equipo." }, { title: "Sigue el embudo y las métricas", desc: "Mira de dónde vienen los contactos y dónde puedes convertir más." }],
     comparison: [{ old: "El paciente espera y busca otra clínica.", new: "El primer contacto recibe respuesta en el momento correcto." }, { old: "Recepción alterna entre mensajes, agenda y notas.", new: "Conversaciones y próximos pasos quedan organizados en el CRM." }, { old: "Cada contacto llega sin contexto para el equipo.", new: "El equipo recibe el historial antes de continuar." }, { old: "Los intereses antiguos se olvidan en WhatsApp.", new: "El seguimiento retoma conversaciones abiertas." }, { old: "No está claro qué canal genera más citas.", new: "El embudo muestra el camino de cada oportunidad a la agenda." }],

@@ -11,10 +11,10 @@ import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
 
 const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
-  clinicas: ["1", "4", "7", "6", "10"],
-  escolas: ["6", "1", "7", "4", "9"],
-  assessorias: ["8", "3", "5", "9", "10"],
-  advocacia: ["2", "8", "5", "3", "9"],
+  clinicas: ["1", "4", "7", "6"],
+  escolas: ["6", "1", "7", "4"],
+  assessorias: ["8", "3", "5", "9"],
+  advocacia: ["2", "8", "5", "3"],
 };
 
 function SegmentProofEyebrow({ variant, text }: { variant: HeroVariant; text: string }) {
