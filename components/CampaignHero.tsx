@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
@@ -8,6 +9,51 @@ import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { renderCampaignMotion, HERO_MOTION_BY_VARIANT } from "@/components/campaignMotion";
 import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
+
+const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
+  clinicas: ["1", "4", "7", "6", "10"],
+  escolas: ["6", "1", "7", "4", "9"],
+  assessorias: ["8", "3", "5", "9", "10"],
+  advocacia: ["2", "8", "5", "3", "9"],
+};
+
+function SegmentProofEyebrow({ variant, text }: { variant: HeroVariant; text: string }) {
+  const avatars = SEGMENT_PROOF_AVATARS[variant];
+  if (!avatars) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      className="mb-5 flex items-center justify-center gap-3 md:justify-start"
+    >
+      <div className="flex shrink-0 -space-x-2.5" aria-hidden="true">
+        {avatars.map((avatar, index) => (
+          <motion.span
+            key={avatar}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.08 + index * 0.06, duration: 0.35 }}
+            className="relative size-8 rounded-full bg-gradient-to-br from-[#B597FF] to-[#38E3FF] p-[1.5px] shadow-[0_3px_10px_rgba(76,57,122,0.14)] md:size-9"
+            style={{ zIndex: index + 1 }}
+          >
+            <Image
+              src={`/lotties/avatars/${avatar}_avatar.webp`}
+              alt=""
+              width={36}
+              height={36}
+              className="h-full w-full rounded-full bg-white object-cover ring-2 ring-white saturate-[0.8]"
+            />
+          </motion.span>
+        ))}
+      </div>
+      <span className="max-w-[250px] text-left text-[11px] font-bold leading-[1.25] tracking-tight text-zinc-700 md:max-w-[290px] md:text-xs">
+        {text}
+      </span>
+    </motion.div>
+  );
+}
 
 // Envolve em degrade as palavras do titulo que baterem com highlightWords
 // (mesma logica de destaque do Hero padrao, sem a animacao de digitacao —
@@ -48,6 +94,7 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const campaign = t.campaigns[variant];
   const motion_ = HERO_MOTION_BY_VARIANT[variant];
+  const socialProof = "socialProof" in campaign ? campaign.socialProof : undefined;
 
   const openQualification = (source: string) => {
     trackFunnelEvent("click_pricing_cta", { cta_source: source, plan_name: "TLIN" });
@@ -69,6 +116,8 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center md:text-left"
         >
+          {socialProof && <SegmentProofEyebrow variant={variant} text={socialProof} />}
+
           <h1 className="text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] mb-6 break-words [overflow-wrap:anywhere]">
             <HighlightedTitle title={withoutClosingPeriod(campaign.title)} highlightWords={campaign.highlightWords} />
           </h1>
