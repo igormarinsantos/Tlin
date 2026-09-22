@@ -17,8 +17,16 @@ const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
   advocacia: ["2", "8", "5", "3"],
 };
 
+const SEGMENT_PROOF_SOURCES: Partial<Record<HeroVariant, string>> = {
+  clinicas: "American Medical Association, pesquisa com cerca de 1.200 médicos",
+  escolas: "Gallup e Walton Family Foundation, pesquisa com mais de 2.000 professores",
+  assessorias: "Microsoft e LinkedIn Work Trend Index, pesquisa com 31.000 profissionais",
+  advocacia: "American Bar Association, pesquisa com 512 advogados",
+};
+
 function SegmentProofEyebrow({ variant, text }: { variant: HeroVariant; text: string }) {
   const avatars = SEGMENT_PROOF_AVATARS[variant];
+  const source = SEGMENT_PROOF_SOURCES[variant];
   if (!avatars) return null;
 
   return (
@@ -48,7 +56,11 @@ function SegmentProofEyebrow({ variant, text }: { variant: HeroVariant; text: st
           </motion.span>
         ))}
       </div>
-      <span className="max-w-[250px] text-left text-[11px] font-bold leading-[1.25] tracking-tight text-zinc-700 md:max-w-[290px] md:text-xs">
+      <span
+        className="max-w-[250px] text-left text-[11px] font-bold leading-[1.25] tracking-tight text-zinc-700 md:max-w-[290px] md:text-xs"
+        title={source}
+        aria-label={source ? `${text}. Fonte: ${source}` : text}
+      >
         {text}
       </span>
     </motion.div>
