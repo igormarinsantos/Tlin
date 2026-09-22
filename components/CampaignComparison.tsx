@@ -83,6 +83,9 @@ function CheckIcon() {
 export function CampaignComparison({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const campaign = t.campaigns[variant];
+  const sectionTitle = "comparisonTitle" in campaign && campaign.comparisonTitle
+    ? campaign.comparisonTitle
+    : t.campaigns.comparisonTitle;
 
   return (
     <section className="w-full bg-gradient-to-b from-white via-[#D6F7FF] to-white py-20 md:py-28 px-4 md:px-8">
@@ -104,7 +107,7 @@ export function CampaignComparison({ variant }: { variant: HeroVariant }) {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="text-3xl md:text-5xl font-black tracking-tight text-[#0c0d0d]"
           >
-            <HighlightedTitle text={t.campaigns.comparisonTitle} />
+            <HighlightedTitle text={sectionTitle} />
           </motion.h2>
         </div>
 

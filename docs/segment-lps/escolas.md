@@ -1,50 +1,29 @@
 # LP de escolas
 
 Rota: `/ia-para-escolas`
-Base visual: `/infoprodutores`
 
-## SEO
+## Promessa e dor
 
-- Title: `IA para escolas | Matrículas e atendimento no WhatsApp | tlin.ai`
-- Description: `Atenda famílias no WhatsApp, organize interesses de matrícula e transforme conversas em visitas para sua escola.`
-- Termos em gradiente: `matrículas`, `famílias`
+- Título: `Mais visitas agendadas, menos famílias sem retorno`
+- Subtítulo: `A IA atende famílias no WhatsApp, esclarece os primeiros passos e conduz o interesse de matrícula até uma visita à escola`
+- Dor: `Enquanto sua escola demora, a família visita outra`
+- Apoio: `No pico de matrículas, cada conversa esquecida pode custar uma visita`
 
-## Hero
+## Jornada de conversão
 
-**Título**
+1. **Receba cada família** — Origem, série de interesse e informações iniciais entram organizadas desde o primeiro contato
+2. **Responda no pico de matrículas** — A IA atende em segundos mesmo quando campanhas e rematrículas aumentam o volume
+3. **Apresente a jornada** — A conversa explica documentos, etapas e como conhecer a escola no tom da instituição
+4. **Organize no CRM nativo** — Cada família fica na etapa certa, de novo interesse até visita e matrícula
+5. **Agende visitas** — Famílias prontas para avançar escolhem um horário para conhecer a escola
+6. **Acompanhe as matrículas** — Veja campanhas, visitas pendentes e famílias que precisam de uma nova abordagem
 
-Mais matrículas,<br>
-menos famílias esperando
+## Objeções prioritárias
 
-**Subtítulo**
-
-A IA atende famílias no WhatsApp, apresenta os próximos passos e ajuda sua equipe a transformar interesse em visita
-
-## Dor
-
-- Headline: `Quando a família espera, [ela continua a busca em outra escola]`
-- Apoio desktop: `Velocidade e contexto fazem diferença na decisão de matrícula`
-- Apoio mobile: `Famílias esperam resposta`
-
-## Como funciona
-
-1. **Capture o interesse** — Cada família entra com origem e informações iniciais organizadas
-2. **Atenda no WhatsApp** — A IA responde o primeiro contato em segundos, mesmo nos períodos de maior procura
-3. **Apresente os próximos passos** — A conversa explica como conhecer a escola com o tom da sua instituição
-4. **Organize no CRM nativo** — Cada interesse de matrícula fica na etapa certa, sem depender de planilha
-5. **Agende visitas** — Famílias interessadas recebem um caminho claro para agendar com sua equipe
-6. **Acompanhe funil e métricas** — Veja os canais, etapas e oportunidades que precisam de acompanhamento
-
-## Comparativo
-
-| Do jeito antigo | Com a Tlin |
-| --- | --- |
-| Família espera retorno e procura outra escola | O primeiro contato é respondido assim que acontece |
-| Interesses de matrícula ficam espalhados em mensagens | Cada família segue organizada no mesmo funil comercial |
-| Visitas dependem de uma resposta manual para acontecer | A conversa encaminha famílias interessadas para a visita |
-| A equipe perde o momento certo para retomar contato | Follow-up mantém a conversa ativa até o próximo passo |
-| Não há visão clara da origem das matrículas | O funil ajuda a entender o caminho de cada matrícula |
+- A IA responde com as informações aprovadas pela escola
+- A visita pode ser marcada dentro da conversa no WhatsApp
+- Conversas simultâneas continuam organizadas durante o pico de matrículas
 
 ## Restrição editorial
 
-A copy não promete matrícula garantida. A proposta é acelerar o primeiro contato, organizar o interesse e ajudar a equipe a avançar a conversa.
+A copy não promete matrícula garantida. A Tlin acelera o primeiro contato, organiza o interesse e ajuda a equipe a avançar cada família até a visita.

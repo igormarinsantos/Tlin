@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
+import type { HeroVariant } from "@/components/Hero";
 
 const FAQ_KEYS = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"] as const;
 type FaqKey = (typeof FAQ_KEYS)[number];
 
-export function Faq({ priorityKeys }: { priorityKeys?: FaqKey[] } = {}) {
+export function Faq({ priorityKeys, variant }: { priorityKeys?: FaqKey[]; variant?: HeroVariant } = {}) {
   const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasPlayedEntrance, setHasPlayedEntrance] = useState(false);
@@ -21,10 +22,15 @@ export function Faq({ priorityKeys }: { priorityKeys?: FaqKey[] } = {}) {
     : FAQ_KEYS;
 
   const faqDict = t.faq as unknown as Record<string, string>;
-  const faqs = orderedKeys.map((key) => ({
+  const standardFaqs = orderedKeys.map((key) => ({
     q: faqDict[key],
     a: faqDict[`a${key.slice(1)}`],
   }));
+  const campaign = variant ? t.campaigns[variant] : undefined;
+  const segmentFaqs = campaign && "faqs" in campaign && Array.isArray(campaign.faqs)
+    ? campaign.faqs as Array<{ q: string; a: string }>
+    : undefined;
+  const faqs = segmentFaqs?.length ? [...segmentFaqs, ...standardFaqs.slice(0, 5)] : standardFaqs;
 
   const handleEntrance = () => {
     if (!hasPlayedEntrance) {

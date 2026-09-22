@@ -40,11 +40,11 @@ const ILLUSTRATIVE_RESULTS = [
   [{ value: "+36%", label: "conversas retomadas" }, { value: "64%", label: "leads com próximo passo" }],
 ] as const;
 
-function ReviewCard({ name, role, text }: { name: string; role: string; text: string }) {
+function ReviewCard({ name, role, text, showResults = true }: { name: string; role: string; text: string; showResults?: boolean }) {
   const logo = pickLogo(name);
   const results = ILLUSTRATIVE_RESULTS[hashSeed(name) % ILLUSTRATIVE_RESULTS.length];
   return (
-    <div className="relative flex min-h-[320px] w-[300px] shrink-0 flex-col rounded-2xl border border-[#B597FF]/20 bg-[#F7FAFF] p-6 md:w-[360px] md:p-7">
+    <div className={`relative flex w-[300px] shrink-0 flex-col rounded-2xl border border-[#B597FF]/20 bg-[#F7FAFF] p-6 md:w-[360px] md:p-7 ${showResults ? "min-h-[320px]" : "min-h-[230px]"}`}>
       <img src={logo.src} alt="" className={`absolute top-5 right-5 md:top-6 md:right-6 ${logo.className}`} />
       <div className="flex items-center gap-3 pr-10 md:pr-12">
         <img src={pickAvatar(name)} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
@@ -54,7 +54,9 @@ function ReviewCard({ name, role, text }: { name: string; role: string; text: st
         </div>
       </div>
       <p className="mt-6 text-base font-medium leading-relaxed text-zinc-700 md:text-lg">“{text}”</p>
-      <div className="mt-auto border-t border-[#B597FF]/20 pt-4"><div className="grid grid-cols-2 gap-4">{results.map((result) => <div key={result.label}><p className="text-2xl font-bold tracking-tight text-[#7254c8]">{result.value}</p><p className="mt-1 text-xs font-medium leading-snug text-zinc-500">{result.label}</p></div>)}</div></div>
+      {showResults && (
+        <div className="mt-auto border-t border-[#B597FF]/20 pt-4"><div className="grid grid-cols-2 gap-4">{results.map((result) => <div key={result.label}><p className="text-2xl font-bold tracking-tight text-[#7254c8]">{result.value}</p><p className="mt-1 text-xs font-medium leading-snug text-zinc-500">{result.label}</p></div>)}</div></div>
+      )}
     </div>
   );
 }
@@ -67,6 +69,7 @@ export function CampaignReviews({ variant }: { variant: HeroVariant }) {
   const mid = Math.ceil(reviews.length / 2);
   const row1 = [...reviews.slice(0, mid), ...reviews.slice(0, mid)];
   const row2 = [...reviews.slice(mid), ...reviews.slice(mid)];
+  const showResults = !["clinicas", "escolas", "assessorias", "advocacia"].includes(variant);
 
   return (
     <section className="w-full bg-white py-14 md:py-20 overflow-hidden">
@@ -78,7 +81,7 @@ export function CampaignReviews({ variant }: { variant: HeroVariant }) {
             className="flex gap-5 w-max"
           >
             {row1.map((r, i) => (
-              <ReviewCard key={i} {...r} />
+              <ReviewCard key={i} {...r} showResults={showResults} />
             ))}
           </motion.div>
         </div>
@@ -90,7 +93,7 @@ export function CampaignReviews({ variant }: { variant: HeroVariant }) {
             className="flex gap-5 w-max"
           >
             {row2.map((r, i) => (
-              <ReviewCard key={i} {...r} />
+              <ReviewCard key={i} {...r} showResults={showResults} />
             ))}
           </motion.div>
         </div>

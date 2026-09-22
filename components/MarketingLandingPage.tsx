@@ -118,9 +118,15 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         {/* Dor com dado de mercado -- so nas paginas de campanha */}
         {heroVariant && <div className="section-to-blur"><PainSection variant={heroVariant} /></div>}
 
-        <DeferredSection minHeight="min-h-[420px]">
-          {heroVariant ? <CampaignHowItWorks variant={heroVariant} /> : <TextReveal />}
-        </DeferredSection>
+        {isSegmentCampaign ? (
+          <div className="section-to-blur">
+            <CampaignHowItWorks variant={heroVariant!} />
+          </div>
+        ) : (
+          <DeferredSection minHeight="min-h-[420px]">
+            {heroVariant ? <CampaignHowItWorks variant={heroVariant} /> : <TextReveal />}
+          </DeferredSection>
+        )}
 
         {/* Na index, alem do TextReveal, repete a sessao "Conheca a Tlin"
             (grid de 6 cards) que ja existe nas paginas de campanha -- usa o
@@ -139,30 +145,39 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           </div>
         )}
 
-        {/* CORE CAPABILITIES — renderizado direto (sem DeferredSection) pra existir
-            no HTML inicial: #como-funciona/#agentes/#crm ficam indexáveis sem JS. */}
-        <div className="section-to-blur">
-          <Features />
-        </div>
+        {/* Campanhas gerais mantêm o bloco amplo de capacidades. Nas LPs por
+            segmento, os mesmos conceitos já aparecem com copy própria no
+            CampaignHowItWorks, que também preserva as âncoras semânticas. */}
+        {!isSegmentCampaign && (
+          <div className="section-to-blur">
+            <Features />
+          </div>
+        )}
 
         {/* WHITE CURVED GRADIENT SECTION (Above ROI/Case) */}
-        <div
-          className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
-          style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
-        />
+        {!isSegmentCampaign && (
+          <div
+            className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
+            style={{ background: "radial-gradient(150% 100% at 50% 0%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
+          />
+        )}
 
-        {/* IMPACT / URGENCY -- a calculadora de ROI tambem entra nas LPs de
-            campanha enquanto o case ainda nao tiver video e resultados
-            publicados. Assim, este espaco sempre entrega valor acionavel. */}
-        <DeferredSection id="roi" className="section-to-blur" minHeight="min-h-[760px]">
-          <RoiCalculator />
-        </DeferredSection>
+        {/* O simulador usa premissas comerciais genéricas. Ele permanece nas
+            campanhas gerais e sai dos segmentos, onde ticket, conversão e
+            resultado significam coisas diferentes. */}
+        {!isSegmentCampaign && (
+          <DeferredSection id="roi" className="section-to-blur" minHeight="min-h-[760px]">
+            <RoiCalculator />
+          </DeferredSection>
+        )}
 
         {/* WHITE CURVED GRADIENT SECTION (Below ROI/Case) */}
-        <div
-          className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
-          style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
-        />
+        {!isSegmentCampaign && (
+          <div
+            className="w-full h-[200px] md:h-[300px] relative overflow-hidden"
+            style={{ background: "radial-gradient(150% 100% at 50% 100%, #FFFFFF 0%, #FFFFFF 35%, #000000 100%)" }}
+          />
+        )}
 
         {/* Comparativo "jeito antigo x com a Tlin" -- so nas paginas de campanha, logo antes do Pricing */}
         {heroVariant && (
@@ -176,14 +191,20 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
           <Pricing />
         </div>
 
-        {/* TRUST / SOCIAL PROOF (The New Carousel) */}
-        <div className="section-to-blur">
-          <Testimonials />
-        </div>
+        {/* As LPs segmentadas já usam CampaignReviews com linguagem própria;
+            evita repetir depois o carrossel genérico da home. */}
+        {!isSegmentCampaign && (
+          <div className="section-to-blur">
+            <Testimonials />
+          </div>
+        )}
 
         {/* OBJECTIONS */}
         <div className="section-to-blur">
-          <Faq priorityKeys={heroVariant === "recuperacaoDeLeads" ? ["q7", "q8"] : undefined} />
+          <Faq
+            priorityKeys={heroVariant === "recuperacaoDeLeads" ? ["q7", "q8"] : undefined}
+            variant={isSegmentCampaign ? heroVariant : undefined}
+          />
         </div>
 
         {/* FINAL CTA (The Flashlight Effect) */}

@@ -18,7 +18,7 @@ export const segmentLandingSeo: Record<SegmentLandingKey, SegmentLandingSeo> = {
   clinicas: {
     path: "/ia-para-clinicas",
     title: "IA para clínicas no WhatsApp | tlin.ai",
-    description: "Atenda novos pacientes no WhatsApp, organize oportunidades no CRM e encaminhe cada contato para o próximo passo da sua clínica com IA comercial.",
+    description: "Reduza a pressão na recepção: responda pacientes no WhatsApp, organize cada interesse no CRM e conduza mais contatos até o agendamento com IA.",
     serviceName: "IA comercial para clínicas",
     serviceType: "Atendimento e organização comercial com IA para clínicas",
     audience: "clínicas, consultórios e operações de saúde com atendimento comercial no WhatsApp",
@@ -28,7 +28,7 @@ export const segmentLandingSeo: Record<SegmentLandingKey, SegmentLandingSeo> = {
   escolas: {
     path: "/ia-para-escolas",
     title: "IA para escolas e matrículas | tlin.ai",
-    description: "Atenda famílias no WhatsApp, organize interesses de matrícula no CRM e transforme conversas em visitas para sua escola com IA comercial.",
+    description: "Atenda famílias mesmo no pico de matrículas, organize cada interesse no CRM e transforme conversas no WhatsApp em visitas agendadas à escola.",
     serviceName: "IA comercial para escolas",
     serviceType: "Atendimento e captação de matrículas com IA para escolas",
     audience: "escolas e instituições de ensino com captação de matrículas pelo WhatsApp",
@@ -38,7 +38,7 @@ export const segmentLandingSeo: Record<SegmentLandingKey, SegmentLandingSeo> = {
   assessorias: {
     path: "/ia-para-assessorias",
     title: "IA para assessorias no WhatsApp | tlin.ai",
-    description: "Responda oportunidades no WhatsApp, qualifique contatos no CRM e direcione cada lead para a conversa certa com sua assessoria.",
+    description: "Qualifique empresários no WhatsApp, aplique seu playbook e agende diagnósticos com contexto para sua assessoria reduzir reuniões sem fit.",
     serviceName: "IA comercial para assessorias",
     serviceType: "Atendimento, qualificação e follow-up com IA para assessorias",
     audience: "assessorias e prestadores de serviços com geração recorrente de oportunidades",
@@ -48,7 +48,7 @@ export const segmentLandingSeo: Record<SegmentLandingKey, SegmentLandingSeo> = {
   advocacia: {
     path: "/ia-para-advocacia",
     title: "IA para advocacia no WhatsApp | tlin.ai",
-    description: "Organize o primeiro atendimento no WhatsApp, reúna o contexto inicial e encaminhe cada contato para a conversa certa com seu escritório.",
+    description: "Organize o primeiro atendimento jurídico no WhatsApp, registre o contexto informado e encaminhe cada contato ao advogado responsável com agilidade.",
     serviceName: "IA para primeiro atendimento na advocacia",
     serviceType: "Organização do primeiro atendimento com IA para escritórios de advocacia",
     audience: "escritórios de advocacia que recebem novos contatos pelo WhatsApp",

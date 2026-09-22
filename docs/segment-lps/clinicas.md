@@ -1,50 +1,29 @@
 # LP de clínicas
 
 Rota: `/ia-para-clinicas`
-Base visual: `/ia-whatsapp`
 
-## SEO
+## Promessa e dor
 
-- Title: `IA para clínicas | Atendimento e agenda no WhatsApp | tlin.ai`
-- Description: `Atenda novos pacientes no WhatsApp, organize oportunidades e encaminhe cada contato para o próximo passo da sua clínica.`
-- Termos em gradiente: `pacientes`, `horários`
+- Título: `Mais agenda preenchida, menos pressão na recepção`
+- Subtítulo: `A IA responde dúvidas iniciais no WhatsApp, organiza o interesse e conduz cada paciente até o próximo passo da sua clínica`
+- Dor: `Se a recepção demora, o paciente agenda em outra clínica`
+- Apoio: `Cada conversa sem retorno pode virar um horário vazio na agenda`
 
-## Hero
+## Jornada de conversão
 
-**Título**
+1. **Receba cada paciente** — Toda mensagem chega com origem e histórico para a recepção continuar sem pedir tudo de novo
+2. **Responda dúvidas iniciais** — A IA informa horários, localização e próximos passos, inclusive fora do expediente
+3. **Entenda o que ele procura** — A conversa identifica o serviço de interesse sem fazer diagnóstico ou avaliação clínica
+4. **Organize no CRM nativo** — Paciente, interesse e etapa ficam registrados no mesmo lugar para toda a equipe
+5. **Conduza ao agendamento** — Quem quer avançar recebe um caminho claro para marcar com a sua recepção
+6. **Reduza horários perdidos** — Veja contatos sem retorno, origem dos agendamentos e pontos de abandono da jornada
 
-Mais pacientes,<br>
-menos horários vazios
+## Objeções prioritárias
 
-**Subtítulo**
-
-A IA atende no WhatsApp, entende o interesse inicial e encaminha cada contato para o próximo passo da sua clínica
-
-## Dor
-
-- Headline: `Quando a resposta demora, [o paciente procura outra clínica]`
-- Apoio desktop: `A primeira conversa decide se o interesse avança para a agenda`
-- Apoio mobile: `O interesse precisa de resposta`
-
-## Como funciona
-
-1. **Capture o interesse** — Cada mensagem ou formulário chega com o contexto que sua recepção precisa para continuar
-2. **Atenda no WhatsApp** — A IA responde dúvidas iniciais com rapidez, inclusive fora do horário comercial
-3. **Entenda a intenção** — A conversa identifica o serviço procurado sem substituir a avaliação da sua equipe
-4. **Organize no CRM nativo** — Cada oportunidade fica registrada com histórico, etapa e próximo passo
-5. **Agende conversas** — Quem demonstra interesse recebe o caminho certo para marcar com sua equipe
-6. **Acompanhe funil e métricas** — Veja de onde vêm os contatos e onde sua operação pode converter mais
-
-## Comparativo
-
-| Do jeito antigo | Com a Tlin |
-| --- | --- |
-| Paciente espera resposta e procura outra clínica | O primeiro contato recebe resposta no momento certo |
-| Recepção alterna entre mensagens, agenda e anotações | Conversas e próximos passos ficam organizados no CRM |
-| Cada contato chega sem contexto para a equipe | A equipe recebe o histórico antes de continuar o atendimento |
-| Interesses antigos ficam esquecidos no WhatsApp | Follow-up ajuda a retomar conversas que ficaram em aberto |
-| Não fica claro qual canal gera mais agendamentos | O funil mostra o caminho de cada oportunidade até a agenda |
+- A IA não diagnostica nem orienta o paciente
+- A agenda segue as regras definidas pela clínica
+- A recepção pode assumir qualquer conversa com o histórico completo
 
 ## Restrição editorial
 
-A IA organiza o atendimento comercial inicial. A copy não deve sugerir diagnóstico, triagem clínica ou substituição da avaliação profissional.
+A IA organiza o atendimento comercial inicial. A copy nunca deve sugerir diagnóstico, triagem clínica ou substituição da avaliação profissional.

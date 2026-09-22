@@ -99,6 +99,12 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
   const { t } = useLanguage();
   const campaign = t.campaigns[variant];
   const icons = HOW_IT_WORKS_ICONS[variant];
+  const sectionTitle = "howItWorksTitle" in campaign && campaign.howItWorksTitle
+    ? campaign.howItWorksTitle
+    : t.campaigns.howItWorksTitle;
+  const sectionCtaTitle = "howItWorksCtaTitle" in campaign && campaign.howItWorksCtaTitle
+    ? campaign.howItWorksCtaTitle
+    : t.campaigns.howItWorksCtaTitle;
 
   const openQualification = (source: string) => {
     trackFunnelEvent("click_pricing_cta", { cta_source: source, plan_name: "TLIN" });
@@ -106,7 +112,7 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
   };
 
   return (
-    <section className="w-full bg-white py-20 md:py-28 px-4 md:px-8">
+    <section id="como-funciona" className="w-full bg-white py-20 md:py-28 px-4 md:px-8">
       <div className="max-w-[1100px] mx-auto">
         <div className="flex flex-col items-center text-center mb-12 md:mb-16">
           <motion.div
@@ -131,9 +137,12 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="text-3xl md:text-5xl font-black tracking-tight text-[#0c0d0d]"
           >
-            <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksTitle)} />
+            <HighlightedTitle text={withoutClosingPeriod(sectionTitle)} />
           </motion.h2>
         </div>
+
+        <h2 id="agentes" className="sr-only">{t.features.agentesTitle}</h2>
+        <h2 id="crm" className="sr-only">{t.features.crmTitle}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {campaign.howItWorksCards.map((card, i) => (
@@ -150,7 +159,7 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
         >
           <TlinCard tone="muted" className="flex flex-col items-center justify-between gap-6 px-6 py-7 md:flex-row md:px-10 md:py-9">
             <p className="text-center text-xl font-bold text-tlin-ink md:text-left md:text-2xl">
-              <HighlightedTitle text={withoutClosingPeriod(t.campaigns.howItWorksCtaTitle)} />
+              <HighlightedTitle text={withoutClosingPeriod(sectionCtaTitle)} />
             </p>
 
             <DemoHoverPill className="shrink-0">
