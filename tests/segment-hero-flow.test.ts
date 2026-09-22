@@ -32,10 +32,17 @@ describe("segment hero CRM flows", () => {
         expect(flow.fields).toHaveLength(4);
         expect(flow.stages).toHaveLength(3);
         expect(flow.activities).toHaveLength(4);
+        expect(flow.contact.avatar).toMatch(/^\/lotties\/avatars\/\d+_avatar\.webp$/);
+        expect(flow.contact.name.length).toBeGreaterThan(5);
         expect(flow.summary.length).toBeGreaterThan(40);
         expect(Object.values(flow.outcome).every(Boolean)).toBe(true);
       }
     }
+  });
+
+  it("keeps one stable person for each segment journey", () => {
+    expect(new Set(segments.map((segment) => ptSegmentHeroFlows[segment].contact.avatar)).size).toBe(segments.length);
+    expect(new Set(segments.map((segment) => ptSegmentHeroFlows[segment].contact.name)).size).toBe(segments.length);
   });
 
   it("keeps the legal flow as intake and routing rather than legal advice", () => {
