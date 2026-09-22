@@ -19,8 +19,8 @@ const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
 
 const SEGMENT_PROOF_SOURCES: Partial<Record<HeroVariant, string>> = {
   clinicas: "American Medical Association, pesquisa com cerca de 1.200 médicos",
-  escolas: "Gallup e Walton Family Foundation, pesquisa com mais de 2.000 professores",
-  assessorias: "Microsoft e LinkedIn Work Trend Index, pesquisa com 31.000 profissionais",
+  escolas: "Department for Education do Reino Unido, pesquisa com 701 líderes escolares",
+  assessorias: "Intuit QuickBooks, pesquisa com 630 donos e executivos de empresas",
   advocacia: "American Bar Association, pesquisa com 512 advogados",
 };
 
