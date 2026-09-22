@@ -276,7 +276,7 @@ export const ptBR = {
     starterF5: "Suporte Especializado",
     scaleName: "Scale",
     scaleTarget: "O mais vendido",
-    scaleBadge: "+ INVESTIDO",
+    scaleBadge: "+INVESTIDO",
     scaleDesc: "Acelere sua tração com múltiplos agentes e o CRM nativo da Tlin.",
     scaleCta: "Escalar Minha Operação",
     scaleF1: "Tudo do Starter +",

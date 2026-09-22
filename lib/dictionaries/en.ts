@@ -277,7 +277,7 @@ export const enUS: TranslationDictionary = {
     starterF5: "Expert Support",
     scaleName: "Scale",
     scaleTarget: "Best Seller",
-    scaleBadge: "+ INVESTED",
+    scaleBadge: "+INVESTED",
     scaleDesc: "Accelerate your traction with multiple agents and Tlin's native CRM.",
     scaleCta: "Scale My Operation",
     scaleF1: "Everything in Starter +",

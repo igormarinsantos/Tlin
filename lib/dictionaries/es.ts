@@ -277,7 +277,7 @@ export const esES: TranslationDictionary = {
     starterF5: "Soporte Especializado",
     scaleName: "Scale",
     scaleTarget: "El más vendido",
-    scaleBadge: "+ INVERTIDO",
+    scaleBadge: "+INVERTIDO",
     scaleDesc: "Acelera tu tracción con múltiples agentes y el CRM nativo de Tlin.",
     scaleCta: "Escalar Mi Operación",
     scaleF1: "Todo en Starter +",

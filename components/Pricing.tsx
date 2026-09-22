@@ -499,17 +499,17 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
 
                        <p className={`text-sm font-medium mb-10 leading-relaxed min-h-[48px] ${plan.highlight ? 'text-zinc-400' : 'text-zinc-600'}`}>{plan.desc}</p>
 
-                        <DemoHoverPill className="w-full" enabled={!plan.highlight}>
+                        <DemoHoverPill className="mb-10 w-full" enabled={!plan.highlight}>
                           <TlinButton
                             onClick={(event) => {
                              event.stopPropagation();
                              openPlanQualification(plan.name, "pricing_button");
                            }}
                             variant={plan.highlight ? "gradient" : "primary"}
+                            size="lg"
                             shape="soft"
                             fullWidth
-                            className="mb-10 py-4 text-sm hover:scale-[1.02]"
-                            contentClassName="py-4 text-sm"
+                            className="text-sm hover:scale-[1.02]"
                           >
                             {plan.cta}
                           </TlinButton>

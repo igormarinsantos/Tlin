@@ -33,6 +33,9 @@ export function TlinButton({
   contentClassName?: string;
 }) {
   const radius = shape === "pill" ? "rounded-tlin-control" : "rounded-2xl";
+  const clipping = shape === "pill"
+    ? "[clip-path:inset(0_round_9999px)]"
+    : "[clip-path:inset(0_round_1rem)]";
   const shared = cn(
     "relative inline-flex items-center justify-center overflow-hidden font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
     radius,
@@ -43,10 +46,10 @@ export function TlinButton({
 
   if (variant === "primary") {
     return (
-      <button type={type} className={cn("relative inline-flex overflow-hidden p-px font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50", radius, fullWidth && "w-full", className, "group/btn cursor-pointer text-white")} {...props}>
+      <button type={type} className={cn("group/btn isolate relative inline-flex overflow-hidden p-px font-bold text-white transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50", radius, clipping, fullWidth && "w-full", className, "cursor-pointer")} {...props}>
         <span
           aria-hidden="true"
-          className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+          className="absolute inset-[-150%] z-0 animate-[spin_3s_linear_infinite] will-change-transform"
           style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
         />
         <span className={cn("relative z-10 block w-full bg-tlin-ink text-center transition-colors duration-300 group-hover/btn:text-tlin-ink", radius, buttonSizes[size], contentClassName)}>
