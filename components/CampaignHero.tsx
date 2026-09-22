@@ -103,7 +103,7 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
           className="relative h-[320px] sm:h-[380px] md:h-[460px]"
         >
-          {renderCampaignMotion(motion_)}
+          {renderCampaignMotion(motion_, variant)}
 
           {/* Fade suave embaixo, na cor do wash azul do fundo da pagina (ver
               MarketingLandingPage.tsx) -- fica aqui na pagina (nao dentro do
