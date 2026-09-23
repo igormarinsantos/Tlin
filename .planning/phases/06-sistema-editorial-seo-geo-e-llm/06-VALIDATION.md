@@ -34,7 +34,8 @@ created: "2026-09-23"
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
 | 06-01-01 | 01 | 1 | BLOG-01 | T-06-04 | Contrato rejeita status, datas, autoria, mídia, URLs e referências inválidas | contract | `npm test -- tests/editorial/content-contract.test.ts`<br>`npm run typecheck` | ❌ planned | ⬜ pending |
 | 06-01-02 | 01 | 1 | BLOG-03, BLOG-07 | T-06-01, T-06-02 | Baseline é independente; JSON-LD/RSS escapam conteúdo adversarial | contract/regression | `npm test -- tests/editorial/content-contract.test.ts tests/editorial/migration-parity.test.ts`<br>`git diff --check` | ❌ planned | ⬜ pending |
-| 06-02-01 | 02 | 2 | BLOG-01, BLOG-02, BLOG-03, BLOG-06, BLOG-07 | T-06-01, T-06-02, T-06-04 | Um slug publicado atravessa HTML, metadata, schema, hub, sitemap, RSS e CTA | tracer/integration | `npm test -- tests/editorial/tracer.test.ts`<br>`npm run typecheck && git diff --check` | ❌ planned | ⬜ pending |
+| 06-02-01 | 02 | 2 | BLOG-01, BLOG-02, BLOG-03, BLOG-06, BLOG-07 | T-06-01, T-06-04 | Um slug publicado atravessa modelo, query, HTML, metadata, schema, hub e CTA | tracer/integration | `npm test -- tests/editorial/tracer.test.ts`<br>`npm run typecheck` | ❌ planned | ⬜ pending |
+| 06-02-02 | 02 | 2 | BLOG-03, BLOG-07 | T-06-02, T-06-04 | O mesmo slug fecha D-13 em sitemap/RSS seguro contra a fixture histórica | integration/regression | `npm test -- tests/editorial/tracer.test.ts tests/editorial/content-contract.test.ts`<br>`npm run typecheck && git diff --check` | ❌ planned | ⬜ pending |
 | 06-03-01 | 03 | 3 | BLOG-01, BLOG-04, BLOG-07 | T-06-04, T-06-05 | Artigo de modelos conserva URL e exige fonte/revisão sem claim inventado | contract/regression | `npm test -- tests/editorial/content-contract.test.ts tests/editorial/migration-parity.test.ts`<br>`npm run typecheck` | ❌ planned | ⬜ pending |
 | 06-03-02 | 03 | 3 | BLOG-01, BLOG-04, BLOG-07 | T-06-04, T-06-05 | Playbook fecha registro único dos três slugs com links resolvíveis | contract/regression | `npm test -- tests/editorial/content-contract.test.ts tests/editorial/migration-parity.test.ts`<br>`git diff --check` | ❌ planned | ⬜ pending |
 | 06-04-01 | 04 | 4 | BLOG-01, BLOG-07 | T-06-04 | Home/client recebem somente summaries publicados e preservam navegação | regression/UI contract | `npm test -- tests/editorial/migration-parity.test.ts`<br>`npm run typecheck` | ❌ planned | ⬜ pending |
@@ -72,7 +73,7 @@ Não há wave executável separada chamada Wave 0: cada tarefa TDD cria o teste 
 - [ ] `tests/editorial/analytics-attribution.test.ts` — 06-07/08, contexto editorial sem PII até transportes simulados
 - [ ] Helper puro em `lib/editorial/queries.ts`/`validate.ts` para carregar e validar o registro sem navegador — 06-01/02
 
-Os 12 planos preservam **46 direções explícitas de falha** em `<fails_when>`, acima do contrato mínimo de 42, distribuídas por todos os 23 tasks.
+Os 12 planos preservam **48 direções explícitas de falha** em `<fails_when>`, acima do contrato mínimo de 42, distribuídas por todos os 24 tasks.
 
 ## Threat References
 
