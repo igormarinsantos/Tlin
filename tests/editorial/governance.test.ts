@@ -1,6 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { agentesDeIaNoWhatsappParaVendas as publishedArticle } from "@/content/editorial/articles/agentes-de-ia-no-whatsapp-para-vendas";
+import { getPublishedArticles } from "@/lib/editorial/queries";
+import type { EditorialArticle } from "@/lib/editorial/types";
+import { validateEditorialArticles } from "@/lib/editorial/validate";
 
 const editorialDocs = {
   workflow: "docs/editorial/README.md",
@@ -97,5 +101,112 @@ describe("editorial governance documents", () => {
     expect(distribution).toContain("utm_content");
     expect(distribution).toContain("não autoriza automação");
     expect(distribution).toContain("não dispara");
+  });
+});
+
+const validationNow = new Date("2026-09-23T18:00:00-03:00");
+
+function validationCodes(article: unknown) {
+  return validateEditorialArticles([article] as EditorialArticle[], {
+    now: validationNow,
+  }).map((issue) => issue.code);
+}
+
+describe("editorial publication governance", () => {
+  it("accepts the evidence and human approvals of the current published record", () => {
+    expect(validateEditorialArticles([publishedArticle], { now: validationNow })).toEqual([]);
+  });
+
+  it("rejects publication without the automated brief fields and an existing URL owner", () => {
+    expect(validationCodes({
+      ...publishedArticle,
+      intent: undefined,
+      clusterId: "cluster:unknown",
+    })).toEqual(expect.arrayContaining([
+      "brief.intent",
+      "brief.urlOwner",
+    ]));
+  });
+
+  it("rejects a claim that does not point to an existing source", () => {
+    expect(validationCodes({
+      ...publishedArticle,
+      claims: [
+        {
+          id: "claim:unverified-result",
+          text: "Afirmação sem prova no registro",
+          sourceIds: ["source:not-registered"],
+        },
+      ],
+    })).toContain("claim.source");
+  });
+
+  it("requires access date and scope for mutable claims", () => {
+    expect(validationCodes({
+      ...publishedArticle,
+      claims: [
+        {
+          id: "claim:mutable-statistic",
+          text: "Estatística que pode mudar",
+          sourceIds: [publishedArticle.sources[0].id],
+          mutable: true,
+        },
+      ],
+    })).toEqual(expect.arrayContaining([
+      "claim.accessedAt",
+      "claim.scope",
+    ]));
+  });
+
+  it("accepts a mutable claim only with registered source, access date and scope", () => {
+    expect(validationCodes({
+      ...publishedArticle,
+      claims: [
+        {
+          id: "claim:documented-guidance",
+          text: "Orientação documentada pela fonte primária",
+          sourceIds: [publishedArticle.sources[0].id],
+          mutable: true,
+          accessedAt: publishedArticle.sources[0].accessedAt,
+          scope: "Documentação oficial consultada na data registrada",
+        },
+      ],
+    })).toEqual([]);
+  });
+
+  it("rejects missing approvals and reviews older than the substantive update", () => {
+    const missingApproval = validationCodes({
+      ...publishedArticle,
+      review: {
+        ...publishedArticle.review,
+        commercial: undefined,
+      },
+    });
+    const staleApproval = validationCodes({
+      ...publishedArticle,
+      review: {
+        ...publishedArticle.review,
+        factual: {
+          ...publishedArticle.review.factual,
+          approvedAt: "2026-09-22T09:00:00-03:00",
+        },
+      },
+    });
+
+    expect(missingApproval).toContain("review.commercial");
+    expect(staleApproval).toContain("review.factual.stale");
+  });
+
+  it("allows an incomplete draft to remain internal and excludes it from public queries", () => {
+    const draft = {
+      id: "article:governance-draft",
+      slug: "governance-draft",
+      title: "Rascunho incompleto",
+      status: "draft",
+      blocks: [],
+    } as EditorialArticle;
+
+    expect(validateEditorialArticles([draft], { now: validationNow })).toEqual([]);
+    expect(getPublishedArticles(validationNow, [draft])).toEqual([]);
   });
 });
