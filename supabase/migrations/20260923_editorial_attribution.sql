@@ -66,4 +66,72 @@ end $$;
 revoke all on function public.record_funnel_lead(jsonb) from public;
 grant execute on function public.record_funnel_lead(jsonb) to service_role;
 
+-- Keep editorial performance on the same commercial milestones and identity.
+-- Every dimension is a validated scalar persisted by record_funnel_lead; no
+-- historical source is inferred when a touch is absent.
+create or replace function public.read_funnel_report(p_from date, p_to date)
+returns jsonb language sql stable security invoker set search_path = public as $$
+  with bookings as (
+    select distinct on (booking_key) id
+    from public.lead_form_submissions
+    where booked_at is not null and booking_key is not null
+    order by booking_key, booked_at, created_at, id
+  ), content_rows as (
+    select
+      touch.touch,
+      touch.article_slug,
+      touch.content_cluster,
+      touch.cta_id,
+      count(*) filter (where l.captured_at is not null) as leads,
+      count(*) filter (where b.id is not null) as demos,
+      count(*) filter (where b.id is not null and l.qualified is true) as qualified_demos,
+      count(*) filter (where l.won_at is not null) as won
+    from public.lead_form_submissions l
+    left join bookings b on b.id = l.id
+    cross join lateral (values
+      (
+        'first',
+        coalesce(nullif(l.utm->>'first_article_slug', ''), 'unattributed'),
+        coalesce(nullif(l.utm->>'first_content_cluster', ''), 'unattributed'),
+        coalesce(nullif(l.utm->>'first_cta_id', ''), 'unattributed')
+      ),
+      (
+        'last',
+        coalesce(nullif(l.utm->>'last_article_slug', ''), 'unattributed'),
+        coalesce(nullif(l.utm->>'last_content_cluster', ''), 'unattributed'),
+        coalesce(nullif(l.utm->>'last_cta_id', ''), 'unattributed')
+      )
+    ) as touch(touch, article_slug, content_cluster, cta_id)
+    where date_trunc('day', l.created_at at time zone 'America/Sao_Paulo')::date between p_from and p_to
+      and l.lead_capture_id is not null
+    group by touch.touch, touch.article_slug, touch.content_cluster, touch.cta_id
+  )
+  select jsonb_build_object(
+    'campaigns', coalesce((select jsonb_agg(row_to_json(t)) from (
+      select source, campaign, sum(leads) as leads, sum(demos) as demos, sum(qualified_demos) as qualified_demos,
+        sum(attended_demos) as attended_demos, sum(won) as won, sum(awaiting_qualification) as awaiting_qualification
+      from public.funnel_report
+      where cohort_date between p_from and p_to
+      group by source, campaign
+      order by sum(leads) desc, source, campaign
+    ) t), '[]'),
+    'content', coalesce((
+      select jsonb_agg(row_to_json(content_rows) order by touch, leads desc, article_slug, content_cluster, cta_id)
+      from content_rows
+    ), '[]'),
+    'pending_operations', (select count(*) from public.funnel_operations where state = 'pending'),
+    'unmatched_events', (
+      select count(*)
+      from public.deskcomm_status_events e
+      where not exists (
+        select 1 from public.lead_form_submissions l where l.lead_capture_id = e.lead_capture_id
+      )
+    ),
+    'mapped_stages', (select count(*) from public.funnel_stage_mapping)
+  )
+$$;
+
+revoke all on function public.read_funnel_report(date, date) from public;
+grant execute on function public.read_funnel_report(date, date) to service_role;
+
 commit;
