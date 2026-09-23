@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
+import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import ArticlePage, { generateMetadata } from "@/app/blog/[slug]/page";
 import { GET as getRss } from "@/app/blog/rss.xml/route";
@@ -178,6 +179,67 @@ describe("editorial discovery outputs", () => {
     expect(filteredXml).toContain(`/blog/${published[0].slug}`);
     expect(filteredXml).not.toContain("/blog/draft");
     expect(filteredXml).not.toContain("/blog/future");
+  });
+
+  it("publishes a short experimental LLM index from safe published projections", async () => {
+    const llmsModule = await import("@/lib/editorial/llms").catch(() => undefined);
+    expect(llmsModule?.createLlmsIndex).toBeTypeOf("function");
+    if (!llmsModule?.createLlmsIndex) return;
+
+    const published = getPublishedArticles(now);
+    const adversarial = {
+      ...published[0],
+      id: "article:adversarial",
+      slug: "adversarial",
+      title: "IA <script>alert(1)</script> & vendas",
+      summary: "Resumo com ](javascript:alert(1)) e conteúdo aprovado.",
+    } as const;
+    const candidates = [
+      adversarial,
+      { ...published[0], id: "article:draft-llms", slug: "draft-llms", status: "draft" },
+      {
+        ...published[0],
+        id: "article:future-llms",
+        slug: "future-llms",
+        publishedAt: "2026-10-01T12:00:00-03:00",
+        modifiedAt: "2026-10-01T12:00:00-03:00",
+      },
+      {
+        ...published[0],
+        id: "article:unsafe-url",
+        slug: "unsafe?preview=true",
+      },
+    ] as EditorialArticle[];
+    const safeArticles = getPublishedArticles(now, candidates);
+    const safeClusters = getPublishedClusters(now, candidates);
+    const output = llmsModule.createLlmsIndex(safeArticles, safeClusters);
+
+    expect(output).toContain("complementar e experimental");
+    expect(output).toContain("não garante ranking, inclusão ou citação");
+    expect(output).toContain(absoluteUrl(`/blog/${adversarial.slug}`));
+    expect(output).toContain("IA &lt;script&gt;alert(1)&lt;/script&gt; &amp; vendas");
+    expect(output).not.toContain("<script>");
+    expect(output).not.toContain("javascript:");
+    expect(output).not.toContain("/blog/draft-llms");
+    expect(output).not.toContain("/blog/future-llms");
+    expect(output).not.toContain("?preview=true");
+    expect(safeClusters.every((cluster) => output.includes(absoluteUrl(cluster.hubPath)))).toBe(true);
+  });
+
+  it("serves the short LLM index as UTF-8 plain text without a competing static file", async () => {
+    const routeModule = await import("@/app/llms.txt/route").catch(() => undefined);
+    const llmsModule = await import("@/lib/editorial/llms").catch(() => undefined);
+
+    expect(routeModule?.GET).toBeTypeOf("function");
+    expect(llmsModule?.createLlmsIndex).toBeTypeOf("function");
+    if (!routeModule?.GET || !llmsModule?.createLlmsIndex) return;
+
+    const response = routeModule.GET();
+    expect(response.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
+    expect(await response.text()).toBe(
+      llmsModule.createLlmsIndex(getPublishedArticles(), getPublishedClusters()),
+    );
+    expect(existsSync("public/llms.txt")).toBe(false);
   });
 });
 
