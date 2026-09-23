@@ -4,7 +4,7 @@ import ArticlePage, { generateMetadata } from "@/app/blog/[slug]/page";
 import { GET as getRss } from "@/app/blog/rss.xml/route";
 import sitemap from "@/app/sitemap";
 import { editorialAuthors } from "@/content/editorial/authors";
-import { serializeRssFeed } from "@/lib/editorial/feed";
+import { createEditorialRss } from "@/lib/editorial/feed";
 import { getPublishedArticles, getPublishedClusters } from "@/lib/editorial/queries";
 import {
   createArticleStructuredData,
@@ -140,7 +140,7 @@ describe("editorial discovery outputs", () => {
       })),
     ]);
 
-    const xmlFromUnsortedInput = serializeRssFeed([...published].reverse());
+    const xmlFromUnsortedInput = createEditorialRss([...published].reverse());
     const canonicalPositions = published.map((article) =>
       xmlFromUnsortedInput.indexOf(`<guid isPermaLink="true">${absoluteUrl(`/blog/${article.slug}`)}</guid>`),
     );
@@ -149,7 +149,7 @@ describe("editorial discovery outputs", () => {
 
     const response = getRss();
     expect(response.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
-    expect(await response.text()).toBe(serializeRssFeed(published));
+    expect(await response.text()).toBe(createEditorialRss(published));
 
     const adversarial = {
       ...published[0],
@@ -158,7 +158,7 @@ describe("editorial discovery outputs", () => {
       title: "IA & vendas <script>alert(1)</script> 🚀",
       summary: "Qualificação > volume, com aspas \"duplas\" e 'simples'.",
     } as const;
-    const adversarialXml = serializeRssFeed([adversarial]);
+    const adversarialXml = createEditorialRss([adversarial]);
     expect(adversarialXml).toContain("IA &amp; vendas &lt;script&gt;alert(1)&lt;/script&gt; 🚀");
     expect(adversarialXml).toContain("aspas &quot;duplas&quot; e &apos;simples&apos;");
     expect(adversarialXml).not.toContain("<script>");
@@ -174,7 +174,7 @@ describe("editorial discovery outputs", () => {
         modifiedAt: "2026-10-01T12:00:00-03:00",
       },
     ] as EditorialArticle[];
-    const filteredXml = serializeRssFeed(getPublishedArticles(now, candidates));
+    const filteredXml = createEditorialRss(getPublishedArticles(now, candidates));
     expect(filteredXml).toContain(`/blog/${published[0].slug}`);
     expect(filteredXml).not.toContain("/blog/draft");
     expect(filteredXml).not.toContain("/blog/future");

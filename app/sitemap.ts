@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { ENCYCLOPEDIA_DATA } from "@/lib/encyclopediaData";
-import { getPublishedArticles } from "@/lib/editorial/queries";
+import { getPublishedArticles, getPublishedClusters } from "@/lib/editorial/queries";
 import { absoluteUrl } from "@/lib/siteConfig";
 
 const lastModified = new Date();
@@ -15,8 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const blogArticles = getPublishedArticles().map((article) => ({
     url: absoluteUrl(`/blog/${article.slug}`),
     lastModified: new Date(article.modifiedAt),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
+  }));
+  const blogClusters = getPublishedClusters().map((cluster) => ({
+    url: absoluteUrl(cluster.hubPath),
+    lastModified: new Date(
+      Math.max(...cluster.articles.map((article) => Date.parse(article.modifiedAt))),
+    ),
   }));
 
   return [
@@ -87,6 +91,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     ...legalArticles,
+    ...blogClusters,
     ...blogArticles,
   ];
 }

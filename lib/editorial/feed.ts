@@ -16,7 +16,7 @@ export function escapeXmlText(value: string) {
     .replace(/'/g, "&apos;");
 }
 
-export function serializeRssFeed(
+export function createEditorialRss(
   articles: readonly EditorialPublishedArticle[],
   options: RssFeedOptions = {},
 ) {
@@ -25,7 +25,7 @@ export function serializeRssFeed(
   const description =
     options.description ?? "Inteligência artificial aplicada ao crescimento de negócios.";
   const language = options.language ?? "pt-BR";
-  const items = articles.map(serializeRssItem).join("");
+  const items = [...articles].sort(byNewestPublication).map(serializeRssItem).join("");
 
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -39,6 +39,16 @@ export function serializeRssFeed(
     "</channel>",
     "</rss>",
   ].join("");
+}
+
+export const serializeRssFeed = createEditorialRss;
+
+function byNewestPublication(
+  left: EditorialPublishedArticle,
+  right: EditorialPublishedArticle,
+) {
+  const dateDifference = Date.parse(right.publishedAt) - Date.parse(left.publishedAt);
+  return dateDifference || left.slug.localeCompare(right.slug, "pt-BR");
 }
 
 function serializeRssItem(article: EditorialPublishedArticle) {
