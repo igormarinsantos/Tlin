@@ -40,6 +40,12 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: 
   // bem no topo, sobre esse wash, entao usa a mesma cor em vez de
   // bg-white pra nao criar um retangulo branco destacado.
   const isCampaignPage = SOLUTIONS.some((s) => s.href === pathname);
+  const isSegmentPage = ["/ia-para-clinicas", "/ia-para-escolas", "/ia-para-assessorias", "/ia-para-advocacia"].includes(pathname);
+  const pageSurface = isSegmentPage
+    ? "bg-[#F5F0FF]/95"
+    : isCampaignPage
+      ? "bg-[#F5FDFF]/95"
+      : "bg-white/95";
 
   const openQualification = () => {
     trackFunnelEvent("click_pricing_cta", { cta_source: "nav_solutions_menu", plan_name: "TLIN" });
@@ -56,8 +62,8 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: 
       onMouseLeave={onLeave}
       className={
         isContained
-          ? "pointer-events-auto mt-3 w-[min(720px,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl"
-          : `pointer-events-auto ${isCampaignPage ? "bg-[#F5FDFF]" : "bg-white"}`
+          ? `pointer-events-auto relative z-0 -mt-3 w-[min(720px,calc(100vw-2rem))] overflow-hidden pt-3 backdrop-blur-2xl ${pageSurface}`
+          : `pointer-events-auto backdrop-blur-xl ${pageSurface}`
       }
       style={
         isContained
@@ -391,7 +397,7 @@ export function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed top-4 left-0 right-0 z-[100] flex flex-col items-center pointer-events-none px-4"
           >
-            <div ref={floatingHeaderRef} className="pointer-events-auto flex w-max items-center justify-between gap-8 rounded-full border border-zinc-200 bg-white px-4 py-2">
+            <div ref={floatingHeaderRef} className="pointer-events-auto relative z-10 flex w-max items-center justify-between gap-8 rounded-full border border-zinc-200 bg-white px-4 py-2">
 
               <div className="flex items-center gap-2">
                 <Link href="/" className="flex items-center gap-2" data-mascot-hide>
