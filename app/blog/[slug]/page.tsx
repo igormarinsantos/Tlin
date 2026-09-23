@@ -15,8 +15,9 @@ import {
   getRelatedPublishedArticles,
 } from "@/lib/editorial/queries";
 import {
+  createArticleSocialImage,
   createArticleStructuredData,
-  serializeStructuredData,
+  serializeJsonLd,
 } from "@/lib/editorial/structured-data";
 import type { ContentBlock, EditorialPublishedArticle } from "@/lib/editorial/types";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
@@ -26,12 +27,6 @@ type ArticlePageProps = {
 };
 
 const visual = CATEGORY_VISUALS["Vendas com IA"];
-const socialImage = {
-  url: absoluteUrl("/og/platform-preview-email.jpg"),
-  width: 1200,
-  height: 630,
-  alt: "Interface da IA comercial da Tlin",
-};
 
 export function generateStaticParams() {
   return getPublishedArticles().map(({ slug }) => ({ slug }));
@@ -44,6 +39,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
   const author = editorialAuthors[article.authorId];
   const canonical = absoluteUrl(`/blog/${article.slug}`);
+  const authorUrl = absoluteUrl(author.profileUrl);
+  const socialImage = createArticleSocialImage(article);
 
   return {
     title: article.title,
@@ -53,7 +50,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       languages: { "pt-BR": canonical },
     },
     robots: { index: true, follow: true },
-    authors: [{ name: author.name, url: absoluteUrl(author.profileUrl) }],
+    authors: [{ name: author.name, url: authorUrl }],
     openGraph: {
       type: "article",
       locale: siteConfig.locale,
@@ -63,14 +60,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       url: canonical,
       publishedTime: article.publishedAt,
       modifiedTime: article.modifiedAt,
-      authors: [author.name],
+      authors: [authorUrl],
       images: [socialImage],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.summary,
-      images: [socialImage.url],
+      images: [{ url: socialImage.url, alt: socialImage.alt }],
     },
   };
 }
@@ -88,7 +85,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const headings = article.blocks.filter(
     (block): block is Extract<ContentBlock, { type: "heading" }> => block.type === "heading",
   );
-  const structuredData = serializeStructuredData(createArticleStructuredData(article));
+  const structuredData = serializeJsonLd(createArticleStructuredData(article));
 
   return (
     <main className="bg-white px-4 pb-12 pt-28 md:px-8 md:pb-20 md:pt-36">
@@ -110,6 +107,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <div
           className="relative mt-6 h-48 overflow-hidden rounded-3xl md:h-64"
           style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
+          aria-hidden="true"
         >
           <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute inset-0 flex items-center justify-center text-white/25">
@@ -129,7 +127,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y border-zinc-200 py-5">
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500">
               <span>{author.name}</span>
-              <span>{formatEditorialDate(article.publishedAt)}</span>
+              <span>Publicado em {formatEditorialDate(article.publishedAt)}</span>
+              {article.modifiedAt !== article.publishedAt && (
+                <span>Atualizado em {formatEditorialDate(article.modifiedAt)}</span>
+              )}
               <span>{article.readingTimeMinutes} min de leitura</span>
             </div>
             <div className="flex flex-wrap items-center gap-4">

@@ -2,8 +2,50 @@ import { editorialAuthors } from "@/content/editorial/authors";
 import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 
+export const ARTICLE_SOCIAL_IMAGE_SIZE = {
+  width: 1200,
+  height: 630,
+} as const;
+
 function absoluteEditorialUrl(value: string) {
   return value.startsWith("/") ? absoluteUrl(value) : value;
+}
+
+export function createArticleSocialImage(article: EditorialPublishedArticle) {
+  return {
+    url: absoluteUrl(`/blog/${article.slug}/opengraph-image`),
+    ...ARTICLE_SOCIAL_IMAGE_SIZE,
+    alt: `Capa do artigo ${article.title}`,
+  };
+}
+
+export function createBreadcrumbStructuredData(article: EditorialPublishedArticle) {
+  const canonical = absoluteUrl(`/blog/${article.slug}`);
+
+  return {
+    "@type": "BreadcrumbList",
+    "@id": `${canonical}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: siteConfig.name,
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Conteúdos",
+        item: absoluteUrl("/blog"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: canonical,
+      },
+    ],
+  };
 }
 
 export function createArticleStructuredData(article: EditorialPublishedArticle) {
@@ -11,7 +53,8 @@ export function createArticleStructuredData(article: EditorialPublishedArticle) 
   if (!author) throw new Error(`Unknown editorial author: ${article.authorId}`);
 
   const canonical = absoluteUrl(`/blog/${article.slug}`);
-  const articleEntity: Record<string, unknown> = {
+  const socialImage = createArticleSocialImage(article);
+  const articleEntity = {
     "@type": "Article",
     "@id": `${canonical}#article`,
     headline: article.title,
@@ -27,44 +70,20 @@ export function createArticleStructuredData(article: EditorialPublishedArticle) 
     },
     publisher: { "@id": absoluteUrl("/#organization") },
     breadcrumb: { "@id": `${canonical}#breadcrumb` },
+    image: [socialImage.url],
   };
-
-  if (article.heroImage) {
-    articleEntity.image = [absoluteEditorialUrl(article.heroImage.src)];
-  }
 
   return {
     "@context": "https://schema.org",
     "@graph": [
       articleEntity,
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${canonical}#breadcrumb`,
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: siteConfig.name,
-            item: absoluteUrl("/"),
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Conteúdos",
-            item: absoluteUrl("/blog"),
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: article.title,
-            item: canonical,
-          },
-        ],
-      },
+      createBreadcrumbStructuredData(article),
     ],
   };
 }
 
-export function serializeStructuredData(value: unknown) {
+export function serializeJsonLd(value: unknown) {
   return JSON.stringify(value).replace(/</g, "\\u003c");
 }
+
+export const serializeStructuredData = serializeJsonLd;
