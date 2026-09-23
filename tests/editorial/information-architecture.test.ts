@@ -1,5 +1,7 @@
+import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import ArticlePage from "@/app/blog/[slug]/page";
 import AuthorPage, {
   generateMetadata as generateAuthorMetadata,
   generateStaticParams as generateAuthorStaticParams,
@@ -8,13 +10,17 @@ import ClusterPage, {
   generateMetadata as generateClusterMetadata,
   generateStaticParams as generateClusterStaticParams,
 } from "@/app/blog/temas/[cluster]/page";
+import BlogHomePage from "@/app/blog/page";
+import { ArticleCard } from "@/components/blog/ArticleCard";
 import { editorialAuthors } from "@/content/editorial/authors";
 import { editorialClusters } from "@/content/editorial/taxonomy";
 import {
   getPublishedAuthorBySlug,
   getPublishedAuthors,
+  getPublishedArticles,
   getPublishedClusterBySlug,
   getPublishedClusters,
+  getRelatedPublishedArticles,
 } from "@/lib/editorial/queries";
 import { editorialArticles } from "@/lib/editorial/registry";
 import {
@@ -167,6 +173,98 @@ describe("editorial information architecture", () => {
     expect(editorialClusters["cluster:follow-up"].intentOwner).toBe("/recuperacao-de-leads");
     expect(editorialClusters["cluster:agendamento"].intentOwner).toBe("/demo");
     expect(editorialClusters["cluster:crm-nativo"].intentOwner).toBe("/crm-com-ia");
+  });
+
+  it("links home, cards and every article to their published hubs without JavaScript", async () => {
+    const clusters = getPublishedClusters(now);
+    const articles = getPublishedArticles(now);
+    const homeHtml = renderToStaticMarkup(await BlogHomePage());
+
+    for (const cluster of clusters) {
+      expect(homeHtml).toContain(`href="${cluster.hubPath}"`);
+    }
+
+    for (const article of articles) {
+      const cluster = editorialClusters[article.clusterId];
+      const cardHtml = renderToStaticMarkup(
+        createElement(ArticleCard, {
+          article: {
+            id: article.id,
+            slug: article.slug,
+            title: article.title,
+            summary: article.summary,
+            clusterId: article.clusterId,
+            topic: cluster.label,
+            publishedAt: article.publishedAt,
+            readingTimeMinutes: article.readingTimeMinutes,
+            featured: Boolean(article.featured),
+          },
+        }),
+      );
+      const articleHtml = renderToStaticMarkup(
+        await ArticlePage({ params: Promise.resolve({ slug: article.slug }) }),
+      );
+
+      expect(cardHtml).toContain(`href="${cluster.hubPath}"`);
+      expect(articleHtml).toContain(`href="${cluster.hubPath}"`);
+      expect(articleHtml).toContain(cluster.label);
+    }
+  });
+
+  it("resolves every declared internal link and keeps URL ownership collision-free", () => {
+    const articles = getPublishedArticles(now);
+    const hubs = getPublishedClusters(now).map(({ hubPath }) => hubPath);
+    const authors = getPublishedAuthors(now).map(({ profilePath }) => profilePath);
+    const staticRoutes = new Set([
+      "/",
+      "/agentes-de-ia",
+      "/blog",
+      "/comece",
+      "/como-funciona",
+      "/crm-com-ia",
+      "/demo",
+      "/ia-whatsapp",
+      "/infoprodutores",
+      "/obrigado",
+      "/precos",
+      "/recuperacao-de-leads",
+    ]);
+    const knownRoutes = new Set([
+      ...staticRoutes,
+      ...hubs,
+      ...authors,
+      ...articles.map(({ slug }) => `/blog/${slug}`),
+    ]);
+
+    for (const article of articles) {
+      for (const link of article.internalLinks) {
+        expect(knownRoutes.has(link.href), `${article.slug} -> ${link.href}`).toBe(true);
+      }
+      if (article.cta.href.startsWith("/")) {
+        expect(knownRoutes.has(article.cta.href), `${article.slug} CTA -> ${article.cta.href}`).toBe(true);
+      }
+    }
+
+    const commercialOwners = Object.values(editorialClusters).map(({ intentOwner }) => intentOwner);
+    expect(new Set(hubs).size).toBe(hubs.length);
+    expect(hubs.some((hub) => commercialOwners.includes(hub))).toBe(false);
+  });
+
+  it("orders related articles by cluster, then intent, with a deterministic fallback", () => {
+    const articles = getPublishedArticles(now);
+
+    for (const article of articles) {
+      const related = getRelatedPublishedArticles(article, now, articles.length - 1);
+      expect(related).not.toContainEqual(article);
+      expect(related).toHaveLength(articles.length - 1);
+
+      const priorities = related.map((candidate) => {
+        if (candidate.clusterId === article.clusterId) return 0;
+        if (candidate.intent === article.intent) return 1;
+        return 2;
+      });
+      expect(priorities).toEqual([...priorities].sort());
+    }
   });
 });
 
