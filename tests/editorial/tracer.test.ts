@@ -11,8 +11,11 @@ import ClusterPage, {
   generateMetadata as generateClusterMetadata,
   generateStaticParams as generateClusterParams,
 } from "@/app/blog/temas/[cluster]/page";
+import { GET as getRss } from "@/app/blog/rss.xml/route";
+import sitemap from "@/app/sitemap";
 import { agentesDeIaNoWhatsappParaVendas as article } from "@/content/editorial/articles/agentes-de-ia-no-whatsapp-para-vendas";
 import { EditorialCta } from "@/components/blog/EditorialCta";
+import { serializeRssFeed } from "@/lib/editorial/feed";
 import {
   getPublishedArticleBySlug,
   getPublishedArticles,
@@ -171,5 +174,43 @@ describe("editorial production tracer", () => {
         articles: [article],
       }),
     ]);
+  });
+
+  it("projects the same published identity and dates into sitemap and RSS", async () => {
+    const published = getPublishedArticles(now);
+    const canonical = absoluteUrl(`/blog/${article.slug}`);
+    const sitemapEntries = sitemap();
+    const editorialSitemapEntries = sitemapEntries.filter((entry) =>
+      published.some((candidate) => entry.url === absoluteUrl(`/blog/${candidate.slug}`)),
+    );
+    const response = getRss();
+    const xml = await response.text();
+
+    expect(editorialSitemapEntries).toEqual([
+      expect.objectContaining({
+        url: canonical,
+        lastModified: new Date(article.modifiedAt),
+      }),
+    ]);
+    expect(
+      sitemapEntries
+        .filter((entry) => entry.url.startsWith(`${absoluteUrl("/blog")}/`))
+        .map((entry) => entry.url),
+    ).toEqual(published.map((candidate) => absoluteUrl(`/blog/${candidate.slug}`)));
+    expect(response.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
+    expect(xml).toBe(serializeRssFeed(published));
+    expect(xml).toContain(`<link>${canonical}</link>`);
+    expect(xml).toContain(`<guid isPermaLink="true">${canonical}</guid>`);
+
+    const adversarialXml = serializeRssFeed([
+      {
+        ...article,
+        title: "IA & vendas <script>alert(1)</script> 🚀",
+        summary: "Qualificação > volume, com aspas \"duplas\" e 'simples'.",
+      },
+    ]);
+    expect(adversarialXml).toContain("IA &amp; vendas &lt;script&gt;alert(1)&lt;/script&gt; 🚀");
+    expect(adversarialXml).toContain("aspas &quot;duplas&quot; e &apos;simples&apos;");
+    expect(adversarialXml).not.toContain("<script>");
   });
 });
