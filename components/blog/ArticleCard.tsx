@@ -1,12 +1,23 @@
 import Link from "next/link";
-import type { BlogArticle } from "@/lib/blog";
-import { formatArticleDate, getChatGptSummaryUrl } from "@/lib/blog";
+import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 import { absoluteUrl } from "@/lib/siteConfig";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
 import { ArrowRightIcon, SparkleIcon } from "./icons";
 
-export function ArticleCard({ article, featured = false }: { article: BlogArticle; featured?: boolean }) {
-  const visual = CATEGORY_VISUALS[article.category];
+export type EditorialArticleSummary = {
+  id: EditorialPublishedArticle["id"];
+  slug: EditorialPublishedArticle["slug"];
+  title: EditorialPublishedArticle["title"];
+  summary: EditorialPublishedArticle["summary"];
+  clusterId: EditorialPublishedArticle["clusterId"];
+  topic: string;
+  publishedAt: EditorialPublishedArticle["publishedAt"];
+  readingTimeMinutes: EditorialPublishedArticle["readingTimeMinutes"];
+  featured: boolean;
+};
+
+export function ArticleCard({ article, featured = false }: { article: EditorialArticleSummary; featured?: boolean }) {
+  const visual = CATEGORY_VISUALS[article.clusterId];
   const summaryUrl = getChatGptSummaryUrl(absoluteUrl(`/blog/${article.slug}`));
 
   return (
@@ -34,14 +45,16 @@ export function ArticleCard({ article, featured = false }: { article: BlogArticl
             className="rounded-full px-3 py-1 text-xs font-bold"
             style={{ backgroundColor: `${visual.from}1a`, color: visual.badgeText }}
           >
-            {article.category}
+            {article.topic}
           </span>
-          <span className="text-xs font-medium text-zinc-400">{article.readingTime}</span>
+          <span className="text-xs font-medium text-zinc-400">
+            {article.readingTimeMinutes} min de leitura
+          </span>
         </div>
         <h2 className={`relative ${featured ? "text-3xl md:text-5xl" : "text-xl"} text-balance font-black tracking-tight text-[#0c0d0d]`}>
           <Link href={`/blog/${article.slug}`} className="outline-none after:absolute after:inset-0">{article.title}</Link>
         </h2>
-        <p className="relative mt-4 text-pretty leading-7 text-zinc-500">{article.description}</p>
+        <p className="relative mt-4 text-pretty leading-7 text-zinc-500">{article.summary}</p>
         <div className="relative z-10 mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-6 text-sm text-zinc-500">
           <span>{formatArticleDate(article.publishedAt)}</span>
           <div className="flex items-center gap-4">
@@ -63,4 +76,18 @@ export function ArticleCard({ article, featured = false }: { article: BlogArticl
       </div>
     </article>
   );
+}
+
+export function formatArticleDate(date: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date(date));
+}
+
+export function getChatGptSummaryUrl(articleUrl: string) {
+  const prompt = `Resuma esse artigo pra mim, em português, com os pontos principais: ${articleUrl}`;
+  return `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
 }

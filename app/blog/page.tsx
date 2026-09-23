@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import { BLOG_ARTICLES, BLOG_CATEGORIES } from "@/lib/blog";
+import { editorialClusters } from "@/content/editorial/taxonomy";
 import { FeaturedCarousel } from "@/components/blog/FeaturedCarousel";
 import { BlogSearchAndGrid } from "@/components/blog/BlogSearchAndGrid";
+import type { EditorialArticleSummary } from "@/components/blog/ArticleCard";
+import { getPublishedArticles } from "@/lib/editorial/queries";
+import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 
 export const metadata: Metadata = { title: "IA, vendas e WhatsApp" };
 
 export default function BlogHomePage() {
-  const featuredArticles = BLOG_ARTICLES.filter((article) => article.featured);
-  const carouselArticles = featuredArticles.length >= 2 ? featuredArticles : BLOG_ARTICLES.slice(0, 3);
+  const articles = getPublishedArticles().map(toArticleSummary);
+  const featuredArticles = articles.filter((article) => article.featured);
+  const carouselArticles = featuredArticles.length >= 2 ? featuredArticles : articles.slice(0, 3);
 
   return (
     <main className="relative bg-white">
@@ -29,9 +33,23 @@ export default function BlogHomePage() {
 
       <section className="px-4 pb-24 md:px-8">
         <div className="mx-auto max-w-6xl">
-          <BlogSearchAndGrid articles={BLOG_ARTICLES} categories={BLOG_CATEGORIES} />
+          <BlogSearchAndGrid articles={articles} />
         </div>
       </section>
     </main>
   );
+}
+
+function toArticleSummary(article: EditorialPublishedArticle): EditorialArticleSummary {
+  return {
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    summary: article.summary,
+    clusterId: article.clusterId,
+    topic: editorialClusters[article.clusterId].label,
+    publishedAt: article.publishedAt,
+    readingTimeMinutes: article.readingTimeMinutes,
+    featured: Boolean(article.featured),
+  };
 }

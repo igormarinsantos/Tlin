@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import type { BlogArticle } from "@/lib/blog";
-import { formatArticleDate } from "@/lib/blog";
+import { formatArticleDate, type EditorialArticleSummary } from "./ArticleCard";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
 import { ArrowRightIcon } from "./icons";
 
@@ -15,7 +14,7 @@ const AUTOPLAY_MS = 6000;
 // categoryVisuals.ts). O texto fica dentro de um container branco por cima
 // do degrade (nao direto sobre ele com scrim escuro) -- sem setas de
 // navegacao manual, so autoplay + dots.
-export function FeaturedCarousel({ articles }: { articles: BlogArticle[] }) {
+export function FeaturedCarousel({ articles }: { articles: readonly EditorialArticleSummary[] }) {
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -30,7 +29,7 @@ export function FeaturedCarousel({ articles }: { articles: BlogArticle[] }) {
   if (articles.length === 0) return null;
 
   const article = articles[index];
-  const visual = CATEGORY_VISUALS[article.category];
+  const visual = CATEGORY_VISUALS[article.clusterId];
 
   return (
     <div
@@ -59,17 +58,17 @@ export function FeaturedCarousel({ articles }: { articles: BlogArticle[] }) {
                 className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4"
                 style={{ backgroundColor: `${visual.from}1a`, color: visual.badgeText }}
               >
-                {article.category}
+                {article.topic}
               </span>
               <h2 className="text-xl md:text-3xl font-black tracking-tight text-[#0c0d0d] text-balance">
                 {article.title}
               </h2>
               <p className="mt-3 text-sm md:text-base text-zinc-500 leading-relaxed line-clamp-2">
-                {article.description}
+                {article.summary}
               </p>
               <div className="mt-4 flex items-center gap-4 text-xs md:text-sm text-zinc-400">
                 <span>{formatArticleDate(article.publishedAt)}</span>
-                <span>{article.readingTime}</span>
+                <span>{article.readingTimeMinutes} min de leitura</span>
               </div>
               <Link
                 href={`/blog/${article.slug}`}

@@ -243,8 +243,7 @@ describe("legacy article migration parity", () => {
       target: { value: "tema canônico" },
     });
 
-    expect(screen.getByRole("link", { name: article.title })).toHaveAttribute(
-      "href",
+    expect(screen.getByRole("link", { name: article.title }).getAttribute("href")).toBe(
       `/blog/${article.slug}`,
     );
   });

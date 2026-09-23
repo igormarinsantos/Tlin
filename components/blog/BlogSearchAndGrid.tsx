@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { BlogArticle, BlogCategory } from "@/lib/blog";
-import { ArticleCard } from "./ArticleCard";
+import { ArticleCard, type EditorialArticleSummary } from "./ArticleCard";
 
-export function BlogSearchAndGrid({ articles, categories }: { articles: BlogArticle[]; categories: BlogCategory[] }) {
+export function BlogSearchAndGrid({ articles }: { articles: readonly EditorialArticleSummary[] }) {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -13,13 +12,16 @@ export function BlogSearchAndGrid({ articles, categories }: { articles: BlogArti
     return articles.filter(
       (article) =>
         article.title.toLowerCase().includes(normalizedQuery) ||
-        article.description.toLowerCase().includes(normalizedQuery)
+        article.summary.toLowerCase().includes(normalizedQuery) ||
+        article.topic.toLowerCase().includes(normalizedQuery)
     );
   }, [articles, normalizedQuery]);
 
-  const categoriesWithArticles = categories
-    .map((category) => ({ category, items: articles.filter((article) => article.category === category) }))
-    .filter((group) => group.items.length > 0);
+  const topicsWithArticles = useMemo(
+    () => [...new Set(articles.map((article) => article.topic))]
+      .map((topic) => ({ topic, items: articles.filter((article) => article.topic === topic) })),
+    [articles],
+  );
 
   return (
     <div>
@@ -58,9 +60,9 @@ export function BlogSearchAndGrid({ articles, categories }: { articles: BlogArti
         </div>
       ) : (
         <div className="mt-14 space-y-16">
-          {categoriesWithArticles.map(({ category, items }) => (
-            <div key={category}>
-              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#0c0d0d] mb-6">{category}</h2>
+          {topicsWithArticles.map(({ topic, items }) => (
+            <div key={topic}>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#0c0d0d] mb-6">{topic}</h2>
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {items.map((article) => (
                   <ArticleCard key={article.slug} article={article} />
