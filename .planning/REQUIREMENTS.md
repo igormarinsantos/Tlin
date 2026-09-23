@@ -33,6 +33,16 @@
 - [ ] **OTIM-01**: A equipe pode avaliar desempenho por canal/origem usando dados de qualidade de lead, demo e venda.
 - [ ] **OTIM-02**: A LP suporta futuras variantes de mensagem ou entrada por canal sem duplicar o fluxo de qualificação.
 
+### Sistema Editorial e Descoberta
+
+- [ ] **BLOG-01**: A equipe publica, revisa e atualiza artigos por um modelo de conteúdo tipado que suporta autoria, datas de publicação e modificação, resumo, imagens, seções, fontes, links internos, CTA e status editorial.
+- [ ] **BLOG-02**: O blog organiza conteúdo em pilares, clusters e hubs com URLs, breadcrumbs e interligação coerentes, preservando a função comercial das landing pages existentes.
+- [ ] **BLOG-03**: Páginas editoriais entregam HTML indexável, metadados únicos, canonical, Open Graph, dados estruturados válidos, sitemap e feed consistentes, imagens acessíveis e sinais de atualização verdadeiros.
+- [ ] **BLOG-04**: O processo editorial exige intenção de busca definida, fontes verificáveis, contribuição original, revisão factual e comercial, regras anti-plágio e proibição de dados ou experiências inventados.
+- [ ] **BLOG-05**: O sistema oferece briefs, templates, checklist de qualidade e rotina de atualização/distribuição para operar o calendário editorial com consistência.
+- [ ] **BLOG-06**: Analytics relaciona artigo, cluster, CTA e origem a engajamento, demo confirmada, qualificação e venda usando o contrato comercial da Phase 1.
+- [ ] **BLOG-07**: Os três artigos atuais são migrados sem quebrar URLs, canonical, sitemap, RSS, compartilhamento, navegação ou aparência essencial.
+
 ## v2 Requirements
 
 ### Personalização e Prova
@@ -70,13 +80,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAN-02 | Phase 4 | Pending |
 | OTIM-01 | Phase 1 | Pending |
 | OTIM-02 | Phase 5 | Pending |
+| BLOG-01 | Phase 6 | Pending |
+| BLOG-02 | Phase 6 | Pending |
+| BLOG-03 | Phase 6 | Pending |
+| BLOG-04 | Phase 6 | Pending |
+| BLOG-05 | Phase 6 | Pending |
+| BLOG-06 | Phase 6 | Pending |
+| BLOG-07 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 13 total
-- Mapped to phases: 13
+- v1 requirements: 20 total
+- Mapped to phases: 20
 - Unmapped: 0 ✓
 
 ---
 
 *Requirements defined: 2026-09-15*
-*Last updated: 2026-09-15 after initial scope approval*
+*Last updated: 2026-09-22 after adding the editorial discovery system*

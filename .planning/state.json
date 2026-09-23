@@ -27,12 +27,17 @@
       "number": "5",
       "name": "Otimização por Origem",
       "status": "pending"
+    },
+    {
+      "number": "6",
+      "name": "Sistema Editorial SEO, GEO e LLM",
+      "status": "pending"
     }
   ],
   "next": {
-    "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 1 of 5 · 0% · executing"
+    "command": "/gsd:progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-09-15T20:12:58.934Z"
+  "updated_at": "2026-09-23T19:18:47.541Z"
 }
