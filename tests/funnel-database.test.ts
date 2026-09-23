@@ -103,6 +103,7 @@ describe("durable funnel in PostgreSQL", () => {
     try {
       await expect(db.query("select * from funnel_report")).rejects.toThrow();
       await expect(rpc("record_funnel_lead", [{ lead_capture_id: "attack" }])).rejects.toThrow();
+      await expect(rpc("read_funnel_report", ["2026-09-01", "2026-09-30"])).rejects.toThrow();
     } finally { await db.exec("reset role"); }
   });
 
@@ -113,5 +114,97 @@ describe("durable funnel in PostgreSQL", () => {
     const report = await rpc("read_funnel_report", ["2020-01-01", "2100-01-01"]);
     const campaigns = report.campaigns as { demos: number }[];
     expect(campaigns.reduce((sum, row) => sum + row.demos, 0)).toBe(2);
+  });
+
+  it("aggregates persisted editorial touches without inventing commercial stages", async () => {
+    await rpc("record_funnel_lead", [{
+      lead_capture_id: "capture-content-won",
+      deskcomm_lead_id: "crm-content-won",
+      company_name: "PII must stay private",
+      phone: "+5511999999999",
+      email: "private@example.com",
+      captured_at: "2026-09-23T10:00:00Z",
+      booked_at: "2026-09-23T11:00:00Z",
+      booking_key: "booking-content-won",
+      utm: {
+        first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        first_content_cluster: "cluster:ia-comercial",
+        first_cta_id: "cta:demo",
+        last_article_slug: "playbook-qualificacao-leads-whatsapp",
+        last_content_cluster: "cluster:qualificacao",
+        last_cta_id: "cta:agendar-demo",
+      },
+      payload: { raw: "must-not-leak" },
+    }]);
+    await rpc("apply_funnel_crm_event", [{
+      eventId: "event-content-qualified",
+      leadCaptureId: "capture-content-won",
+      leadId: "crm-content-won",
+      status: "qualified",
+      occurredAt: "2026-09-23T12:00:00Z",
+      payload: {},
+    }]);
+    await rpc("apply_funnel_crm_event", [{
+      eventId: "event-content-won",
+      leadCaptureId: "capture-content-won",
+      leadId: "crm-content-won",
+      status: "won",
+      occurredAt: "2026-09-23T13:00:00Z",
+      payload: {},
+    }]);
+    await rpc("record_funnel_lead", [{
+      lead_capture_id: "capture-content-score-only",
+      captured_at: "2026-09-23T10:30:00Z",
+      lead_score: 100,
+      lead_quality: "high",
+      utm: {
+        first_article_slug: "como-avaliar-novos-modelos-de-ia-para-negocios",
+        first_content_cluster: "cluster:modelos-de-ia",
+        first_cta_id: "cta:conhecer-tlin",
+      },
+    }]);
+    await rpc("record_funnel_lead", [{
+      lead_capture_id: "capture-content-unattributed",
+      captured_at: "2026-09-23T10:45:00Z",
+    }]);
+
+    const report = await rpc("read_funnel_report", ["2026-09-01", "2026-09-30"]);
+    const content = report.content as Array<Record<string, string | number>>;
+    expect(content).toEqual(expect.any(Array));
+    expect(content).toContainEqual(expect.objectContaining({
+      touch: "first",
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      cta_id: "cta:demo",
+      leads: 1,
+      demos: 1,
+      qualified_demos: 1,
+      won: 1,
+    }));
+    expect(content).toContainEqual(expect.objectContaining({
+      touch: "last",
+      article_slug: "playbook-qualificacao-leads-whatsapp",
+      content_cluster: "cluster:qualificacao",
+      cta_id: "cta:agendar-demo",
+      leads: 1,
+      demos: 1,
+      qualified_demos: 1,
+      won: 1,
+    }));
+    expect(content).toContainEqual(expect.objectContaining({
+      touch: "first",
+      article_slug: "como-avaliar-novos-modelos-de-ia-para-negocios",
+      leads: 1,
+      demos: 0,
+      qualified_demos: 0,
+      won: 0,
+    }));
+    expect(content).toContainEqual(expect.objectContaining({
+      touch: "first",
+      article_slug: "unattributed",
+      content_cluster: "unattributed",
+      cta_id: "unattributed",
+    }));
+    expect(JSON.stringify(content)).not.toMatch(/PII must stay private|private@example|5511999999999|must-not-leak/);
   });
 });
