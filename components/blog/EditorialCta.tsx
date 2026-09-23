@@ -6,6 +6,10 @@ import type {
   EditorialCta as EditorialCtaContract,
   SearchIntent,
 } from "@/lib/editorial/types";
+import {
+  captureEditorialTouch,
+  getEditorialEventPayload,
+} from "@/lib/editorial/analytics";
 import { trackFunnelEvent } from "@/lib/utm";
 
 export type EditorialCtaLocation = "article-end" | "cluster-hub";
@@ -26,20 +30,21 @@ export function EditorialCta({
   location,
 }: EditorialCtaProps) {
   const openQualification = () => {
+    const editorialTouch = captureEditorialTouch(`/blog/${articleSlug}`, cta.id);
+    const editorialPayload = getEditorialEventPayload(editorialTouch);
     const detail = {
       plan: "TLIN",
       source: "editorial_article",
       articleSlug,
       clusterId,
+      intent,
       ctaId: cta.id,
       location,
     };
 
     trackFunnelEvent("article_cta_click", {
-      article_slug: articleSlug,
-      content_cluster: clusterId,
-      content_intent: intent,
-      cta_id: cta.id,
+      ...editorialPayload,
+      content_group: "editorial",
       cta_source: detail.source,
       cta_location: location,
       plan_name: detail.plan,

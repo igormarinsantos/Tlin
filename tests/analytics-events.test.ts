@@ -44,6 +44,19 @@ describe("analytics and attribution", () => {
       item_id: "agentes-de-ia-no-whatsapp-para-vendas",
     });
   });
+  it("drops malformed or high-cardinality editorial dimensions", () => {
+    expect(cleanAnalyticsParams({
+      article_slug: "../../ana@example.test",
+      content_cluster: "cluster:ia comercial",
+      content_intent: "whatever-the-browser-sent",
+      content_group: "article-title",
+      cta_id: `cta:${"x".repeat(200)}`,
+      cta_location: "free-form-position",
+      method: "email",
+      content_type: "message",
+      item_id: "11999999999",
+    })).toEqual({});
+  });
   it("queues early events for exactly one configured owner", () => {
     window.dataLayer = [];
     vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "ga4");

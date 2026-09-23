@@ -1,5 +1,10 @@
 // @vitest-environment jsdom
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { EditorialCta } from "@/components/blog/EditorialCta";
+import { ShareBar } from "@/components/blog/ShareBar";
+import { QualificationController } from "@/components/QualificationController";
 import {
   captureEditorialTouch,
   getEditorialEventPayload,
@@ -7,11 +12,20 @@ import {
 } from "@/lib/editorial/analytics";
 import { captureUtms, getUtmLeadPayload } from "@/lib/utm";
 
+vi.mock("next/dynamic", () => ({
+  default: () => function QualificationPopupStub() {
+    return null;
+  },
+}));
+
 const FIRST_EDITORIAL_KEY = "tlin_first_editorial";
 const LAST_EDITORIAL_KEY = "tlin_last_editorial";
 
 afterEach(() => {
+  cleanup();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
+  window.dataLayer = [];
   localStorage.clear();
   for (const key of [
     "tlin_first_utm",
@@ -125,5 +139,76 @@ describe("editorial analytics attribution", () => {
     expect(captureEditorialTouch("/precos")).toBeNull();
     expect(captureEditorialTouch("/blog")).toBeNull();
     expect(getEditorialLeadPayload()).toEqual({});
+  });
+
+  it("emits a controlled CTA event and carries editorial context into the global funnel", () => {
+    vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "gtm");
+    const qualificationEvents: CustomEvent[] = [];
+    const receiveQualification = (event: Event) => qualificationEvents.push(event as CustomEvent);
+    window.addEventListener("open-qualification", receiveQualification);
+
+    render(createElement(QualificationController));
+    render(createElement(EditorialCta, {
+      articleSlug: "agentes-de-ia-no-whatsapp-para-vendas",
+      clusterId: "cluster:ia-comercial",
+      intent: "informational",
+      cta: { id: "cta:demo", label: "Agendar demonstração", href: "/demo" },
+      location: "article-end",
+    }));
+    fireEvent.click(screen.getByRole("button", { name: "Agendar demonstração" }));
+
+    expect(window.dataLayer).toContainEqual(expect.objectContaining({
+      event: "article_cta_click",
+      event_category: "lead_funnel",
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      content_intent: "informational",
+      content_group: "editorial",
+      cta_id: "cta:demo",
+      cta_location: "article-end",
+    }));
+    expect(window.dataLayer).toContainEqual(expect.objectContaining({
+      event: "lead_form_opened",
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      content_intent: "informational",
+      cta_id: "cta:demo",
+      cta_location: "article-end",
+    }));
+    expect(qualificationEvents).toHaveLength(1);
+    expect(qualificationEvents[0].detail).toMatchObject({
+      articleSlug: "agentes-de-ia-no-whatsapp-para-vendas",
+      clusterId: "cluster:ia-comercial",
+      intent: "informational",
+      ctaId: "cta:demo",
+      location: "article-end",
+    });
+    expect(getEditorialLeadPayload()).toMatchObject({ last_cta_id: "cta:demo" });
+
+    window.removeEventListener("open-qualification", receiveQualification);
+  });
+
+  it("emits recommended share fields without title, URL, query or contact data", () => {
+    vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "gtm");
+    render(createElement(ShareBar, {
+      url: "https://tlin.ia.br/blog/agentes-de-ia-no-whatsapp-para-vendas?email=ana@example.test#private",
+      title: "Artigo de ana@example.test",
+    }));
+
+    fireEvent.click(screen.getByRole("link", { name: "Compartilhar no WhatsApp" }));
+    const shareEvent = window.dataLayer.find((entry) =>
+      typeof entry === "object" && entry !== null && "event" in entry && entry.event === "share",
+    );
+
+    expect(shareEvent).toMatchObject({
+      event: "share",
+      event_category: "lead_funnel",
+      method: "whatsapp",
+      content_type: "article",
+      item_id: "agentes-de-ia-no-whatsapp-para-vendas",
+    });
+    expect(JSON.stringify(shareEvent)).not.toMatch(/ana@example\.test|private|title|url|query/i);
+    expect(screen.getByRole("link", { name: "Compartilhar no WhatsApp" }).getAttribute("href"))
+      .not.toMatch(/email=|#private/);
   });
 });
