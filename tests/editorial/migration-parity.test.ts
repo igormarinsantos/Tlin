@@ -158,6 +158,42 @@ describe("legacy article migration parity", () => {
       commercial: { status: "approved", approvedBy: "author:igor-marin" },
     });
   });
+
+  it("closes the canonical registry with each legacy article exactly once", () => {
+    const registeredSlugs = editorialArticles.map((article) => article.slug);
+    const legacySlugs = legacyArticles.map((article) => article.slug);
+
+    expect(registeredSlugs).toEqual(legacySlugs);
+    expect(new Set(registeredSlugs).size).toBe(legacySlugs.length);
+
+    for (const legacy of legacyArticles) {
+      const migrated = editorialArticles.find((article) => article.slug === legacy.slug);
+      const headings = migrated?.blocks.filter((block) => block.type === "heading") ?? [];
+      const paragraphs = migrated?.blocks.filter((block) => block.type === "paragraph") ?? [];
+
+      expect(migrated).toMatchObject({
+        id: `article:${legacy.slug}`,
+        slug: legacy.slug,
+        title: legacy.title,
+        summary: legacy.description,
+        status: "published",
+        publishedAt: `${legacy.publishedAt}T12:00:00-03:00`,
+        readingTimeMinutes: Number.parseInt(legacy.readingTime, 10),
+        featured: legacy.featured,
+      });
+      expect(headings.map(({ text }) => text)).toEqual(
+        legacy.content.map(({ heading }) => heading),
+      );
+      expect(paragraphs.map(({ text }) => text)).toEqual(
+        legacy.content.flatMap(({ paragraphs: sectionParagraphs }) => sectionParagraphs),
+      );
+      expect(migrated?.sources.every((source) => source.url.startsWith("https://"))).toBe(true);
+      expect(migrated?.review).toMatchObject({
+        factual: { status: "approved", approvedBy: "author:igor-marin" },
+        commercial: { status: "approved", approvedBy: "author:igor-marin" },
+      });
+    }
+  });
 });
 
 describe("safe editorial serializers", () => {
