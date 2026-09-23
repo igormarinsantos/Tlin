@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 0
+open_count: 1
 waived_count: 0
 fixed_count: 2
-total_count: 2
-last_updated: 2026-09-23T20:45:06.840Z
+total_count: 3
+last_updated: 2026-09-23T21:18:31.319Z
 ---
 
 # Broken Windows Ledger
@@ -17,6 +17,7 @@ last_updated: 2026-09-23T20:45:06.840Z
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 06 | deviation | tests/editorial/tracer.test.ts |  | Tracer de sitemap deixou de assumir um único artigo após o fechamento do registro canônico. | fixed |  | 2026-09-23T20:44:12.006Z | 2026-09-23T20:45:06.289Z |
 | 2 | 06 | deviation | tests/editorial/tracer.test.ts |  | Tracer alinhado ao campo controlado content_group do contrato editorial paralelo. | fixed |  | 2026-09-23T20:44:12.538Z | 2026-09-23T20:45:06.840Z |
+| 3 | 06 | unrun-verify | app/blog/[slug]/page.tsx |  | Rich Results Test, Schema Markup Validator e preview Open Graph em preview autorizado não executados no fechamento local | open |  | 2026-09-23T21:18:31.319Z |  |
 
 ````json
 [
@@ -43,6 +44,18 @@ last_updated: 2026-09-23T20:45:06.840Z
     "reason": "",
     "recorded_at": "2026-09-23T20:44:12.538Z",
     "resolved_at": "2026-09-23T20:45:06.840Z"
+  },
+  {
+    "id": 3,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "app/blog/[slug]/page.tsx",
+    "line": null,
+    "description": "Rich Results Test, Schema Markup Validator e preview Open Graph em preview autorizado não executados no fechamento local",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-23T21:18:31.319Z",
+    "resolved_at": null
   }
 ]
 ````
