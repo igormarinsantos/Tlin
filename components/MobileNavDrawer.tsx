@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
@@ -56,17 +56,38 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
     onClose();
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverscroll = document.documentElement.style.overscrollBehavior;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overscrollBehavior = "none";
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overscrollBehavior = previousHtmlOverscroll;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8, scale: 0.985 }}
-          transition={{ type: "spring", stiffness: 380, damping: 28 }}
-          className="pointer-events-auto absolute left-0 right-0 top-full z-[110] mt-3 max-h-[calc(100svh-7rem)] overflow-y-auto overscroll-contain rounded-[1.5rem] border border-zinc-200 bg-white shadow-[0_22px_70px_rgba(17,24,39,0.15)]"
+          id="mobile-navigation"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="pointer-events-auto fixed inset-x-0 bottom-0 top-[calc(var(--fd-banner-height,0px)+4rem)] z-[110] overflow-y-auto overscroll-contain bg-transparent md:hidden"
         >
-          <div className="px-5 pb-5 pt-3">
+          <div className="flex min-h-full flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2">
             <nav aria-label="Navegação mobile" className="divide-y divide-zinc-100">
               <button
                 type="button"
@@ -135,45 +156,47 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
               </button>
             </nav>
 
-            <div className="mt-2 flex items-center justify-between border-t border-zinc-100 pt-4">
-              <a
-                href="https://app.tlin.ia.br"
-                onClick={() => trackAndClose("nav_link_click", { destination: "login" })}
-                className="text-[13px] font-semibold text-zinc-600"
-              >
-                {t.nav.login}
-              </a>
-              <div className="flex items-center gap-1.5">
-              {LANGUAGES.map((l) => (
-                <button
-                  key={l.code}
-                  type="button"
-                  onClick={() => setLang(l.code)}
-                  className={`flex items-center gap-1.5 rounded-full border px-2 py-1.5 transition-all ${
-                    lang === l.code ? "border-[#0c0d0d] bg-[#0c0d0d] text-white" : "border-zinc-200 bg-white text-zinc-500"
-                  }`}
+            <div className="mt-auto pt-6">
+              <div className="flex items-center justify-between border-t border-zinc-200/70 pt-4">
+                <a
+                  href="https://app.tlin.ia.br"
+                  onClick={() => trackAndClose("nav_link_click", { destination: "login" })}
+                  className="text-[13px] font-semibold text-zinc-600"
                 >
-                  <CountryFlag country={l.flag} />
-                  <span className="text-[11px] font-bold">{l.code}</span>
-                </button>
-              ))}
+                  {t.nav.login}
+                </a>
+                <div className="flex items-center gap-1.5">
+                {LANGUAGES.map((l) => (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() => setLang(l.code)}
+                    className={`flex items-center gap-1.5 rounded-full border px-2 py-1.5 transition-all ${
+                      lang === l.code ? "border-[#0c0d0d] bg-[#0c0d0d] text-white" : "border-zinc-200 bg-white/70 text-zinc-500"
+                    }`}
+                  >
+                    <CountryFlag country={l.flag} />
+                    <span className="text-[11px] font-bold">{l.code}</span>
+                  </button>
+                ))}
+                </div>
               </div>
-            </div>
 
-            <button
-              type="button"
-              onClick={openQualification}
-              className="group relative mt-5 block w-full overflow-hidden rounded-full p-[1px] transition-transform active:scale-[0.98]"
-            >
-              <span
-                aria-hidden="true"
-                className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
-                style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
-              />
-              <span className="relative flex items-center justify-center rounded-full bg-[#0c0d0d] py-3.5 text-center text-[13px] font-bold text-white transition-colors duration-300 group-hover:bg-gradient-to-r group-hover:from-[#B597FF] group-hover:to-[#38E3FF] group-hover:text-[#0c0d0d]">
-                {t.nav.cta}
-              </span>
-            </button>
+              <button
+                type="button"
+                onClick={openQualification}
+                className="group relative mt-5 block w-full overflow-hidden rounded-full p-[1px] transition-transform active:scale-[0.98]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+                  style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }}
+                />
+                <span className="relative flex items-center justify-center rounded-full bg-[#0c0d0d] py-3.5 text-center text-[13px] font-bold text-white transition-colors duration-300 group-hover:bg-gradient-to-r group-hover:from-[#B597FF] group-hover:to-[#38E3FF] group-hover:text-[#0c0d0d]">
+                  {t.nav.cta}
+                </span>
+              </button>
+            </div>
           </div>
         </motion.div>
       )}

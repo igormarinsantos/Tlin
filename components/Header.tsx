@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -237,6 +237,19 @@ export function Header() {
   const solutionsCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const floatingHeaderRef = useRef<HTMLDivElement | null>(null);
   const [floatingHeaderWidth, setFloatingHeaderWidth] = useState(0);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const isSegmentPage = ["/ia-para-clinicas", "/ia-para-escolas", "/ia-para-assessorias", "/ia-para-advocacia"].includes(pathname);
+  const isCampaignPage = SOLUTIONS.some((solution) => solution.href === pathname);
+  const mobileMenuSurface = isSegmentPage
+    ? "bg-[#F5F0FF]/95"
+    : isCampaignPage
+      ? "bg-[#F5FDFF]/95"
+      : "bg-white/95";
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+    window.requestAnimationFrame(() => mobileMenuButtonRef.current?.focus());
+  }, []);
 
   // Pequeno delay ao fechar (em vez de fechar na hora do mouseleave) pra
   // nao fechar o menu quando o cursor atravessa o espaco entre o botao
@@ -311,6 +324,19 @@ export function Header() {
 
   return (
     <>
+      <AnimatePresence>
+        {isMobileMenuOpen && !showFloating && (
+          <motion.div
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className={`fixed inset-0 z-[90] backdrop-blur-xl md:hidden ${mobileMenuSurface}`}
+          />
+        )}
+      </AnimatePresence>
+
       {/* 1. Top Header */}
       <header data-mascot-header
         className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] mx-auto w-full max-w-6xl px-4 pt-6 md:px-6"
@@ -318,9 +344,11 @@ export function Header() {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
             <button
+              ref={mobileMenuButtonRef}
               type="button"
               aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
               onClick={() => setIsMobileMenuOpen((open) => !open)}
               className="flex h-10 w-10 items-center justify-center rounded-full text-[#0c0d0d] transition-colors hover:bg-zinc-100 md:hidden"
             >
@@ -350,7 +378,7 @@ export function Header() {
         <AnimatePresence>
           {isSolutionsOpen && <SolutionsPanel onEnter={openSolutions} onLeave={closeSolutionsWithDelay} />}
         </AnimatePresence>
-        {!showFloating && <MobileNavDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />}
+        {!showFloating && <MobileNavDrawer isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />}
       </header>
 
       {/* 2. Floating Header */}
