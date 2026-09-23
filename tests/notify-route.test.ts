@@ -19,6 +19,25 @@ function request(overrides: Record<string, unknown> = {}) {
   }) });
 }
 
+function captureRequest(overrides: Record<string, unknown> = {}) {
+  return new NextRequest("http://localhost/api/leads/capture", { method: "POST", body: JSON.stringify({
+    name: "Ana", phone: "11999999999", countryCode: "+55", leadCaptureId: "test-request",
+    turnstileToken: "test-token", ...overrides,
+  }) });
+}
+
+const editorialAttribution = {
+  first_utm_source: "google",
+  last_utm_source: "direct",
+  first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+  first_content_cluster: "cluster:ia-comercial",
+  first_content_intent: "informational",
+  last_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+  last_content_cluster: "cluster:ia-comercial",
+  last_content_intent: "informational",
+  last_cta_id: "cta:demo",
+};
+
 beforeEach(() => {
   mocks.capture.mockResolvedValue({ ok: true, data: {} });
   mocks.search.mockResolvedValue({ ok: true, data: { contacts: [{ id: "contact", phone: "+5511999999999" }] } });
@@ -37,6 +56,59 @@ describe("demo endpoint with simulated services", () => {
     expect(await response.json()).toMatchObject({ success: true, leadCaptureId: "test-request", demoBooking: { booked: true } });
     expect(mocks.book).toHaveBeenCalledTimes(1);
     expect(mocks.capture).toHaveBeenCalledWith(expect.objectContaining({ leadCaptureId: "test-request", email: "ana@example.test" }));
+  });
+
+  it("forwards the same sanitized editorial attribution through early and final capture", async () => {
+    const unsafeAttribution = {
+      ...editorialAttribution,
+      unknown_dimension: "free text",
+      first_utm_term: "ana@example.test",
+      nested: { article_slug: editorialAttribution.first_article_slug },
+    };
+
+    await capturePost(captureRequest({ utm: unsafeAttribution }));
+    await POST(request({ utm: unsafeAttribution }));
+
+    expect(mocks.capture).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      leadCaptureId: "test-request",
+      utm: editorialAttribution,
+    }));
+    expect(mocks.capture).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      leadCaptureId: "test-request",
+      utm: editorialAttribution,
+    }));
+    expect(mocks.save).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      leadCaptureId: "test-request",
+      utm: editorialAttribution,
+    }));
+    expect(mocks.save).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      leadCaptureId: "test-request",
+      utm: editorialAttribution,
+      payload: expect.objectContaining({ utm: editorialAttribution }),
+    }));
+    expect(JSON.stringify(mocks.capture.mock.calls)).not.toMatch(/unknown_dimension|ana@example\.test.*first_utm_term|nested/);
+    expect(JSON.stringify(mocks.save.mock.calls)).not.toMatch(/unknown_dimension|first_utm_term|nested|test-token/);
+  });
+
+  it("drops malformed editorial bundles and keeps the caller identity on retries", async () => {
+    const adversarial = {
+      first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      first_content_cluster: "cluster:ia-comercial",
+      first_content_intent: "informational",
+      first_cta_id: { injected: true },
+      last_article_slug: "x".repeat(200),
+      last_content_cluster: "cluster:ia-comercial",
+      last_content_intent: "not-an-intent",
+      last_cta_id: "ana@example.test",
+    };
+
+    await capturePost(captureRequest({ utm: adversarial }));
+    await capturePost(captureRequest({ utm: adversarial }));
+
+    expect(mocks.capture).toHaveBeenCalledTimes(2);
+    expect(mocks.capture).toHaveBeenNthCalledWith(1, expect.objectContaining({ leadCaptureId: "test-request", utm: {} }));
+    expect(mocks.capture).toHaveBeenNthCalledWith(2, expect.objectContaining({ leadCaptureId: "test-request", utm: {} }));
+    expect(JSON.stringify(mocks.save.mock.calls)).not.toMatch(/injected|not-an-intent|ana@example\.test|x{50}/);
   });
 
   it("does not book or announce success when capture fails", async () => {
