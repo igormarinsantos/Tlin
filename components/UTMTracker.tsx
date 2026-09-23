@@ -3,6 +3,10 @@
 import { useEffect, Suspense, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { captureUtms, sendUtmToGA, injectUtmsIntoForms } from "@/lib/utm";
+import {
+  captureEditorialTouch,
+  getEditorialEventPayload,
+} from "@/lib/editorial/analytics";
 
 /** requestIdleCallback polyfill for Safari */
 const scheduleIdle = (cb: () => void, timeout = 2000) => {
@@ -26,9 +30,14 @@ function UTMTrackerInner() {
     if (pathname.startsWith("/internal/")) return;
     // ── 1. Capture UTMs synchronously (fast, just reads URL + localStorage)
     captureUtms(window.location.search);
+    const editorialTouch = captureEditorialTouch(pathname);
     if (lastPage.current !== pathname) {
       lastPage.current = pathname;
-      sendUtmToGA("page_view", { page_location: window.location.origin + pathname, page_referrer: document.referrer });
+      sendUtmToGA("page_view", {
+        page_location: window.location.origin + pathname,
+        page_referrer: document.referrer,
+        ...getEditorialEventPayload(editorialTouch),
+      });
     }
 
     // ── 2. Send to GA and inject into forms during browser idle time

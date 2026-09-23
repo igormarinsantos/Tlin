@@ -1,4 +1,5 @@
 import { emitAnalytics, safePageUrl } from "./analytics-events";
+import { getEditorialLeadPayload } from "./editorial/analytics";
 /**
  * UTM Tracking System — Tlin.ai
  * Handles capture, persistence (first/last touch), GA4 integration and form injection.
@@ -258,7 +259,14 @@ export function sendUtmToGA(eventName = 'utm_capture', extraData: Record<string,
 
 export function getUtmLeadPayload() {
   const first = getFirstTouch(); const last = getLastTouch();
-  return { ...getUtmEventPayload(), first_gclid: first.gclid, last_gclid: last.gclid, first_fbclid: first.fbclid, last_fbclid: last.fbclid };
+  return {
+    ...getUtmEventPayload(),
+    first_gclid: first.gclid,
+    last_gclid: last.gclid,
+    first_fbclid: first.fbclid,
+    last_fbclid: last.fbclid,
+    ...getEditorialLeadPayload(),
+  };
 }
 
 export function trackFunnelEvent(eventName: string, extraData: Record<string, EventParam> = {}): void {
