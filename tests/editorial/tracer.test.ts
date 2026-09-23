@@ -179,6 +179,7 @@ describe("editorial production tracer", () => {
 
   it("projects the same published identity and dates into sitemap and RSS", async () => {
     const published = getPublishedArticles(now);
+    const publishedClusters = getPublishedClusters(now);
     const canonical = absoluteUrl(`/blog/${article.slug}`);
     const sitemapEntries = sitemap();
     const editorialSitemapEntries = sitemapEntries.filter((entry) =>
@@ -199,7 +200,24 @@ describe("editorial production tracer", () => {
       sitemapEntries
         .filter((entry) => entry.url.startsWith(`${absoluteUrl("/blog")}/`))
         .map((entry) => entry.url),
-    ).toEqual(published.map((candidate) => absoluteUrl(`/blog/${candidate.slug}`)));
+    ).toEqual([
+      ...publishedClusters.map((cluster) => absoluteUrl(cluster.hubPath)),
+      ...published.map((candidate) => absoluteUrl(`/blog/${candidate.slug}`)),
+    ]);
+    expect(
+      sitemapEntries.filter((entry) =>
+        publishedClusters.some((cluster) => entry.url === absoluteUrl(cluster.hubPath)),
+      ),
+    ).toEqual(
+      publishedClusters.map((cluster) =>
+        expect.objectContaining({
+          url: absoluteUrl(cluster.hubPath),
+          lastModified: new Date(
+            Math.max(...cluster.articles.map((candidate) => Date.parse(candidate.modifiedAt))),
+          ),
+        }),
+      ),
+    );
     expect(response.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
     expect(xml).toBe(serializeRssFeed(published));
     expect(xml).toContain(`<link>${canonical}</link>`);
