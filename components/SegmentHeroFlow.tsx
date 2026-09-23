@@ -18,24 +18,22 @@ function ContactAvatar({ flow, size = "md" }: { flow: Flow; size?: "sm" | "md" }
   const pixels = size === "sm" ? 28 : 38;
   return (
     <span className={`relative block shrink-0 ${size === "sm" ? "size-7" : "size-[38px]"}`}>
-      <Image src={flow.contact.avatar} alt="" width={pixels} height={pixels} className="h-full w-full rounded-full object-cover ring-2 ring-white" />
+      <Image src={flow.contact.avatar} alt="" width={pixels} height={pixels} className="h-full w-full rounded-full border border-zinc-200/80 object-cover" />
     </span>
   );
 }
 
 function TlinAvatar() {
   return (
-    <span className="grid size-7 shrink-0 place-items-center rounded-full border border-zinc-200 bg-white shadow-sm">
-      <Image src="/TlinIA.svg" alt="" width={28} height={28} className="h-full w-full" />
-    </span>
+    <Image src="/TlinIA.svg" alt="" width={28} height={28} className="size-7 shrink-0 object-contain" />
   );
 }
 
-function TypingDots() {
+function TypingDots({ isAi }: { isAi: boolean }) {
   return (
-    <span className="flex h-4 items-center gap-1">
+    <span className="flex h-4 items-center gap-1 px-1">
       {[0, 0.16, 0.32].map((delay) => (
-        <motion.span key={delay} animate={{ opacity: [0.25, 1, 0.25], y: [0, -2, 0] }} transition={{ duration: 0.85, delay, repeat: Infinity }} className="size-1 rounded-full bg-zinc-400" />
+        <motion.span key={delay} animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, delay, repeat: Infinity, times: [0, 0.5, 1] }} className={`size-1.5 rounded-full ${isAi ? "bg-zinc-950" : "bg-tlin-purple"}`} />
       ))}
     </span>
   );
@@ -43,7 +41,6 @@ function TypingDots() {
 
 function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
   const visibleCount = Math.min(step + 1, flow.messages.length);
-  const isTyping = step < 3;
 
   return (
     <TlinCard className="absolute left-3 top-4 z-10 flex h-[76%] w-[74%] flex-col overflow-hidden shadow-[0_22px_55px_rgba(62,49,94,0.10)] sm:left-5 sm:top-6 sm:h-[75%] sm:w-[70%] md:left-6 md:top-7 md:w-[68%]">
@@ -55,44 +52,47 @@ function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
             <p className="truncate text-[8px] font-semibold text-[#24a957] md:text-[9px]">{flow.contact.status}</p>
           </div>
         </div>
-        <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#f2edff] px-3 py-1.5 text-[8px] font-bold text-[#7254c8] md:px-3.5 md:text-[9px]">
-          <Sparkles className="size-2.5" />
+        <span className="flex shrink-0 items-center rounded-full bg-[#f2edff] px-3 py-1.5 text-[8px] font-bold text-[#7254c8] md:px-3.5 md:text-[9px]">
           {flow.conversationLabel}
         </span>
       </div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-end gap-2 overflow-hidden bg-[#fbfbfc] p-3 md:gap-2.5 md:p-4">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-end gap-1 overflow-hidden bg-[#fbfbfc] p-3 md:gap-1.5 md:p-4">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:radial-gradient(#0c0d0d_0.75px,transparent_0.75px)] [background-size:14px_14px]" />
         <AnimatePresence initial={false} mode="popLayout">
           {flow.messages.slice(0, visibleCount).map((message, index) => {
             const isAi = message.from === "ai";
+            const isTyping = index > 0 && step === index;
             if (step >= 4 && index === 0) return null;
 
             return (
               <motion.div
                 layout
                 key={`${message.from}-${message.text}`}
-                initial={{ opacity: 0, y: 9, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                transition={{ duration: 0.38, ease }}
-                className={`relative z-10 flex items-end gap-1.5 ${isAi ? "justify-end" : "justify-start"}`}
+                initial={{ opacity: 0, x: isAi ? 10 : -10, y: 5, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.96 }}
+                transition={{ type: "spring", damping: 32, stiffness: 180, layout: { type: "spring", damping: 35, stiffness: 200, mass: 1.2 } }}
+                className={`relative z-10 flex w-full items-start gap-2 ${isAi ? "flex-row-reverse" : "flex-row"}`}
               >
-                {!isAi && <ContactAvatar flow={flow} size="sm" />}
-                <div className={`max-w-[82%] rounded-2xl px-3 py-2 text-[9px] font-medium leading-[1.38] md:px-3.5 md:text-[10px] ${isAi ? "rounded-br-[6px] bg-tlin-ink text-white" : "rounded-bl-[6px] bg-zinc-100 text-zinc-600"}`}>
-                  {message.text}
+                {isAi ? <TlinAvatar /> : <ContactAvatar flow={flow} size="sm" />}
+                <div className={`relative max-w-[82%] overflow-hidden rounded-2xl p-2.5 text-[9px] font-semibold leading-[1.38] md:p-3 md:text-[10px] ${isAi ? "rounded-tr-none bg-gradient-to-r from-tlin-purple to-tlin-blue text-zinc-950" : "rounded-tl-none border border-zinc-200 bg-white text-zinc-800"} ${isTyping ? "w-fit" : ""}`}>
+                  <AnimatePresence mode="wait" initial={false}>
+                    {isTyping ? (
+                      <motion.span key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="block">
+                        <TypingDots isAi={isAi} />
+                      </motion.span>
+                    ) : (
+                      <motion.span key="content" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1], delay: 0.1 }} className="block">
+                        {message.text}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </div>
-                {isAi && <TlinAvatar />}
               </motion.div>
             );
           })}
         </AnimatePresence>
-        {isTyping && (
-          <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 flex items-end justify-end gap-1.5">
-            <span className="rounded-2xl rounded-br-[6px] bg-tlin-ink px-3 py-2 text-white"><TypingDots /></span>
-            <TlinAvatar />
-          </motion.div>
-        )}
       </div>
     </TlinCard>
   );
