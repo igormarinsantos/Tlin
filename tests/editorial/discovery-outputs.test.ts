@@ -318,6 +318,35 @@ describe("editorial discovery outputs", () => {
     );
     expect(existsSync("public/llms-full.txt")).toBe(false);
   });
+
+  it("keeps both LLM URL sets aligned with the canonical sitemap and RSS projections", async () => {
+    const llmsModule = await import("@/lib/editorial/llms");
+    const published = getPublishedArticles(now);
+    const clusters = getPublishedClusters(now);
+    const shortOutput = llmsModule.createLlmsIndex(published, clusters);
+    const fullOutput = llmsModule.createLlmsFull(published, clusters, editorialAuthors);
+    const expectedEditorialUrls = [
+      ...clusters.map((cluster) => absoluteUrl(cluster.hubPath)),
+      ...published.map((article) => absoluteUrl(`/blog/${article.slug}`)),
+    ].sort();
+    const sitemapEditorialUrls = sitemap()
+      .map((entry) => entry.url)
+      .filter((url) => expectedEditorialUrls.includes(url))
+      .sort();
+    const rssXml = await getRss().text();
+    const rssArticleUrls = [...rssXml.matchAll(/<guid isPermaLink="true">([^<]+)<\/guid>/g)]
+      .map((match) => match[1])
+      .sort();
+
+    expect(editorialUrls(shortOutput)).toEqual(
+      expectedEditorialUrls.map((url) => `- URL: ${url}`).sort(),
+    );
+    expect(editorialUrls(fullOutput)).toEqual(editorialUrls(shortOutput));
+    expect(sitemapEditorialUrls).toEqual(expectedEditorialUrls);
+    expect(rssArticleUrls).toEqual(
+      published.map((article) => absoluteUrl(`/blog/${article.slug}`)).sort(),
+    );
+  });
 });
 
 function formatDate(value: string) {
