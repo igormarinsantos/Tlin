@@ -1,7 +1,6 @@
 import { editorialAuthors } from "@/content/editorial/authors";
 import { editorialClusters } from "@/content/editorial/taxonomy";
 import type {
-  AuthorId,
   ContentBlock,
   EditorialApproval,
   EditorialArticle,

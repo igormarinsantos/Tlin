@@ -72,9 +72,17 @@ describe("legacy article migration parity", () => {
       featured: Boolean(article.featured),
       content: article.content,
     }));
-    const baseline = legacyArticles.map(({ surfaces: _surfaces, migration: _migration, ...article }) =>
-      article,
-    );
+    const baseline = legacyArticles.map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      description: article.description,
+      category: article.category,
+      publishedAt: article.publishedAt,
+      readingTime: article.readingTime,
+      author: article.author,
+      featured: article.featured,
+      content: article.content,
+    }));
 
     expect(current).toEqual(baseline);
     for (const article of legacyArticles) {
