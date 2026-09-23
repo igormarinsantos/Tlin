@@ -1,5 +1,6 @@
 import { createHmac } from "node:crypto";
 import { callDeskcommTool } from "./deskcomm-mcp";
+import { sanitizeLeadAttribution } from "./supabase-leads";
 
 export type DeskcommLeadCaptureInput = {
   leadCaptureId: string;
@@ -9,7 +10,7 @@ export type DeskcommLeadCaptureInput = {
   leadScore?: number;
   leadQuality?: "high" | "medium" | "low";
   status?: string;
-  utm?: Record<string, string | undefined>;
+  utm?: Record<string, unknown>;
 };
 
 type DeskcommLeadCaptureResult =
@@ -30,6 +31,7 @@ export async function captureDeskcommLead(
     return { ok: false, error: "Deskcomm webhook is not configured." };
   }
 
+  const attribution = sanitizeLeadAttribution(input.utm);
   const payload = {
     external_id: input.leadCaptureId,
     nome: input.name,
@@ -40,9 +42,7 @@ export async function captureDeskcommLead(
     ...(input.leadQuality ? { lead_quality: input.leadQuality } : {}),
     ...(input.status ? { status_lp: input.status } : {}),
     // The CRM inbound mapper discards nested objects. Keep attribution scalar.
-    ...Object.fromEntries(Object.entries(input.utm || {}).filter(([key, value]) =>
-      /^(first_|last_)?(utm_(source|medium|campaign|term|content)|landing_page|current_page|referrer|referrer_host|gclid|fbclid)$/.test(key)
-      && typeof value === "string")),
+    ...attribution,
   };
 
   const body = JSON.stringify(payload);

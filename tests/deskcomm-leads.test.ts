@@ -94,7 +94,7 @@ describe("captureDeskcommLead", () => {
         first_utm_term: "ana@example.test",
         turnstileToken: "must-not-leave-server",
         nested: { injected: true },
-      } as unknown as Record<string, string>,
+      },
     });
 
     const request = fetchMock.mock.calls[0][1] as RequestInit;

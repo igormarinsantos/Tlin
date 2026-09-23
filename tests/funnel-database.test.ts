@@ -9,7 +9,7 @@ async function rpc(name: string, params: unknown[]) {
 }
 beforeAll(async () => {
   await db.exec("create role anon; create role authenticated; create role service_role bypassrls;");
-  for (const file of ["20260602210412_create_lead_form_submissions.sql", "20260915_deskcomm_backup_projection.sql", "20260917_funnel_reliability.sql"]) {
+  for (const file of ["20260602210412_create_lead_form_submissions.sql", "20260915_deskcomm_backup_projection.sql", "20260917_funnel_reliability.sql", "20260923_editorial_attribution.sql"]) {
     await db.exec(readFileSync(`supabase/migrations/${file}`, "utf8"));
   }
   await db.exec("insert into funnel_stage_mapping(stage_id,label,qualified,attended,won) values ('qualified','Qualified',true,false,false),('rejected','Rejected',false,false,false),('attended','Attended',null,true,false),('won','Won',null,false,true)");

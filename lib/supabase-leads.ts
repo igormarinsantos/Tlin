@@ -117,7 +117,7 @@ export async function saveLeadSubmission(input: LeadSubmissionInput): Promise<Le
       company_name: input.name || null, phone: input.phone || null, country_code: input.countryCode || null,
       email: input.email || null, lead_volume: input.volume || null, team_size: input.team || null,
       plan_name: input.planName || null, lead_score: input.lead_score ?? null, lead_quality: input.lead_quality || null,
-      utm: input.utm || {}, payload: input.payload || {},
+      utm: sanitizeLeadAttribution(input.utm), payload: input.payload || {},
     } });
 
     return {
