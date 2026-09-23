@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { operationKey, runOnce } from "@/lib/funnel-store";
 import nodemailer from "nodemailer";
-import { saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
+import { sanitizeLeadAttribution, saveLeadSubmission, updateLeadSubmissionNotification } from "@/lib/supabase-leads";
 import { bookAppointment, searchContactByPhone, type DeskcommContact } from "@/lib/deskcomm-mcp";
 import { getLeadNotificationHtml, getWelcomeEmailHtml } from "@/lib/emailTemplates";
 import { checkRateLimit, rateLimitedResponse, requestIsTooLarge } from "@/lib/rate-limit";
@@ -109,7 +109,10 @@ export async function POST(req: NextRequest) {
     if (!(await verifyTurnstileToken(data.turnstileToken, req))) {
       return NextResponse.json({ success: false, error: "Não foi possível validar o envio. Tente novamente." }, { status: 403 });
     }
-    const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, utm, demoSlot } = data;
+    const { name, phone, countryCode, volume, team, email, planName, lead_score, lead_quality, demoSlot } = data;
+    const attribution = sanitizeLeadAttribution(data.utm);
+    const mirroredPayload: Record<string, unknown> = { ...data, utm: attribution };
+    delete mirroredPayload.turnstileToken;
     const leadCaptureId = typeof data.leadCaptureId === "string" && data.leadCaptureId.length > 0 && data.leadCaptureId.length <= 128
       ? data.leadCaptureId
       : crypto.randomUUID();
@@ -125,7 +128,7 @@ export async function POST(req: NextRequest) {
       leadScore: lead_score,
       leadQuality: lead_quality,
       status: "novo",
-      utm,
+      utm: attribution,
     });
 
     let supabaseResult = await saveLeadSubmission({
@@ -143,8 +146,8 @@ export async function POST(req: NextRequest) {
       planName,
       lead_score,
       lead_quality,
-      utm,
-      payload: { ...data, turnstileToken: undefined },
+      utm: attribution,
+      payload: mirroredPayload,
     });
     const supabaseLeadId = Array.isArray(supabaseResult.row)
       ? (supabaseResult.row[0] as any)?.id || null
@@ -207,7 +210,7 @@ export async function POST(req: NextRequest) {
           planName,
           lead_score,
           lead_quality,
-          utm,
+          utm: attribution,
         }),
       };
       

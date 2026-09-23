@@ -7,7 +7,10 @@ const mocks = vi.hoisted(() => ({ capture: vi.fn(), search: vi.fn(), book: vi.fn
 vi.mock("@/lib/funnel-store", () => ({ operationKey: (kind: string, key: string) => kind + key, runOnce: async (_key: string, execute: () => Promise<{ result: unknown }>) => { try { return { state: "done", result: (await execute()).result }; } catch { return { state: "pending" }; } } }));
 vi.mock("@/lib/deskcomm-leads", () => ({ captureDeskcommLead: mocks.capture }));
 vi.mock("@/lib/deskcomm-mcp", () => ({ bookAppointment: mocks.book, searchContactByPhone: mocks.search }));
-vi.mock("@/lib/supabase-leads", () => ({ saveLeadSubmission: mocks.save, updateLeadSubmissionNotification: mocks.update }));
+vi.mock("@/lib/supabase-leads", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/supabase-leads")>();
+  return { ...actual, saveLeadSubmission: mocks.save, updateLeadSubmissionNotification: mocks.update };
+});
 vi.mock("@/lib/turnstile", () => ({ verifyTurnstileToken: mocks.verify }));
 vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: () => ({ allowed: true }), requestIsTooLarge: () => false }));
 vi.mock("nodemailer", () => ({ default: { createTransport: () => ({ sendMail: mocks.mail }) } }));
