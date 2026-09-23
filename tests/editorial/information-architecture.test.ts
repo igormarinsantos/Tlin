@@ -245,16 +245,18 @@ describe("editorial information architecture", () => {
       }
     }
 
-    const commercialOwners = Object.values(editorialClusters).map(({ intentOwner }) => intentOwner);
+    const commercialOwners = new Set<string>(
+      Object.values(editorialClusters).map(({ intentOwner }) => intentOwner),
+    );
     expect(new Set(hubs).size).toBe(hubs.length);
-    expect(hubs.some((hub) => commercialOwners.includes(hub))).toBe(false);
+    expect(hubs.some((hub) => commercialOwners.has(hub))).toBe(false);
   });
 
   it("orders related articles by cluster, then intent, with a deterministic fallback", () => {
     const articles = getPublishedArticles(now);
 
     for (const article of articles) {
-      const related = getRelatedPublishedArticles(article, now, articles.length - 1);
+      const related = getRelatedPublishedArticles(article, now, articles.length - 1, articles);
       expect(related).not.toContainEqual(article);
       expect(related).toHaveLength(articles.length - 1);
 
@@ -265,6 +267,36 @@ describe("editorial information architecture", () => {
       });
       expect(priorities).toEqual([...priorities].sort());
     }
+
+    const source = articles[0];
+    const candidates = [
+      source,
+      {
+        ...source,
+        id: "article:same-cluster",
+        slug: "same-cluster",
+        intent: "commercial-investigation",
+      },
+      {
+        ...source,
+        id: "article:same-intent",
+        slug: "same-intent",
+        clusterId: "cluster:qualificacao",
+      },
+      {
+        ...source,
+        id: "article:fallback",
+        slug: "fallback",
+        clusterId: "cluster:agendamento",
+        intent: "conversion-support",
+      },
+    ] as EditorialArticle[];
+
+    expect(getRelatedPublishedArticles(source, now, 3, candidates).map(({ slug }) => slug)).toEqual([
+      "same-cluster",
+      "same-intent",
+      "fallback",
+    ]);
   });
 });
 

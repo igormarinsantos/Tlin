@@ -105,9 +105,19 @@ export function getRelatedPublishedArticles(
   article: EditorialPublishedArticle,
   now: Date = new Date(),
   limit = 2,
+  articles: readonly EditorialArticle[] = editorialArticles,
 ) {
-  const others = getPublishedArticles(now).filter((candidate) => candidate.slug !== article.slug);
+  const others = getPublishedArticles(now, articles).filter(
+    (candidate) => candidate.slug !== article.slug,
+  );
   const sameCluster = others.filter((candidate) => candidate.clusterId === article.clusterId);
-  const remaining = others.filter((candidate) => candidate.clusterId !== article.clusterId);
-  return [...sameCluster, ...remaining].slice(0, limit);
+  const sameIntent = others.filter(
+    (candidate) =>
+      candidate.clusterId !== article.clusterId && candidate.intent === article.intent,
+  );
+  const remaining = others.filter(
+    (candidate) =>
+      candidate.clusterId !== article.clusterId && candidate.intent !== article.intent,
+  );
+  return [...sameCluster, ...sameIntent, ...remaining].slice(0, limit);
 }

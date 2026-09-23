@@ -12,6 +12,7 @@ import { CATEGORY_VISUALS } from "@/components/blog/categoryVisuals";
 import {
   getPublishedArticleBySlug,
   getPublishedArticles,
+  getPublishedAuthors,
   getRelatedPublishedArticles,
 } from "@/lib/editorial/queries";
 import {
@@ -78,6 +79,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (!article) notFound();
 
   const author = editorialAuthors[article.authorId];
+  const publicAuthor = getPublishedAuthors().find((candidate) => candidate.id === article.authorId);
   const cluster = editorialClusters[article.clusterId];
   const articleUrl = absoluteUrl(`/blog/${article.slug}`);
   const summaryUrl = createChatGptSummaryUrl(articleUrl);
@@ -117,7 +119,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         <div className="max-w-3xl">
           <p className="mt-10 text-sm font-bold tracking-wide" style={{ color: visual.badgeText }}>
-            {cluster.label}
+            <Link href={cluster.hubPath} className="hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B597FF]/20">
+              {cluster.label}
+            </Link>
           </p>
           <h1 className="mt-4 text-balance text-4xl font-black tracking-tight text-[#0c0d0d] md:text-6xl">
             {article.title}
@@ -126,7 +130,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y border-zinc-200 py-5">
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500">
-              <span>{author.name}</span>
+              {publicAuthor ? (
+                <Link href={publicAuthor.profilePath} className="font-bold hover:text-[#8659e7] hover:underline">
+                  {author.name}
+                </Link>
+              ) : (
+                <span>{author.name}</span>
+              )}
               <span>Publicado em {formatEditorialDate(article.publishedAt)}</span>
               {article.modifiedAt !== article.publishedAt && (
                 <span>Atualizado em {formatEditorialDate(article.modifiedAt)}</span>

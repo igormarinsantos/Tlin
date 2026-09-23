@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { editorialClusters } from "@/content/editorial/taxonomy";
 import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 import { absoluteUrl } from "@/lib/siteConfig";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
@@ -41,12 +42,13 @@ export function ArticleCard({ article, featured = false }: { article: EditorialA
 
       <div className={`relative flex flex-1 flex-col px-6 pb-6 ${featured ? "md:px-10 md:pb-10" : ""}`}>
         <div className="mb-6 flex items-center justify-between gap-4">
-          <span
-            className="rounded-full px-3 py-1 text-xs font-bold"
+          <Link
+            href={editorialClusters[article.clusterId].hubPath}
+            className="relative z-20 rounded-full px-3 py-1 text-xs font-bold outline-none transition-opacity hover:opacity-80 focus-visible:ring-4 focus-visible:ring-[#B597FF]/20"
             style={{ backgroundColor: `${visual.from}1a`, color: visual.badgeText }}
           >
             {article.topic}
-          </span>
+          </Link>
           <span className="text-xs font-medium text-zinc-400">
             {article.readingTimeMinutes} min de leitura
           </span>
