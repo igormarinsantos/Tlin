@@ -92,7 +92,7 @@ export function validateEditorialArticles(
     validateMedia(article, add);
 
     if (article.status === "published") {
-      validatePublicationGate(article, add);
+      validatePublicationGate(article, now, add);
     }
   }
 
@@ -239,11 +239,26 @@ function validateMedia(
 
 function validatePublicationGate(
   article: EditorialArticle,
+  now: Date,
   add: (article: EditorialArticle, code: string, path: string, message: string) => void,
 ) {
   if (!article.authorId) add(article, "author.required", "authorId", "Publicação exige autoria aprovada.");
   if (!article.clusterId) add(article, "cluster.required", "clusterId", "Publicação exige cluster editorial.");
-  if (!article.intent) add(article, "intent.required", "intent", "Publicação exige intenção de busca.");
+  if (!article.intent) {
+    add(article, "intent.required", "intent", "Publicação exige intenção de busca.");
+    add(article, "brief.intent", "intent", "O brief publicável exige intenção de busca definida.");
+  }
+  const cluster = article.clusterId
+    ? editorialClusters[article.clusterId as keyof typeof editorialClusters]
+    : undefined;
+  if (!cluster || !isSafeInternalUrl(cluster.intentOwner)) {
+    add(
+      article,
+      "brief.urlOwner",
+      "clusterId",
+      "O brief publicável exige cluster com URL owner registrada.",
+    );
+  }
   if (!article.summary?.trim()) add(article, "summary.required", "summary", "Publicação exige resumo.");
   if (!article.publishedAt) add(article, "publishedAt.required", "publishedAt", "Publicação exige data com timezone.");
   if (!article.modifiedAt) add(article, "modifiedAt.required", "modifiedAt", "Publicação exige data de modificação verdadeira.");
@@ -263,6 +278,86 @@ function validatePublicationGate(
   if (!isApproved(article.review?.commercial)) {
     add(article, "review.commercial", "review.commercial", "Publicação exige revisão comercial aprovada.");
   }
+
+  validateReviewCurrency(article, "factual", article.review?.factual, now, add);
+  validateReviewCurrency(article, "commercial", article.review?.commercial, now, add);
+  validateClaims(article, now, add);
+}
+
+function validateReviewCurrency(
+  article: EditorialArticle,
+  kind: "factual" | "commercial",
+  approval: EditorialApproval | undefined,
+  now: Date,
+  add: (article: EditorialArticle, code: string, path: string, message: string) => void,
+) {
+  if (!isApproved(approval)) return;
+
+  const approvalTime = Date.parse(approval.approvedAt);
+  if (approvalTime > now.getTime()) {
+    add(
+      article,
+      `review.${kind}.future`,
+      `review.${kind}.approvedAt`,
+      "A aprovação editorial não pode ter data futura.",
+    );
+  }
+}
+
+function validateClaims(
+  article: EditorialArticle,
+  now: Date,
+  add: (article: EditorialArticle, code: string, path: string, message: string) => void,
+) {
+  const claims = (article as unknown as Record<string, unknown>).claims;
+  if (claims === undefined) return;
+  if (!Array.isArray(claims)) {
+    add(article, "claim.format", "claims", "Claims estruturados devem usar uma lista.");
+    return;
+  }
+
+  const sourceIds = new Set<string>(article.sources?.map((source) => source.id) ?? []);
+
+  claims.forEach((claim, index) => {
+    const path = `claims.${index}`;
+    if (!isRecord(claim)) {
+      add(article, "claim.format", path, "Cada claim deve usar um registro estruturado.");
+      return;
+    }
+
+    const referencedSourceIds = claim.sourceIds;
+    if (
+      !Array.isArray(referencedSourceIds) ||
+      referencedSourceIds.length === 0 ||
+      referencedSourceIds.some((sourceId) => typeof sourceId !== "string" || !sourceIds.has(sourceId))
+    ) {
+      add(
+        article,
+        "claim.source",
+        `${path}.sourceIds`,
+        "O claim deve apontar para ao menos uma fonte existente no artigo.",
+      );
+    }
+
+    if (claim.mutable !== true) return;
+
+    if (!isIsoWithTimezone(claim.accessedAt) || Date.parse(claim.accessedAt) > now.getTime()) {
+      add(
+        article,
+        "claim.accessedAt",
+        `${path}.accessedAt`,
+        "Claim mutável exige data de acesso válida e não futura.",
+      );
+    }
+    if (typeof claim.scope !== "string" || !claim.scope.trim()) {
+      add(
+        article,
+        "claim.scope",
+        `${path}.scope`,
+        "Claim mutável exige escopo e limites registrados.",
+      );
+    }
+  });
 }
 
 function isApproved(approval: EditorialApproval | undefined) {

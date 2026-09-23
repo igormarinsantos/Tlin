@@ -174,7 +174,7 @@ describe("editorial publication governance", () => {
     })).toEqual([]);
   });
 
-  it("rejects missing approvals and reviews older than the substantive update", () => {
+  it("rejects missing approvals and approvals dated in the future", () => {
     const missingApproval = validationCodes({
       ...publishedArticle,
       review: {
@@ -182,19 +182,19 @@ describe("editorial publication governance", () => {
         commercial: undefined,
       },
     });
-    const staleApproval = validationCodes({
+    const futureApproval = validationCodes({
       ...publishedArticle,
       review: {
         ...publishedArticle.review,
         factual: {
           ...publishedArticle.review.factual,
-          approvedAt: "2026-09-22T09:00:00-03:00",
+          approvedAt: "2026-09-24T09:00:00-03:00",
         },
       },
     });
 
     expect(missingApproval).toContain("review.commercial");
-    expect(staleApproval).toContain("review.factual.stale");
+    expect(futureApproval).toContain("review.factual.future");
   });
 
   it("allows an incomplete draft to remain internal and excludes it from public queries", () => {
