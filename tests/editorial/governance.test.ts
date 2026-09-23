@@ -128,50 +128,33 @@ describe("editorial publication governance", () => {
     ]));
   });
 
-  it("rejects a claim that does not point to an existing source", () => {
+  it("rejects publication with claims but no applicable source list", () => {
     expect(validationCodes({
       ...publishedArticle,
-      claims: [
-        {
-          id: "claim:unverified-result",
-          text: "Afirmação sem prova no registro",
-          sourceIds: ["source:not-registered"],
-        },
-      ],
-    })).toContain("claim.source");
+      sources: [],
+    })).toContain("sources.required");
   });
 
-  it("requires access date and scope for mutable claims", () => {
+  it("rejects future source access dates before mutable claims can be approved", () => {
     expect(validationCodes({
       ...publishedArticle,
-      claims: [
+      sources: [
         {
-          id: "claim:mutable-statistic",
-          text: "Estatística que pode mudar",
-          sourceIds: [publishedArticle.sources[0].id],
-          mutable: true,
+          ...publishedArticle.sources[0],
+          accessedAt: "2026-09-24T09:00:00-03:00",
         },
       ],
-    })).toEqual(expect.arrayContaining([
-      "claim.accessedAt",
-      "claim.scope",
-    ]));
+    })).toContain("source.accessedAt.future");
   });
 
-  it("accepts a mutable claim only with registered source, access date and scope", () => {
+  it("rejects duplicate source evidence identifiers", () => {
     expect(validationCodes({
       ...publishedArticle,
-      claims: [
-        {
-          id: "claim:documented-guidance",
-          text: "Orientação documentada pela fonte primária",
-          sourceIds: [publishedArticle.sources[0].id],
-          mutable: true,
-          accessedAt: publishedArticle.sources[0].accessedAt,
-          scope: "Documentação oficial consultada na data registrada",
-        },
+      sources: [
+        publishedArticle.sources[0],
+        publishedArticle.sources[0],
       ],
-    })).toEqual([]);
+    })).toContain("source.id.duplicate");
   });
 
   it("rejects missing approvals and approvals dated in the future", () => {

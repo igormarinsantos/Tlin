@@ -88,7 +88,7 @@ export function validateEditorialArticles(
     validateReferences(article, add);
     validateDates(article, now, add);
     validateBlocks(article, add);
-    validateLinksAndSources(article, add);
+    validateLinksAndSources(article, now, add);
     validateMedia(article, add);
 
     if (article.status === "published") {
@@ -184,14 +184,22 @@ function validateBlocks(
 
 function validateLinksAndSources(
   article: EditorialArticle,
+  now: Date,
   add: (article: EditorialArticle, code: string, path: string, message: string) => void,
 ) {
+  const sourceIds = new Set<string>();
   article.sources?.forEach((source, index) => {
+    if (sourceIds.has(source.id)) {
+      add(article, "source.id.duplicate", `sources.${index}.id`, "IDs de fonte devem ser únicos no artigo.");
+    }
+    sourceIds.add(source.id);
     if (!isSafeHttpsUrl(source.url)) {
       add(article, "source.url", `sources.${index}.url`, "Fontes externas devem usar HTTPS sem credenciais.");
     }
     if (!isIsoWithTimezone(source.accessedAt)) {
       add(article, "source.accessedAt", `sources.${index}.accessedAt`, "A data de acesso deve incluir timezone.");
+    } else if (Date.parse(source.accessedAt) > now.getTime()) {
+      add(article, "source.accessedAt.future", `sources.${index}.accessedAt`, "A data de acesso da fonte não pode ser futura.");
     }
   });
 
@@ -281,7 +289,6 @@ function validatePublicationGate(
 
   validateReviewCurrency(article, "factual", article.review?.factual, now, add);
   validateReviewCurrency(article, "commercial", article.review?.commercial, now, add);
-  validateClaims(article, now, add);
 }
 
 function validateReviewCurrency(
@@ -302,62 +309,6 @@ function validateReviewCurrency(
       "A aprovação editorial não pode ter data futura.",
     );
   }
-}
-
-function validateClaims(
-  article: EditorialArticle,
-  now: Date,
-  add: (article: EditorialArticle, code: string, path: string, message: string) => void,
-) {
-  const claims = (article as unknown as Record<string, unknown>).claims;
-  if (claims === undefined) return;
-  if (!Array.isArray(claims)) {
-    add(article, "claim.format", "claims", "Claims estruturados devem usar uma lista.");
-    return;
-  }
-
-  const sourceIds = new Set<string>(article.sources?.map((source) => source.id) ?? []);
-
-  claims.forEach((claim, index) => {
-    const path = `claims.${index}`;
-    if (!isRecord(claim)) {
-      add(article, "claim.format", path, "Cada claim deve usar um registro estruturado.");
-      return;
-    }
-
-    const referencedSourceIds = claim.sourceIds;
-    if (
-      !Array.isArray(referencedSourceIds) ||
-      referencedSourceIds.length === 0 ||
-      referencedSourceIds.some((sourceId) => typeof sourceId !== "string" || !sourceIds.has(sourceId))
-    ) {
-      add(
-        article,
-        "claim.source",
-        `${path}.sourceIds`,
-        "O claim deve apontar para ao menos uma fonte existente no artigo.",
-      );
-    }
-
-    if (claim.mutable !== true) return;
-
-    if (!isIsoWithTimezone(claim.accessedAt) || Date.parse(claim.accessedAt) > now.getTime()) {
-      add(
-        article,
-        "claim.accessedAt",
-        `${path}.accessedAt`,
-        "Claim mutável exige data de acesso válida e não futura.",
-      );
-    }
-    if (typeof claim.scope !== "string" || !claim.scope.trim()) {
-      add(
-        article,
-        "claim.scope",
-        `${path}.scope`,
-        "Claim mutável exige escopo e limites registrados.",
-      );
-    }
-  });
 }
 
 function isApproved(approval: EditorialApproval | undefined) {
