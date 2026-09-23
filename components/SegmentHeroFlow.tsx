@@ -25,14 +25,14 @@ function ContactAvatar({ flow, size = "md" }: { flow: Flow; size?: "sm" | "md" }
 
 function TlinAvatar() {
   return (
-    <Image src="/TlinIA.svg" alt="" width={28} height={28} className="size-7 shrink-0 object-contain" />
+    <Image src="/TlinIA.svg" alt="" width={24} height={24} className="size-6 shrink-0 object-contain" />
   );
 }
 
 function TypingDots({ isAi }: { isAi: boolean }) {
   return (
-    <span className="flex h-4 items-center gap-1 px-1">
-      {[0, 0.16, 0.32].map((delay) => (
+    <span className="flex h-3 items-center gap-1">
+      {[0, 0.2, 0.4].map((delay) => (
         <motion.span key={delay} animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, delay, repeat: Infinity, times: [0, 0.5, 1] }} className={`size-1.5 rounded-full ${isAi ? "bg-zinc-950" : "bg-tlin-purple"}`} />
       ))}
     </span>
@@ -57,7 +57,7 @@ function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
         </span>
       </div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-end gap-1 overflow-hidden bg-[#fbfbfc] p-3 md:gap-1.5 md:p-4">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-start gap-1 overflow-hidden bg-[#fbfbfc] p-4 md:gap-1.5 md:p-5">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:radial-gradient(#0c0d0d_0.75px,transparent_0.75px)] [background-size:14px_14px]" />
         <AnimatePresence initial={false} mode="popLayout">
           {flow.messages.slice(0, visibleCount).map((message, index) => {
@@ -76,7 +76,11 @@ function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
                 className={`relative z-10 flex w-full items-start gap-2 ${isAi ? "flex-row-reverse" : "flex-row"}`}
               >
                 {isAi ? <TlinAvatar /> : <ContactAvatar flow={flow} size="sm" />}
-                <div className={`relative max-w-[82%] overflow-hidden rounded-2xl p-2.5 text-[9px] font-semibold leading-[1.38] md:p-3 md:text-[10px] ${isAi ? "rounded-tr-none bg-gradient-to-r from-tlin-purple to-tlin-blue text-zinc-950" : "rounded-tl-none border border-zinc-200 bg-white text-zinc-800"} ${isTyping ? "w-fit" : ""}`}>
+                <motion.div
+                  layout
+                  transition={{ layout: { type: "spring", damping: 28, stiffness: 240 } }}
+                  className={`relative max-w-[82%] overflow-hidden rounded-2xl text-[9px] font-semibold leading-[1.38] md:text-[10px] ${isAi ? "rounded-tr-none bg-gradient-to-r from-tlin-purple to-tlin-blue text-zinc-950" : "rounded-tl-none border border-zinc-200 bg-white text-zinc-800"} ${isTyping ? "w-fit px-2.5 py-1.5" : "px-3 py-2.5 md:px-3.5 md:py-3"}`}
+                >
                   <AnimatePresence mode="wait" initial={false}>
                     {isTyping ? (
                       <motion.span key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="block">
@@ -88,7 +92,7 @@ function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
                       </motion.span>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               </motion.div>
             );
           })}
