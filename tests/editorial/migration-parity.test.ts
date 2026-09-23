@@ -1,4 +1,11 @@
-import { describe, expect, it } from "vitest";
+// @vitest-environment jsdom
+import { readFileSync } from "node:fs";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { afterEach, describe, expect, it } from "vitest";
+import BlogHomePage from "@/app/blog/page";
+import { BlogSearchAndGrid } from "@/components/blog/BlogSearchAndGrid";
 import { BLOG_ARTICLES } from "@/lib/blog";
 import { serializeRssFeed } from "@/lib/editorial/feed";
 import { editorialArticles } from "@/lib/editorial/registry";
@@ -9,6 +16,8 @@ import {
 import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 import { absoluteUrl } from "@/lib/siteConfig";
 import { legacyArticles } from "@/tests/editorial/fixtures/legacy-articles";
+
+afterEach(cleanup);
 
 function editorialArticle(overrides: Partial<EditorialPublishedArticle> = {}): EditorialPublishedArticle {
   return {
@@ -195,6 +204,63 @@ describe("legacy article migration parity", () => {
         commercial: { status: "approved", approvedBy: "author:igor-marin" },
       });
     }
+  });
+
+  it("renders every published slug in the server HTML with navigation and summary links", async () => {
+    const html = renderToStaticMarkup(await BlogHomePage());
+
+    for (const article of legacyArticles) {
+      expect(html).toContain(`href="/blog/${article.slug}"`);
+      expect(html).toContain(article.title);
+    }
+
+    expect(html).toContain("rounded-3xl");
+    expect(html).toContain("Resumir com IA");
+    expect(html).toContain("https://chatgpt.com/?q=");
+  });
+
+  it("searches the serializable article topic as well as title and summary", () => {
+    const article = {
+      id: "article:search-contract",
+      slug: "search-contract",
+      title: "Título sem o termo",
+      summary: "Resumo sem o termo",
+      description: "Resumo sem o termo",
+      clusterId: "cluster:ia-comercial",
+      topic: "Tema canônico exclusivo",
+      category: "Vendas com IA",
+      publishedAt: "2026-07-21",
+      readingTimeMinutes: 6,
+      readingTime: "6 min de leitura",
+      featured: true,
+    };
+
+    render(createElement(BlogSearchAndGrid, {
+      articles: [article],
+      categories: [article.category],
+    } as never));
+    fireEvent.change(screen.getByPlaceholderText("Buscar por título ou tema..."), {
+      target: { value: "tema canônico" },
+    });
+
+    expect(screen.getByRole("link", { name: article.title })).toHaveAttribute(
+      "href",
+      `/blog/${article.slug}`,
+    );
+  });
+
+  it("keeps the server query as the only source delivered to client blog components", () => {
+    const pageSource = readFileSync("app/blog/page.tsx", "utf8");
+    const componentSources = [
+      "components/blog/ArticleCard.tsx",
+      "components/blog/BlogSearchAndGrid.tsx",
+      "components/blog/FeaturedCarousel.tsx",
+    ].map((path) => readFileSync(path, "utf8"));
+
+    expect(pageSource).toContain("getPublishedArticles");
+    expect(pageSource).not.toContain("@/lib/blog");
+    expect(componentSources.join("\n")).toContain("EditorialArticleSummary");
+    expect(componentSources.join("\n")).not.toContain("@/lib/blog");
   });
 });
 
