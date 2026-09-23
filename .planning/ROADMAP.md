@@ -112,7 +112,7 @@ Este roadmap evolui uma LP já posicionada em cinco fatias verticais: primeiro t
   4. Cada conteúdo segue um processo de pesquisa, evidência, revisão, atualização e distribuição que proíbe estatísticas, experiências e URLs inventadas.
   5. A equipe mede descoberta, engajamento, cliques comerciais, demos, qualificação e vendas por conteúdo/origem, sem tratar tráfego ou formulário como resultado final.
 
-**Plans:** 11 plans
+**Plans:** 12 plans
 
 Plans:
 - [ ] `06-01-PLAN.md` — fixar contratos, serializers seguros e baseline independente sem trocar consumidores públicos
@@ -122,12 +122,13 @@ Plans:
 - [ ] `06-05-PLAN.md` — projetar metadados, OG, JSON-LD seguro, sitemap e RSS a partir do registro canônico
 - [ ] `06-06-PLAN.md` — entregar hubs, autoria, breadcrumbs e malha de links internos sem canibalização comercial
 - [ ] `06-07-PLAN.md` — persistir primeiro e último toque editorial e instrumentar CTAs/compartilhamento com allowlist
-- [ ] `06-08-PLAN.md` — transportar atribuição editorial até captura, contrato comercial e relatório interno usando apenas serviços simulados
-- [ ] `06-09-PLAN.md` — instituir governança editorial verificável sem automatizar julgamentos humanos
-- [ ] `06-10-PLAN.md` — gerar superfícies LLM experimentais a partir do registro publicado, sem promessas de ranking
-- [ ] `06-11-PLAN.md` — executar a convergência final e checkpoints de autoria, crawler policy, schema, OG, acessibilidade, GA4 e Search Console
+- [ ] `06-08-PLAN.md` — transportar e persistir atribuição editorial no mesmo lead/CRM com first/last touch e serviços simulados
+- [ ] `06-09-PLAN.md` — agregar a atribuição persistida no relatório comercial protegido por artigo, cluster e CTA
+- [ ] `06-10-PLAN.md` — instituir governança editorial verificável sem automatizar julgamentos humanos
+- [ ] `06-11-PLAN.md` — gerar superfícies LLM experimentais após as mutações finais de hubs/queries, sem promessas de ranking
+- [ ] `06-12-PLAN.md` — executar a convergência final e checkpoints de autoria, crawler policy, schema, OG, acessibilidade, GA4 e Search Console
 
-**Waves:** Wave 1: 06-01; Wave 2: 06-02; Wave 3: 06-03 e 06-07; Wave 4: 06-04, 06-05 e 06-08; Wave 5: 06-06, 06-09 e 06-10; Wave 6: 06-11.
+**Waves:** Wave 1: 06-01; Wave 2: 06-02; Wave 3: 06-03 e 06-07; Wave 4: 06-04, 06-05 e 06-08; Wave 5: 06-06, 06-09 e 06-10; Wave 6: 06-11; Wave 7: 06-12.
 **UI hint:** yes
 
 ## Progress
@@ -142,7 +143,7 @@ Phases 2 → 3 → 4 → 5 follow the conversion track. Phase 6 depends only on 
 | 3. Como Funciona — Prova da Operação | 0/TBD | Not started | - |
 | 4. Planos e Caminho de Fit | 0/TBD | Not started | - |
 | 5. Otimização por Origem | 0/TBD | Not started | - |
-| 6. Sistema Editorial SEO, GEO e LLM | 0/11 | Planned | - |
+| 6. Sistema Editorial SEO, GEO e LLM | 0/12 | Planned | - |
 
 ## Backlog
 
