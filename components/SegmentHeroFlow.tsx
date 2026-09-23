@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { SegmentHeroFlowKey } from "@/lib/dictionaries/segmentHeroFlows";
 import { TlinCard } from "@/components/ui/tlin";
@@ -118,18 +117,15 @@ function CrmResultCard({ flow, step }: { flow: Flow; step: number }) {
       <TlinCard className="overflow-hidden border-white/90 shadow-[0_24px_60px_rgba(62,49,94,0.16)]">
         <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-2.5 md:px-4 md:py-3">
           <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-lg bg-[#f2edff]">
-              <Image src="/favicon.svg" alt="" width={18} height={18} className="size-[18px]" />
-            </span>
+            <Image src="/favicon.svg" alt="" width={20} height={20} className="size-5 shrink-0" />
             <div>
               <p className="text-[9px] font-black tracking-tight text-tlin-ink md:text-[10px]">tlin.ai</p>
               <p className="text-[6px] font-semibold text-zinc-400 md:text-[7px]">{flow.crmLabel}</p>
             </div>
           </div>
           <AnimatePresence mode="wait">
-            <motion.span key={isComplete ? "complete" : "active"} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className={`flex items-center gap-1 rounded-full px-2 py-1 text-[6px] font-bold md:text-[7px] ${isComplete ? "bg-[#e8fafc] text-[#15808d]" : "bg-[#f2edff] text-[#7254c8]"}`}>
-              {isComplete ? <Check className="size-2.5" strokeWidth={3} /> : <Sparkles className="size-2.5" />}
-              <span className="hidden sm:inline">{isComplete ? flow.updatedLabel : flow.identifyingLabel}</span>
+            <motion.span key={isComplete ? "complete" : "active"} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className={`max-w-[92px] truncate rounded-full px-2 py-1 text-[6px] font-bold sm:max-w-none md:text-[7px] ${isComplete ? "bg-[#e8fafc] text-[#15808d]" : "bg-[#f2edff] text-[#7254c8]"}`}>
+              {isComplete ? flow.updatedLabel : flow.identifyingLabel}
             </motion.span>
           </AnimatePresence>
         </div>
@@ -157,10 +153,7 @@ function CrmResultCard({ flow, step }: { flow: Flow; step: number }) {
           </div>
 
           <AnimatePresence mode="wait">
-            <motion.div key={isComplete ? "outcome" : currentActivity} initial={{ opacity: 0, y: 7 }} animate={{ opacity: hasContext ? 1 : 0, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.35, ease }} className={`mt-3 flex items-center gap-2 rounded-xl px-2.5 py-2.5 ${isComplete ? "bg-tlin-ink text-white" : "bg-[#f2edff] text-[#7254c8]"}`}>
-              <span className={`grid size-6 shrink-0 place-items-center rounded-full ${isComplete ? "bg-gradient-to-br from-tlin-purple to-tlin-blue text-tlin-ink" : "bg-white shadow-sm"}`}>
-                {isComplete ? <Check className="size-3" strokeWidth={3} /> : <Sparkles className="size-3" />}
-              </span>
+            <motion.div key={isComplete ? "outcome" : currentActivity} initial={{ opacity: 0, y: 7 }} animate={{ opacity: hasContext ? 1 : 0, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.35, ease }} className={`mt-3 flex items-center rounded-xl px-3 py-2.5 ${isComplete ? "bg-tlin-ink text-white" : "bg-[#f2edff] text-[#7254c8]"}`}>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[7px] font-bold md:text-[8px]">{isComplete ? flow.outcome.title : currentActivity}</p>
                 {isComplete && <p className="mt-0.5 truncate text-[6px] font-medium text-white/50 md:text-[7px]">{flow.outcome.crmStatus}</p>}
