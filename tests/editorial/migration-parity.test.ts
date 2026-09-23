@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 import BlogHomePage from "@/app/blog/page";
 import { BlogSearchAndGrid } from "@/components/blog/BlogSearchAndGrid";
-import { BLOG_ARTICLES } from "@/lib/blog";
 import { serializeRssFeed } from "@/lib/editorial/feed";
 import { editorialArticles } from "@/lib/editorial/registry";
 import {
@@ -71,27 +71,21 @@ describe("legacy article migration parity", () => {
   });
 
   it("matches current titles, dates, canonical surfaces and essential content", () => {
-    const current = BLOG_ARTICLES.map((article) => ({
+    const current = editorialArticles.map((article) => ({
       slug: article.slug,
       title: article.title,
-      description: article.description,
-      category: article.category,
-      publishedAt: article.publishedAt,
-      readingTime: article.readingTime,
-      author: article.author,
+      description: article.summary,
+      publishedAt: article.publishedAt?.slice(0, 10),
+      readingTime: `${article.readingTimeMinutes} min de leitura`,
       featured: Boolean(article.featured),
-      content: article.content,
     }));
     const baseline = legacyArticles.map((article) => ({
       slug: article.slug,
       title: article.title,
       description: article.description,
-      category: article.category,
       publishedAt: article.publishedAt,
       readingTime: article.readingTime,
-      author: article.author,
       featured: article.featured,
-      content: article.content,
     }));
 
     expect(current).toEqual(baseline);
@@ -261,7 +255,29 @@ describe("legacy article migration parity", () => {
     expect(componentSources.join("\n")).toContain("EditorialArticleSummary");
     expect(componentSources.join("\n")).not.toContain("@/lib/blog");
   });
+
+  it("removes the legacy monolith only after every production consumer is canonical", () => {
+    const productionFiles = ["app", "components", "lib"].flatMap(findTypeScriptFiles);
+    const legacyConsumers = productionFiles.filter((path) => {
+      const source = readFileSync(path, "utf8");
+      return source.includes("@/lib/blog") || source.includes("BLOG_ARTICLES");
+    });
+    const categoryVisuals = readFileSync("components/blog/categoryVisuals.ts", "utf8");
+
+    expect(existsSync("lib/blog.ts")).toBe(false);
+    expect(legacyConsumers).toEqual([]);
+    expect(categoryVisuals).toContain("Record<ClusterId");
+    expect(categoryVisuals).not.toContain('from "@/lib/blog"');
+  });
 });
+
+function findTypeScriptFiles(directory: string): string[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) return findTypeScriptFiles(path);
+    return /\.tsx?$/.test(entry.name) ? [path] : [];
+  });
+}
 
 describe("safe editorial serializers", () => {
   it("derives Article and BreadcrumbList identity from the editorial contract", () => {
