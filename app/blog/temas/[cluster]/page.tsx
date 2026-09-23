@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EditorialCta } from "@/components/blog/EditorialCta";
-import { getPublishedClusters } from "@/lib/editorial/queries";
+import {
+  getPublishedClusterBySlug,
+  getPublishedClusters,
+} from "@/lib/editorial/queries";
+import {
+  createEditorialBreadcrumbData,
+  serializeJsonLd,
+} from "@/lib/editorial/structured-data";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 
 type ClusterPageProps = {
@@ -15,7 +22,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: ClusterPageProps): Promise<Metadata> {
   const { cluster: clusterSlug } = await params;
-  const cluster = getPublishedClusters().find(({ slug }) => slug === clusterSlug);
+  const cluster = getPublishedClusterBySlug(clusterSlug);
   if (!cluster) return {};
 
   const canonical = absoluteUrl(cluster.hubPath);
@@ -49,14 +56,39 @@ export async function generateMetadata({ params }: ClusterPageProps): Promise<Me
 
 export default async function ClusterPage({ params }: ClusterPageProps) {
   const { cluster: clusterSlug } = await params;
-  const cluster = getPublishedClusters().find(({ slug }) => slug === clusterSlug);
+  const cluster = getPublishedClusterBySlug(clusterSlug);
   if (!cluster) notFound();
 
   const leadArticle = cluster.articles[0];
   if (!leadArticle) notFound();
+  const breadcrumb = createEditorialBreadcrumbData(cluster.hubPath, [
+    { name: siteConfig.name, path: "/" },
+    { name: "Conteúdos", path: "/blog" },
+    { name: cluster.label, path: cluster.hubPath },
+  ]);
+  const structuredData = serializeJsonLd({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${absoluteUrl(cluster.hubPath)}#webpage`,
+        url: absoluteUrl(cluster.hubPath),
+        name: cluster.label,
+        description: cluster.description,
+        inLanguage: "pt-BR",
+        isPartOf: { "@id": absoluteUrl("/#website") },
+        breadcrumb: { "@id": breadcrumb["@id"] },
+      },
+      breadcrumb,
+    ],
+  });
 
   return (
     <main className="relative overflow-hidden bg-white px-4 pb-24 pt-32 md:px-8 md:pt-40">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: structuredData }}
+      />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[540px] overflow-hidden">
         <div className="absolute -left-40 top-10 h-[420px] w-[420px] rounded-full bg-[#B597FF]/20 blur-[120px]" />
         <div className="absolute right-0 top-24 h-[340px] w-[340px] rounded-full bg-[#38E3FF]/15 blur-[110px]" />
@@ -64,6 +96,8 @@ export default async function ClusterPage({ params }: ClusterPageProps) {
 
       <div className="mx-auto max-w-6xl">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-zinc-500">
+          <Link href="/" className="font-bold text-[#8659e7] hover:underline">{siteConfig.name}</Link>
+          <span aria-hidden="true">/</span>
           <Link href="/blog" className="font-bold text-[#8659e7] hover:underline">Conteúdos</Link>
           <span aria-hidden="true">/</span>
           <span>{cluster.label}</span>

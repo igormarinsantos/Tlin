@@ -1,13 +1,21 @@
+import { editorialAuthors } from "@/content/editorial/authors";
 import { editorialClusters } from "@/content/editorial/taxonomy";
 import { editorialArticles } from "@/lib/editorial/registry";
 import type {
   EditorialArticle,
+  EditorialAuthor,
   EditorialCluster,
   EditorialPublishedArticle,
 } from "@/lib/editorial/types";
 
 export type PublishedEditorialCluster = EditorialCluster & {
   slug: string;
+  articles: readonly EditorialPublishedArticle[];
+};
+
+export type PublishedEditorialAuthor = EditorialAuthor & {
+  slug: string;
+  profilePath: `/blog/autores/${string}`;
   articles: readonly EditorialPublishedArticle[];
 };
 
@@ -54,6 +62,43 @@ export function getPublishedClusters(
     }))
     .filter((cluster) => cluster.slug && cluster.articles.length > 0)
     .sort((left, right) => left.label.localeCompare(right.label, "pt-BR"));
+}
+
+export function getPublishedClusterBySlug(
+  slug: string,
+  now: Date = new Date(),
+  articles: readonly EditorialArticle[] = editorialArticles,
+) {
+  return getPublishedClusters(now, articles).find((cluster) => cluster.slug === slug);
+}
+
+export function getPublishedAuthors(
+  now: Date = new Date(),
+  articles: readonly EditorialArticle[] = editorialArticles,
+  authors: Readonly<Record<string, EditorialAuthor>> = editorialAuthors,
+): PublishedEditorialAuthor[] {
+  const published = getPublishedArticles(now, articles);
+
+  return Object.values(authors)
+    .map((author) => {
+      const slug = author.id.split(":").at(-1) ?? "";
+      return {
+        ...author,
+        slug,
+        profilePath: `/blog/autores/${slug}` as const,
+        articles: published.filter((article) => article.authorId === author.id),
+      };
+    })
+    .filter((author) => author.approved && author.slug && author.articles.length > 0)
+    .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+}
+
+export function getPublishedAuthorBySlug(
+  slug: string,
+  now: Date = new Date(),
+  articles: readonly EditorialArticle[] = editorialArticles,
+) {
+  return getPublishedAuthors(now, articles).find((author) => author.slug === slug);
 }
 
 export function getRelatedPublishedArticles(

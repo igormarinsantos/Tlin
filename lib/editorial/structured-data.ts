@@ -7,6 +7,22 @@ export const ARTICLE_SOCIAL_IMAGE_SIZE = {
   height: 630,
 } as const;
 
+export type EditorialBreadcrumbItem = {
+  name: string;
+  path: `/${string}`;
+};
+
+export type EditorialAuthorProfileData = {
+  name: string;
+  role: string;
+  bio?: string;
+  profilePath: `/blog/autores/${string}`;
+  image?: {
+    src: `/${string}`;
+    alt: string;
+  };
+};
+
 function absoluteEditorialUrl(value: string) {
   return value.startsWith("/") ? absoluteUrl(value) : value;
 }
@@ -20,30 +36,59 @@ export function createArticleSocialImage(article: EditorialPublishedArticle) {
 }
 
 export function createBreadcrumbStructuredData(article: EditorialPublishedArticle) {
-  const canonical = absoluteUrl(`/blog/${article.slug}`);
+  return createEditorialBreadcrumbData(`/blog/${article.slug}`, [
+    { name: siteConfig.name, path: "/" },
+    { name: "Conteúdos", path: "/blog" },
+    { name: article.title, path: `/blog/${article.slug}` },
+  ]);
+}
 
+export function createEditorialBreadcrumbData(
+  pagePath: `/${string}`,
+  items: readonly EditorialBreadcrumbItem[],
+) {
   return {
     "@type": "BreadcrumbList",
-    "@id": `${canonical}#breadcrumb`,
-    itemListElement: [
+    "@id": `${absoluteUrl(pagePath)}#breadcrumb`,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
+  };
+}
+
+export function createEditorialAuthorStructuredData(author: EditorialAuthorProfileData) {
+  const canonical = absoluteUrl(author.profilePath);
+  const breadcrumb = createEditorialBreadcrumbData(author.profilePath, [
+    { name: siteConfig.name, path: "/" },
+    { name: "Conteúdos", path: "/blog" },
+    { name: author.name, path: author.profilePath },
+  ]);
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
       {
-        "@type": "ListItem",
-        position: 1,
-        name: siteConfig.name,
-        item: absoluteUrl("/"),
+        "@type": "ProfilePage",
+        "@id": `${canonical}#webpage`,
+        url: canonical,
+        name: author.name,
+        inLanguage: "pt-BR",
+        mainEntity: { "@id": `${canonical}#person` },
+        breadcrumb: { "@id": breadcrumb["@id"] },
       },
       {
-        "@type": "ListItem",
-        position: 2,
-        name: "Conteúdos",
-        item: absoluteUrl("/blog"),
+        "@type": "Person",
+        "@id": `${canonical}#person`,
+        name: author.name,
+        jobTitle: author.role,
+        url: canonical,
+        ...(author.bio ? { description: author.bio } : {}),
+        ...(author.image ? { image: absoluteUrl(author.image.src) } : {}),
       },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: article.title,
-        item: canonical,
-      },
+      breadcrumb,
     ],
   };
 }
