@@ -1,11 +1,13 @@
 import { agentesDeIaNoWhatsappParaVendas } from "@/content/editorial/articles/agentes-de-ia-no-whatsapp-para-vendas";
 import { comoAvaliarNovosModelosArticle } from "@/content/editorial/articles/como-avaliar-novos-modelos-de-ia-para-negocios";
+import { playbookQualificacaoLeadsArticle } from "@/content/editorial/articles/playbook-qualificacao-leads-whatsapp";
 import type { EditorialArticle } from "@/lib/editorial/types";
 import { validateEditorialArticles } from "@/lib/editorial/validate";
 
 export const editorialArticles = [
   agentesDeIaNoWhatsappParaVendas,
   comoAvaliarNovosModelosArticle,
+  playbookQualificacaoLeadsArticle,
 ] satisfies readonly EditorialArticle[];
 
 const registryIssues = validateEditorialArticles(editorialArticles);
