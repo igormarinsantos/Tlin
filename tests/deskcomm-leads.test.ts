@@ -72,4 +72,44 @@ describe("captureDeskcommLead", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ received: true })));
     expect(await captureDeskcommLead({ leadCaptureId: "one", name: "Ana", phone: "+5511999999999" })).toMatchObject({ ok: false });
   });
+
+  it("forwards only allowlisted scalar editorial attribution", async () => {
+    process.env.DESKCOMM_WEBHOOK_URL = "https://crm.example.test/webhook";
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{"data":{"lead_id":"crm-lead"}}', { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await captureDeskcommLead({
+      leadCaptureId: "capture-editorial",
+      name: "Ana Silva",
+      phone: "+5511999999999",
+      utm: {
+        first_utm_source: "google",
+        first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        first_content_cluster: "cluster:ia-comercial",
+        first_content_intent: "informational",
+        last_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        last_content_cluster: "cluster:ia-comercial",
+        last_content_intent: "informational",
+        last_cta_id: "cta:demo",
+        first_utm_term: "ana@example.test",
+        turnstileToken: "must-not-leave-server",
+        nested: { injected: true },
+      } as unknown as Record<string, string>,
+    });
+
+    const request = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(JSON.parse(String(request.body))).toMatchObject({
+      external_id: "capture-editorial",
+      first_utm_source: "google",
+      first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      first_content_cluster: "cluster:ia-comercial",
+      first_content_intent: "informational",
+      last_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      last_content_cluster: "cluster:ia-comercial",
+      last_content_intent: "informational",
+      last_cta_id: "cta:demo",
+    });
+    expect(JSON.stringify(JSON.parse(String(request.body))))
+      .not.toMatch(/ana@example\.test|turnstile|must-not-leave-server|nested|injected/);
+  });
 });

@@ -35,6 +35,53 @@ describe("durable funnel in PostgreSQL", () => {
     expect(rows.rows[0]).toMatchObject({ qualified: null, utm: { first_utm_source: "google", last_utm_source: "meta" } });
   });
 
+  it("preserves first editorial touch, updates last touch and rejects unsafe attribution", async () => {
+    const original = {
+      lead_capture_id: "capture-editorial",
+      utm: {
+        first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        first_content_cluster: "cluster:ia-comercial",
+        first_content_intent: "informational",
+        last_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        last_content_cluster: "cluster:ia-comercial",
+        last_content_intent: "informational",
+        last_cta_id: "cta:demo",
+        nested: { injected: true },
+        turnstileToken: "secret",
+      },
+    };
+    await rpc("record_funnel_lead", [original]);
+    await rpc("record_funnel_lead", [{
+      lead_capture_id: "capture-editorial",
+      utm: {
+        first_article_slug: "como-avaliar-novos-modelos-de-ia-para-negocios",
+        first_content_cluster: "cluster:crm-nativo",
+        first_content_intent: "commercial-investigation",
+        last_article_slug: "playbook-qualificacao-leads-whatsapp",
+        last_content_cluster: "cluster:qualificacao",
+        last_content_intent: "informational",
+        last_cta_id: "cta:demo",
+      },
+    }]);
+    await rpc("record_funnel_lead", [{ lead_capture_id: "capture-historical" }]);
+
+    const current = (await db.query("select utm from lead_form_submissions where lead_capture_id='capture-editorial'")).rows[0];
+    expect(current).toMatchObject({
+      utm: {
+        first_article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+        first_content_cluster: "cluster:ia-comercial",
+        first_content_intent: "informational",
+        last_article_slug: "playbook-qualificacao-leads-whatsapp",
+        last_content_cluster: "cluster:qualificacao",
+        last_content_intent: "informational",
+        last_cta_id: "cta:demo",
+      },
+    });
+    expect(JSON.stringify(current)).not.toMatch(/nested|injected|turnstile|secret/);
+    expect((await db.query("select utm from lead_form_submissions where lead_capture_id='capture-historical'")).rows[0])
+      .toEqual({ utm: {} });
+  });
+
   it("reconciles early events, ignores duplicates and preserves event chronology", async () => {
     const event = { eventId: "event-q", leadId: "crm-two", status: "qualified", occurredAt: "2026-09-17T12:00:00Z", payload: { event: "lead.stage_changed" } };
     expect(await rpc("apply_funnel_crm_event", [event])).toMatchObject({ saved: true, projected: false });
