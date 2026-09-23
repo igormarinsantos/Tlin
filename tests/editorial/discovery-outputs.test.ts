@@ -1,12 +1,16 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import ArticlePage, { generateMetadata } from "@/app/blog/[slug]/page";
+import { GET as getRss } from "@/app/blog/rss.xml/route";
+import sitemap from "@/app/sitemap";
 import { editorialAuthors } from "@/content/editorial/authors";
-import { getPublishedArticles } from "@/lib/editorial/queries";
+import { serializeRssFeed } from "@/lib/editorial/feed";
+import { getPublishedArticles, getPublishedClusters } from "@/lib/editorial/queries";
 import {
   createArticleStructuredData,
   serializeStructuredData,
 } from "@/lib/editorial/structured-data";
+import type { EditorialArticle } from "@/lib/editorial/types";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 
 const now = new Date("2026-09-23T12:00:00-03:00");
@@ -113,6 +117,67 @@ describe("editorial discovery outputs", () => {
 
     expect(metadataTitles.size).toBe(published.length);
     expect(socialImages.size).toBe(published.length);
+  });
+
+  it("projects deterministic published sitemap and RSS with safe escaping", async () => {
+    const published = getPublishedArticles(now);
+    const clusters = getPublishedClusters(now);
+    const sitemapEntries = sitemap();
+    const editorialEntries = sitemapEntries.filter((entry) =>
+      entry.url.startsWith(`${absoluteUrl("/blog")}/`),
+    );
+
+    expect(editorialEntries).toEqual([
+      ...clusters.map((cluster) => ({
+        url: absoluteUrl(cluster.hubPath),
+        lastModified: new Date(
+          Math.max(...cluster.articles.map((article) => Date.parse(article.modifiedAt))),
+        ),
+      })),
+      ...published.map((article) => ({
+        url: absoluteUrl(`/blog/${article.slug}`),
+        lastModified: new Date(article.modifiedAt),
+      })),
+    ]);
+
+    const xmlFromUnsortedInput = serializeRssFeed([...published].reverse());
+    const canonicalPositions = published.map((article) =>
+      xmlFromUnsortedInput.indexOf(`<guid isPermaLink="true">${absoluteUrl(`/blog/${article.slug}`)}</guid>`),
+    );
+    expect(canonicalPositions.every((position) => position >= 0)).toBe(true);
+    expect(canonicalPositions).toEqual([...canonicalPositions].sort((left, right) => left - right));
+
+    const response = getRss();
+    expect(response.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
+    expect(await response.text()).toBe(serializeRssFeed(published));
+
+    const adversarial = {
+      ...published[0],
+      id: "article:adversarial",
+      slug: "adversarial",
+      title: "IA & vendas <script>alert(1)</script> 🚀",
+      summary: "Qualificação > volume, com aspas \"duplas\" e 'simples'.",
+    } as const;
+    const adversarialXml = serializeRssFeed([adversarial]);
+    expect(adversarialXml).toContain("IA &amp; vendas &lt;script&gt;alert(1)&lt;/script&gt; 🚀");
+    expect(adversarialXml).toContain("aspas &quot;duplas&quot; e &apos;simples&apos;");
+    expect(adversarialXml).not.toContain("<script>");
+
+    const candidates = [
+      published[0],
+      { ...published[0], id: "article:draft", slug: "draft", status: "draft" },
+      {
+        ...published[0],
+        id: "article:future",
+        slug: "future",
+        publishedAt: "2026-10-01T12:00:00-03:00",
+        modifiedAt: "2026-10-01T12:00:00-03:00",
+      },
+    ] as EditorialArticle[];
+    const filteredXml = serializeRssFeed(getPublishedArticles(now, candidates));
+    expect(filteredXml).toContain(`/blog/${published[0].slug}`);
+    expect(filteredXml).not.toContain("/blog/draft");
+    expect(filteredXml).not.toContain("/blog/future");
   });
 });
 
