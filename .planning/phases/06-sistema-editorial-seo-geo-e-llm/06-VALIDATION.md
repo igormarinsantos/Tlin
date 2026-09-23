@@ -114,6 +114,10 @@ O build controlado definiu `NEXT_PUBLIC_SITE_URL=https://tlin.ia.br` somente no
 processo local. O valor de `.env.local` permaneceu intacto. Detalhes e limites:
 `docs/quality/phase-6-editorial-system.md`.
 
+Os passos, resultados esperados e campos de evidência para cada checkpoint estão
+na seção **Checklist do UAT final** desse documento. Esse checklist é a fonte de
+retomada; `BLOCKED` não pode ser convertido em `PASS` por inferência de teste local.
+
 ## Validation Sign-Off
 
 - [x] All tasks have `<automated>` verify or Wave 0 dependencies

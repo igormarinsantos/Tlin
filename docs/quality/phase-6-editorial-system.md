@@ -103,6 +103,37 @@ autor, `/sitemap.xml`, `/blog/rss.xml`, `/robots.txt`, `/llms.txt` e
   qualquer mudança de `GPTBot`, `Google-Extended` ou agentes equivalentes exige
   decisão explícita do owner
 
+## Checklist do UAT final
+
+Use uma URL de preview explicitamente autorizada. Não use a produção atual para
+atribuir a esta branch um resultado que ela ainda não publicou. Para cada item,
+anexar URL, data, viewport/ferramenta e evidência; trocar `BLOCKED` por `PASS` ou
+`FAIL` somente depois da execução real.
+
+| Checkpoint | Passos | Esperado | Resultado | Evidência ou pendência |
+| --- | --- | --- | --- | --- |
+| HTML sem JavaScript | Desativar JavaScript; abrir `/blog`, os três artigos, `/blog/temas/ia-comercial`, `/blog/temas/qualificacao-de-leads` e `/blog/autores/igor-marin`; seguir links entre home, hubs, artigo e autor | Título, conteúdo, breadcrumb, autoria, relacionados e CTA continuam legíveis e navegáveis; nenhum slug redireciona | BLOCKED | HTML bruto local passou estruturalmente; falta inspeção humana em preview |
+| Teclado e screen reader | Em desktop e mobile, navegar com Tab/Shift+Tab/Enter; ler landmark, headings, breadcrumb, sumário, share, links, imagens e CTA com screen reader | Ordem lógica, foco visível, nomes acessíveis, um H1, hierarquia coerente, alt adequado e nenhuma armadilha de foco/overflow | BLOCKED | Não executado por pessoa nesta sessão |
+| Comparação visual | Comparar `/blog`, três artigos e hubs em 1440 px e 390 px com `docs/design-system.md` e a baseline disponível; verificar quebras, espaçamento, cards, CTA e overflow | Aparência essencial preservada e comportamento mobile utilizável; diferenças intencionais registradas | BLOCKED | A baseline de 17/09 não cobre estas rotas editoriais novas em profundidade; exige capturas humanas adicionais |
+| Rich Results Test | Submeter cada artigo ou ao menos uma URL representativa de preview ao Rich Results Test | `Article` e `BreadcrumbList` lidos sem erro crítico e coerentes com a UI | BLOCKED | Sem preview público autorizado; teste local não substitui a ferramenta |
+| Schema Markup Validator | Validar os mesmos artigos/hubs e comparar canonical, pessoa autora, publisher, imagem e datas com a página | Grafo parseável, sem entidade contraditória ou valor ausente inventado | BLOCKED | Sem URL autorizada/evidência externa |
+| Open Graph | Abrir cada `/blog/{slug}/opengraph-image` e usar um preview social autorizado | Título, descrição e imagem 1200 × 630 corretos por artigo, sem cache antigo | BLOCKED | Metadata/rota passam em testes; consumo externo não verificado |
+| Feed e descoberta | Abrir `/sitemap.xml`, `/blog/rss.xml`, `/robots.txt`, `/llms.txt` e `/llms-full.txt`; conferir headers, três slugs e domínio | Respostas 200, conjuntos canônicos coerentes, sem draft/futuro e sem promessa de ranking/citação | PASS local | Smoke do build controlado e `discovery-outputs` passaram; publicação permanece não comprovada |
+| GA4 DebugView | Com propriedade/ID controlados e somente eventos simulados, abrir artigo, CTA e share sem enviar formulário; conferir `article_slug`, `content_cluster`, `content_intent`, `cta_id` e `cta_location`; revisar custom definitions | Eventos únicos, sem PII e dimensões disponíveis no escopo Evento | BLOCKED | Sem acesso ao GA4; nenhuma custom definition foi confirmada |
+| Search Console | Após deploy autorizado, exportar baseline por página/query e verificar `/sitemap.xml` na propriedade correta | Baseline datado e sitemap processado/estado registrado; nenhuma conclusão de ranking antes dos dados | BLOCKED | Sem acesso e sem deploy autorizado |
+| Política de crawlers | O owner decide separadamente search/fetch iniciado pelo usuário e uso de conteúdo para treinamento; registrar decisão e agentes afetados antes de editar `robots.ts` | Decisão explícita, impacto descrito sem promessa de ranking/citação e diff deliberado ou preservação consciente | BLOCKED | Nenhuma decisão fornecida; `robots.ts` preservado |
+| Correlação comercial | Em ambiente futuro explicitamente autorizado, verificar migration, Deskcomm/Supabase e relatório sem repetir operação incerta | Mesmo `leadCaptureId`, first/last editorial preservados e resultados comerciais confirmados pelo contrato da fase 3 | BLOCKED / adiado | Apenas mocks e PGlite foram usados; nenhum lead, e-mail ou agenda real é autorizado por este checklist |
+
+### Dados permitidos no UAT
+
+- IDs editoriais controlados e URLs públicas de conteúdo
+- Eventos simulados sem nome, e-mail, telefone, mensagem ou click ID
+- Exportações de Search Console somente leitura, armazenadas fora do Git quando
+  contiverem informação restrita
+
+O UAT não autoriza preencher ou enviar o fluxo de demo, disparar e-mail, reservar
+agenda, aplicar migration, alterar Vercel, publicar canais, fazer push ou merge.
+
 ## Operações que não ocorreram
 
 Nenhum lead, e-mail, agendamento, webhook, migration externa, publicação em canal
