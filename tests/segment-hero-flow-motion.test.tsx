@@ -1,25 +1,28 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SegmentHeroFlow } from "@/components/SegmentHeroFlow";
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const original = await importOriginal<typeof import("framer-motion")>();
-  return { ...original, useReducedMotion: () => true };
+afterEach(() => {
+  vi.useRealTimers();
+  cleanup();
 });
 
-afterEach(cleanup);
-
-describe("segment hero reduced motion", () => {
-  it("lets the visitor explicitly play the full flow", () => {
+describe("segment hero motion", () => {
+  it("autoplays and loops without playback controls", () => {
+    vi.useFakeTimers();
     render(<SegmentHeroFlow variant="clinicas" />);
 
-    const play = screen.getByRole("button", { name: "Ver animação" });
-    expect(play).toBeTruthy();
-
-    fireEvent.click(play);
-
+    const flow = screen.getByTestId("segment-hero-flow");
+    expect(flow.getAttribute("data-flow-step")).toBe("0");
     expect(screen.queryByRole("button", { name: "Ver animação" })).toBeNull();
-    expect(screen.getByText("Oi! Gostaria de agendar uma consulta inicial. Tem horário esta semana?")).toBeTruthy();
+
+    for (const duration of [1450, 1550, 1450, 1650, 1450, 1550]) {
+      act(() => vi.advanceTimersByTime(duration));
+    }
+    expect(flow.getAttribute("data-flow-step")).toBe("6");
+
+    act(() => vi.advanceTimersByTime(2600));
+    expect(flow.getAttribute("data-flow-step")).toBe("0");
   });
 });

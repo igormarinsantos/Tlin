@@ -1,18 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, MessageCircle, Play, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, MessageCircle, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { SegmentHeroFlowKey } from "@/lib/dictionaries/segmentHeroFlows";
 import { TlinCard } from "@/components/ui/tlin";
 
 const STEP_DURATIONS = [1450, 1550, 1450, 1650, 1450, 1550, 2600] as const;
 const FINAL_STEP = STEP_DURATIONS.length - 1;
-const subscribeToHydration = () => () => undefined;
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
 const ease = [0.22, 1, 0.36, 1] as const;
 
 type Flow = ReturnType<typeof useSegmentFlow>;
@@ -181,36 +178,23 @@ function useSegmentFlow(variant: SegmentHeroFlowKey) {
 
 export function SegmentHeroFlow({ variant }: { variant: SegmentHeroFlowKey }) {
   const flow = useSegmentFlow(variant);
-  const shouldReduceMotion = useReducedMotion();
-  const hasMounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
-  const [motionOverride, setMotionOverride] = useState(false);
   const [step, setStep] = useState(0);
-  const motionEnabled = !shouldReduceMotion || motionOverride;
 
   useEffect(() => {
-    if (!hasMounted || !motionEnabled) return;
     const timeout = window.setTimeout(() => setStep((current) => (current >= FINAL_STEP ? 0 : current + 1)), STEP_DURATIONS[step]);
     return () => window.clearTimeout(timeout);
-  }, [hasMounted, motionEnabled, step]);
-
-  const effectiveStep = hasMounted && !motionEnabled ? FINAL_STEP : step;
+  }, [step]);
 
   return (
-    <div data-testid="segment-hero-flow" className="relative h-full w-full overflow-hidden rounded-[2rem] bg-gradient-to-br from-tlin-purple/45 via-white to-tlin-blue/45 p-px shadow-[0_24px_70px_rgba(82,66,120,0.10)]">
+    <div data-testid="segment-hero-flow" data-flow-step={step} className="relative h-full w-full">
       <p className="sr-only">{flow.summary}</p>
-      <div aria-hidden="true" className="relative h-full overflow-hidden rounded-[calc(2rem-1px)] bg-[#f8f6ff]">
+      <div aria-hidden="true" className="relative h-full w-full">
         <div className="pointer-events-none absolute -left-16 -top-20 size-64 rounded-full bg-tlin-purple/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-tlin-blue/15 blur-3xl" />
-        <motion.div animate={{ opacity: effectiveStep >= 3 ? 1 : 0.25, scaleX: effectiveStep >= 3 ? 1 : 0.4 }} transition={{ duration: 0.55, ease }} className="absolute bottom-[27%] left-[54%] right-[34%] z-0 h-px origin-left bg-gradient-to-r from-tlin-purple to-tlin-blue" />
-        <ConversationCard flow={flow} step={effectiveStep} />
-        <CrmResultCard flow={flow} step={effectiveStep} />
+        <motion.div animate={{ opacity: step >= 3 ? 1 : 0.25, scaleX: step >= 3 ? 1 : 0.4 }} transition={{ duration: 0.55, ease }} className="absolute bottom-[27%] left-[54%] right-[34%] z-0 h-px origin-left bg-gradient-to-r from-tlin-purple to-tlin-blue" />
+        <ConversationCard flow={flow} step={step} />
+        <CrmResultCard flow={flow} step={step} />
       </div>
-      {hasMounted && shouldReduceMotion && !motionOverride && (
-        <button type="button" onClick={() => { setStep(0); setMotionOverride(true); }} className="absolute right-4 top-4 z-40 flex items-center gap-1.5 rounded-full bg-tlin-ink px-3 py-2 text-[9px] font-bold text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tlin-purple focus-visible:ring-offset-2">
-          <Play className="size-3 fill-current" />
-          {flow.playLabel}
-        </button>
-      )}
     </div>
   );
 }

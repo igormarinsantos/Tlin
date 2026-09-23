@@ -18,7 +18,7 @@ export function isSegmentHeroVariant(variant: HeroVariant): variant is SegmentHe
 export function renderCampaignMotion(motion: CampaignMotion, variant: HeroVariant) {
   switch (motion) {
     case "segmentFlow":
-      return isSegmentHeroVariant(variant) ? <SegmentHeroFlow variant={variant} /> : null;
+      return isSegmentHeroVariant(variant) ? <SegmentHeroFlow key={variant} variant={variant} /> : null;
     case "whatsapp":
       return <WhatsAppQualifyAnimation />;
     case "sales":
