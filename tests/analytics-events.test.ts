@@ -19,6 +19,31 @@ describe("analytics and attribution", () => {
   it("strips contact fields and query strings from analytics", () => {
     expect(cleanAnalyticsParams({ email: "ana@example.test", phone: "11999999999", page_location: "https://tlin.ia.br/demo?email=ana@example.test#secret", last_utm_campaign: "ana@example.test", lead_step: 4 })).toEqual({ page_location: "https://tlin.ia.br/demo", last_utm_campaign: "[redacted]", lead_step: 4 });
   });
+  it("allows only controlled editorial analytics dimensions", () => {
+    expect(cleanAnalyticsParams({
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      content_intent: "informational",
+      content_group: "editorial",
+      cta_id: "cta:demo",
+      cta_location: "article-end",
+      method: "whatsapp",
+      content_type: "article",
+      item_id: "agentes-de-ia-no-whatsapp-para-vendas",
+      title: "Título livre com ana@example.test",
+      query: "telefone 11999999999",
+    })).toEqual({
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      content_intent: "informational",
+      content_group: "editorial",
+      cta_id: "cta:demo",
+      cta_location: "article-end",
+      method: "whatsapp",
+      content_type: "article",
+      item_id: "agentes-de-ia-no-whatsapp-para-vendas",
+    });
+  });
   it("queues early events for exactly one configured owner", () => {
     window.dataLayer = [];
     vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "ga4");
