@@ -130,6 +130,7 @@ describe("editorial production tracer", () => {
     expect(analytics.track).toHaveBeenCalledWith("article_cta_click", {
       article_slug: article.slug,
       content_cluster: article.clusterId,
+      content_group: "editorial",
       content_intent: article.intent,
       cta_id: article.cta.id,
       cta_source: "editorial_article",
