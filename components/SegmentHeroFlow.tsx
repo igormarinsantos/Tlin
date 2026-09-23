@@ -32,7 +32,7 @@ function TypingDots({ isAi }: { isAi: boolean }) {
   return (
     <span className="flex h-3 items-center gap-1">
       {[0, 0.2, 0.4].map((delay) => (
-        <motion.span key={delay} animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, delay, repeat: Infinity, times: [0, 0.5, 1] }} className={`size-1.5 rounded-full ${isAi ? "bg-zinc-950" : "bg-tlin-purple"}`} />
+        <motion.span key={delay} animate={{ y: [0, -3, 0], opacity: [0.45, 1, 0.45] }} transition={{ duration: 0.55, delay, repeat: Infinity, repeatDelay: 0.45, ease: "easeInOut" }} className={`size-1.5 rounded-full ${isAi ? "bg-zinc-950" : "bg-tlin-purple"}`} />
       ))}
     </span>
   );
