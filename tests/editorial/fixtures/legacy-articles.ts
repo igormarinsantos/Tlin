@@ -1,5 +1,3 @@
-import { absoluteUrl } from "@/lib/siteConfig";
-
 type LegacyArticleFixture = {
   slug: string;
   title: string;
@@ -27,11 +25,13 @@ type LegacyArticleFixture = {
   };
 };
 
+const LEGACY_SITE_URL = "https://tlin.ia.br";
+
 function fixture(
   article: Omit<LegacyArticleFixture, "surfaces" | "migration">,
 ): LegacyArticleFixture {
   const route = `/blog/${article.slug}`;
-  const canonical = absoluteUrl(route);
+  const canonical = `${LEGACY_SITE_URL}${route}`;
 
   return {
     ...article,
