@@ -53,6 +53,17 @@ function isSafeLink(value: unknown): value is string {
   return isSafeInternalUrl(value) || isSafeHttpsUrl(value);
 }
 
+function isResolvableInternalUrl(value: string) {
+  const knownPaths = new Set<string>([
+    "/blog",
+    ...Object.values(editorialClusters).flatMap((cluster) => [
+      cluster.hubPath,
+      cluster.intentOwner,
+    ]),
+  ]);
+  return knownPaths.has(value);
+}
+
 export function validateEditorialArticles(
   articles: readonly EditorialArticle[],
   options: EditorialValidationOptions = {},
@@ -106,6 +117,21 @@ function validateReferences(
   }
   if (article.clusterId && !editorialClusters[article.clusterId as keyof typeof editorialClusters]) {
     add(article, "cluster.unknown", "clusterId", `Cluster inexistente: ${article.clusterId}`);
+  }
+  const cluster = article.clusterId
+    ? editorialClusters[article.clusterId as keyof typeof editorialClusters]
+    : undefined;
+  if (
+    article.intent &&
+    cluster &&
+    !cluster.allowedIntents.some((allowedIntent) => allowedIntent === article.intent)
+  ) {
+    add(
+      article,
+      "intent.cluster",
+      "intent",
+      `A intenção ${article.intent} não pertence ao território do cluster ${cluster.id}.`,
+    );
   }
 }
 
@@ -172,11 +198,19 @@ function validateLinksAndSources(
   article.internalLinks?.forEach((link, index) => {
     if (!isSafeInternalUrl(link.href)) {
       add(article, "internalLink.url", `internalLinks.${index}.href`, "Links internos devem usar paths absolutos locais.");
+    } else if (!isResolvableInternalUrl(link.href)) {
+      add(article, "internalLink.unresolved", `internalLinks.${index}.href`, "O link interno deve apontar para uma rota editorial ou comercial registrada.");
     }
   });
 
   if (article.cta && !isSafeLink(article.cta.href)) {
     add(article, "cta.url", "cta.href", "O CTA deve usar um path interno ou HTTPS seguro.");
+  } else if (
+    article.cta &&
+    isSafeInternalUrl(article.cta.href) &&
+    !isResolvableInternalUrl(article.cta.href)
+  ) {
+    add(article, "cta.unresolved", "cta.href", "O CTA interno deve apontar para uma rota registrada.");
   }
 }
 
