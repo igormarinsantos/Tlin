@@ -186,12 +186,14 @@ describe("editorial production tracer", () => {
     const response = getRss();
     const xml = await response.text();
 
-    expect(editorialSitemapEntries).toEqual([
-      expect.objectContaining({
-        url: canonical,
-        lastModified: new Date(article.modifiedAt),
-      }),
-    ]);
+    expect(editorialSitemapEntries).toEqual(
+      published.map((candidate) =>
+        expect.objectContaining({
+          url: absoluteUrl(`/blog/${candidate.slug}`),
+          lastModified: new Date(candidate.modifiedAt),
+        }),
+      ),
+    );
     expect(
       sitemapEntries
         .filter((entry) => entry.url.startsWith(`${absoluteUrl("/blog")}/`))
