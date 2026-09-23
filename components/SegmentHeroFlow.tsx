@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, MessageCircle, Sparkles } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { SegmentHeroFlowKey } from "@/lib/dictionaries/segmentHeroFlows";
 import { TlinCard } from "@/components/ui/tlin";
@@ -19,7 +19,6 @@ function ContactAvatar({ flow, size = "md" }: { flow: Flow; size?: "sm" | "md" }
   return (
     <span className={`relative block shrink-0 ${size === "sm" ? "size-7" : "size-[38px]"}`}>
       <Image src={flow.contact.avatar} alt="" width={pixels} height={pixels} className="h-full w-full rounded-full object-cover ring-2 ring-white" />
-      <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-white bg-[#25D366]" />
     </span>
   );
 }
@@ -56,9 +55,9 @@ function ConversationCard({ flow, step }: { flow: Flow; step: number }) {
             <p className="truncate text-[8px] font-semibold text-[#24a957] md:text-[9px]">{flow.contact.status}</p>
           </div>
         </div>
-        <span className="flex shrink-0 items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-1 text-[7px] font-bold text-[#168a43] md:px-2.5 md:text-[8px]">
-          <MessageCircle className="size-2.5" />
-          WhatsApp
+        <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#f2edff] px-3 py-1.5 text-[8px] font-bold text-[#7254c8] md:px-3.5 md:text-[9px]">
+          <Sparkles className="size-2.5" />
+          {flow.conversationLabel}
         </span>
       </div>
 

@@ -28,7 +28,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
   clinicas: {
     contact: { name: "Ana Paula", avatar: "/lotties/avatars/1_avatar.webp", status: "online agora" },
     contactLabel: "Paciente",
-    conversationLabel: "Novo contato recebido",
+    conversationLabel: "Novo paciente",
     aiLabel: "IA em ação",
     crmLabel: "CRM Tlin",
     identifyingLabel: "Contexto identificado pela IA",
@@ -59,7 +59,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
   escolas: {
     contact: { name: "Carla Freitas", avatar: "/lotties/avatars/6_avatar.webp", status: "online agora" },
     contactLabel: "Família",
-    conversationLabel: "Nova família recebida",
+    conversationLabel: "Novo aluno",
     aiLabel: "IA em ação",
     crmLabel: "CRM Tlin",
     identifyingLabel: "Contexto identificado pela IA",
@@ -90,7 +90,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
   assessorias: {
     contact: { name: "Marcos Oliveira", avatar: "/lotties/avatars/8_avatar.webp", status: "online agora" },
     contactLabel: "Lead",
-    conversationLabel: "Novo lead recebido",
+    conversationLabel: "Novo lead",
     aiLabel: "IA em ação",
     crmLabel: "CRM Tlin",
     identifyingLabel: "Contexto identificado pela IA",
@@ -121,7 +121,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
   advocacia: {
     contact: { name: "Ricardo Mendes", avatar: "/lotties/avatars/2_avatar.webp", status: "online agora" },
     contactLabel: "Contato",
-    conversationLabel: "Novo contato recebido",
+    conversationLabel: "Novo contato",
     aiLabel: "IA em ação",
     crmLabel: "CRM Tlin",
     identifyingLabel: "Contexto identificado pela IA",
@@ -155,7 +155,7 @@ export const enSegmentHeroFlows: SegmentHeroFlows = {
   clinicas: {
     ...ptSegmentHeroFlows.clinicas,
     contact: { ...ptSegmentHeroFlows.clinicas.contact, status: "online now" },
-    contactLabel: "Patient", conversationLabel: "New contact received", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
+    contactLabel: "Patient", conversationLabel: "New patient", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
     summary: "AI assists a patient, identifies their preferred time, records the context in the CRM, and books the appointment",
     messages: [{ from: "contact", text: "Hi! I'd like to book an initial appointment. Is there a time this week?" }, { from: "ai", text: "Of course! Do you prefer morning or afternoon?" }, { from: "contact", text: "Afternoon, if possible" }, { from: "ai", text: "Great. I found Thursday at 3 PM. May I book it?" }],
     fields: [{ label: "Interest", value: "Initial appointment" }, { label: "Preference", value: "Afternoon" }, { label: "Source", value: "Instagram" }, { label: "Next step", value: "Booking" }],
@@ -166,7 +166,7 @@ export const enSegmentHeroFlows: SegmentHeroFlows = {
   escolas: {
     ...ptSegmentHeroFlows.escolas,
     contact: { ...ptSegmentHeroFlows.escolas.contact, status: "online now" },
-    contactLabel: "Family", conversationLabel: "New family received", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
+    contactLabel: "Family", conversationLabel: "New student", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
     summary: "AI assists a family, identifies enrollment interest, records the details in the CRM, and books a visit",
     messages: [{ from: "contact", text: "Hi! I'd like to learn more about 6th grade enrollment" }, { from: "ai", text: "Of course! Which period do you need, and would you like to visit?" }, { from: "contact", text: "Morning. Could we visit this week?" }, { from: "ai", text: "Yes. I have Wednesday at 10 AM. May I book the visit?" }],
     fields: [{ label: "Grade", value: "6th grade" }, { label: "Period", value: "Morning" }, { label: "Interest", value: "Visit the school" }, { label: "Next step", value: "Visit" }],
@@ -177,7 +177,7 @@ export const enSegmentHeroFlows: SegmentHeroFlows = {
   assessorias: {
     ...ptSegmentHeroFlows.assessorias,
     contact: { ...ptSegmentHeroFlows.assessorias.contact, status: "online now" },
-    contactLabel: "Lead", conversationLabel: "New lead received", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
+    contactLabel: "Lead", conversationLabel: "New lead", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
     summary: "AI assists a lead, understands their sales goal, organizes the context in the CRM, and books a diagnostic call",
     messages: [{ from: "contact", text: "I saw the ad and want to know if you can help my company" }, { from: "ai", text: "What is the company's main goal today?" }, { from: "contact", text: "Organize sales. We are a team of 8" }, { from: "ai", text: "Got it. I have tomorrow at 2 PM for a diagnostic call. Shall I book it?" }],
     fields: [{ label: "Goal", value: "Organize sales" }, { label: "Team", value: "8 people" }, { label: "Source", value: "Campaign" }, { label: "Next step", value: "Diagnostic" }],
@@ -188,7 +188,7 @@ export const enSegmentHeroFlows: SegmentHeroFlows = {
   advocacia: {
     ...ptSegmentHeroFlows.advocacia,
     contact: { ...ptSegmentHeroFlows.advocacia.contact, status: "online now" },
-    contactLabel: "Contact", conversationLabel: "New contact received", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
+    contactLabel: "Contact", conversationLabel: "New inquiry", aiLabel: "AI in action", crmLabel: "Tlin CRM", identifyingLabel: "Context identified by AI", updatingLabel: "Updating stage...", updatedLabel: "Stage updated",
     summary: "AI welcomes the first contact, organizes the information in the CRM, and routes the conversation to the responsible team",
     messages: [{ from: "contact", text: "Hi, I need to speak with a lawyer about a contract" }, { from: "ai", text: "Is the contract business or personal? Is there a deadline?" }, { from: "contact", text: "Business. I need the document reviewed by Friday" }, { from: "ai", text: "Context recorded. I'll route this to the responsible team" }],
     fields: [{ label: "Area provided", value: "Contracts" }, { label: "Context", value: "Business" }, { label: "Deadline provided", value: "Friday" }, { label: "Next step", value: "Routing" }],
@@ -202,7 +202,7 @@ export const esSegmentHeroFlows: SegmentHeroFlows = {
   clinicas: {
     ...ptSegmentHeroFlows.clinicas,
     contact: { ...ptSegmentHeroFlows.clinicas.contact, status: "en línea ahora" },
-    contactLabel: "Paciente", conversationLabel: "Nuevo contacto recibido", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
+    contactLabel: "Paciente", conversationLabel: "Nuevo paciente", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
     summary: "La IA atiende a un paciente, identifica su horario preferido, registra el contexto en el CRM y agenda la consulta",
     messages: [{ from: "contact", text: "¡Hola! Quisiera agendar una consulta inicial. ¿Hay horario esta semana?" }, { from: "ai", text: "¡Claro! ¿Prefieres por la mañana o por la tarde?" }, { from: "contact", text: "Por la tarde, si es posible" }, { from: "ai", text: "Perfecto. Encontré el jueves a las 15 h. ¿Puedo reservar?" }],
     fields: [{ label: "Interés", value: "Consulta inicial" }, { label: "Preferencia", value: "Por la tarde" }, { label: "Origen", value: "Instagram" }, { label: "Próximo paso", value: "Agenda" }],
@@ -213,7 +213,7 @@ export const esSegmentHeroFlows: SegmentHeroFlows = {
   escolas: {
     ...ptSegmentHeroFlows.escolas,
     contact: { ...ptSegmentHeroFlows.escolas.contact, status: "en línea ahora" },
-    contactLabel: "Familia", conversationLabel: "Nueva familia recibida", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
+    contactLabel: "Familia", conversationLabel: "Nuevo alumno", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
     summary: "La IA atiende a una familia, identifica el interés de matrícula, registra los datos en el CRM y agenda una visita",
     messages: [{ from: "contact", text: "¡Hola! Quisiera saber más sobre matrículas para 6º grado" }, { from: "ai", text: "¡Claro! ¿Qué turno buscas y te gustaría conocer la escuela?" }, { from: "contact", text: "Por la mañana. ¿Podemos visitar esta semana?" }, { from: "ai", text: "Sí. Tengo el miércoles a las 10 h. ¿Puedo agendar la visita?" }],
     fields: [{ label: "Grado", value: "6º grado" }, { label: "Turno", value: "Mañana" }, { label: "Interés", value: "Conocer la escuela" }, { label: "Próximo paso", value: "Visita" }],
@@ -224,7 +224,7 @@ export const esSegmentHeroFlows: SegmentHeroFlows = {
   assessorias: {
     ...ptSegmentHeroFlows.assessorias,
     contact: { ...ptSegmentHeroFlows.assessorias.contact, status: "en línea ahora" },
-    contactLabel: "Lead", conversationLabel: "Nuevo lead recibido", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
+    contactLabel: "Lead", conversationLabel: "Nuevo lead", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
     summary: "La IA atiende a un lead, entiende su objetivo comercial, organiza el contexto en el CRM y agenda un diagnóstico",
     messages: [{ from: "contact", text: "Vi el anuncio y quiero saber si pueden ayudar a mi empresa" }, { from: "ai", text: "¿Cuál es el principal objetivo de la empresa hoy?" }, { from: "contact", text: "Organizar ventas. Somos un equipo de 8" }, { from: "ai", text: "Entiendo. Tengo mañana a las 14 h para un diagnóstico. ¿Lo reservo?" }],
     fields: [{ label: "Objetivo", value: "Organizar ventas" }, { label: "Equipo", value: "8 personas" }, { label: "Origen", value: "Campaña" }, { label: "Próximo paso", value: "Diagnóstico" }],
@@ -235,7 +235,7 @@ export const esSegmentHeroFlows: SegmentHeroFlows = {
   advocacia: {
     ...ptSegmentHeroFlows.advocacia,
     contact: { ...ptSegmentHeroFlows.advocacia.contact, status: "en línea ahora" },
-    contactLabel: "Contacto", conversationLabel: "Nuevo contacto recibido", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
+    contactLabel: "Contacto", conversationLabel: "Nueva consulta", aiLabel: "IA en acción", crmLabel: "CRM Tlin", identifyingLabel: "Contexto identificado por la IA", updatingLabel: "Actualizando etapa...", updatedLabel: "Etapa actualizada",
     summary: "La IA recibe el primer contacto, organiza la información en el CRM y dirige la conversación al equipo responsable",
     messages: [{ from: "contact", text: "Hola, necesito hablar con un abogado sobre un contrato" }, { from: "ai", text: "¿El contrato es empresarial o personal? ¿Hay algún plazo?" }, { from: "contact", text: "Empresarial. Necesito revisar el documento antes del viernes" }, { from: "ai", text: "Contexto registrado. Lo dirigiré al equipo responsable" }],
     fields: [{ label: "Área informada", value: "Contratos" }, { label: "Contexto", value: "Empresarial" }, { label: "Plazo informado", value: "Viernes" }, { label: "Próximo paso", value: "Derivación" }],

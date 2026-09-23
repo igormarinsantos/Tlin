@@ -45,6 +45,15 @@ describe("segment hero CRM flows", () => {
     expect(new Set(segments.map((segment) => ptSegmentHeroFlows[segment].contact.name)).size).toBe(segments.length);
   });
 
+  it("uses a segment-specific lead state in the conversation header", () => {
+    expect(segments.map((segment) => ptSegmentHeroFlows[segment].conversationLabel)).toEqual([
+      "Novo paciente",
+      "Novo aluno",
+      "Novo lead",
+      "Novo contato",
+    ]);
+  });
+
   it("keeps the legal flow as intake and routing rather than legal advice", () => {
     const legal = ptSegmentHeroFlows.advocacia;
     const visibleCopy = JSON.stringify(legal).toLowerCase();
