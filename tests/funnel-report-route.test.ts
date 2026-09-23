@@ -26,3 +26,63 @@ it("returns aggregates without caching and makes outages explicit", async () => 
   expect(rpc).toHaveBeenCalledWith("read_funnel_report", { p_from: "2026-09-01", p_to: "2026-09-18" });
   rpc.mockRejectedValue(new Error("offline")); expect((await GET(request())).status).toBe(503);
 });
+
+it("returns only allowlisted campaign and editorial aggregates", async () => {
+  rpc.mockResolvedValue({
+    campaigns: [{
+      source: "google",
+      campaign: "ia-comercial",
+      leads: 4,
+      demos: 3,
+      qualified_demos: 2,
+      attended_demos: 1,
+      won: 1,
+      awaiting_qualification: 1,
+      email: "private@example.com",
+    }],
+    content: [{
+      touch: "first",
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      cta_id: "cta:demo",
+      leads: 4,
+      demos: 3,
+      qualified_demos: 2,
+      won: 1,
+      phone: "+5511999999999",
+      payload: { raw: true },
+    }],
+    pending_operations: 0,
+    unmatched_events: 0,
+    mapped_stages: 4,
+    individual_lead: { name: "Private person" },
+  });
+
+  const response = await GET(request());
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({
+    campaigns: [{
+      source: "google",
+      campaign: "ia-comercial",
+      leads: 4,
+      demos: 3,
+      qualified_demos: 2,
+      attended_demos: 1,
+      won: 1,
+      awaiting_qualification: 1,
+    }],
+    content: [{
+      touch: "first",
+      article_slug: "agentes-de-ia-no-whatsapp-para-vendas",
+      content_cluster: "cluster:ia-comercial",
+      cta_id: "cta:demo",
+      leads: 4,
+      demos: 3,
+      qualified_demos: 2,
+      won: 1,
+    }],
+    pending_operations: 0,
+    unmatched_events: 0,
+    mapped_stages: 4,
+  });
+});
