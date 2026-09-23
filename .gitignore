@@ -17,3 +17,4 @@ yarn-error.log*
 # Evolution API
 evolution-api/.env
 evolution-api/instances/
+.vercel
