@@ -81,4 +81,3 @@ que uma promessa está autorizada. Um build aprovado não substitui os gates hum
 Registre no PR: checks executados, revisores, data, evidências examinadas, pendências
 e decisão `aprovar`, `retornar a draft/review` ou `arquivar`. Não gere texto de
 aprovação automaticamente e não marque itens que não foram de fato verificados.
-

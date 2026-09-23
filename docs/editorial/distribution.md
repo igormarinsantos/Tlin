@@ -72,4 +72,3 @@ limites de taxa, credenciais fora do repositório, preview, logs sem dados pesso
 cancelamento e reconciliação. A presença desta interface documental não autoriza
 automação nem cria requisito para CMS headless. A automação só reabre em outro
 plano com canal, permissão, proprietário e risco confirmados.
-

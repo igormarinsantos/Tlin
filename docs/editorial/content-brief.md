@@ -65,4 +65,3 @@ texto genérico apenas para atravessar o gate.
 - [ ] `review`: pronto para julgamento factual, comercial e anti-plágio
 - [ ] `published`: somente após evidências e aprovações completas
 - [ ] `archived`: removido da query pública com decisão registrada
-

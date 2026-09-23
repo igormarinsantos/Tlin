@@ -117,4 +117,3 @@ ranking ou citação.
 - `content-brief.md`: intenção, evidências, contribuição, revisão e medição.
 - `quality-checklist.md`: gates técnicos e aprovações humanas antes de publicar.
 - `distribution.md`: registro manual de canais, URLs, UTMs e observação.
-
