@@ -241,6 +241,83 @@ describe("editorial discovery outputs", () => {
     );
     expect(existsSync("public/llms.txt")).toBe(false);
   });
+
+  it("expands the same published LLM projection with approved structured content", async () => {
+    const llmsModule = await import("@/lib/editorial/llms");
+    expect(llmsModule.createLlmsFull).toBeTypeOf("function");
+    if (!llmsModule.createLlmsFull) return;
+
+    const published = getPublishedArticles(now);
+    const adversarial = {
+      ...published[0],
+      id: "article:adversarial-full",
+      slug: "adversarial-full",
+      title: "Projeção expandida segura",
+      blocks: [
+        { type: "heading", level: 2, id: "adversarial", text: "Seção <script>alert(1)</script>" },
+        { type: "paragraph", text: "Linha um\n# heading injetado com javascript:alert(1)" },
+        { type: "list", items: ["Item <b>um</b>", "Item dois"] },
+        { type: "quote", text: "Citação </textarea><script>alert(2)</script>", attribution: "Fonte segura" },
+        { type: "image", src: "/test.png", alt: "Imagem <svg onload=alert(3)>", decorative: false },
+      ],
+      sources: [
+        ...published[0].sources,
+        {
+          id: "source:unsafe-protocol",
+          title: "Fonte insegura",
+          url: "javascript:alert(4)",
+          accessedAt: "2026-09-23T12:00:00-03:00",
+        },
+      ],
+    } as EditorialArticle;
+    const candidates = [
+      adversarial,
+      { ...published[0], id: "article:draft-full", slug: "draft-full", status: "draft" },
+      {
+        ...published[0],
+        id: "article:future-full",
+        slug: "future-full",
+        publishedAt: "2026-10-01T12:00:00-03:00",
+        modifiedAt: "2026-10-01T12:00:00-03:00",
+      },
+    ] as EditorialArticle[];
+    const safeArticles = getPublishedArticles(now, candidates);
+    const safeClusters = getPublishedClusters(now, candidates);
+    const shortOutput = llmsModule.createLlmsIndex(safeArticles, safeClusters);
+    const fullOutput = llmsModule.createLlmsFull(safeArticles, safeClusters, editorialAuthors);
+
+    expect(editorialUrls(fullOutput)).toEqual(editorialUrls(shortOutput));
+    expect(fullOutput).toContain(`- Publicado em: ${adversarial.publishedAt}`);
+    expect(fullOutput).toContain(`- Atualizado em: ${adversarial.modifiedAt}`);
+    expect(fullOutput).toContain(`- Autor: ${editorialAuthors[adversarial.authorId].name}`);
+    expect(fullOutput).toContain(published[0].sources[0].url);
+    expect(fullOutput).toContain("Seção &lt;script&gt;alert(1)&lt;/script&gt;");
+    expect(fullOutput).toContain("Imagem &lt;svg onload=alert(3)&gt;");
+    expect(fullOutput).not.toContain("<script>");
+    expect(fullOutput).not.toContain("javascript:");
+    expect(fullOutput).not.toContain("/blog/draft-full");
+    expect(fullOutput).not.toContain("/blog/future-full");
+  });
+
+  it("serves the expanded LLM projection as UTF-8 plain text without a static duplicate", async () => {
+    const routeModule = await import("@/app/llms-full.txt/route").catch(() => undefined);
+    const llmsModule = await import("@/lib/editorial/llms");
+
+    expect(routeModule?.GET).toBeTypeOf("function");
+    expect(llmsModule.createLlmsFull).toBeTypeOf("function");
+    if (!routeModule?.GET || !llmsModule.createLlmsFull) return;
+
+    const response = routeModule.GET();
+    expect(response.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
+    expect(await response.text()).toBe(
+      llmsModule.createLlmsFull(
+        getPublishedArticles(),
+        getPublishedClusters(),
+        editorialAuthors,
+      ),
+    );
+    expect(existsSync("public/llms-full.txt")).toBe(false);
+  });
 });
 
 function formatDate(value: string) {
@@ -249,4 +326,11 @@ function formatDate(value: string) {
     month: "long",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function editorialUrls(value: string) {
+  return value
+    .split("\n")
+    .filter((line) => line.startsWith("- URL: "))
+    .sort();
 }
