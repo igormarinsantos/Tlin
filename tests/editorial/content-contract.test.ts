@@ -102,6 +102,17 @@ describe("editorial content contract", () => {
     ).toEqual(expect.arrayContaining(["author.unknown", "cluster.unknown"]));
   });
 
+  it("rejects intents outside the cluster territory and unresolved internal routes", () => {
+    expect(
+      issueCodes([
+        publishedArticle({
+          intent: "conversion-support",
+          internalLinks: [{ href: "/rota-editorial-inexistente", label: "Rota inexistente" }],
+        }),
+      ]),
+    ).toEqual(expect.arrayContaining(["intent.cluster", "internalLink.unresolved"]));
+  });
+
   it("rejects unsafe external and internal URLs", () => {
     expect(
       issueCodes([

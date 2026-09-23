@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BLOG_ARTICLES } from "@/lib/blog";
 import { serializeRssFeed } from "@/lib/editorial/feed";
+import { editorialArticles } from "@/lib/editorial/registry";
 import {
   createArticleStructuredData,
   serializeStructuredData,
@@ -117,6 +118,45 @@ describe("legacy article migration parity", () => {
         migrated: "pending",
       },
     ]);
+  });
+
+  it("migrates the model evaluation article without changing its public contract", () => {
+    const legacy = legacyArticles.find(
+      (article) => article.slug === "como-avaliar-novos-modelos-de-ia-para-negocios",
+    );
+    const migrated = editorialArticles.find((article) => article.slug === legacy?.slug);
+
+    expect(legacy).toBeDefined();
+    expect(migrated).toMatchObject({
+      id: `article:${legacy?.slug}`,
+      slug: legacy?.slug,
+      title: legacy?.title,
+      summary: legacy?.description,
+      status: "published",
+      publishedAt: "2026-07-18T12:00:00-03:00",
+      modifiedAt: "2026-07-18T12:00:00-03:00",
+      readingTimeMinutes: 5,
+      intent: "informational",
+      clusterId: "cluster:ia-comercial",
+      featured: true,
+    });
+    expect(migrated?.blocks).toEqual([
+      { type: "heading", level: 2, id: "novidade-nao-e-necessariamente-vantagem", text: legacy?.content[0].heading },
+      ...legacy!.content[0].paragraphs.map((text) => ({ type: "paragraph", text })),
+      { type: "heading", level: 2, id: "um-filtro-de-quatro-perguntas", text: legacy?.content[1].heading },
+      ...legacy!.content[1].paragraphs.map((text) => ({ type: "paragraph", text })),
+    ]);
+    expect(migrated?.sources).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          url: "https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/",
+        }),
+      ]),
+    );
+    expect(migrated?.review).toMatchObject({
+      factual: { status: "approved", approvedBy: "author:igor-marin" },
+      commercial: { status: "approved", approvedBy: "author:igor-marin" },
+    });
   });
 });
 
