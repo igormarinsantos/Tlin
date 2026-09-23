@@ -25,7 +25,7 @@ function ContactAvatar({ flow, size = "md" }: { flow: Flow; size?: "sm" | "md" }
 
 function TlinAvatar() {
   return (
-    <Image src="/TlinIA.svg" alt="" width={24} height={24} className="size-6 shrink-0 object-contain" />
+    <Image src="/TlinIA.svg" alt="" width={20} height={20} className="size-5 shrink-0 object-contain" />
   );
 }
 
