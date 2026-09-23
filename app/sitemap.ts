@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { ENCYCLOPEDIA_DATA } from "@/lib/encyclopediaData";
-import { BLOG_ARTICLES } from "@/lib/blog";
+import { getPublishedArticles } from "@/lib/editorial/queries";
 import { absoluteUrl } from "@/lib/siteConfig";
 
 const lastModified = new Date();
@@ -12,9 +12,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
-  const blogArticles = BLOG_ARTICLES.map((article) => ({
+  const blogArticles = getPublishedArticles().map((article) => ({
     url: absoluteUrl(`/blog/${article.slug}`),
-    lastModified: new Date(`${article.publishedAt}T12:00:00`),
+    lastModified: new Date(article.modifiedAt),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
