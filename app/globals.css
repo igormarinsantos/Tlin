@@ -427,11 +427,11 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .persona-trigger__flip {
-    transition: none;
+    transition-duration: 700ms;
   }
 
   .persona-trigger-wrap {
-    transition: none;
+    transition-duration: 220ms;
   }
 
   .persona-follow-up,
