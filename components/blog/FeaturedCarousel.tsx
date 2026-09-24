@@ -1,99 +1,175 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
 import { formatArticleDate, type EditorialArticleSummary } from "./ArticleCard";
 import { CATEGORY_VISUALS } from "./categoryVisuals";
-import { ArrowRightIcon } from "./icons";
 
 const AUTOPLAY_MS = 6000;
 
-// Carrossel de posts em destaque -- cada slide usa um gradiente por
-// categoria como "fundo" (o site nao tem fotografia pra capa de post, ver
-// categoryVisuals.ts). O texto fica dentro de um container branco por cima
-// do degrade (nao direto sobre ele com scrim escuro) -- sem setas de
-// navegacao manual, so autoplay + dots.
-export function FeaturedCarousel({ articles }: { articles: readonly EditorialArticleSummary[] }) {
+// O topo funciona como stories: indicadores segmentados acima da area visual
+// e troca automatica por slide ou arraste. Artigos sem capa aprovada preservam
+// o gradiente por categoria como fallback.
+export function FeaturedCarousel({
+  articles,
+}: {
+  articles: readonly EditorialArticleSummary[];
+}) {
   const [index, setIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const shouldReduceMotion = useReducedMotion();
+
+  const showNext = () => {
+    setDirection(1);
+    setIndex((prev) => (prev + 1) % articles.length);
+  };
+
+  const showPrevious = () => {
+    setDirection(-1);
+    setIndex((prev) => (prev - 1 + articles.length) % articles.length);
+  };
+
+  const showStory = (storyIndex: number) => {
+    if (storyIndex === index) return;
+    setDirection(storyIndex > index ? 1 : -1);
+    setIndex(storyIndex);
+  };
 
   useEffect(() => {
-    if (isPaused || articles.length < 2) return;
-    const timer = setInterval(() => {
+    if (articles.length < 2) return;
+    const timer = setTimeout(() => {
+      setDirection(1);
       setIndex((prev) => (prev + 1) % articles.length);
     }, AUTOPLAY_MS);
-    return () => clearInterval(timer);
-  }, [isPaused, articles.length]);
+    return () => clearTimeout(timer);
+  }, [index, articles.length]);
 
   if (articles.length === 0) return null;
 
   const article = articles[index];
   const visual = CATEGORY_VISUALS[article.clusterId];
+  const slideVariants: Variants = {
+    enter: (slideDirection: number) => ({
+      x: shouldReduceMotion ? "0%" : slideDirection > 0 ? "100%" : "-100%",
+      opacity: shouldReduceMotion ? 1 : 0.82,
+      scale: shouldReduceMotion ? 1 : 0.985,
+    }),
+    center: { x: "0%", opacity: 1, scale: 1 },
+    exit: (slideDirection: number) => ({
+      x: shouldReduceMotion ? "0%" : slideDirection > 0 ? "-32%" : "32%",
+      opacity: shouldReduceMotion ? 1 : 0,
+      scale: shouldReduceMotion ? 1 : 0.985,
+    }),
+  };
 
   return (
-    <div
-      className="relative w-full h-[420px] md:h-[480px] rounded-3xl overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={article.slug}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="absolute inset-0"
-        >
-          <div
-            className="absolute inset-0"
-            style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
-          />
-          <div className="absolute -right-20 -top-20 w-[400px] h-[400px] rounded-full bg-white/10 blur-[100px]" />
-
-          <div className="relative h-full flex items-end p-4 md:p-8">
-            <div className="w-full max-w-xl bg-white rounded-2xl md:rounded-3xl p-5 md:p-8">
-              <span
-                className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4"
-                style={{ backgroundColor: `${visual.from}1a`, color: visual.badgeText }}
-              >
-                {article.topic}
-              </span>
-              <h2 className="text-xl md:text-3xl font-black tracking-tight text-[#0c0d0d] text-balance">
-                {article.title}
-              </h2>
-              <p className="mt-3 text-sm md:text-base text-zinc-500 leading-relaxed line-clamp-2">
-                {article.summary}
-              </p>
-              <div className="mt-4 flex items-center gap-4 text-xs md:text-sm text-zinc-400">
-                <span>{formatArticleDate(article.publishedAt)}</span>
-                <span>{article.readingTimeMinutes} min de leitura</span>
-              </div>
-              <Link
-                href={`/blog/${article.slug}`}
-                className="mt-5 flex items-center gap-1.5 w-fit font-bold text-[#0c0d0d] transition-colors hover:text-[#8659e7]"
-              >
-                Ler artigo
-                <ArrowRightIcon className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
+    <div>
       {articles.length > 1 && (
-        <div className="absolute top-4 right-4 md:top-6 md:right-6 flex gap-2">
-          {articles.map((a, i) => (
+        <div
+          className="mb-3 flex gap-1.5 px-1 md:mb-4 md:px-2"
+          role="group"
+          aria-label="Navegação dos destaques"
+        >
+          {articles.map((story, storyIndex) => (
             <button
-              key={a.slug}
-              aria-label={`Ir para o post ${i + 1}`}
-              onClick={() => setIndex(i)}
-              className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/60"}`}
-            />
+              key={story.slug}
+              type="button"
+              aria-label={`Mostrar destaque ${storyIndex + 1}: ${story.title}`}
+              aria-current={storyIndex === index ? "true" : undefined}
+              onClick={() => showStory(storyIndex)}
+              className="group/story flex h-5 flex-1 items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#8659e7] focus-visible:ring-offset-2"
+            >
+              <span
+                className={`h-1.5 w-full rounded-full transition-colors duration-300 ${
+                  storyIndex === index
+                    ? "bg-gradient-to-r from-[#8659e7] to-[#38E3FF]"
+                    : "bg-zinc-200 group-hover/story:bg-zinc-300"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}
+
+      <div className="relative h-[440px] w-full overflow-hidden rounded-[2.5rem] md:h-[500px] md:rounded-[3rem]">
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.div
+            key={article.slug}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              duration: shouldReduceMotion ? 0 : 0.72,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            drag={articles.length > 1 && !shouldReduceMotion ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -60 || info.velocity.x < -500) {
+                showNext();
+              } else if (info.offset.x > 60 || info.velocity.x > 500) {
+                showPrevious();
+              }
+            }}
+            className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
+          >
+            {article.heroImage ? (
+              <>
+                <Image
+                  src={article.heroImage.src}
+                  alt={article.heroImage.decorative ? "" : article.heroImage.alt}
+                  fill
+                  priority={index === 0}
+                  sizes="(min-width: 768px) 72rem, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+              </>
+            ) : (
+              <>
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
+                />
+                <div className="absolute -right-20 -top-20 h-[400px] w-[400px] rounded-full bg-white/10 blur-[100px]" />
+              </>
+            )}
+
+            <div className="relative flex h-full items-end p-4 md:p-8">
+              <div className="w-full max-w-xl rounded-[2rem] bg-white p-5 md:rounded-[2.5rem] md:p-8">
+                <span
+                  className="mb-4 inline-block rounded-full px-3 py-1 text-xs font-bold"
+                  style={{ backgroundColor: `${visual.from}1a`, color: visual.badgeText }}
+                >
+                  {article.topic}
+                </span>
+                <h2 className="text-balance text-xl font-black tracking-tight text-[#0c0d0d] md:text-3xl">
+                  {article.title}
+                </h2>
+                <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-zinc-500 md:text-base">
+                  {article.summary}
+                </p>
+                <div className="mt-4 flex items-center gap-4 text-xs text-zinc-400 md:text-sm">
+                  <span>{formatArticleDate(article.publishedAt)}</span>
+                  <span>{article.readingTimeMinutes} min de leitura</span>
+                </div>
+                <Link
+                  href={`/blog/${article.slug}`}
+                  className="mt-5 inline-flex min-h-10 w-fit items-center justify-center rounded-xl bg-[#0c0d0d] px-5 py-2 font-bold text-white outline-none transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#242525] focus-visible:ring-4 focus-visible:ring-[#0c0d0d]/20"
+                >
+                  Ler artigo
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
     </div>
   );
 }

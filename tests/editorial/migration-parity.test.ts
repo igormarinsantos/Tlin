@@ -6,8 +6,10 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 import BlogHomePage from "@/app/blog/page";
+import { ArticleCard } from "@/components/blog/ArticleCard";
 import { BlogSearchAndGrid } from "@/components/blog/BlogSearchAndGrid";
 import { serializeRssFeed } from "@/lib/editorial/feed";
+import { getPublishedArticles } from "@/lib/editorial/queries";
 import { editorialArticles } from "@/lib/editorial/registry";
 import {
   createArticleStructuredData,
@@ -71,7 +73,7 @@ describe("legacy article migration parity", () => {
   });
 
   it("matches current titles, dates, canonical surfaces and essential content", () => {
-    const current = editorialArticles.map((article) => ({
+    const current = getPublishedArticles(undefined, editorialArticles).map((article) => ({
       slug: article.slug,
       title: article.title,
       description: article.summary,
@@ -162,8 +164,10 @@ describe("legacy article migration parity", () => {
     });
   });
 
-  it("closes the canonical registry with each legacy article exactly once", () => {
-    const registeredSlugs = editorialArticles.map((article) => article.slug);
+  it("keeps each legacy article exactly once among the published registry entries", () => {
+    const registeredSlugs = getPublishedArticles(undefined, editorialArticles).map(
+      (article) => article.slug,
+    );
     const legacySlugs = legacyArticles.map((article) => article.slug);
 
     expect(registeredSlugs).toEqual(legacySlugs);
@@ -209,8 +213,59 @@ describe("legacy article migration parity", () => {
     }
 
     expect(html).toContain("rounded-3xl");
+    expect(html).toContain("Navegação dos destaques");
+    expect(html).toContain("Mostrar destaque 1:");
+    expect(html).toContain('aria-label="Filtros do blog"');
+    expect(html).toContain('aria-label="Filtrar por tema"');
+    expect(html).toContain("Todos");
+    expect(html).toContain("rounded-[2.5rem]");
+    expect(html).toContain("aspect-video");
     expect(html).toContain("Resumir com IA");
     expect(html).toContain("https://chatgpt.com/?q=");
+    expect(html).toContain("grid-cols-2");
+    expect(html).toContain("bg-[#0c0d0d]");
+    expect(html).not.toContain("Compartilhar");
+
+    const articleHtml = renderToStaticMarkup(
+      await import("@/app/blog/[slug]/page").then(({ default: ArticlePage }) =>
+        ArticlePage({ params: Promise.resolve({ slug: legacyArticles[0].slug }) }),
+      ),
+    );
+    expect(articleHtml).toContain(`aria-label="Resumir “${legacyArticles[0].title}” com IA"`);
+    expect(articleHtml).toContain("from-[#B597FF]");
+    expect(articleHtml).toContain("to-[#38E3FF]");
+    expect(articleHtml).toContain("text-[#0c0d0d]");
+    expect(articleHtml).toContain("Compartilhar");
+    expect(articleHtml).toContain('aria-label="Compartilhar no WhatsApp"');
+    expect(articleHtml).toContain('aria-label="Compartilhar no LinkedIn"');
+    expect(articleHtml).toContain('aria-label="Compartilhar no X"');
+  });
+
+  it("renders a sourced hero image in cards while preserving the 16:9 media frame", () => {
+    const html = renderToStaticMarkup(
+      createElement(ArticleCard, {
+        article: {
+          id: "article:sourced-image",
+          slug: "sourced-image",
+          title: "Artigo com imagem editorial",
+          summary: "Resumo do conteúdo",
+          clusterId: "cluster:vendas-whatsapp",
+          topic: "Vendas no WhatsApp",
+          publishedAt: "2026-09-24T12:00:00-03:00",
+          readingTimeMinutes: 5,
+          featured: false,
+          heroImage: {
+            src: "https://images.unsplash.com/photo-example",
+            alt: "Pessoa usando um celular para trocar mensagens",
+            decorative: false,
+          },
+        },
+      }),
+    );
+
+    expect(html).toContain("aspect-video");
+    expect(html).toContain("Pessoa usando um celular para trocar mensagens");
+    expect(html).toContain("images.unsplash.com");
   });
 
   it("searches the serializable article topic as well as title and summary", () => {
@@ -228,17 +283,34 @@ describe("legacy article migration parity", () => {
       readingTime: "6 min de leitura",
       featured: true,
     };
+    const otherArticle = {
+      ...article,
+      id: "article:other-search-contract",
+      slug: "other-search-contract",
+      title: "Outro conteúdo",
+      clusterId: "cluster:qualificacao",
+      topic: "Qualificação de leads",
+    };
 
     render(createElement(BlogSearchAndGrid, {
-      articles: [article],
-      categories: [article.category],
+      articles: [article, otherArticle],
     } as never));
-    fireEvent.change(screen.getByPlaceholderText("Buscar por título ou tema..."), {
+    const searchInput = screen.getByPlaceholderText("Buscar por título ou tema...");
+    fireEvent.change(searchInput, {
       target: { value: "tema canônico" },
     });
 
     expect(screen.getByRole("link", { name: article.title }).getAttribute("href")).toBe(
       `/blog/${article.slug}`,
+    );
+    expect(screen.queryByRole("link", { name: otherArticle.title })).toBeNull();
+
+    fireEvent.change(searchInput, { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: "Qualificação de leads" }));
+
+    expect(screen.queryByRole("link", { name: article.title })).toBeNull();
+    expect(screen.getByRole("link", { name: otherArticle.title }).getAttribute("href")).toBe(
+      `/blog/${otherArticle.slug}`,
     );
   });
 

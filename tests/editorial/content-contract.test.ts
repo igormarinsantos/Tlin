@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { editorialAuthors } from "@/content/editorial/authors";
 import { editorialClusters } from "@/content/editorial/taxonomy";
+import { editorialArticles } from "@/lib/editorial/registry";
+import { getPublishedArticles } from "@/lib/editorial/queries";
 import { validateEditorialArticles } from "@/lib/editorial/validate";
 
 const publishedAt = "2026-07-21T12:00:00-03:00";
@@ -191,6 +193,16 @@ describe("editorial content contract", () => {
         "publishedAt.required",
         "review.factual",
       ]),
+    );
+  });
+
+  it("registers the WhatsApp service pricing article as a non-public draft", () => {
+    const slug = "whatsapp-api-cobranca-mensagens-servico-outubro-2026";
+    const draft = editorialArticles.find((article) => article.slug === slug);
+
+    expect(draft).toMatchObject({ status: "draft", clusterId: "cluster:vendas-whatsapp" });
+    expect(getPublishedArticles(new Date("2026-10-02T12:00:00-03:00"))).not.toContainEqual(
+      expect.objectContaining({ slug }),
     );
   });
 });

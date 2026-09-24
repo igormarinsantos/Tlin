@@ -29,7 +29,7 @@
     "components/LeadQualificationPopup.tsx::@typescript-eslint/no-unused-vars": 1,
     "components/LeadQualificationPopup.tsx::react-hooks/exhaustive-deps": 6,
     "components/LiaPopup.tsx::@next/next/no-img-element": 4,
-    "components/LiaPopup.tsx::@typescript-eslint/no-unused-vars": 3,
+    "components/LiaPopup.tsx::@typescript-eslint/no-unused-vars": 2,
     "components/LiaPopup.tsx::react-hooks/exhaustive-deps": 3,
     "components/MarketingLandingPage.tsx::react-hooks/set-state-in-effect": 1,
     "components/ObjectionAnimation.tsx::@next/next/no-img-element": 2,

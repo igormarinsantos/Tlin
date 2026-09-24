@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { editorialClusters } from "@/content/editorial/taxonomy";
 import { FeaturedCarousel } from "@/components/blog/FeaturedCarousel";
 import { BlogSearchAndGrid } from "@/components/blog/BlogSearchAndGrid";
 import type { EditorialArticleSummary } from "@/components/blog/ArticleCard";
-import { getPublishedArticles, getPublishedClusters } from "@/lib/editorial/queries";
+import { getPublishedArticles } from "@/lib/editorial/queries";
 import type { EditorialPublishedArticle } from "@/lib/editorial/types";
 
 export const metadata: Metadata = { title: "IA, vendas e WhatsApp" };
 
 export default function BlogHomePage() {
   const articles = getPublishedArticles().map(toArticleSummary);
-  const clusters = getPublishedClusters();
   const featuredArticles = articles.filter((article) => article.featured);
   const carouselArticles = featuredArticles.length >= 2 ? featuredArticles : articles.slice(0, 3);
 
@@ -29,25 +27,10 @@ export default function BlogHomePage() {
 
       <section className="px-4 pb-16 pt-28 md:px-8 md:pb-24 md:pt-36">
         <div className="mx-auto max-w-6xl">
-          <nav aria-label="Temas do blog" className="mb-8 flex flex-wrap items-center gap-3">
-            <span className="text-sm font-bold text-zinc-500">Explore por tema</span>
-            {clusters.map((cluster) => (
-              <Link
-                key={cluster.id}
-                href={cluster.hubPath}
-                className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-bold text-[#0c0d0d] transition-colors hover:border-[#B597FF]/40 hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B597FF]/20"
-              >
-                {cluster.label}
-              </Link>
-            ))}
-          </nav>
           <FeaturedCarousel articles={carouselArticles} />
-        </div>
-      </section>
-
-      <section className="px-4 pb-24 md:px-8">
-        <div className="mx-auto max-w-6xl">
-          <BlogSearchAndGrid articles={articles} />
+          <div className="mt-5 md:mt-6">
+            <BlogSearchAndGrid articles={articles} />
+          </div>
         </div>
       </section>
     </main>
@@ -65,5 +48,6 @@ function toArticleSummary(article: EditorialPublishedArticle): EditorialArticleS
     publishedAt: article.publishedAt,
     readingTimeMinutes: article.readingTimeMinutes,
     featured: Boolean(article.featured),
+    heroImage: article.heroImage,
   };
 }

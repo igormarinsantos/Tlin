@@ -210,5 +210,8 @@ describe("editorial analytics attribution", () => {
     expect(JSON.stringify(shareEvent)).not.toMatch(/ana@example\.test|private|title|url|query/i);
     expect(screen.getByRole("link", { name: "Compartilhar no WhatsApp" }).getAttribute("href"))
       .not.toMatch(/email=|#private/);
+    expect(screen.getByRole("link", { name: "Compartilhar no LinkedIn" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Compartilhar no X" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Copiar link" })).toBeTruthy();
   });
 });

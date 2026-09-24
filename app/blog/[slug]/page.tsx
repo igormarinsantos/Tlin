@@ -4,8 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { editorialAuthors } from "@/content/editorial/authors";
 import { editorialClusters } from "@/content/editorial/taxonomy";
+import { AiSummaryButton } from "@/components/blog/AiSummaryButton";
 import { EditorialCta } from "@/components/blog/EditorialCta";
-import { ArrowLeftIcon, SparkleIcon } from "@/components/blog/icons";
+import { ArrowLeftIcon } from "@/components/blog/icons";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { ShareBar } from "@/components/blog/ShareBar";
 import { CATEGORY_VISUALS } from "@/components/blog/categoryVisuals";
@@ -82,7 +83,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const publicAuthor = getPublishedAuthors().find((candidate) => candidate.id === article.authorId);
   const cluster = editorialClusters[article.clusterId];
   const articleUrl = absoluteUrl(`/blog/${article.slug}`);
-  const summaryUrl = createChatGptSummaryUrl(articleUrl);
   const relatedArticles = getRelatedPublishedArticles(article);
   const headings = article.blocks.filter(
     (block): block is Extract<ContentBlock, { type: "heading" }> => block.type === "heading",
@@ -106,15 +106,28 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           Todos os conteúdos
         </Link>
 
-        <div
-          className="relative mt-6 h-48 overflow-hidden rounded-3xl md:h-64"
-          style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
-          aria-hidden="true"
-        >
-          <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute inset-0 flex items-center justify-center text-white/25">
-            <visual.Icon className="h-20 w-20 md:h-24 md:w-24" />
-          </div>
+        <div className="relative mt-6 aspect-video overflow-hidden rounded-3xl">
+          {article.heroImage ? (
+            <Image
+              src={article.heroImage.src}
+              alt={article.heroImage.decorative ? "" : article.heroImage.alt}
+              fill
+              priority
+              sizes="(min-width: 1024px) 64rem, 100vw"
+              className="object-cover"
+            />
+          ) : (
+            <div
+              className="absolute inset-0"
+              style={{ background: `linear-gradient(135deg, ${visual.from}, ${visual.to})` }}
+              aria-hidden="true"
+            >
+              <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+              <div className="absolute inset-0 flex items-center justify-center text-white/25">
+                <visual.Icon className="h-20 w-20 md:h-24 md:w-24" />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="max-w-3xl">
@@ -143,16 +156,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               )}
               <span>{article.readingTimeMinutes} min de leitura</span>
             </div>
-            <div className="flex flex-wrap items-center gap-4">
-              <a
-                href={summaryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm font-bold text-zinc-500 transition-colors hover:text-[#8659e7]"
-              >
-                <SparkleIcon className="h-3.5 w-3.5" />
-                Resumir com IA
-              </a>
+            <div className="flex flex-wrap items-center gap-3">
+              <AiSummaryButton
+                articleUrl={articleUrl}
+                articleTitle={article.title}
+                variant="gradient"
+                className="min-h-10 px-5"
+              />
               <ShareBar url={articleUrl} title={article.title} />
             </div>
           </div>
@@ -289,9 +299,4 @@ function formatEditorialDate(date: string) {
     month: "long",
     year: "numeric",
   }).format(new Date(date));
-}
-
-function createChatGptSummaryUrl(articleUrl: string) {
-  const prompt = `Resuma esse artigo pra mim, em português, com os pontos principais: ${articleUrl}`;
-  return `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
 }
