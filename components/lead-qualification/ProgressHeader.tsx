@@ -75,7 +75,7 @@ export function ProgressHeader({
         <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-12 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
             <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shrink-0 ${isLight ? "bg-zinc-100" : "bg-white/10"}`}>
-              <Image src="/team/igor-avatar.png" alt={t?.headerName || "Igor"} width={48} height={48} className="w-full h-full object-cover" />
+              <Image src="/team/igor-avatar.avif" alt={t?.headerName || "Igor"} width={48} height={48} className="w-full h-full object-cover" />
             </div>
             <div className="min-w-0">
               <p className={`text-base sm:text-lg font-bold truncate ${isLight ? "text-zinc-950" : "text-white"}`}>{t?.headerName || "Igor"}</p>

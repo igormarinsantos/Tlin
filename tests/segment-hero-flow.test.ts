@@ -32,7 +32,7 @@ describe("segment hero CRM flows", () => {
         expect(flow.fields).toHaveLength(4);
         expect(flow.stages).toHaveLength(3);
         expect(flow.activities).toHaveLength(4);
-        expect(flow.contact.avatar).toMatch(/^\/lotties\/avatars\/\d+_avatar\.webp$/);
+        expect(flow.contact.avatar).toMatch(/^\/lotties\/avatars\/\d+_avatar\.avif$/);
         expect(flow.contact.name.length).toBeGreaterThan(5);
         expect(flow.summary.length).toBeGreaterThan(40);
         expect(Object.values(flow.outcome).every(Boolean)).toBe(true);

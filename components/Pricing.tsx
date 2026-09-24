@@ -521,7 +521,7 @@ export function Pricing({ hideEyebrow = false, comparisonMode = "market" }: { hi
                              {plan.features.map((feat) => (
                                 <li key={feat} className="flex items-start gap-3">
                                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                      <Image src="/icons/Check.webp" alt="check" width={20} height={20} className="w-full h-full object-contain" />
+                                      <Image src="/icons/Check.avif" alt="check" width={20} height={20} className="w-full h-full object-contain" />
                                    </div>
                                    <span className="text-sm font-bold opacity-80">{feat}</span>
                                 </li>

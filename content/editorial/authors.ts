@@ -8,7 +8,7 @@ export const editorialAuthors = {
     profileUrl: "/como-funciona",
     approved: true,
     image: {
-      src: "/team/igor-avatar.png",
+      src: "/team/igor-avatar.avif",
       alt: "Igor Marin, fundador da Tlin",
       approved: true,
     },

@@ -1,19 +1,25 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 import { CountryFlag } from "@/components/CountryFlag";
 import { AvailabilityCalendar } from "@/components/lead-qualification/AvailabilityCalendar";
 import { COUNTRIES, type DemoDay, type DemoSlot } from "@/components/lead-qualification/constants";
+import { FloatingPersonaTrigger } from "@/components/FloatingPersonaTrigger";
+import {
+  getPendingReplyCount,
+  useEngagementFollowUp,
+  type EngagementFollowUp,
+} from "@/components/lia-popup/useEngagementFollowUp";
 
 export function LiaPopup() {
   const { t, lang } = useLanguage();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [canShow, setCanShow] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'bot', text: string, type: 'text' | 'handoff'}[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -37,6 +43,40 @@ export function LiaPopup() {
   const reasoningIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scrollFrameRef = useRef<number | null>(null);
   const scrollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const handleEngagementTyping = useCallback((typing: boolean) => {
+    setIsTyping(typing);
+  }, []);
+
+  const handleEngagementMessage = useCallback((message: string, source: EngagementFollowUp["source"]) => {
+    if (source === "page_complete") {
+      setQualificationStep((step) => step === 0 ? 1 : step);
+    }
+    setMessages((previous) => [...previous, { role: "bot", text: message, type: "text" }]);
+  }, []);
+
+  const pendingReplyCount = getPendingReplyCount(messages);
+  const {
+    externalFollowUp,
+    clearExternalFollowUp,
+  } = useEngagementFollowUp({
+    pathname,
+    isOpen,
+    isBusy: isTyping || Boolean(reasoningLabel) || availabilityLoading,
+    inputValue,
+    formActive: qualificationStep > 0 && scheduleStage !== "complete",
+    qualificationStep,
+    messages,
+    copy: {
+      formIdleMessage: t.liaPopup.formIdleFollowUp,
+      formIdleHighlights: t.liaPopup.formIdleHighlights,
+      pageCompleteMessage: t.liaPopup.pageCompleteFollowUp,
+      pageCompleteHighlights: t.liaPopup.pageCompleteHighlights,
+      notificationTitle: t.liaPopup.notificationTitle,
+    },
+    onTypingChange: handleEngagementTyping,
+    onDeliverMessage: handleEngagementMessage,
+  });
 
   const clearReasoningCycle = () => {
     if (reasoningIntervalRef.current) {
@@ -114,17 +154,6 @@ export function LiaPopup() {
   useEffect(() => {
     setStatus(isTyping ? t.liaPopup.typing : t.liaPopup.online);
   }, [t, isTyping]);
-
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 400) {
-      setCanShow(true);
-    } else {
-      setCanShow(false);
-      setIsOpen(false); // Auto-close popup when scrolling back to Hero
-    }
-  });
 
   useEffect(() => {
     // Listen for custom open event
@@ -480,7 +509,7 @@ export function LiaPopup() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden shrink-0">
                     <img
-                      src="/team/igor-avatar.png"
+                      src="/team/igor-avatar.avif"
                       alt="Igor"
                       className="w-full h-full object-cover"
                     />
@@ -512,7 +541,7 @@ export function LiaPopup() {
                   <div className="flex flex-1 flex-col gap-3 pt-2 pb-6">
                     <div className="flex items-start gap-2">
                       <div className="mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-zinc-800">
-                        <img src="/team/igor-avatar.png" alt="Igor" className="h-full w-full object-cover" />
+                        <img src="/team/igor-avatar.avif" alt="Igor" className="h-full w-full object-cover" />
                       </div>
                       <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[14px] font-semibold text-zinc-100">
                         Olá, tudo bem?
@@ -554,7 +583,7 @@ export function LiaPopup() {
                               {isFirstInBlock && (
                                 <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden mt-1">
                                   <img
-                                    src="/team/igor-avatar.png"
+                                    src="/team/igor-avatar.avif"
                                     alt="Igor"
                                     className="w-full h-full object-cover"
                                   />
@@ -598,7 +627,7 @@ export function LiaPopup() {
                       <div className="flex items-start gap-2">
                          <div className="w-8 h-8 rounded-full bg-zinc-800 overflow-hidden shrink-0 mt-1">
                            <img
-                             src="/team/igor-avatar.png"
+                             src="/team/igor-avatar.avif"
                              alt="Igor"
                              className="w-full h-full object-cover"
                            />
@@ -700,48 +729,39 @@ export function LiaPopup() {
         )}
       </AnimatePresence>
 
-      {/* Floating Buttons: Only visible after Hero animation is done or chat is open */}
+      {/* Floating Igor trigger: visible from the first fold, reveals the persona after one viewport. */}
       <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-6 z-[200] flex flex-col items-center">
-        <AnimatePresence>
-          {(canShow || isOpen) && (
-            <>
-              {/* Igor Button */}
-              <motion.div
-                initial={{ y: 200 }}
-                animate={{ y: 0 }}
-                exit={{ y: 200 }}
-                transition={{ duration: 0.875, ease: [0.23, 1, 0.32, 1] }}
-                className={`relative group ${isOpen ? "hidden sm:block" : ""}`}
-              >
-                {/* External Lilac Glow */}
-                <div className={`absolute -inset-1 bg-[#B597FF] rounded-full blur-md transition duration-1000 group-hover:duration-200 animate-pulse opacity-70 group-hover:opacity-100 pointer-events-none ${isOpen ? 'opacity-40' : ''}`}></div>
-                <div className={`absolute -inset-2 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full blur-xl transition duration-1000 opacity-30 group-hover:opacity-60 pointer-events-none ${isOpen ? 'opacity-20' : ''}`}></div>
-                
-                <button
-                  onClick={() => {
-                    const nextOpen = !isOpen;
-                    setIsOpen(nextOpen);
-                    if (nextOpen) trackFunnelEvent("lia_chat_opened", { cta_source: "floating_lia" });
-                  }}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  className={`relative flex items-center h-12 bg-zinc-950 text-white rounded-full transition-all active:scale-95 z-10 cursor-pointer ${isOpen ? 'px-8 justify-center min-w-[120px]' : 'px-2 pr-6'}`}
-                >
-                  {!isOpen && (
-                    <div className="relative shrink-0 pl-2">
-                      <span className="text-lg">✨</span>
-                    </div>
-                  )}
-                  <motion.div initial={false} animate={{ opacity: 1 }} className="overflow-hidden flex-shrink-0 flex items-center justify-center">
-                    <span className={`font-bold text-[13px] whitespace-nowrap tracking-wide ${isOpen ? 'pl-0' : 'pl-2'}`}>
-                      {isOpen ? t.liaPopup.close : t.liaPopup.talkToLia}
-                    </span>
-                  </motion.div>
-                </button>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        <FloatingPersonaTrigger
+          config={{
+            attendant: { name: "Igor", avatarUrl: "/team/igor-avatar.avif" },
+            followUpMessage: t.liaPopup.followUpPrompt,
+            followUpHighlights: t.liaPopup.followUpHighlights,
+            revealAfterViewports: 1,
+            typingDurationMs: 700,
+            bubbleAutoDismissMs: 11000,
+          }}
+          label={t.liaPopup.talkToLia}
+          closeLabel={t.liaPopup.close}
+          isOpen={isOpen}
+          pendingReplyCount={pendingReplyCount}
+          externalFollowUp={externalFollowUp}
+          onExternalFollowUpOpen={() => {
+            clearExternalFollowUp();
+            setIsOpen(true);
+            trackFunnelEvent("lia_followup_opened", {
+              trigger: externalFollowUp?.source,
+              pathname,
+            });
+          }}
+          onToggle={() => {
+            const nextOpen = !isOpen;
+            setIsOpen(nextOpen);
+            if (nextOpen) {
+              clearExternalFollowUp();
+              trackFunnelEvent("lia_chat_opened", { cta_source: "floating_lia" });
+            }
+          }}
+        />
       </div>
     </>
   );

@@ -26,7 +26,7 @@ type SegmentHeroFlows = Record<SegmentHeroFlowKey, SegmentHeroFlow>;
 
 export const ptSegmentHeroFlows: SegmentHeroFlows = {
   clinicas: {
-    contact: { name: "Ana Paula", avatar: "/lotties/avatars/1_avatar.webp", status: "online agora" },
+    contact: { name: "Ana Paula", avatar: "/lotties/avatars/1_avatar.avif", status: "online agora" },
     contactLabel: "Paciente",
     conversationLabel: "Novo paciente",
     aiLabel: "IA em ação",
@@ -57,7 +57,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
     },
   },
   escolas: {
-    contact: { name: "Carla Freitas", avatar: "/lotties/avatars/6_avatar.webp", status: "online agora" },
+    contact: { name: "Carla Freitas", avatar: "/lotties/avatars/6_avatar.avif", status: "online agora" },
     contactLabel: "Família",
     conversationLabel: "Novo aluno",
     aiLabel: "IA em ação",
@@ -88,7 +88,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
     },
   },
   assessorias: {
-    contact: { name: "Marcos Oliveira", avatar: "/lotties/avatars/8_avatar.webp", status: "online agora" },
+    contact: { name: "Marcos Oliveira", avatar: "/lotties/avatars/8_avatar.avif", status: "online agora" },
     contactLabel: "Lead",
     conversationLabel: "Novo lead",
     aiLabel: "IA em ação",
@@ -119,7 +119,7 @@ export const ptSegmentHeroFlows: SegmentHeroFlows = {
     },
   },
   advocacia: {
-    contact: { name: "Ricardo Mendes", avatar: "/lotties/avatars/2_avatar.webp", status: "online agora" },
+    contact: { name: "Ricardo Mendes", avatar: "/lotties/avatars/2_avatar.avif", status: "online agora" },
     contactLabel: "Contato",
     conversationLabel: "Novo contato",
     aiLabel: "IA em ação",

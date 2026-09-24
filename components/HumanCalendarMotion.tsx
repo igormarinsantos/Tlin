@@ -8,7 +8,7 @@ const APPOINTMENTS = [
   {
     time: "09:00",
     name: "Carla F.",
-    image: "/lotties/avatars/6_avatar.webp",
+    image: "/lotties/avatars/6_avatar.avif",
     qualifications: [
       { label: "Fit alto", className: "bg-[#F0EBFF] text-[#7254c8]" },
       { label: "Urgente", className: "bg-[#E8FAFC] text-[#15808d]" },
@@ -17,7 +17,7 @@ const APPOINTMENTS = [
   {
     time: "11:30",
     name: "Rafael M.",
-    image: "/lotties/avatars/7_avatar.webp",
+    image: "/lotties/avatars/7_avatar.avif",
     qualifications: [
       { label: "Decisor", className: "bg-[#FFF3E6] text-[#b86816]" },
       { label: "Qualificado", className: "bg-[#F0EBFF] text-[#7254c8]" },
@@ -26,7 +26,7 @@ const APPOINTMENTS = [
   {
     time: "15:00",
     name: "Marina L.",
-    image: "/lotties/avatars/8_avatar.webp",
+    image: "/lotties/avatars/8_avatar.avif",
     qualifications: [
       { label: "Fit alto", className: "bg-[#F0EBFF] text-[#7254c8]" },
       { label: "Pronto", className: "bg-[#E8FAFC] text-[#15808d]" },

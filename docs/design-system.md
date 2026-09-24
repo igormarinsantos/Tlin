@@ -362,8 +362,8 @@ Logo:
 
 - horizontal: `/Logo%20Horizontal.svg`
 - mascote/cursor: `/TlinIA.svg`
-- Lia perfil: `/team/LIA PERFIL.webp`
-- Igor perfil (header do /demo): `/team/igor-avatar.png`
+- Lia perfil: `/team/LIA PERFIL.avif`
+- Igor perfil (header do /demo): `/team/igor-avatar.avif`
 
 Assets ficam organizados em `public/`: `team/` (fotos de pessoas/personas),
 `icons/` (icones de UI como Check/3STARS), `email/` e `og/` (imagens usadas
@@ -373,7 +373,7 @@ nao apagar sem confirmar antes.
 
 Avatares pequenos:
 
-- usar `/lotties/avatars/*_avatar.webp`
+- usar `/lotties/avatars/*_avatar.avif`
 - nao usar imagens `2048x2048` para avatar pequeno.
 
 ## 9. Scrollbars

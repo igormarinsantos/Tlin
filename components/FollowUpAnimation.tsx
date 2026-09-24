@@ -114,7 +114,7 @@ function ConversationMessage({
   isTyping?: boolean;
   caption?: string;
 }) {
-  const leadPhoto = "/lotties/avatars/5_avatar.webp";
+  const leadPhoto = "/lotties/avatars/5_avatar.avif";
 
   return (
     <div className={`flex flex-col ${side === "right" ? "items-end" : "items-start"} w-full mb-2 mt-1`}>

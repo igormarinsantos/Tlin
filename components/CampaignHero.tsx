@@ -12,28 +12,28 @@ import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
 
 const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
   clinicas: [
-    "/segments/avatars/clinicas-1.jpg",
-    "/segments/avatars/clinicas-2.jpg",
-    "/segments/avatars/clinicas-3.jpg",
-    "/segments/avatars/clinicas-4.jpg",
+    "/segments/avatars/clinicas-1.avif",
+    "/segments/avatars/clinicas-2.avif",
+    "/segments/avatars/clinicas-3.avif",
+    "/segments/avatars/clinicas-4.avif",
   ],
   escolas: [
-    "/segments/avatars/escolas-1.jpg",
-    "/segments/avatars/escolas-2.jpg",
-    "/segments/avatars/escolas-3.jpg",
-    "/segments/avatars/escolas-4.jpg",
+    "/segments/avatars/escolas-1.avif",
+    "/segments/avatars/escolas-2.avif",
+    "/segments/avatars/escolas-3.avif",
+    "/segments/avatars/escolas-4.avif",
   ],
   assessorias: [
-    "/segments/avatars/assessorias-1.jpg",
-    "/segments/avatars/assessorias-2.jpg",
-    "/segments/avatars/assessorias-3.jpg",
-    "/segments/avatars/assessorias-4.jpg",
+    "/segments/avatars/assessorias-1.avif",
+    "/segments/avatars/assessorias-2.avif",
+    "/segments/avatars/assessorias-3.avif",
+    "/segments/avatars/assessorias-4.avif",
   ],
   advocacia: [
-    "/segments/avatars/advocacia-1.jpg",
-    "/segments/avatars/advocacia-2.jpg",
-    "/segments/avatars/advocacia-3.jpg",
-    "/segments/avatars/advocacia-4.jpg",
+    "/segments/avatars/advocacia-1.avif",
+    "/segments/avatars/advocacia-2.avif",
+    "/segments/avatars/advocacia-3.avif",
+    "/segments/avatars/advocacia-4.avif",
   ],
 };
 

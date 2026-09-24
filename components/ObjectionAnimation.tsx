@@ -136,7 +136,7 @@ function ConversationMessage({
   showAvatar?: boolean;
   isTyping?: boolean;
 }) {
-  const leadPhoto = "/lotties/avatars/5_avatar.webp";
+  const leadPhoto = "/lotties/avatars/5_avatar.avif";
 
   return (
     <div className={`flex items-start gap-2 w-full ${side === "right" ? "flex-row-reverse" : "flex-row"} ${showAvatar ? 'mb-2 mt-1' : 'mb-0'}`}>

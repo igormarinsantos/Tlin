@@ -38,11 +38,11 @@ function Tag({ label }: { label: string }) {
 // "clicados" (bounce) e sumindo em sequencia mais pausada -- simbolico,
 // sem cursor nem texto de chat, so a ideia de captura acontecendo uma a uma.
 const CAPTURE_LEADS = [
-  { src: "/lotties/avatars/1_avatar.webp", size: 40, className: "left-4 top-4", driftX: [0, 6, -3, 2, 0], driftY: [0, -5, 4, -2, 0], duration: 3.2 },
-  { src: "/lotties/avatars/2_avatar.webp", size: 36, className: "left-24 top-2", driftX: [0, -5, 4, -3, 0], driftY: [0, 4, -5, 3, 0], duration: 4.1 },
-  { src: "/lotties/avatars/9_avatar.webp", size: 34, className: "left-2 bottom-10", driftX: [0, 3, -6, 4, 0], driftY: [0, -3, -5, 2, 0], duration: 3.7 },
-  { src: "/lotties/avatars/6_avatar.webp", size: 38, className: "left-24 bottom-6", driftX: [0, -4, 2, -5, 0], driftY: [0, 5, 3, -3, 0], duration: 4.6 },
-  { src: "/lotties/avatars/3_avatar.webp", size: 42, className: "right-5 top-8", driftX: [0, 5, 3, -4, 0], driftY: [0, -2, 5, -4, 0], duration: 3.9 },
+  { src: "/lotties/avatars/1_avatar.avif", size: 40, className: "left-4 top-4", driftX: [0, 6, -3, 2, 0], driftY: [0, -5, 4, -2, 0], duration: 3.2 },
+  { src: "/lotties/avatars/2_avatar.avif", size: 36, className: "left-24 top-2", driftX: [0, -5, 4, -3, 0], driftY: [0, 4, -5, 3, 0], duration: 4.1 },
+  { src: "/lotties/avatars/9_avatar.avif", size: 34, className: "left-2 bottom-10", driftX: [0, 3, -6, 4, 0], driftY: [0, -3, -5, 2, 0], duration: 3.7 },
+  { src: "/lotties/avatars/6_avatar.avif", size: 38, className: "left-24 bottom-6", driftX: [0, -4, 2, -5, 0], driftY: [0, 5, 3, -3, 0], duration: 4.6 },
+  { src: "/lotties/avatars/3_avatar.avif", size: 42, className: "right-5 top-8", driftX: [0, 5, 3, -4, 0], driftY: [0, -2, 5, -4, 0], duration: 3.9 },
 ];
 
 // Ciclo unico e sincronizado (feito reels): todos aparecem juntos, vao
@@ -331,7 +331,7 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
               animate={isActive ? { opacity: [0, 0, 1, 1, 0] } : { opacity: i === 0 ? 1 : 0 }}
               transition={{ duration: CRM_CYCLE, times: [0, appearAt - 0.01, appearAt, 0.95, 1], repeat: loop(isActive), repeatDelay: 0.4, ease: "easeOut" }}
             >
-              <Avatar src={`/lotties/avatars/${lead.src}.webp`} size={32} />
+              <Avatar src={`/lotties/avatars/${lead.src}.avif`} size={32} />
               <span className="text-[11px] font-bold text-zinc-600 flex-1 whitespace-nowrap">{lead.name}</span>
               <span className="w-6 h-6 rounded-full bg-white border border-zinc-100 flex items-center justify-center shrink-0">
                 <img src={lead.source} alt="" className="w-3.5 h-3.5" />
@@ -351,9 +351,9 @@ export function CrmMotion({ isActive }: { isActive: boolean }) {
 // organicamente (drift continuo, como no CaptureMotion) sem mudar o
 // zigue-zague fixo de alinhamento.
 const SCHEDULE_ROWS = [
-  { src: "/lotties/avatars/6_avatar.webp", name: "Carla F.", align: "self-start ml-6", driftX: [0, 4, -3, 0], driftY: [0, -3, 2, 0], duration: 3.4 },
-  { src: "/lotties/avatars/7_avatar.webp", name: "Mariana L.", align: "self-end mr-2", driftX: [0, -4, 3, -2, 0], driftY: [0, 3, -3, 2, 0], duration: 4.0 },
-  { src: "/lotties/avatars/8_avatar.webp", name: "Fernando H.", align: "self-start ml-1", driftX: [0, 3, -4, 2, 0], driftY: [0, -2, 3, -2, 0], duration: 3.7 },
+  { src: "/lotties/avatars/6_avatar.avif", name: "Carla F.", align: "self-start ml-6", driftX: [0, 4, -3, 0], driftY: [0, -3, 2, 0], duration: 3.4 },
+  { src: "/lotties/avatars/7_avatar.avif", name: "Mariana L.", align: "self-end mr-2", driftX: [0, -4, 3, -2, 0], driftY: [0, 3, -3, 2, 0], duration: 4.0 },
+  { src: "/lotties/avatars/8_avatar.avif", name: "Fernando H.", align: "self-start ml-1", driftX: [0, 3, -4, 2, 0], driftY: [0, -2, 3, -2, 0], duration: 3.7 },
 ];
 const SCHEDULE_MSG_MS = 900;
 const SCHEDULE_HOLD_MS = 700;
@@ -586,7 +586,7 @@ export function FollowupMotion({ isActive }: { isActive: boolean }) {
           animate={isActive ? { filter: ["grayscale(1) opacity(0.5)", "grayscale(0) opacity(1)"] } as any : { filter: "grayscale(1) opacity(0.5)" }}
           transition={{ duration: 0.8, repeat: loop(isActive), repeatType: "reverse", repeatDelay: 0.6 }}
         >
-          <Avatar src="/lotties/avatars/7_avatar.webp" size={56} />
+          <Avatar src="/lotties/avatars/7_avatar.avif" size={56} />
         </motion.div>
         <motion.div
           className="absolute -top-1.5 -right-1.5 w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center"
@@ -619,7 +619,7 @@ export function CartMotion({ isActive }: { isActive: boolean }) {
         animate={isActive ? { opacity: [1, 1, 0.5] } : { opacity: 1 }}
         transition={{ duration: 1.3, repeat: loop(isActive), repeatDelay: 0.6 }}
       >
-        <Avatar src="/lotties/avatars/8_avatar.webp" size={26} />
+        <Avatar src="/lotties/avatars/8_avatar.avif" size={26} />
         <span className="text-[11px] font-bold text-zinc-500 whitespace-nowrap">Carrinho abandonado</span>
       </motion.div>
       <div className="relative flex items-end justify-center pb-1 pt-3">

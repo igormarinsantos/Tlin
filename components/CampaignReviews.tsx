@@ -11,7 +11,7 @@ const SOURCE_LOGOS = [
 ];
 
 // Nomes masculinos dos depoimentos (o resto cai em feminino) -- so pra
-// escolher a pasta certa (men/women) do banco de fotos.
+// escolher a pasta certa (men/women) do banco de fotos local.
 const REVIEW_MALE_FIRST_NAMES = new Set([
   "Thiago", "Bruno", "Diego", "Rodrigo", "Felipe", "Marcelo", "Gustavo", "André",
   "Rafael", "Vinícius", "Leonardo", "Eduardo", "Henrique", "Otávio", "Caio",
@@ -25,12 +25,12 @@ function hashSeed(seed: string) {
 function pickLogo(seed: string) {
   return SOURCE_LOGOS[hashSeed(seed) % SOURCE_LOGOS.length];
 }
-// Fotos reais (banco publico randomuser.me, pensado exatamente pra avatar
-// de placeholder) escolhidas de forma deterministica pelo nome.
+// As mesmas fotos do banco publico usadas anteriormente, agora servidas
+// localmente em AVIF. A escolha continua deterministica pelo nome.
 function pickAvatar(name: string) {
   const gender = REVIEW_MALE_FIRST_NAMES.has(name.split(" ")[0]) ? "men" : "women";
   const index = hashSeed(name) % 100;
-  return `https://randomuser.me/api/portraits/${gender}/${index}.jpg`;
+  return `/reviews/${gender}-${index}.avif`;
 }
 
 const ILLUSTRATIVE_RESULTS = [
