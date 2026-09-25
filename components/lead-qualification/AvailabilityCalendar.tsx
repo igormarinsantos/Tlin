@@ -58,7 +58,7 @@ export function AvailabilityCalendar({
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6" /></svg>
           </button>
-          <span className={`text-sm font-bold capitalize ${isLight ? "text-zinc-950" : "text-white"}`}>
+          <span className={`text-[15px] font-bold capitalize ${isLight ? "text-zinc-950" : "text-white"}`}>
             {formatDate(activeMonth, "MMMM yyyy", { locale })}
           </span>
           <button
@@ -74,7 +74,7 @@ export function AvailabilityCalendar({
 
       <div className="grid grid-cols-7 gap-1 mb-1">
         {weekdayLabels.map((w, i) => (
-          <div key={i} className={`text-center text-[10px] sm:text-xs font-bold uppercase ${isLight ? "text-zinc-400" : "text-zinc-600"}`}>
+          <div key={i} className={`text-center text-[11px] font-bold uppercase sm:text-[13px] ${isLight ? "text-zinc-400" : "text-zinc-600"}`}>
             {w}
           </div>
         ))}
@@ -92,7 +92,7 @@ export function AvailabilityCalendar({
                 key={key}
                 type="button"
                 onClick={() => onSelectDay(available)}
-                className="h-8 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-bold border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-zinc-950 hover:bg-none hover:bg-[#38E3FF]/20 hover:border-[#38E3FF] transition-all active:scale-95"
+                className="flex h-8 items-center justify-center rounded-lg border border-[#B597FF]/40 bg-gradient-to-br from-[#B597FF]/15 to-[#38E3FF]/15 text-[13px] font-bold text-zinc-950 transition-all hover:border-[#38E3FF] hover:bg-[#38E3FF]/20 hover:bg-none active:scale-95 sm:h-10 sm:rounded-xl sm:text-[15px]"
               >
                 {formatDate(day, "d")}
               </button>
@@ -101,7 +101,7 @@ export function AvailabilityCalendar({
           return (
             <div
               key={key}
-              className={`h-8 sm:h-10 flex items-center justify-center text-xs sm:text-sm ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
+              className={`flex h-8 items-center justify-center text-[13px] sm:h-10 sm:text-[15px] ${isLight ? "text-zinc-300" : "text-zinc-700"}`}
             >
               {formatDate(day, "d")}
             </div>

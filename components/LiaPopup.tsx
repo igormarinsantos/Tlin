@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { Fragment, useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
 import { CountryFlag } from "@/components/CountryFlag";
@@ -15,6 +15,10 @@ import {
   useEngagementFollowUp,
   type EngagementFollowUp,
 } from "@/components/lia-popup/useEngagementFollowUp";
+
+const QUALIFICATION_START_TYPING_MS = 520;
+const REASONING_MIN_DURATION_MS = 1700;
+const REASONING_MAX_DURATION_MS = 2300;
 
 export function LiaPopup() {
   const { t, lang } = useLanguage();
@@ -125,7 +129,7 @@ export function LiaPopup() {
     if (!textarea) return;
 
     const isCompact = messages.length > 0;
-    const minHeight = isCompact ? 32 : 60;
+    const minHeight = qualificationStep === 2 ? 40 : isCompact ? 32 : 60;
     const maxHeight = isCompact ? 88 : 120;
 
     textarea.style.height = "auto";
@@ -136,7 +140,7 @@ export function LiaPopup() {
 
   useLayoutEffect(() => {
     resizeTextarea();
-  }, [inputValue, messages.length, isOpen]);
+  }, [inputValue, messages.length, isOpen, qualificationStep]);
 
   useEffect(() => {
     if (isOpen) {
@@ -230,7 +234,7 @@ export function LiaPopup() {
       setMessages([{ role: "bot", text: t.leadQualify.initialMsg, type: "text" }]);
       setIsTyping(false);
       setStatus(t.liaPopup.online);
-    }, getHumanTypingDelay(t.leadQualify.initialMsg));
+    }, QUALIFICATION_START_TYPING_MS);
     trackFunnelEvent("lia_chat_started", { cta_source: "igor_chat" });
   };
 
@@ -249,6 +253,11 @@ export function LiaPopup() {
     return Math.min(Math.max(characters * 22, 720), 2400);
   };
 
+  const getReasoningDelay = (answer: string) => Math.min(
+    REASONING_MIN_DURATION_MS + answer.trim().length * 12,
+    REASONING_MAX_DURATION_MS,
+  );
+
   const formatBrazilianPhone = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 11);
     if (countryCode !== "+55") return value.replace(/\D/g, "").slice(0, 15);
@@ -265,6 +274,10 @@ export function LiaPopup() {
       : qualificationStep === 5
         ? t.leadQualify.teamOptions
         : null;
+  const latestBotMessageIndex = messages.reduce(
+    (latestIndex, message, index) => message.role === "bot" ? index : latestIndex,
+    -1,
+  );
 
   const isInputValid = () => {
     if (qualificationStep === 1) return inputValue.trim().length >= 2;
@@ -303,6 +316,7 @@ export function LiaPopup() {
     setMessages(prev => [...prev, { role: 'user', text: displayUserMessage, type: 'text' }]);
     setInputValue("");
     clearReasoningCycle();
+    const name = qualificationStep === 1 ? userMsg : leadName;
     const thoughts = [
       t.leadQualify.thinking2,
       t.leadQualify.thinking3,
@@ -311,11 +325,15 @@ export function LiaPopup() {
       t.leadQualify.thinking6,
       t.leadQualify.thinking7,
     ];
-    setReasoningLabel(thoughts[Math.max(0, qualificationStep - 1)] || t.leadQualify.thinkingGeneric);
+    const reasoningMessage = thoughts[Math.max(0, qualificationStep - 1)] || t.leadQualify.thinkingGeneric;
+    setReasoningLabel(
+      reasoningMessage
+        .replace("{name}", name)
+        .replace("{answer}", userMsg),
+    );
     setIsTyping(false);
     setStatus(t.liaPopup.online);
 
-    const name = qualificationStep === 1 ? userMsg : leadName;
     if (qualificationStep === 1) setLeadName(userMsg);
     const isCorrectingPhone = qualificationStep === 3 && userMsg === t.leadQualify.noCorrect;
     const nextMessage = isCorrectingPhone ? t.leadQualify.step2.replace("{name}", name) : [
@@ -337,7 +355,7 @@ export function LiaPopup() {
         setStatus(t.liaPopup.online);
         setQualificationStep((step) => isCorrectingPhone ? 2 : Math.min(step + 1, 7));
       }, getHumanTypingDelay(nextMessage));
-    }, 850);
+    }, getReasoningDelay(userMsg));
   };
 
   useEffect(() => {
@@ -359,7 +377,7 @@ export function LiaPopup() {
     if (isTyping || reasoningLabel) return;
     setSelectedDay(day);
     setMessages((previous) => [...previous, { role: "user", text: day.label, type: "text" }]);
-    setReasoningLabel(t.leadQualify.thinking8);
+    setReasoningLabel(t.leadQualify.thinking8.replace("{answer}", day.label));
     window.setTimeout(() => {
       setReasoningLabel(null);
       setIsTyping(true);
@@ -369,13 +387,13 @@ export function LiaPopup() {
         setScheduleStage("slot");
         setIsTyping(false);
       }, getHumanTypingDelay(message));
-    }, 850);
+    }, getReasoningDelay(day.label));
   };
 
   const handleSelectSlot = (slot: DemoSlot) => {
     if (isTyping || reasoningLabel) return;
     setMessages((previous) => [...previous, { role: "user", text: slot.when, type: "text" }]);
-    setReasoningLabel(t.leadQualify.thinking9);
+    setReasoningLabel(t.leadQualify.thinking9.replace("{answer}", slot.when));
     window.setTimeout(() => {
       setReasoningLabel(null);
       setIsTyping(true);
@@ -385,7 +403,7 @@ export function LiaPopup() {
         setScheduleStage("complete");
         setIsTyping(false);
       }, getHumanTypingDelay(message));
-    }, 850);
+    }, getReasoningDelay(slot.when));
   };
 
   function WhatsAppHandoff() {
@@ -423,10 +441,10 @@ export function LiaPopup() {
         animate={{ opacity: 1, scale: 1 }}
         className="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 flex flex-col items-center gap-3 w-full"
       >
-        <div className="flex flex-col items-center gap-1 text-green-400 font-bold text-sm">
+        <div className="flex flex-col items-center gap-1 text-base font-bold text-green-400">
           {t.liaPopup.handoffForwarding}
           {!isCancelled && !isRedirected && (
-            <span className="text-[10px] font-medium opacity-70">{t.liaPopup.handoffRedirect} {countdown}s</span>
+            <span className="text-[12px] font-medium opacity-70">{t.liaPopup.handoffRedirect} {countdown}s</span>
           )}
         </div>
 
@@ -434,24 +452,24 @@ export function LiaPopup() {
           <div className="w-full flex flex-col items-center gap-2">
             <button
               onClick={handleRedirect}
-              className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 py-3 text-base font-bold text-white transition-all hover:bg-green-600"
             >
               {isRedirected ? t.liaPopup.handoffOpening : t.liaPopup.handoffOpenNow}
             </button>
             <button
               onClick={handleCancel}
-              className="text-[11px] text-green-400/60 hover:text-green-400 font-bold underline transition-colors"
+              className="text-[12px] font-bold text-green-400/60 underline transition-colors hover:text-green-400"
             >
               {t.liaPopup.handoffCancel}
             </button>
           </div>
         ) : (
-          <div className="text-green-400 font-bold text-sm py-2">
+          <div className="py-2 text-base font-bold text-green-400">
             {t.liaPopup.handoffCancelled}
           </div>
         )}
 
-        <p className="text-[10px] text-green-400/70 font-medium text-center">
+        <p className="text-center text-[12px] font-medium text-green-400/70">
           {!isCancelled ? t.liaPopup.handoffAutoRedirect : t.liaPopup.handoffChangeMind}
         </p>
       </motion.div>
@@ -515,8 +533,8 @@ export function LiaPopup() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-white text-lg tracking-tight leading-none mb-0.5">Igor</span>
-                    <span className="text-[11px] font-bold bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent transition-all duration-300">
+                    <span className="mb-0.5 text-[19px] font-bold leading-none tracking-tight text-white">Igor</span>
+                    <span className="bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-[12px] font-bold text-transparent transition-all duration-300">
                       {status.toLowerCase()}
                     </span>
                   </div>
@@ -543,41 +561,41 @@ export function LiaPopup() {
                       <div className="mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-zinc-800">
                         <img src="/team/igor-avatar.avif" alt="Igor" className="h-full w-full object-cover" />
                       </div>
-                      <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[14px] font-semibold text-zinc-100">
+                      <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[15px] font-semibold text-zinc-100">
                         Olá, tudo bem?
                       </div>
                     </div>
 
                     <div className="ml-10 max-w-[82%] rounded-3xl rounded-tl-md border border-white/10 bg-white/[0.06] p-4">
-                      <p className="text-[14px] font-semibold leading-relaxed text-zinc-100">Vamos entender como a Tlin pode organizar seu comercial e preparar uma demonstração para a sua operação?</p>
+                      <p className="text-[15px] font-semibold leading-relaxed text-zinc-100">Vamos entender como a Tlin pode organizar seu comercial e preparar uma demonstração para a sua operação?</p>
                       <button
                         type="button"
                         onClick={beginQualification}
-                        className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[12px] font-bold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
+                        className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[13px] font-bold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
                       >
                         Sim, começar agora
-                        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13" /><path d="m13 6 6 6-6 6" /></svg>
                       </button>
-                      <p className="mt-3 text-[10px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <Link href="/legal?tab=privacidade" onNavigate={() => setIsOpen(false)} className="text-[#64E5FA] hover:underline">Política de Privacidade</Link></p>
+                      <p className="mt-3 text-[11px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <Link href="/legal?tab=privacidade" onNavigate={() => setIsOpen(false)} className="text-[#64E5FA] hover:underline">Política de Privacidade</Link></p>
                     </div>
                   </div>
 
                 ) : (
                   <div className="flex flex-col gap-3 pb-8 pt-4">
-                    {qualificationStep > 1 && !isTyping && !reasoningLabel && (
-                      <button
-                        type="button"
-                        onClick={handleBackInChat}
-                        className="ml-10 inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold text-zinc-500 transition-colors hover:text-[#B597FF]"
-                      >
-                        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
-                        Voltar
-                      </button>
-                    )}
                     {messages.map((msg, i) => {
                       const isFirstInBlock = i === 0 || messages[i-1].role !== msg.role;
                       return (
-                        <div key={i} className={`flex items-start gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} ${!isFirstInBlock ? '-mt-1.5' : ''}`}>
+                        <Fragment key={i}>
+                          {i === latestBotMessageIndex && qualificationStep > 1 && !isTyping && !reasoningLabel && (
+                            <button
+                              type="button"
+                              onClick={handleBackInChat}
+                              className="ml-10 inline-flex w-fit items-center gap-1.5 text-[12px] font-semibold text-zinc-500 transition-colors hover:text-[#B597FF]"
+                            >
+                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
+                              Voltar
+                            </button>
+                          )}
+                          <div className={`flex items-start gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} ${!isFirstInBlock ? '-mt-1.5' : ''}`}>
                           {msg.role === 'bot' && msg.type !== 'handoff' && (
                             <div className="w-8 h-8 shrink-0">
                               {isFirstInBlock && (
@@ -595,7 +613,7 @@ export function LiaPopup() {
                           {msg.type === 'handoff' ? (
                             <WhatsAppHandoff />
                           ) : (
-                            <div className={`max-w-[82%] p-3.5 rounded-2xl text-[14px] sm:text-[15px] font-semibold leading-relaxed transition-all ${
+                            <div className={`max-w-[82%] p-3.5 rounded-2xl text-[15px] sm:text-[16px] font-semibold leading-relaxed transition-all ${
                               msg.role === 'user'
                                 ? `bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-zinc-950 ${isFirstInBlock ? 'rounded-tr-none' : ''}`
                                 : `bg-white/[0.06] text-zinc-100 border border-white/10 ${isFirstInBlock ? 'rounded-tl-none' : ''}`
@@ -603,7 +621,8 @@ export function LiaPopup() {
                               <FormattedMessage text={msg.text} />
                             </div>
                           )}
-                        </div>
+                          </div>
+                        </Fragment>
                       );
                     })}
                     {reasoningLabel && (
@@ -615,7 +634,7 @@ export function LiaPopup() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -3 }}
                             transition={{ duration: 0.2 }}
-                            className="text-[11px] font-medium text-zinc-500"
+                            className="text-[12px] font-medium text-zinc-500"
                           >
                             {reasoningLabel}
                           </motion.span>
@@ -646,7 +665,7 @@ export function LiaPopup() {
                             key={option}
                             type="button"
                             onClick={() => handleSendMessage(option)}
-                            className={`rounded-2xl px-4 py-3 text-left text-[13px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
+                            className={`rounded-2xl px-4 py-3 text-left text-[14px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
                           >
                             {option}
                           </button>
@@ -655,14 +674,14 @@ export function LiaPopup() {
                     )}
                     {qualificationStep === 7 && scheduleStage === "day" && !isTyping && !reasoningLabel && (
                       <div className="ml-10 mt-1 max-w-[82%] rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                        {availabilityLoading && <p className="py-3 text-center text-[12px] font-medium text-zinc-500">Carregando horários</p>}
-                        {availabilityError && <p className="py-3 text-center text-[12px] font-medium text-zinc-500">{availabilityError}</p>}
+                        {availabilityLoading && <p className="py-3 text-center text-[13px] font-medium text-zinc-500">Carregando horários</p>}
+                        {availabilityError && <p className="py-3 text-center text-[13px] font-medium text-zinc-500">{availabilityError}</p>}
                         {!availabilityLoading && !availabilityError && availabilityDays && <AvailabilityCalendar days={availabilityDays} onSelectDay={handleSelectDay} lang={lang} isLight={false} />}
                       </div>
                     )}
                     {qualificationStep === 7 && scheduleStage === "slot" && selectedDay && !isTyping && !reasoningLabel && (
                       <div className="ml-10 mt-1 grid max-w-[82%] grid-cols-2 gap-2">
-                        {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[13px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
+                        {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[14px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
                       </div>
                     )}
                   </div>
@@ -673,11 +692,11 @@ export function LiaPopup() {
                  <div className={`border border-white/10 bg-white/5 flex focus-within:border-[#B597FF]/60 focus-within:ring-4 focus-within:ring-[#B597FF]/10 transition-all duration-300 ${
                    messages.length > 0 ? `flex-row ${qualificationStep === 2 ? 'items-center gap-2 rounded-[1.25rem] p-2' : 'items-end gap-1.5 rounded-[1.25rem] p-2.5'}` : 'flex-col rounded-[1.5rem] p-3 py-4'
                  }`}>
-                   {qualificationStep === 2 && <div className="relative shrink-0">
+                   {qualificationStep === 2 && <div className="relative shrink-0 self-stretch">
                      <button
                        type="button"
                        onClick={() => setIsCountryDropdownOpen((open) => !open)}
-                       className="flex h-10 items-center gap-1.5 rounded-xl bg-white/[0.04] px-2.5 text-[13px] font-bold text-zinc-200 transition-colors hover:bg-white/[0.08]"
+                       className="flex h-full min-h-10 items-center gap-1.5 rounded-xl bg-white/[0.04] px-2.5 text-[14px] font-bold text-zinc-200 transition-colors hover:bg-white/[0.08]"
                        aria-label="Selecionar DDI"
                        aria-expanded={isCountryDropdownOpen}
                      >
@@ -687,7 +706,7 @@ export function LiaPopup() {
                      </button>
                      <AnimatePresence>
                        {isCountryDropdownOpen && <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} className="absolute bottom-full left-0 z-30 mb-2 w-44 overflow-hidden rounded-2xl border border-white/10 bg-[#171717] py-1 shadow-2xl">
-                         {COUNTRIES.map((country) => <button key={country.code} type="button" onClick={() => { setCountryCode(country.code); setInputValue(""); setIsCountryDropdownOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[12px] font-semibold text-zinc-300 transition-colors hover:bg-white/10 hover:text-white">
+                         {COUNTRIES.map((country) => <button key={country.code} type="button" onClick={() => { setCountryCode(country.code); setInputValue(""); setIsCountryDropdownOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] font-semibold text-zinc-300 transition-colors hover:bg-white/10 hover:text-white">
                            <CountryFlag country={country.flag} size={18} />
                            <span className="flex-1">{country.name}</span>
                            <span className="text-zinc-500">{country.code}</span>
@@ -695,9 +714,10 @@ export function LiaPopup() {
                        </motion.div>}
                      </AnimatePresence>
                    </div>}
-                   {qualificationStep === 2 && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-white/10" />}
+                   {qualificationStep === 2 && <span aria-hidden="true" className="w-px shrink-0 self-stretch bg-white/10" />}
                    <textarea
                      ref={textareaRef}
+                      rows={1}
                      aria-label="Mensagem para Igor"
                      value={inputValue}
                      onChange={(e) => handleInputChange(e.target.value)}
@@ -706,8 +726,8 @@ export function LiaPopup() {
                      inputMode={qualificationStep === 2 ? "tel" : qualificationStep === 6 ? "email" : "text"}
                      maxLength={qualificationStep === 2 ? 15 : qualificationStep === 6 ? 160 : 80}
                      placeholder={inputPlaceholder}
-                     className={`bg-transparent border-none outline-none text-zinc-100 placeholder-zinc-500 resize-none w-full px-2 font-semibold leading-relaxed transition-all duration-300 ${
-                       qualificationStep === 2 ? 'h-10 min-h-10 py-[9px] leading-5 text-[15px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : messages.length > 0 ? 'min-h-8 py-1.5 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[15px]'
+                     className={`min-w-0 w-full resize-none border-none bg-transparent px-2 font-semibold text-zinc-100 outline-none placeholder-zinc-500 ${
+                       qualificationStep === 2 ? 'h-10 min-h-10 py-2 leading-6 text-[16px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : messages.length > 0 ? 'min-h-9 py-1.5 text-[16px] leading-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'min-h-[60px] text-[16px] leading-6'
                      }`}
                    />
                    <div className={`flex justify-end ${messages.length > 0 ? 'shrink-0' : 'mt-1'}`}>

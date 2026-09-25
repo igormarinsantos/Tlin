@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useMotionValue, useSpring, useInView } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -49,13 +49,32 @@ function FeatureCard({
 }) {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
+  const [isMotionPaused, setIsMotionPaused] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const updateAnimations = () => {
+      card.getAnimations({ subtree: true }).forEach((animation) => {
+        if (isMotionPaused) animation.pause();
+        else if (animation.playState === "paused") animation.play();
+      });
+    };
+
+    updateAnimations();
+    const observer = new MutationObserver(updateAnimations);
+    observer.observe(card, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [isMotionPaused]);
+
   return (
-    <div className="relative w-full py-8 md:h-[650px] md:py-0">
+    <div ref={cardRef} data-feature-paused={isMotionPaused} className="relative w-full py-8 md:h-[650px] md:py-0">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -169,6 +188,16 @@ function FeatureCard({
                 <FeatureMedia id={feature.id} />
               )}
             </div>
+            <button
+              type="button"
+              onClick={() => setIsMotionPaused((paused) => !paused)}
+              aria-pressed={isMotionPaused}
+              aria-label={`${isMotionPaused ? "Reproduzir" : "Pausar"} animação: ${feature.title}`}
+              className="absolute bottom-5 right-5 z-30 flex h-9 w-9 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 active:bg-zinc-200 md:bottom-8 md:right-8"
+              title={isMotionPaused ? "Reproduzir animação" : "Pausar animação"}
+            >
+              {isMotionPaused ? <Play size={14} fill="currentColor" aria-hidden="true" /> : <Pause size={14} fill="currentColor" aria-hidden="true" />}
+            </button>
           </div>
         </div>
 
@@ -179,28 +208,6 @@ function FeatureCard({
 
 export function Features() {
   const { t } = useLanguage();
-  const sectionRef = useRef<HTMLElement>(null);
-  const isFeaturesVisible = useInView(sectionRef, { amount: 0.05 });
-  const [isMotionPaused, setIsMotionPaused] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const updateAnimations = () => {
-      section.getAnimations({ subtree: true }).forEach((animation) => {
-        if (isMotionPaused) animation.pause();
-        else if (animation.playState === "paused") animation.play();
-      });
-    };
-
-    updateAnimations();
-    const observer = new MutationObserver(() => {
-      if (isMotionPaused) updateAnimations();
-    });
-    observer.observe(section, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, [isMotionPaused]);
 
   const featuresList = [
     {
@@ -234,11 +241,8 @@ export function Features() {
   ];
 
   return (
-    <section ref={sectionRef} data-features-paused={isMotionPaused} id="como-funciona" className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
-      <style jsx global>{`[data-features-paused="true"] *, [data-features-paused="true"] *::before, [data-features-paused="true"] *::after { animation-play-state: paused !important; }`}</style>
-      {isFeaturesVisible && <button type="button" onClick={() => setIsMotionPaused((paused) => !paused)} aria-pressed={isMotionPaused} aria-label={isMotionPaused ? "Reproduzir animações" : "Pausar animações"} className="fixed bottom-5 right-5 z-[90] flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-[#0c0d0d] shadow-lg shadow-zinc-900/10 transition-transform duration-200 hover:scale-105 active:scale-95 md:bottom-8 md:right-8" title={isMotionPaused ? "Reproduzir animações" : "Pausar animações"}>
-        {isMotionPaused ? <Play size={16} fill="currentColor" aria-hidden="true" /> : <Pause size={16} fill="currentColor" aria-hidden="true" />}
-      </button>}
+    <section id="como-funciona" className="w-full bg-white py-24 md:py-32 relative px-4 md:px-8 section-to-blur">
+      <style jsx global>{`[data-feature-paused="true"] *, [data-feature-paused="true"] *::before, [data-feature-paused="true"] *::after { animation-play-state: paused !important; }`}</style>
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="max-w-3xl mb-32 text-center mx-auto">

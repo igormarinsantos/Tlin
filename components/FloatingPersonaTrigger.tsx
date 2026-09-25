@@ -231,7 +231,7 @@ export function FloatingPersonaTrigger({
             dismissBubble();
             if (bubbleContent.externalId) onExternalFollowUpOpen?.();
           }}
-          className="persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 max-w-[min(18rem,calc(100vw-6rem))] rounded-[1.25rem] rounded-br-md border border-zinc-200 bg-white px-4 py-3 text-left shadow-[0_16px_45px_rgba(12,13,13,0.16)]"
+          className="persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 max-w-[min(18rem,calc(100vw-6rem))] rounded-[1.25rem] rounded-br-md border border-white/10 bg-[#0c0d0d] px-4 py-3 text-left shadow-[0_16px_45px_rgba(12,13,13,0.28)]"
           aria-label={bubblePhase === "typing" ? `${config.attendant.name} está digitando` : "Fechar mensagem"}
         >
           {bubblePhase === "typing" ? (
@@ -241,7 +241,7 @@ export function FloatingPersonaTrigger({
               <span className="persona-typing-dot [animation-delay:320ms]" />
             </span>
           ) : (
-            <span className="block min-w-[14rem] text-[14px] font-bold leading-snug tracking-[-0.01em] text-zinc-950" role="status" aria-live="polite">
+            <span className="block min-w-[14rem] text-[14px] font-bold leading-snug tracking-[-0.01em] text-zinc-100" role="status" aria-live="polite">
               <HighlightedFollowUp
                 message={bubbleContent.message}
                 highlights={bubbleContent.highlights}
