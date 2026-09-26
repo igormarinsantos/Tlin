@@ -325,14 +325,14 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className={`fixed inset-0 z-[90] backdrop-blur-xl md:hidden ${mobileMenuSurface}`}
+            className={`fixed inset-0 z-[490] backdrop-blur-xl md:hidden ${mobileMenuSurface}`}
           />
         )}
       </AnimatePresence>
 
       {/* 1. Top Header */}
       <header data-mascot-header
-        className="absolute top-[var(--fd-banner-height,0px)] left-0 right-0 z-[100] mx-auto w-full max-w-6xl px-4 pt-6 md:px-6"
+        className={`absolute top-[var(--fd-banner-height,0px)] left-0 right-0 mx-auto w-full max-w-6xl px-4 pt-6 md:px-6 ${isMobileMenuOpen ? "z-[500]" : "z-[100]"}`}
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">

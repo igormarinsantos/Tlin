@@ -77,7 +77,7 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="pointer-events-auto fixed inset-x-0 bottom-0 top-[calc(var(--fd-banner-height,0px)+4rem)] z-[110] overflow-y-auto overscroll-contain bg-transparent md:hidden"
+          className="pointer-events-auto fixed inset-x-0 bottom-0 top-[calc(var(--fd-banner-height,0px)+4rem)] z-[510] overflow-y-auto overscroll-contain bg-transparent md:hidden"
         >
           <div className="flex min-h-full flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2">
             <nav aria-label="Navegação mobile" className="divide-y divide-zinc-100">
@@ -146,35 +146,36 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
             </nav>
 
             <div className="mt-auto pt-6">
-              <div className="flex items-center justify-between border-t border-zinc-200/70 pt-4">
+              <div className="border-t border-zinc-200/70 pt-4">
+                <div className="flex items-center justify-center gap-2">
+                  {LANGUAGES.map((l) => (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => setLang(l.code)}
+                      className={`flex items-center gap-1.5 rounded-full border px-2 py-1.5 transition-all ${
+                        lang === l.code ? "border-[#0c0d0d] bg-[#0c0d0d] text-white" : "border-zinc-200 bg-white/70 text-zinc-500"
+                      }`}
+                    >
+                      <CountryFlag country={l.flag} />
+                      <span className="text-[11px] font-bold">{l.code}</span>
+                    </button>
+                  ))}
+                </div>
+
                 <a
                   href="https://app.tlin.ia.br"
                   onClick={() => trackAndClose("nav_link_click", { destination: "login" })}
-                  className="text-[13px] font-semibold text-zinc-600"
+                  className="mt-4 flex w-full items-center justify-center rounded-full border border-zinc-200 bg-white/75 py-3.5 text-[13px] font-bold text-[#0c0d0d] transition-colors active:bg-zinc-100"
                 >
                   {t.nav.login}
                 </a>
-                <div className="flex items-center gap-1.5">
-                {LANGUAGES.map((l) => (
-                  <button
-                    key={l.code}
-                    type="button"
-                    onClick={() => setLang(l.code)}
-                    className={`flex items-center gap-1.5 rounded-full border px-2 py-1.5 transition-all ${
-                      lang === l.code ? "border-[#0c0d0d] bg-[#0c0d0d] text-white" : "border-zinc-200 bg-white/70 text-zinc-500"
-                    }`}
-                  >
-                    <CountryFlag country={l.flag} />
-                    <span className="text-[11px] font-bold">{l.code}</span>
-                  </button>
-                ))}
-                </div>
               </div>
 
               <button
                 type="button"
                 onClick={openQualification}
-                className="group relative mt-5 block w-full overflow-hidden rounded-full p-[1px] transition-transform active:scale-[0.98]"
+                className="group relative mt-3 block w-full overflow-hidden rounded-full p-[1px] transition-transform active:scale-[0.98]"
               >
                 <span
                   aria-hidden="true"
