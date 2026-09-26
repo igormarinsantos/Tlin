@@ -240,7 +240,7 @@ export const enUS: TranslationDictionary = {
     salesSuffix: "sales",
     additionalRevenueLabel: "Additional revenue",
     perMonthLabel: "per month",
-    disclaimer: "Simulation based on an average ticket of R$500 and an estimated 25% conversion improvement. Actual results vary by operation.",
+    disclaimer: "Simulation based on an average ticket of R$500 and an estimated {rate} conversion rate with Tlin. Actual results vary by operation.",
     details: "operation details",
     convCurrent: "current conv.",
     revealed: "Result revealed",

@@ -6,16 +6,27 @@ import { withoutClosingPeriod } from "@/lib/marketingCopy";
 
 const LEADS_MIN = 40;
 const LEADS_MAX = 10000;
+const CURRENT_CONVERSION_RATE = 0.05;
+const PROJECTED_CONVERSION_RATE = 0.25;
+
+const LOCALES = {
+  PT: "pt-BR",
+  EN: "en-US",
+  ES: "es-ES",
+} as const;
 
 export function RoiCalculator() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [opportunities, setOpportunities] = useState(500);
-  const currentRate = 0.05;
-  const projectedRate = 0.0625;
   const ticket = 500;
-  const currentSales = Math.round(opportunities * currentRate);
-  const projectedSales = Math.round(opportunities * projectedRate);
+  const formatPercentage = (rate: number) => new Intl.NumberFormat(LOCALES[lang], {
+    style: "percent",
+    maximumFractionDigits: 2,
+  }).format(rate);
+  const currentSales = Math.round(opportunities * CURRENT_CONVERSION_RATE);
+  const projectedSales = Math.round(opportunities * PROJECTED_CONVERSION_RATE);
   const additionalRevenue = Math.max(0, (projectedSales - currentSales) * ticket);
+  const disclaimer = t.roi.disclaimer.replace("{rate}", formatPercentage(PROJECTED_CONVERSION_RATE));
 
   return (
     <section id="roi" className="w-full bg-black py-16 md:py-24" style={{ fontFamily: '"DM Sans", sans-serif' }}>
@@ -43,14 +54,24 @@ export function RoiCalculator() {
             <div className="flex justify-between text-xs text-zinc-700 mt-2"><span>40</span><span>10.000+</span></div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-10">
-              <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.currentRateLabel}</p><p className="mt-1 text-2xl font-black text-white">5%</p><p className="text-xs text-white/60">{currentSales} {t.roi.salesSuffix}</p></div>
-              <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.withTlinLabel}</p><p className="mt-1 text-2xl font-black text-[#B597FF]">6,25%</p><p className="text-xs text-white/60">{projectedSales} {t.roi.salesSuffix}</p></div>
-              <div className="rounded-2xl border border-white/10 bg-[#0c0d0d] p-5 text-white md:p-6"><p className="text-xs font-bold text-[#38E3FF]">{t.roi.additionalRevenueLabel}</p><p className="mt-1 text-2xl font-black">R$ {additionalRevenue.toLocaleString("pt-BR")}</p><p className="text-xs text-white/60">{t.roi.perMonthLabel}</p></div>
+              <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.currentRateLabel}</p><p className="mt-1 text-2xl font-black text-white">{formatPercentage(CURRENT_CONVERSION_RATE)}</p><p className="text-xs text-white/60">{currentSales} {t.roi.salesSuffix}</p></div>
+              <div className="relative overflow-hidden rounded-2xl border border-[#B597FF]/70 bg-[#17131f] p-5 shadow-[0_18px_45px_rgba(181,151,255,0.22)] sm:-translate-y-2 md:p-6">
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
+                <p className="text-xs font-bold text-white/80">{t.roi.withTlinLabel}</p>
+                <p className="mt-1 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-3xl font-black text-transparent">{formatPercentage(PROJECTED_CONVERSION_RATE)}</p>
+                <p className="text-xs font-medium text-white/70">{projectedSales} {t.roi.salesSuffix}</p>
+              </div>
+              <div className="relative overflow-hidden rounded-2xl border border-[#38E3FF]/70 bg-[#0c0d0d] p-5 text-white shadow-[0_18px_45px_rgba(56,227,255,0.2)] sm:-translate-y-2 md:p-6">
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#B597FF] to-[#38E3FF]" />
+                <p className="text-xs font-bold text-[#38E3FF]">{t.roi.additionalRevenueLabel}</p>
+                <p className="mt-1 text-3xl font-black">R$ {additionalRevenue.toLocaleString(LOCALES[lang])}</p>
+                <p className="text-xs font-medium text-white/70">{t.roi.perMonthLabel}</p>
+              </div>
             </div>
           </div>
           </div>
         </div>
-        <p className="text-center text-xs text-white/40 mt-6">{t.roi.disclaimer}</p>
+        <p className="text-center text-xs text-white/40 mt-6">{disclaimer}</p>
       </div>
     </section>
   );

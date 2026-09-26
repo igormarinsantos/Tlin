@@ -239,7 +239,7 @@ export const ptBR = {
     salesSuffix: "vendas",
     additionalRevenueLabel: "Receita adicional",
     perMonthLabel: "por mês",
-    disclaimer: "Simulação baseada em ticket médio de R$ 500 e melhoria estimada de 25% na conversão. Os resultados reais variam conforme sua operação.",
+    disclaimer: "Simulação baseada em ticket médio de R$ 500 e taxa de conversão estimada em {rate} com a Tlin. Os resultados reais variam conforme sua operação.",
     details: "detalhes da operação",
     convCurrent: "conv. atual",
     revealed: "Resultado revelado",
