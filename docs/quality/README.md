@@ -53,8 +53,8 @@ git status --short
 | `npm run build` | Compilação de produção e geração das rotas |
 | `npm run check` | Executa tipos, lint controlado, testes e build em sequência |
 
-O workflow [Quality](../../.github/workflows/quality.yml) roda em PRs, pushes
-para `main`/`codex/**` e execução manual. Usa Node de `.nvmrc`, lockfile,
+O workflow [Quality](../../.github/workflows/quality.yml) roda em todos os PRs,
+pushes para `main` e execução manual. Usa Node de `.nvmrc`, lockfile,
 permissão somente de leitura e nenhum segredo comercial. Confere whitespace
 do diff completo no PR e do último commit em pushes/execução manual.
 As actions oficiais [checkout](https://github.com/actions/checkout) e

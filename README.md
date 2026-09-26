@@ -21,7 +21,7 @@ Leia esta seção antes de editar o produto.
 - CTAs pretos de conversão usam a borda gradiente e, em desktop, a pílula animada **Demo 100% grátis**. Reutilize `components/DemoHoverPill.tsx` em vez de recriar o efeito.
 - Mobile não é desktop comprimido: o header abre um mega menu abaixo da navegação, o scroll é nativo e os layouts precisam preservar hierarquia e respiro.
 - Não altere arquivos gerados ou locais sem necessidade: `next-env.d.ts`, `tsconfig.tsbuildinfo`, logs e `.planning/` podem estar sujos por processos locais.
-- Antes de concluir uma alteração: rode `npm run check` e `git diff --check`. Trabalhe em uma branch `codex/`, com commits pequenos. Merge ou push em `main` exige autorização explícita do Igor, pois publica na Vercel; checks verdes não autorizam publicação.
+- Antes de concluir uma alteração: rode `npm run check` e `git diff --check`. Use uma branch curta e descritiva (`feat/`, `fix/`, `refactor/` ou `docs/`), criada a partir da `main` atualizada, com commits pequenos. Siga o [fluxo de desenvolvimento](docs/development-workflow.md). Merge ou push em `main` exige autorização explícita do Igor, pois publica na Vercel; checks verdes não autorizam publicação.
 
 ## O que está pronto
 
@@ -197,7 +197,7 @@ git status --short
 Depois, confira a rota afetada em desktop e mobile. Em mudanças de CTA, valide clique, origem do evento e abertura do fluxo de qualificação.
 Consulte o [protocolo de qualidade](docs/quality/README.md) e a
 [referência visual](docs/quality/visual-baseline.md). O workflow `Quality` executa
-os checks em PRs e pushes nas branches previstas; ele não faz deploy. A exigência
+os checks em todos os PRs e pushes em `main`; ele não faz deploy. A exigência
 do check nas regras de proteção do GitHub é uma configuração externa, não aplicada
 por este repositório.
 
@@ -211,6 +211,7 @@ por este repositório.
 ## Referências internas
 
 - [Contexto detalhado para agentes](AGENTS.md)
+- [Fluxo de desenvolvimento e Git](docs/development-workflow.md)
 - [Design system](docs/design-system.md)
 - [Qualidade e plano de evolução](docs/quality/README.md)
 - [Dívida de lint priorizada](docs/quality/lint-backlog.md)

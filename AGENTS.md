@@ -10,7 +10,8 @@ não estão necessariamente em produção. A prioridade comercial confirmada é
 
 ## Referências e fluxo de trabalho
 
-- Leia `README.md`, este arquivo e `docs/quality/README.md` antes de editar.
+- Leia `README.md`, este arquivo, `docs/development-workflow.md` e
+  `docs/quality/README.md` antes de editar.
 - O contrato visual está em `docs/design-system.md`; as capturas de referência
   estão em `docs/quality/visual-baseline.md`.
 - A sequência de seis fases aprovada em 17/09 está em `docs/quality/README.md`.
@@ -19,8 +20,11 @@ não estão necessariamente em produção. A prioridade comercial confirmada é
   Algumas páginas ali marcadas como não iniciadas já existem. Confira o código
   e não recrie páginas a partir de um status antigo.
 - Confira `git status`, branches e base antes de trabalhar; preserve mudanças
-  locais. Use branch `codex/` e commits pequenos. Não inclua cache TypeScript,
-  alterações geradas de `next-env.d.ts`, segredos ou logs no commit.
+  locais. Crie uma branch curta e descritiva (`feat/`, `fix/`, `refactor/` ou
+  `docs/`) a partir da `main` atualizada, faça commits pequenos e apague a branch
+  após o merge. Não reutilize branches antigas. Não inclua cache TypeScript,
+  alterações geradas de `next-env.d.ts`, segredos, logs ou estado local de
+  ferramentas no commit.
 - Rode `npm run check` e `git diff --check`. O lint bloqueia erros e aumentos
   de avisos por arquivo/regra; consulte `docs/quality/lint-backlog.md`.
 - Merge, push ou outras alterações em `main` exigem autorização explícita do

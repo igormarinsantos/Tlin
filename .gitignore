@@ -18,3 +18,9 @@ yarn-error.log*
 evolution-api/.env
 evolution-api/instances/
 .vercel
+
+# Estado local de ferramentas e planejamento
+.gsd/
+.planning/milestone.lock
+.planning/research/.cache/
+.planning/tmp/
