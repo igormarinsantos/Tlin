@@ -15,6 +15,10 @@ import {
   useEngagementFollowUp,
   type EngagementFollowUp,
 } from "@/components/lia-popup/useEngagementFollowUp";
+import {
+  appendEngagementFollowUp,
+  type LiaChatMessage,
+} from "@/components/lia-popup/chatHistory";
 
 const QUALIFICATION_START_TYPING_MS = 520;
 const REASONING_MIN_DURATION_MS = 1700;
@@ -24,7 +28,7 @@ export function LiaPopup() {
   const { t, lang } = useLanguage();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{role: 'user' | 'bot', text: string, type: 'text' | 'handoff'}[]>([]);
+  const [messages, setMessages] = useState<LiaChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [qualificationStep, setQualificationStep] = useState(0);
@@ -56,8 +60,16 @@ export function LiaPopup() {
     if (source === "page_complete") {
       setQualificationStep((step) => step === 0 ? 1 : step);
     }
-    setMessages((previous) => [...previous, { role: "bot", text: message, type: "text" }]);
-  }, []);
+    setMessages((previous) => appendEngagementFollowUp(
+      previous,
+      message,
+      source,
+      [
+        { role: "bot", text: t.liaPopup.welcomeGreeting, type: "text" },
+        { role: "bot", text: t.liaPopup.welcomePitch, type: "text" },
+      ],
+    ));
+  }, [t.liaPopup.welcomeGreeting, t.liaPopup.welcomePitch]);
 
   const pendingReplyCount = getPendingReplyCount(messages);
   const {
@@ -562,12 +574,12 @@ export function LiaPopup() {
                         <img src="/team/igor-avatar.avif" alt="Igor" className="h-full w-full object-cover" />
                       </div>
                       <div className="rounded-2xl rounded-tl-none border border-white/10 bg-white/[0.06] px-4 py-3 text-[15px] font-semibold text-zinc-100">
-                        Olá, tudo bem?
+                        {t.liaPopup.welcomeGreeting}
                       </div>
                     </div>
 
                     <div className="ml-10 max-w-[82%] rounded-3xl rounded-tl-md border border-white/10 bg-white/[0.06] p-4">
-                      <p className="text-[15px] font-semibold leading-relaxed text-zinc-100">Vamos entender como a Tlin pode organizar seu comercial e preparar uma demonstração para a sua operação?</p>
+                      <p className="text-[15px] font-semibold leading-relaxed text-zinc-100">{t.liaPopup.welcomePitch}</p>
                       <button
                         type="button"
                         onClick={beginQualification}

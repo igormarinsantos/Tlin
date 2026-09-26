@@ -387,6 +387,8 @@ export const ptBR = {
     close: "Fechar",
     newChat: "Novo chat",
     talkToLia: "Fale com o Igor",
+    welcomeGreeting: "Olá, tudo bem?",
+    welcomePitch: "Vamos entender como a Tlin pode organizar seu comercial e preparar uma demonstração para a sua operação?",
     followUpPrompt: "Vamos transformar seu WhatsApp em uma operação comercial que vende 24/7?",
     followUpHighlights: ["WhatsApp", "vende 24/7"],
     formIdleFollowUp: "Vamos continuar? Vi que ficou uma pergunta sem resposta. Leva menos de 1 minuto",

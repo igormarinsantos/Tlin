@@ -388,6 +388,8 @@ export const enUS: TranslationDictionary = {
     close: "Close",
     newChat: "New chat",
     talkToLia: "Talk to Igor",
+    welcomeGreeting: "Hi, how are you?",
+    welcomePitch: "Let's understand how Tlin can organize your sales operation and prepare a demonstration tailored to your business.",
     followUpPrompt: "Shall we turn your WhatsApp into a sales operation that sells 24/7?",
     followUpHighlights: ["WhatsApp", "sells 24/7"],
     formIdleFollowUp: "Shall we continue? I noticed one question is still unanswered. It takes less than 1 minute",

@@ -6,6 +6,7 @@ import {
   useEngagementFollowUp,
   type EngagementFollowUp,
 } from "../components/lia-popup/useEngagementFollowUp";
+import { appendEngagementFollowUp } from "../components/lia-popup/chatHistory";
 
 vi.mock("@/lib/utm", () => ({ trackFunnelEvent: vi.fn() }));
 
@@ -93,6 +94,27 @@ afterEach(() => {
 });
 
 describe("Lia engagement follow-up", () => {
+  it("preserves the welcome conversation when the final-page follow-up starts the form", () => {
+    const welcomeMessages = [
+      { role: "bot" as const, text: "Olá, tudo bem?", type: "text" as const },
+      { role: "bot" as const, text: "Vamos entender sua operação", type: "text" as const },
+    ];
+
+    expect(appendEngagementFollowUp([], copy.pageCompleteMessage, "page_complete", welcomeMessages)).toEqual([
+      ...welcomeMessages,
+      { role: "bot", text: copy.pageCompleteMessage, type: "text" },
+    ]);
+
+    const existingHistory = [
+      { role: "bot" as const, text: "Qual é seu nome?", type: "text" as const },
+      { role: "user" as const, text: "Ana", type: "text" as const },
+    ];
+    expect(appendEngagementFollowUp(existingHistory, copy.pageCompleteMessage, "page_complete", welcomeMessages)).toEqual([
+      ...existingHistory,
+      { role: "bot", text: copy.pageCompleteMessage, type: "text" },
+    ]);
+  });
+
   it("counts only bot messages sent after the latest user answer", () => {
     expect(getPendingReplyCount([
       { role: "bot", text: "Pergunta 1" },
