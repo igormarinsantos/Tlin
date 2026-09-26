@@ -14,14 +14,6 @@ const LANGUAGES: { code: Lang; flag: string }[] = [
   { code: "ES", flag: "es" },
 ];
 
-function ArrowUpRightIcon() {
-  return (
-    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 17 17 7M8 7h9v9" />
-    </svg>
-  );
-}
-
 function ChevronIcon({ open = false }: { open?: boolean }) {
   return (
     <svg aria-hidden="true" className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -136,7 +128,6 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
                 className="flex items-center justify-between py-4 text-[15px] font-semibold text-[#0c0d0d] transition-colors"
               >
                 {t.nav.comoFunciona}
-                <ArrowUpRightIcon />
               </a>
               <a
                 href="/precos"
@@ -144,7 +135,6 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
                 className="flex items-center justify-between py-4 text-[15px] font-semibold text-[#0c0d0d] transition-colors"
               >
                 {t.nav.pricing}
-                <ArrowUpRightIcon />
               </a>
               <button
                 type="button"
@@ -152,7 +142,6 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
                 className="flex w-full items-center justify-between py-4 text-left text-[15px] font-semibold text-[#0c0d0d] transition-colors"
               >
                 <span>{t.nav.ia}</span>
-                <ArrowUpRightIcon />
               </button>
             </nav>
 
