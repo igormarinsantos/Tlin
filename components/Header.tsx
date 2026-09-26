@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
@@ -183,10 +183,6 @@ function NavLinks({
 function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
-  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
   return (
     <div className="relative">
@@ -201,32 +197,23 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
         fullWidth
         className={isHovered ? "z-[100]" : "z-10"}
         contentClassName={`${padding} text-[13px]`}
-        onMouseEnter={(e) => {
-           const rect = e.currentTarget.getBoundingClientRect();
-           mouseX.set(e.clientX - rect.left);
-           mouseY.set(e.clientY - rect.top);
-           setIsHovered(true);
-        }}
+        onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onMouseMove={(e) => {
-           const rect = e.currentTarget.getBoundingClientRect();
-           mouseX.set(e.clientX - rect.left);
-           mouseY.set(e.clientY - rect.top);
-        }}
       >{t.nav.cta}</TlinButton>
       
       <AnimatePresence>
         {isHovered && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            style={{ position: "absolute", left: springX, top: springY, x: "15px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-            className="hidden overflow-hidden rounded-full p-[1px] shadow-xl md:block"
-          >
-            <span className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} />
-            <span className="relative block whitespace-nowrap rounded-full border border-white/10 bg-zinc-950 px-2 py-0.5 text-[9px] font-bold leading-none tracking-wide text-white">{t.hero.demoHover}</span>
-          </motion.div>
+          <div className="pointer-events-none absolute left-1/2 top-[calc(100%+8px)] z-[200] hidden -translate-x-1/2 md:block">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: -8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -8 }}
+              className="relative overflow-hidden rounded-full p-[1px] shadow-xl"
+            >
+              <span className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} />
+              <span className="relative block whitespace-nowrap rounded-full border border-white/10 bg-zinc-950 px-2 py-0.5 text-[9px] font-bold leading-none tracking-wide text-white">{t.hero.demoHover}</span>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -51,10 +51,6 @@ function FeatureCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isMotionPaused, setIsMotionPaused] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
-  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
 
   useEffect(() => {
     const card = cardRef.current;
@@ -102,18 +98,8 @@ function FeatureCard({
                   if (lenis) lenis.scrollTo('#planos', { offset: -40 });
                   else document.querySelector('#planos')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                onMouseEnter={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  mouseX.set(e.clientX - rect.left);
-                  mouseY.set(e.clientY - rect.top);
-                  setIsHovered(true);
-                }}
+                onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  mouseX.set(e.clientX - rect.left);
-                  mouseY.set(e.clientY - rect.top);
-                }}
                 className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full md:w-max"
               >
                 <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
@@ -128,21 +114,22 @@ function FeatureCard({
 
               <AnimatePresence>
                 {isHovered && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                    style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-                  >
-                    <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                      <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
-                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
-                      />
-                      <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
-                        <span className="text-[10px] font-bold tracking-wide leading-none">{t.nav.demo}</span>
+                  <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-[200] -translate-x-1/2">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: 8 }}
+                    >
+                      <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
+                        <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+                          style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
+                        />
+                        <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
+                          <span className="text-[10px] font-bold tracking-wide leading-none">{t.nav.demo}</span>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </div>
                 )}
               </AnimatePresence>
             </div>

@@ -251,10 +251,6 @@ export function Hero() {
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [isDemoHovered, setIsDemoHovered] = useState(false);
   
-  const uiMouseX = useMotionValue(0);
-  const uiMouseY = useMotionValue(0);
-  const uiSpringX = useSpring(uiMouseX, { damping: 25, stiffness: 150 });
-  const uiSpringY = useSpring(uiMouseY, { damping: 25, stiffness: 150 });
 
   return (
     <LazyMotion features={domAnimation}>
@@ -340,36 +336,27 @@ export function Hero() {
               }}
               className={isCtaHovered ? "z-[100]" : "z-10"}
               contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
-              onMouseEnter={(e) => {
-                 const rect = e.currentTarget.getBoundingClientRect();
-                 uiMouseX.set(e.clientX - rect.left);
-                 uiMouseY.set(e.clientY - rect.top);
-                 setIsCtaHovered(true);
-              }}
+              onMouseEnter={() => setIsCtaHovered(true)}
               onMouseLeave={() => setIsCtaHovered(false)}
-              onMouseMove={(e) => {
-                 const rect = e.currentTarget.getBoundingClientRect();
-                 uiMouseX.set(e.clientX - rect.left);
-                 uiMouseY.set(e.clientY - rect.top);
-              }}
             >{t.hero.cta}</TlinButton>
             <AnimatePresence>
               {isCtaHovered && (
-                <m.div
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  style={{ position: "absolute", left: uiSpringX, top: uiSpringY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}
-                >
-                  <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                    <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
-                      style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
-                    />
-                    <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
-                      <span className="text-[10px] font-bold tracking-wide leading-none">{t.hero.demoHover}</span>
+                <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-[200] -translate-x-1/2">
+                  <m.div
+                    initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 8 }}
+                  >
+                    <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
+                      <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
+                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
+                      />
+                      <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
+                        <span className="text-[10px] font-bold tracking-wide leading-none">{t.hero.demoHover}</span>
+                      </div>
                     </div>
-                  </div>
-                </m.div>
+                  </m.div>
+                </div>
               )}
             </AnimatePresence>
           </div>
@@ -384,18 +371,8 @@ export function Hero() {
             }}
             variant="secondary"
             className="whitespace-nowrap"
-            onMouseEnter={(e) => {
-               const rect = e.currentTarget.getBoundingClientRect();
-               uiMouseX.set(e.clientX - rect.left);
-               uiMouseY.set(e.clientY - rect.top);
-               setIsDemoHovered(true);
-            }}
+            onMouseEnter={() => setIsDemoHovered(true)}
             onMouseLeave={() => setIsDemoHovered(false)}
-            onMouseMove={(e) => {
-               const rect = e.currentTarget.getBoundingClientRect();
-               uiMouseX.set(e.clientX - rect.left);
-               uiMouseY.set(e.clientY - rect.top);
-            }}
           >{t.hero.watchDemo}</TlinButton>
         </m.div>
 
