@@ -37,7 +37,7 @@ export function TlinButton({
     ? "[clip-path:inset(0_round_9999px)]"
     : "[clip-path:inset(0_round_1rem)]";
   const shared = cn(
-    "relative inline-flex items-center justify-center overflow-hidden font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+    "relative inline-flex cursor-pointer items-center justify-center overflow-hidden font-bold transition-all duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
     radius,
     buttonSizes[size],
     fullWidth && "w-full",

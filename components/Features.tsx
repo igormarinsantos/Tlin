@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 import { SalesNotification } from "./SalesNotification";
 import { FunnelAnimation } from "./FunnelAnimation";
@@ -48,7 +49,6 @@ function FeatureCard({
   idx: number
 }) {
   const { t } = useLanguage();
-  const [isHovered, setIsHovered] = useState(false);
   const [isMotionPaused, setIsMotionPaused] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -92,46 +92,25 @@ function FeatureCard({
             
             {/* Desktop Button */}
             <div className="hidden md:block relative w-max mt-6">
-              <button
-                onClick={() => {
-                  const lenis = (window as any).lenis;
-                  if (lenis) lenis.scrollTo('#planos', { offset: -40 });
-                  else document.querySelector('#planos')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full md:w-max"
-              >
-                <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
-                  style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
-                />
-                <div className="relative px-8 py-4 md:py-5 rounded-full font-bold text-base md:text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
-                  <span className="relative z-10">{(t.features as any)[`${feature.id}_cta`] || t.features.cta}</span>
-                  <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
-                </div>
-              </button>
-
-              <AnimatePresence>
-                {isHovered && (
-                  <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-[200] -translate-x-1/2">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8, y: 8 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: 8 }}
-                    >
-                      <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                        <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
-                          style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
-                        />
-                        <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
-                          <span className="text-[10px] font-bold tracking-wide leading-none">{t.nav.demo}</span>
-                        </div>
-                      </div>
-                    </motion.div>
+              <DemoHoverPill label={t.nav.demo}>
+                <button
+                  onClick={() => {
+                    const lenis = (window as any).lenis;
+                    if (lenis) lenis.scrollTo('#planos', { offset: -40 });
+                    else document.querySelector('#planos')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="relative p-[1px] rounded-full overflow-hidden group/btn transition-all duration-300 cursor-pointer block w-full md:w-max"
+                >
+                  <div className="absolute inset-[-150%] opacity-100 animate-[spin_3s_linear_infinite]"
+                    style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)` }}
+                  />
+                  <div className="relative px-8 py-4 md:py-5 rounded-full font-bold text-base md:text-lg z-10 block w-full text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d] text-center">
+                    <span className="relative z-10">{(t.features as any)[`${feature.id}_cta`] || t.features.cta}</span>
+                    <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
                   </div>
-                )}
-              </AnimatePresence>
+                </button>
+              </DemoHoverPill>
             </div>
           </div>
         </div>

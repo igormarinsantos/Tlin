@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
 import { TlinButton } from "@/components/ui/tlin";
+import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
   char: string; 
@@ -326,39 +327,19 @@ export function Hero() {
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
           <div className="relative">
-            <TlinButton
-              onClick={() => {
-                trackFunnelEvent("click_pricing_cta", {
-                  cta_source: "hero_primary",
-                  plan_name: "TLIN",
-                });
-                window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
-              }}
-              className={isCtaHovered ? "z-[100]" : "z-10"}
-              contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
-              onMouseEnter={() => setIsCtaHovered(true)}
-              onMouseLeave={() => setIsCtaHovered(false)}
-            >{t.hero.cta}</TlinButton>
-            <AnimatePresence>
-              {isCtaHovered && (
-                <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-[200] -translate-x-1/2">
-                  <m.div
-                    initial={{ opacity: 0, scale: 0.8, y: 8 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: 8 }}
-                  >
-                    <div className="relative p-[1px] rounded-full overflow-hidden inline-flex">
-                      <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]"
-                        style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)` }}
-                      />
-                      <div className="relative px-2 py-0.5 bg-zinc-950 rounded-full text-white border border-white/10 whitespace-nowrap">
-                        <span className="text-[10px] font-bold tracking-wide leading-none">{t.hero.demoHover}</span>
-                      </div>
-                    </div>
-                  </m.div>
-                </div>
-              )}
-            </AnimatePresence>
+            <DemoHoverPill onHoverChange={setIsCtaHovered}>
+              <TlinButton
+                onClick={() => {
+                  trackFunnelEvent("click_pricing_cta", {
+                    cta_source: "hero_primary",
+                    plan_name: "TLIN",
+                  });
+                  window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
+                }}
+                className={isCtaHovered ? "z-[100]" : "z-10"}
+                contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
+              >{t.hero.cta}</TlinButton>
+            </DemoHoverPill>
           </div>
 
           <TlinButton
