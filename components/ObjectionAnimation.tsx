@@ -78,7 +78,7 @@ export function ObjectionAnimation({ dictKey = "objectionAnimation" }: { dictKey
   return (
     <div
       ref={scrollRef}
-      className="relative flex h-full min-h-0 w-full flex-col gap-1 overflow-y-auto overscroll-contain p-4 pb-8 scrollbar-hide md:p-12"
+      className="relative flex h-full min-h-0 w-full touch-pan-y flex-col gap-1 overflow-y-hidden p-4 pb-8 md:p-12"
     >
       {/* Blocos discretos (nao .map()) de proposito, igual o componente
           original -- cada mensagem e uma expressao JSX irma separada. */}

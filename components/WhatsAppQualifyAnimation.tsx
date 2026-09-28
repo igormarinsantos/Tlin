@@ -41,7 +41,7 @@ export function WhatsAppQualifyAnimation() {
           scale: step >= 8 ? 0.98 : 1
         }}
         transition={{ duration: 0.5 }}
-        className="relative w-full h-full flex flex-col gap-1 p-4 md:p-12 overflow-y-auto scrollbar-hide scroll-smooth z-10"
+        className="relative z-10 flex h-full w-full touch-pan-y flex-col gap-1 overflow-y-hidden scroll-smooth p-4 md:p-12"
       >
         <AnimatePresence>
           {/* Step 0-1: Lead Greeting */}
