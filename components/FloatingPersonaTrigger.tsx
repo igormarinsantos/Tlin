@@ -275,7 +275,7 @@ export function FloatingPersonaTrigger({
                     else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
                     else onToggle();
                   }}
-                  className="block min-w-[14rem] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
+                  className="block w-[13.5rem] max-w-[calc(100vw-6rem)] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
                   aria-label={`Abrir conversa com ${config.attendant.name}`}
                 >
                   <span role="status" aria-live="polite">
