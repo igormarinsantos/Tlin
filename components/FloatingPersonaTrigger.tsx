@@ -9,6 +9,7 @@ export type ExternalPersonaFollowUp = {
   id: string;
   message: string;
   highlights: string[];
+  source?: "form_idle" | "page_complete";
 };
 
 export type FloatingPersonaTriggerConfig = {
@@ -27,6 +28,7 @@ type FloatingPersonaTriggerProps = {
   config: FloatingPersonaTriggerConfig;
   label: string;
   closeLabel: string;
+  followUpCtaLabel?: string;
   isOpen: boolean;
   pendingReplyCount?: number;
   externalFollowUp?: ExternalPersonaFollowUp | null;
@@ -67,6 +69,7 @@ export function FloatingPersonaTrigger({
   config,
   label,
   closeLabel,
+  followUpCtaLabel = "Vamos começar",
   isOpen,
   pendingReplyCount = 0,
   externalFollowUp,
@@ -225,30 +228,48 @@ export function FloatingPersonaTrigger({
       />
 
       {bubblePhase !== "hidden" && !isOpen && (
-        <button
-          type="button"
-          onClick={() => {
-            dismissBubble();
-            if (bubbleContent.externalId) onExternalFollowUpOpen?.();
-          }}
-          className="persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 max-w-[min(18rem,calc(100vw-6rem))] rounded-[1.25rem] rounded-br-md border border-white/10 bg-[#0c0d0d] px-4 py-3 text-left shadow-[0_16px_45px_rgba(12,13,13,0.28)]"
-          aria-label={bubblePhase === "typing" ? `${config.attendant.name} está digitando` : "Fechar mensagem"}
+        <div
+          className="persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 max-w-[min(19rem,calc(100vw-6rem))] rounded-[1.25rem] rounded-br-md border border-white/10 bg-[#0c0d0d] px-4 py-3 text-left shadow-[0_16px_45px_rgba(12,13,13,0.28)]"
+          aria-label={bubblePhase === "typing" ? `${config.attendant.name} está digitando` : undefined}
         >
           {bubblePhase === "typing" ? (
-            <span className="flex h-5 min-w-10 items-center justify-center gap-1" role="status" aria-live="polite">
+            <button type="button" onClick={dismissBubble} className="flex h-5 min-w-10 items-center justify-center gap-1" aria-label={`${config.attendant.name} está digitando`}>
               <span className="persona-typing-dot" />
               <span className="persona-typing-dot [animation-delay:160ms]" />
               <span className="persona-typing-dot [animation-delay:320ms]" />
-            </span>
+            </button>
           ) : (
-            <span className="block min-w-[14rem] text-[14px] font-bold leading-snug tracking-[-0.01em] text-zinc-100" role="status" aria-live="polite">
-              <HighlightedFollowUp
-                message={bubbleContent.message}
-                highlights={bubbleContent.highlights}
-              />
-            </span>
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  dismissBubble();
+                  if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                }}
+                className="block min-w-[14rem] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
+                aria-label="Fechar mensagem"
+              >
+                <span role="status" aria-live="polite">
+                  <HighlightedFollowUp
+                    message={bubbleContent.message}
+                    highlights={bubbleContent.highlights}
+                  />
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  dismissBubble();
+                  if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                  else onToggle();
+                }}
+                className="mt-3 inline-flex min-h-10 items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2 text-[14px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
+              >
+                {followUpCtaLabel}
+              </button>
+            </>
           )}
-        </button>
+        </div>
       )}
 
       <span

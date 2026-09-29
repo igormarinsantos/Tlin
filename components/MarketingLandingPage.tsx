@@ -46,6 +46,23 @@ function DeferredSection({
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
+    if (!id || window.location.hash !== `#${id}`) return;
+
+    let scrollFrameId: number | null = null;
+    const renderFrameId = window.requestAnimationFrame(() => {
+      setShouldRender(true);
+      scrollFrameId = window.requestAnimationFrame(() => {
+        ref.current?.scrollIntoView({ block: "start" });
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(renderFrameId);
+      if (scrollFrameId !== null) window.cancelAnimationFrame(scrollFrameId);
+    };
+  }, [id]);
+
+  useEffect(() => {
     if (shouldRender) return;
 
     const node = ref.current;

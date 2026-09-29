@@ -57,9 +57,6 @@ export function LiaPopup() {
   }, []);
 
   const handleEngagementMessage = useCallback((message: string, source: EngagementFollowUp["source"]) => {
-    if (source === "page_complete") {
-      setQualificationStep((step) => step === 0 ? 1 : step);
-    }
     setMessages((previous) => appendEngagementFollowUp(
       previous,
       message,
@@ -240,10 +237,21 @@ export function LiaPopup() {
   };
 
   const beginQualification = () => {
+    if (qualificationStep > 0) return;
     setQualificationStep(1);
     setIsTyping(true);
     window.setTimeout(() => {
-      setMessages([{ role: "bot", text: t.leadQualify.initialMsg, type: "text" }]);
+      setMessages((previous) => {
+        const history = previous.length > 0 ? previous : [
+          { role: "bot" as const, text: t.liaPopup.welcomeGreeting, type: "text" as const },
+          { role: "bot" as const, text: t.liaPopup.welcomePitch, type: "text" as const },
+        ];
+
+        return [
+          ...history,
+          { role: "bot", text: t.leadQualify.initialMsg, type: "text" },
+        ];
+      });
       setIsTyping(false);
       setStatus(t.liaPopup.online);
     }, QUALIFICATION_START_TYPING_MS);
@@ -526,14 +534,14 @@ export function LiaPopup() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`fixed inset-0 z-[150] h-[var(--lia-popup-height,100dvh)] overflow-hidden p-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[420px] sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)] sm:rounded-[2.5rem] sm:p-[2px] sm:transition-[height] sm:duration-500 sm:ease-out ${qualificationStep === 0 ? "sm:h-[min(370px,calc(var(--lia-popup-height,100dvh)-2rem))]" : "sm:h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))]"}`}
+            className={`fixed inset-0 z-[150] h-[var(--lia-popup-height,100dvh)] overflow-hidden p-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[420px] sm:rounded-[2.5rem] sm:p-[2px] sm:transition-[height] sm:duration-500 sm:ease-out ${qualificationStep === 0 ? "sm:h-auto sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)]" : "sm:h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))] sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)]"}`}
           >
             {/* Animated Gradient Border Layer */}
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] pointer-events-none"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 165deg, #B597FF 180deg, #38E3FF 195deg, transparent 210deg 360deg)` }}
             />
             
-            <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0c0d0d] sm:rounded-[2.4rem]">
+            <div className={`relative flex h-full w-full flex-col overflow-hidden bg-[#0c0d0d] sm:rounded-[2.4rem] ${qualificationStep === 0 ? "sm:h-auto" : ""}`}>
               {/* Top Bar */}
               <div className="flex items-center justify-between p-3.5 bg-transparent shrink-0 z-10">
                 <div className="flex items-center gap-3">
@@ -565,7 +573,7 @@ export function LiaPopup() {
               </div>
 
               {/* Scrollable Content */}
-              <div ref={scrollRef} data-lenis-prevent onWheelCapture={(event) => event.stopPropagation()} className="flex-1 overflow-y-auto px-4 sm:px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10">
+              <div ref={scrollRef} data-lenis-prevent onWheelCapture={(event) => event.stopPropagation()} className={`flex-1 px-4 sm:px-6 flex flex-col custom-scrollbar bg-transparent min-h-0 overscroll-contain z-10 ${qualificationStep === 0 ? "overflow-hidden sm:flex-none" : "overflow-y-auto"}`}>
                 
                 {messages.length === 0 && !isTyping ? (
                   <div className="flex flex-1 flex-col gap-3 pt-2 pb-6">
@@ -583,9 +591,9 @@ export function LiaPopup() {
                       <button
                         type="button"
                         onClick={beginQualification}
-                        className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2.5 text-[13px] font-bold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
+                        className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-5 py-2.5 text-[15px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
                       >
-                        Sim, começar agora
+                        {t.leadQualify.startChat}
                       </button>
                       <p className="mt-3 text-[11px] font-medium leading-relaxed text-zinc-500">Ao continuar, você aceita nossa <Link href="/legal?tab=privacidade" onNavigate={() => setIsOpen(false)} className="text-[#64E5FA] hover:underline">Política de Privacidade</Link></p>
                     </div>
@@ -670,6 +678,20 @@ export function LiaPopup() {
                         </div>
                       </div>
                     )}
+                    {qualificationStep === 0 && !isTyping && !reasoningLabel && (
+                      <div className="ml-10 max-w-[82%] pb-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={beginQualification}
+                          className="inline-flex min-h-11 items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-5 py-2.5 text-[15px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
+                        >
+                          {t.leadQualify.startChat}
+                        </button>
+                        <p className="mt-3 text-[12px] font-medium leading-relaxed text-zinc-500">
+                          {t.leadQualify.consentPrefix} <Link href="/legal?tab=privacidade" onNavigate={() => setIsOpen(false)} className="text-[#64E5FA] hover:underline">{t.leadQualify.consentPrivacy}</Link>
+                        </p>
+                      </div>
+                    )}
                     {currentOptions && !reasoningLabel && !isTyping && (
                       <div className="ml-10 flex max-w-[82%] flex-col gap-2 pt-1">
                         {currentOptions.filter(Boolean).map((option) => (
@@ -677,7 +699,7 @@ export function LiaPopup() {
                             key={option}
                             type="button"
                             onClick={() => handleSendMessage(option)}
-                            className={`rounded-2xl px-4 py-3 text-left text-[14px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
+                            className={`min-h-12 rounded-2xl px-4 py-3 text-left text-[16px] font-bold transition-all active:scale-[0.98] ${option === t.leadQualify.yesCorrect || option === t.leadQualify.confirm ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] text-[#0c0d0d] hover:brightness-105" : "border border-white/10 bg-white/[0.05] text-zinc-200 hover:border-[#B597FF]/50 hover:bg-white/[0.09]"}`}
                           >
                             {option}
                           </button>
@@ -693,7 +715,7 @@ export function LiaPopup() {
                     )}
                     {qualificationStep === 7 && scheduleStage === "slot" && selectedDay && !isTyping && !reasoningLabel && (
                       <div className="ml-10 mt-1 grid max-w-[82%] grid-cols-2 gap-2">
-                        {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[14px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
+                        {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="min-h-12 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[15px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
                       </div>
                     )}
                   </div>
@@ -708,7 +730,7 @@ export function LiaPopup() {
                      <button
                        type="button"
                        onClick={() => setIsCountryDropdownOpen((open) => !open)}
-                       className="flex h-full min-h-10 items-center gap-1.5 rounded-xl bg-white/[0.04] px-2.5 text-[14px] font-bold text-zinc-200 transition-colors hover:bg-white/[0.08]"
+                       className="flex h-full min-h-10 items-center gap-1.5 rounded-xl bg-white/[0.04] px-2.5 text-[15px] font-bold text-zinc-200 transition-colors hover:bg-white/[0.08]"
                        aria-label="Selecionar DDI"
                        aria-expanded={isCountryDropdownOpen}
                      >
@@ -774,6 +796,7 @@ export function LiaPopup() {
           }}
           label={t.liaPopup.talkToLia}
           closeLabel={t.liaPopup.close}
+          followUpCtaLabel={qualificationStep === 0 ? t.leadQualify.startChat : t.leadQualify.resumeContinue}
           isOpen={isOpen}
           pendingReplyCount={pendingReplyCount}
           externalFollowUp={externalFollowUp}

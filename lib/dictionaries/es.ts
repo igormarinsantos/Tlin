@@ -392,7 +392,7 @@ export const esES: TranslationDictionary = {
     followUpHighlights: ["WhatsApp", "vende 24/7"],
     formIdleFollowUp: "¿Continuamos? Vi que quedó una pregunta sin respuesta. Toma menos de 1 minuto",
     formIdleHighlights: ["¿Continuamos?", "menos de 1 minuto"],
-    pageCompleteFollowUp: "¿Llegaste hasta aquí? Continuemos y construyamos tu operación comercial con IA. Responde la próxima pregunta para avanzar",
+    pageCompleteFollowUp: "¿Llegaste hasta aquí? Construyamos tu operación comercial con IA. Empieza ahora y descubre el próximo paso",
     pageCompleteHighlights: ["¿Llegaste hasta aquí?", "operación comercial con IA"],
     notificationTitle: "Igor te escribió 👋 | tlin.ai",
     fullPlaceholder: "Pregúntale cualquier cosa a Igor...",

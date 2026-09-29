@@ -391,7 +391,7 @@ export const ptBR = {
     followUpHighlights: ["WhatsApp", "vende 24/7"],
     formIdleFollowUp: "Vamos continuar? Vi que ficou uma pergunta sem resposta. Leva menos de 1 minuto",
     formIdleHighlights: ["Vamos continuar?", "menos de 1 minuto"],
-    pageCompleteFollowUp: "Chegou até aqui? Vamos continuar e montar sua operação comercial com IA? Responda a próxima pergunta para avançar",
+    pageCompleteFollowUp: "Chegou até aqui? Vamos montar sua operação comercial com IA? Comece agora e veja o próximo passo",
     pageCompleteHighlights: ["Chegou até aqui?", "operação comercial com IA"],
     notificationTitle: "Igor te chamou 👋 | tlin.ai",
     fullPlaceholder: "Pergunte qualquer coisa para o Igor...",
