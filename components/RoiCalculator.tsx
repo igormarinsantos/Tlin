@@ -56,13 +56,11 @@ export function RoiCalculator() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-10">
               <div className="rounded-2xl border border-white/10 bg-[#111016]/90 p-5 md:p-6"><p className="text-xs text-white/60">{t.roi.currentRateLabel}</p><p className="mt-1 text-2xl font-black text-white">{formatPercentage(CURRENT_CONVERSION_RATE)}</p><p className="text-xs text-white/60">{currentSales} {t.roi.salesSuffix}</p></div>
               <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-[#B597FF] p-5 text-[#17101f] shadow-[0_18px_45px_rgba(126,87,224,0.3)] sm:-translate-y-2 md:p-6">
-                <div className="absolute inset-x-0 top-0 h-1 bg-white/55" />
                 <p className="text-xs font-bold text-[#302047]">{t.roi.withTlinLabel}</p>
                 <p className="mt-1 text-3xl font-black text-[#17101f]">{formatPercentage(PROJECTED_CONVERSION_RATE)}</p>
                 <p className="text-xs font-semibold text-[#302047]/80">{projectedSales} {t.roi.salesSuffix}</p>
               </div>
               <div className="relative overflow-hidden rounded-2xl border border-white/55 bg-[#38D77A] p-5 text-[#062A16] shadow-[0_18px_45px_rgba(21,159,82,0.3)] sm:-translate-y-2 md:p-6">
-                <div className="absolute inset-x-0 top-0 h-1 bg-white/55" />
                 <p className="text-xs font-bold text-[#0B4827]">{t.roi.additionalRevenueLabel}</p>
                 <p className="mt-1 text-3xl font-black">R$ {additionalRevenue.toLocaleString(LOCALES[lang])}</p>
                 <p className="text-xs font-semibold text-[#0B4827]/80">{t.roi.perMonthLabel}</p>
