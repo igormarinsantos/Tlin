@@ -2,13 +2,16 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Fragment, useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { trackConversion, trackFunnelEvent } from "@/lib/utm";
+import { calculateLeadScore, getUtmLeadPayload, trackConversion, trackFunnelEvent } from "@/lib/utm";
 import { CountryFlag } from "@/components/CountryFlag";
 import { AvailabilityCalendar } from "@/components/lead-qualification/AvailabilityCalendar";
-import { COUNTRIES, type DemoDay, type DemoSlot } from "@/components/lead-qualification/constants";
+import { COUNTRIES, FALLBACK_FORM_DATA, WHATSAPP_NUMBER, type DemoDay, type DemoSlot } from "@/components/lead-qualification/constants";
+import { Turnstile } from "@/components/Turnstile";
+import { useQualificationRequest } from "@/components/lead-qualification/useQualificationRequest";
+import { saveDemoConfirmation } from "@/lib/qualification-request";
 import { FloatingPersonaTrigger } from "@/components/FloatingPersonaTrigger";
 import {
   getPendingReplyCount,
@@ -27,6 +30,7 @@ const REASONING_MAX_DURATION_MS = 2300;
 export function LiaPopup() {
   const { t, lang } = useLanguage();
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<LiaChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -39,7 +43,10 @@ export function LiaPopup() {
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<DemoDay | null>(null);
-  const [scheduleStage, setScheduleStage] = useState<"day" | "slot" | "complete">("day");
+  const [selectedSlot, setSelectedSlot] = useState<DemoSlot | null>(null);
+  const [formData, setFormData] = useState(FALLBACK_FORM_DATA);
+  const [scheduleStage, setScheduleStage] = useState<"day" | "slot" | "review" | "submitting" | "complete">("day");
+  const { request, turnstileRef, capture, submit, busy, busyRef, uncertain } = useQualificationRequest();
   // Mostrado enquanto espera a resposta real da API, antes do "digitando"
   // bloco a bloco que ja existia -- em vez de pular direto pros pontinhos.
   const [reasoningLabel, setReasoningLabel] = useState<string | null>(null);
@@ -51,6 +58,7 @@ export function LiaPopup() {
   const reasoningIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scrollFrameRef = useRef<number | null>(null);
   const scrollTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const hasTrackedBookedDemoRef = useRef(false);
 
   const handleEngagementTyping = useCallback((typing: boolean) => {
     setIsTyping(typing);
@@ -90,6 +98,12 @@ export function LiaPopup() {
     onTypingChange: handleEngagementTyping,
     onDeliverMessage: handleEngagementMessage,
   });
+
+  useEffect(() => {
+    if (qualificationStep >= 4 && qualificationStep <= 7 && formData.name && formData.phone) {
+      capture({ ...formData, utm: getUtmLeadPayload() });
+    }
+  }, [capture, formData, qualificationStep]);
 
   const clearReasoningCycle = () => {
     if (reasoningIntervalRef.current) {
@@ -230,6 +244,8 @@ export function LiaPopup() {
     setAvailabilityLoading(false);
     setAvailabilityError(null);
     setSelectedDay(null);
+    setSelectedSlot(null);
+    setFormData(FALLBACK_FORM_DATA);
     setScheduleStage("day");
     setReasoningLabel(null);
     setStatus(t.liaPopup.online);
@@ -360,6 +376,14 @@ export function LiaPopup() {
     setStatus(t.liaPopup.online);
 
     if (qualificationStep === 1) setLeadName(userMsg);
+    setFormData((previous) => {
+      if (qualificationStep === 1) return { ...previous, name: userMsg };
+      if (qualificationStep === 2) return { ...previous, phone: userMsg, countryCode };
+      if (qualificationStep === 4) return { ...previous, volume: userMsg };
+      if (qualificationStep === 5) return { ...previous, team: userMsg };
+      if (qualificationStep === 6) return { ...previous, email: userMsg };
+      return previous;
+    });
     const isCorrectingPhone = qualificationStep === 3 && userMsg === t.leadQualify.noCorrect;
     const nextMessage = isCorrectingPhone ? t.leadQualify.step2.replace("{name}", name) : [
       "",
@@ -417,18 +441,74 @@ export function LiaPopup() {
 
   const handleSelectSlot = (slot: DemoSlot) => {
     if (isTyping || reasoningLabel) return;
+    setSelectedSlot(slot);
     setMessages((previous) => [...previous, { role: "user", text: slot.when, type: "text" }]);
     setReasoningLabel(t.leadQualify.thinking9.replace("{answer}", slot.when));
     window.setTimeout(() => {
       setReasoningLabel(null);
       setIsTyping(true);
-      const message = `Perfeito, ${leadName}. Recebi sua preferência para ${slot.when}. Vou confirmar sua demonstração com a equipe`;
+      const message = t.leadQualify.step9.replace("{name}", leadName);
       window.setTimeout(() => {
         setMessages((previous) => [...previous, { role: "bot", text: message, type: "text" }]);
-        setScheduleStage("complete");
+        setScheduleStage("review");
         setIsTyping(false);
       }, getHumanTypingDelay(message));
     }, getReasoningDelay(slot.when));
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!selectedDay || !selectedSlot || busyRef.current || uncertain) return;
+    setScheduleStage("submitting");
+    const score = calculateLeadScore({
+      planName: "TLIN",
+      volume: formData.volume,
+      team: formData.team,
+    });
+    const outcome = await submit({
+      ...formData,
+      planName: "TLIN",
+      ...score,
+      utm: getUtmLeadPayload(),
+      demoSlot: { starts_at: selectedSlot.startsAt },
+    });
+
+    if (outcome === "booked") {
+      saveDemoConfirmation({
+        requestId: request.state.id,
+        day: selectedDay.label,
+        time: selectedSlot.when,
+        startsAt: selectedSlot.startsAt,
+      });
+      if (!hasTrackedBookedDemoRef.current) {
+        hasTrackedBookedDemoRef.current = true;
+        trackConversion("demo_booked", {
+          plan_name: "TLIN",
+          lead_volume: formData.volume || "not_set",
+          team_size: formData.team || "not_set",
+          lead_country_code: formData.countryCode || "+55",
+          ...score,
+        });
+      }
+      setScheduleStage("complete");
+      router.push("/obrigado");
+      return;
+    }
+
+    if (outcome === "slots") {
+      setMessages((previous) => [...previous, { role: "bot", text: t.leadQualify.slotUnavailable, type: "text" }]);
+      setSelectedDay(null);
+      setSelectedSlot(null);
+      setAvailabilityDays(null);
+      setScheduleStage("day");
+      return;
+    }
+
+    setMessages((previous) => [...previous, {
+      role: "bot",
+      text: outcome === "unknown" ? t.leadQualify.bookingUncertain : t.leadQualify.sendError,
+      type: "text",
+    }]);
+    setScheduleStage("review");
   };
 
   function WhatsAppHandoff() {
@@ -541,6 +621,24 @@ export function LiaPopup() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className={`fixed inset-0 z-[150] h-[var(--lia-popup-height,100dvh)] overflow-hidden p-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[420px] sm:rounded-[2.5rem] sm:p-[2px] sm:transition-[height] sm:duration-500 sm:ease-out ${qualificationStep === 0 ? "sm:h-auto sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)]" : "sm:h-[min(560px,calc(var(--lia-popup-height,100dvh)-2rem))] sm:max-h-[calc(var(--lia-popup-height,100dvh)-2rem)]"}`}
           >
+            <div className="absolute left-1/2 top-1/2 z-[210] -translate-x-1/2 -translate-y-1/2">
+              <Turnstile ref={turnstileRef} />
+            </div>
+            {(scheduleStage === "submitting" || busy || uncertain) && (
+              <div role="status" className="absolute inset-x-4 top-20 z-[205] rounded-2xl border border-white/10 bg-[#171919] p-4 text-center text-[14px] font-semibold text-zinc-100 shadow-xl">
+                {uncertain ? t.leadQualify.bookingUncertain : t.leadQualify.sendingRequest}
+                {uncertain && (
+                  <a
+                    className="mt-3 block font-bold text-[#64E5FA] underline"
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`${t.leadQualify.bookingSupportMessage} ${request.state.id}`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {t.leadQualify.bookingSupport}
+                  </a>
+                )}
+              </div>
+            )}
             {/* Animated Gradient Border Layer */}
             <div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] pointer-events-none"
               style={{ backgroundImage: `conic-gradient(from 0deg, transparent 0 165deg, #B597FF 180deg, #38E3FF 195deg, transparent 210deg 360deg)` }}
@@ -721,6 +819,42 @@ export function LiaPopup() {
                     {qualificationStep === 7 && scheduleStage === "slot" && selectedDay && !isTyping && !reasoningLabel && (
                       <div className="ml-10 mt-1 grid max-w-[82%] grid-cols-2 gap-2">
                         {selectedDay.slots.map((slot) => <button key={slot.startsAt} type="button" onClick={() => handleSelectSlot(slot)} className="min-h-12 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-[15px] font-bold text-zinc-200 transition-colors hover:border-[#B597FF]/50 hover:bg-white/[0.09]">{slot.when.split(" às ")[1] || slot.when}</button>)}
+                      </div>
+                    )}
+                    {qualificationStep === 7 && scheduleStage === "review" && selectedDay && selectedSlot && !isTyping && !reasoningLabel && (
+                      <div className="ml-10 mt-1 max-w-[82%] rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+                        <dl className="space-y-2 text-[14px]">
+                          <div className="flex items-start justify-between gap-4">
+                            <dt className="text-zinc-500">{t.leadQualify.fields.company}</dt>
+                            <dd className="text-right font-bold text-zinc-100">{formData.name}</dd>
+                          </div>
+                          <div className="flex items-start justify-between gap-4">
+                            <dt className="text-zinc-500">{t.leadQualify.fields.whatsapp}</dt>
+                            <dd className="text-right font-bold text-zinc-100">{formData.countryCode} {formData.phone}</dd>
+                          </div>
+                          <div className="flex items-start justify-between gap-4">
+                            <dt className="text-zinc-500">Demo</dt>
+                            <dd className="text-right font-bold text-zinc-100">{selectedDay.label}<br />{selectedSlot.when}</dd>
+                          </div>
+                        </dl>
+                        <button
+                          type="button"
+                          onClick={handleConfirmBooking}
+                          className="mt-4 min-h-12 w-full rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-3 text-[15px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.01] active:scale-[0.98]"
+                        >
+                          {t.leadQualify.confirm}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedDay(null);
+                            setSelectedSlot(null);
+                            setScheduleStage("day");
+                          }}
+                          className="mt-2 min-h-10 w-full text-[13px] font-bold text-zinc-400 hover:text-zinc-200"
+                        >
+                          {t.leadQualify.chooseAnotherDay}
+                        </button>
                       </div>
                     )}
                   </div>
