@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-type BubblePhase = "hidden" | "typing" | "message";
+type BubblePhase = "hidden" | "typing" | "message" | "closing";
+
+const BUBBLE_CLOSE_DURATION_MS = 280;
 
 export type ExternalPersonaFollowUp = {
   id: string;
@@ -76,6 +79,7 @@ export function FloatingPersonaTrigger({
   onFollowUpCta,
   onToggle,
 }: FloatingPersonaTriggerProps) {
+  const reduceMotion = useReducedMotion();
   const [revealed, setRevealed] = useState(false);
   const [preparing, setPreparing] = useState(false);
   const [compacted, setCompacted] = useState(false);
@@ -93,6 +97,7 @@ export function FloatingPersonaTrigger({
   const typingStartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeBubbleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeStatusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const revealAfterViewports = Number.isFinite(config.revealAfterViewports)
@@ -120,19 +125,30 @@ export function FloatingPersonaTrigger({
     };
   }, [isOpen]);
 
-  const clearBubbleTimers = () => {
+  const clearBubbleTimers = useCallback(() => {
     if (typingStartTimerRef.current) clearTimeout(typingStartTimerRef.current);
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+    if (closeBubbleTimerRef.current) clearTimeout(closeBubbleTimerRef.current);
     typingStartTimerRef.current = null;
     typingTimerRef.current = null;
     dismissTimerRef.current = null;
-  };
+    closeBubbleTimerRef.current = null;
+  }, []);
 
-  const dismissBubble = () => {
+  const dismissBubble = useCallback((animate = true) => {
     clearBubbleTimers();
-    setBubblePhase("hidden");
-  };
+    if (!animate || reduceMotion) {
+      setBubblePhase("hidden");
+      return;
+    }
+
+    setBubblePhase("closing");
+    closeBubbleTimerRef.current = setTimeout(() => {
+      setBubblePhase("hidden");
+      closeBubbleTimerRef.current = null;
+    }, BUBBLE_CLOSE_DURATION_MS);
+  }, [clearBubbleTimers, reduceMotion]);
 
   useEffect(() => {
     if (!externalFollowUp || isOpen) return;
@@ -149,13 +165,13 @@ export function FloatingPersonaTrigger({
       typingTimerRef.current = setTimeout(() => {
         setBubblePhase("message");
         dismissTimerRef.current = setTimeout(() => {
-          setBubblePhase("hidden");
+          dismissBubble();
         }, bubbleAutoDismissMs);
       }, typingDurationMs);
     }, 0);
 
     return clearBubbleTimers;
-  }, [bubbleAutoDismissMs, externalFollowUp, isOpen, typingDurationMs]);
+  }, [bubbleAutoDismissMs, clearBubbleTimers, dismissBubble, externalFollowUp, isOpen, typingDurationMs]);
 
   useEffect(() => {
     if (hasTriggeredRef.current) return;
@@ -196,7 +212,7 @@ export function FloatingPersonaTrigger({
         typingTimerRef.current = setTimeout(() => {
           setBubblePhase("message");
           dismissTimerRef.current = setTimeout(() => {
-            setBubblePhase("hidden");
+            dismissBubble();
           }, bubbleAutoDismissMs);
         }, typingDurationMs);
       }, prepareDurationMs + flipDurationMs + postFlipPauseMs);
@@ -216,7 +232,7 @@ export function FloatingPersonaTrigger({
       if (personaReadyTimerRef.current) clearTimeout(personaReadyTimerRef.current);
       clearBubbleTimers();
     };
-  }, [bubbleAutoDismissMs, config.followUpHighlights, config.followUpMessage, revealAfterViewports, typingDurationMs]);
+  }, [bubbleAutoDismissMs, clearBubbleTimers, config.followUpHighlights, config.followUpMessage, dismissBubble, revealAfterViewports, typingDurationMs]);
 
   return (
     <div className={`relative group ${isOpen ? "hidden sm:block" : ""}`}>
@@ -227,41 +243,69 @@ export function FloatingPersonaTrigger({
         className={`absolute -inset-2 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] blur-xl transition duration-1000 pointer-events-none ${isOpen ? "opacity-20" : "opacity-30 group-hover:opacity-60"}`}
       />
 
-      {bubblePhase !== "hidden" && !isOpen && (
-        <div
-          className="persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 max-w-[min(19rem,calc(100vw-6rem))] rounded-[1.25rem] rounded-br-md border border-white/10 bg-[#0c0d0d] px-4 py-3 text-left shadow-[0_16px_45px_rgba(12,13,13,0.28)]"
-          aria-label={bubblePhase === "typing" ? `${config.attendant.name} está digitando` : undefined}
-        >
-          {bubblePhase === "typing" ? (
-            <button type="button" onClick={dismissBubble} className="flex h-5 min-w-10 items-center justify-center gap-1" aria-label={`${config.attendant.name} está digitando`}>
-              <span className="persona-typing-dot" />
-              <span className="persona-typing-dot [animation-delay:160ms]" />
-              <span className="persona-typing-dot [animation-delay:320ms]" />
-            </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  dismissBubble();
-                  if (onFollowUpCta) onFollowUpCta();
-                  else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
-                  else onToggle();
-                }}
-                className="block min-w-[14rem] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
-                aria-label={`Abrir conversa com ${config.attendant.name}`}
-              >
-                <span role="status" aria-live="polite">
-                  <HighlightedFollowUp
-                    message={bubbleContent.message}
-                    highlights={bubbleContent.highlights}
-                  />
-                </span>
-              </button>
-            </>
-          )}
-        </div>
-      )}
+      <AnimatePresence>
+        {bubblePhase !== "hidden" && !isOpen && (
+          <motion.div
+            layout="size"
+            initial={reduceMotion ? false : { opacity: 0, y: 8, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.9 }}
+            transition={reduceMotion ? { duration: 0 } : {
+              layout: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+              opacity: { duration: 0.2 },
+              scale: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+              y: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+            }}
+            data-state={bubblePhase}
+            className={`persona-follow-up absolute bottom-0 right-[calc(100%+12px)] z-20 overflow-hidden rounded-[1.25rem] rounded-br-md border border-white/10 bg-[#0c0d0d] text-left shadow-[0_16px_45px_rgba(12,13,13,0.28)] ${bubblePhase === "message" ? "max-w-[min(19rem,calc(100vw-6rem))] px-4 py-3" : "px-2.5 py-2"}`}
+            aria-label={bubblePhase === "typing" ? `${config.attendant.name} está digitando` : undefined}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
+              {bubblePhase === "message" ? (
+                <motion.button
+                  key="message"
+                  initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -2 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                  type="button"
+                  onClick={() => {
+                    dismissBubble(false);
+                    if (onFollowUpCta) onFollowUpCta();
+                    else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                    else onToggle();
+                  }}
+                  className="block min-w-[14rem] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
+                  aria-label={`Abrir conversa com ${config.attendant.name}`}
+                >
+                  <span role="status" aria-live="polite">
+                    <HighlightedFollowUp
+                      message={bubbleContent.message}
+                      highlights={bubbleContent.highlights}
+                    />
+                  </span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  key="typing"
+                  initial={reduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: bubblePhase === "closing" ? 0.55 : 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.16 }}
+                  type="button"
+                  onClick={() => dismissBubble()}
+                  className="flex h-4 min-w-8 items-center justify-center gap-1.5"
+                  aria-label={`${config.attendant.name} está digitando`}
+                >
+                  <span className="persona-typing-dot" />
+                  <span className="persona-typing-dot" />
+                  <span className="persona-typing-dot" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <span
         className={`persona-trigger-wrap relative z-10 inline-flex h-12 transition-[width] duration-[220ms] ${compacted && !isOpen ? "w-12" : isOpen ? "w-[120px]" : "w-[152px]"}`}

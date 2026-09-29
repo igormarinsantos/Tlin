@@ -87,14 +87,16 @@ describe("floating persona trigger", () => {
     act(() => vi.advanceTimersByTime(700));
     expect(screen.getByRole("status").textContent).toBe(config.followUpMessage);
     expect(document.querySelectorAll(".persona-follow-up__highlight")).toHaveLength(2);
+    expect(document.querySelector(".persona-follow-up")?.getAttribute("data-state")).toBe("message");
 
     setScrollY(0);
     fireEvent.scroll(window);
     expect(document.querySelector(".persona-trigger--revealed")).toBeTruthy();
 
     act(() => vi.advanceTimersByTime(11000));
-    expect(screen.queryByRole("status")).toBeNull();
-    expect(document.querySelectorAll(".persona-follow-up__highlight")).toHaveLength(0);
+    expect(document.querySelector(".persona-follow-up")?.getAttribute("data-state")).toBe("closing");
+    expect(screen.getByRole("button", { name: "Igor está digitando" })).toBeTruthy();
+    act(() => vi.advanceTimersByTime(280));
     expect(document.querySelector(".persona-trigger--revealed")).toBeTruthy();
   });
 
