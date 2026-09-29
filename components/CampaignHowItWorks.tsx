@@ -7,7 +7,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton, TlinCard } from "@/components/ui/tlin";
 import { CARD_MOTION, HOW_IT_WORKS_ICONS } from "@/components/campaignCards";
 
@@ -162,11 +161,11 @@ export function CampaignHowItWorks({ variant }: { variant: HeroVariant }) {
               <HighlightedTitle text={withoutClosingPeriod(sectionCtaTitle)} />
             </p>
 
-            <DemoHoverPill className="shrink-0">
+            <div className="shrink-0">
               <TlinButton onClick={() => openQualification("how_it_works_cta")} className="whitespace-nowrap">
                 {t.hero.cta}
               </TlinButton>
-            </DemoHoverPill>
+            </div>
           </TlinCard>
         </motion.div>
       </div>

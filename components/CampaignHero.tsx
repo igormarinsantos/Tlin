@@ -7,7 +7,6 @@ import type { HeroVariant } from "@/components/Hero";
 import { trackFunnelEvent } from "@/lib/utm";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { renderCampaignMotion, HERO_MOTION_BY_VARIANT } from "@/components/campaignMotion";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton, TlinGradientText } from "@/components/ui/tlin";
 
 const SEGMENT_PROOF_AVATARS: Partial<Record<HeroVariant, string[]>> = {
@@ -160,14 +159,12 @@ export function CampaignHero({ variant }: { variant: HeroVariant }) {
           </p>
 
           <div className="flex flex-row items-center justify-center md:justify-start gap-3 md:gap-4">
-            <DemoHoverPill>
-              <TlinButton
-                onClick={() => openQualification("campaign_hero_primary")}
-                size="md"
-              >
-                {t.hero.cta}
-              </TlinButton>
-            </DemoHoverPill>
+            <TlinButton
+              onClick={() => openQualification("campaign_hero_primary")}
+              size="md"
+            >
+              {t.hero.cta}
+            </TlinButton>
 
             <TlinButton
               onClick={() => openQualification("campaign_hero_secondary")}

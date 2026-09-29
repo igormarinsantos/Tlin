@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowDown, MessagesSquare, TrendingUp, Zap } from "lucide-react";
 import { GlobalBackground } from "@/components/GlobalBackground";
 import { ScrollBgWrapper } from "@/components/ScrollBgWrapper";
@@ -19,18 +18,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 }
 
 function HeroDemoCta({ onClick }: { onClick: () => void }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { damping: 25, stiffness: 150 });
-  const springY = useSpring(mouseY, { damping: 25, stiffness: 150 });
-  const updatePointer = (element: HTMLButtonElement, clientX: number, clientY: number) => {
-    const rect = element.getBoundingClientRect();
-    mouseX.set(clientX - rect.left);
-    mouseY.set(clientY - rect.top);
-  };
-
-  return <div className="relative"><button onClick={onClick} onMouseEnter={(event) => { updatePointer(event.currentTarget, event.clientX, event.clientY); setIsHovered(true); }} onMouseLeave={() => setIsHovered(false)} onMouseMove={(event) => updatePointer(event.currentTarget, event.clientX, event.clientY)} className={`group/btn relative block w-full cursor-pointer overflow-hidden rounded-full p-[1px] transition-all duration-300 ${isHovered ? "z-[100]" : "z-10"}`}><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }} /><div className="relative block w-full rounded-full bg-[#0c0d0d] px-7 py-4 text-center text-sm font-bold text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d]"><span className="relative z-10">Ver isso na minha operação</span><div className="absolute inset-0 rounded-full bg-[#0c0d0d] transition-opacity duration-500 group-hover/btn:opacity-0" /><div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" /></div></button><AnimatePresence>{isHovered && <motion.div initial={{ opacity: 0, scale: 0.8, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 10 }} style={{ position: "absolute", left: springX, top: springY, x: "20px", y: "-50%", zIndex: 200, pointerEvents: "none" }}><div className="relative inline-flex overflow-hidden rounded-full p-[1px]"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 150deg, #B597FF 170deg, #38E3FF 190deg, transparent 210deg 360deg)" }} /><div className="relative whitespace-nowrap rounded-full border border-white/10 bg-zinc-950 px-2 py-0.5 text-white"><span className="text-[10px] font-bold leading-none tracking-wide">Demo 100% grátis</span></div></div></motion.div>}</AnimatePresence></div>;
+  return <button onClick={onClick} className="group/btn relative z-10 block w-full cursor-pointer overflow-hidden rounded-full p-[1px] transition-all duration-300"><div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite]" style={{ backgroundImage: "conic-gradient(from 0deg, transparent 0 120deg, #B597FF 150deg, #38E3FF 210deg, transparent 240deg 360deg)" }} /><div className="relative block w-full rounded-full bg-[#0c0d0d] px-7 py-4 text-center text-sm font-bold text-white transition-colors duration-300 group-hover/btn:text-[#0c0d0d]"><span className="relative z-10">Ver isso na minha operação</span><div className="absolute inset-0 rounded-full bg-[#0c0d0d] transition-opacity duration-500 group-hover/btn:opacity-0" /><div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B597FF] to-[#38E3FF] opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" /></div></button>;
 }
 
 const iaDeliveries = [

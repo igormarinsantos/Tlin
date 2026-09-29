@@ -10,7 +10,6 @@ import { trackFunnelEvent } from "@/lib/utm";
 import { SOLUTIONS, PAGES_WITH_FEATURES_SECTION } from "./navData";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 import { TlinButton } from "@/components/ui/tlin";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 function MenuIcon({ isOpen = false }: { isOpen?: boolean }) {
   return (
@@ -185,7 +184,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
   const { t } = useLanguage();
 
   return (
-    <DemoHoverPill className="w-full" labelClassName="text-[9px]">
+    <div className="w-full">
       <TlinButton
         onClick={() => {
           trackFunnelEvent("click_pricing_cta", {
@@ -198,7 +197,7 @@ function HeaderCTA({ padding = "px-5 py-2.5" }: { padding?: string }) {
         className="z-10"
         contentClassName={`${padding} text-[13px]`}
       >{t.nav.cta}</TlinButton>
-    </DemoHoverPill>
+    </div>
   );
 }
 

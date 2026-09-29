@@ -67,7 +67,7 @@ comparando o antes/depois, sem substituir todos os estilos de uma vez.
 | --- | --- | --- |
 | Tokens | Cores primitivas e papéis de texto, superfície, borda, foco e estados; tipografia, espaçamento, raios, camadas e motion | Valores compartilhados definidos em CSS e consumidos pelos componentes |
 | Layout | `Container`, `Section`, `SectionHeading`, `SectionEyebrow` | Nova seção escolhe variantes explícitas sem copiar um bloco de classes |
-| Conversão | `ConversionButton` com variantes, `DemoHoverPill` e abertura centralizada | O CTA mantém estilo, origem e destino corretos em toda rota |
+| Conversão | `ConversionButton` com variantes e abertura centralizada | O CTA mantém estilo, origem e destino corretos em toda rota |
 | Formulários | `FormField`, `IconButton`, estados de erro/carregamento e shell do modal | Labels, foco, teclado, retry e prevenção de duplo envio consistentes |
 | Navegação | Disclosure/menu com estado e semântica explícitos | Abrir, percorrer e fechar com teclado; foco retornando ao disparador |
 | Catálogo | Renderizar os componentes reais, com variantes e estados | O catálogo acompanha o produto; não mantém uma segunda implementação HTML |
@@ -76,8 +76,8 @@ comparando o antes/depois, sem substituir todos os estilos de uma vez.
 
 Ajustes concretos de fundação: `font-sans` aponta para Geist em `app/globals.css:39`,
 embora o layout carregue DM Sans; `xs:` é usado sem um breakpoint correspondente;
-gradientes cônicos aparecem em 14 arquivos; Header e Hero recriam partes do efeito
-que `DemoHoverPill` deveria compartilhar. Cores decorativas claras precisam de
+gradientes cônicos aparecem em 14 arquivos; Header e Hero ainda precisam convergir
+para o mesmo primitivo de CTA. Cores decorativas claras precisam de
 variantes semânticas apropriadas quando usadas em textos pequenos.
 
 O Tailwind 4 permite transformar esses tokens em classes por meio de `@theme`, sem

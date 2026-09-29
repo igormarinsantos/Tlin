@@ -7,7 +7,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
 import { TlinButton } from "@/components/ui/tlin";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
   char: string; 
@@ -326,20 +325,22 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
-          <div className="relative">
-            <DemoHoverPill onHoverChange={setIsCtaHovered}>
-              <TlinButton
-                onClick={() => {
-                  trackFunnelEvent("click_pricing_cta", {
-                    cta_source: "hero_primary",
-                    plan_name: "TLIN",
-                  });
-                  window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
-                }}
-                className={isCtaHovered ? "z-[100]" : "z-10"}
-                contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
-              >{t.hero.cta}</TlinButton>
-            </DemoHoverPill>
+          <div
+            className="relative"
+            onMouseEnter={() => setIsCtaHovered(true)}
+            onMouseLeave={() => setIsCtaHovered(false)}
+          >
+            <TlinButton
+              onClick={() => {
+                trackFunnelEvent("click_pricing_cta", {
+                  cta_source: "hero_primary",
+                  plan_name: "TLIN",
+                });
+                window.dispatchEvent(new CustomEvent("open-qualification", { detail: { plan: "TLIN", source: "hero_primary" } }));
+              }}
+              className={isCtaHovered ? "z-[100]" : "z-10"}
+              contentClassName="px-6 py-3.5 text-[14px] md:px-10 md:text-[15px]"
+            >{t.hero.cta}</TlinButton>
           </div>
 
           <TlinButton

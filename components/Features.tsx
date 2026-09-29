@@ -6,7 +6,6 @@ import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 
 import { SalesNotification } from "./SalesNotification";
 import { FunnelAnimation } from "./FunnelAnimation";
@@ -92,8 +91,7 @@ function FeatureCard({
             
             {/* Desktop Button */}
             <div className="hidden md:block relative w-max mt-6">
-              <DemoHoverPill label={t.nav.demo}>
-                <button
+              <button
                   onClick={() => {
                     const lenis = (window as any).lenis;
                     if (lenis) lenis.scrollTo('#planos', { offset: -40 });
@@ -109,8 +107,7 @@ function FeatureCard({
                     <div className="absolute inset-0 bg-zinc-950 rounded-full transition-opacity duration-500 group-hover/btn:opacity-0" />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#B597FF] to-[#38E3FF] rounded-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100" />
                   </div>
-                </button>
-              </DemoHoverPill>
+              </button>
             </div>
           </div>
         </div>

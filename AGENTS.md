@@ -241,8 +241,8 @@ componente.
   importam subcomponentes locais).
 - Dois espaços de indentação, aspas duplas e ponto e vírgula; preserve o estilo
   local. ESLint está configurado em `eslint.config.mjs`; não há formatador imposto.
-- Reutilize `DemoHoverPill` e o contrato visual, inclusive estados de foco,
-  mobile, carregamento e erro. Conteúdo novo deve seguir o tom existente e
+- Reutilize `TlinButton` e o contrato visual, inclusive estados de foco,
+  mobile, carregamento e erro. CTAs não usam pílulas flutuantes. Conteúdo novo deve seguir o tom existente e
   evitar hífens e ponto final em títulos/textos auxiliares de marketing.
 - `console.error`/`console.warn` em falhas de integração externa
   (Supabase, SMTP, WhatsApp). Não logar credenciais ou payloads de auth.

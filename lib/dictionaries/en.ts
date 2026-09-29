@@ -8,7 +8,6 @@ export const enUS: TranslationDictionary = {
     pricing: "Pricing",
     login: "Sign In",
     cta: "Get Started",
-    demo: "100% Free Demo",
     comoFunciona: "How it works",
     planos: "Plans",
     content: "Content",
@@ -34,7 +33,6 @@ export const enUS: TranslationDictionary = {
     subtitle: "An AI-powered sales system on WhatsApp and CRM to run your sales operation 24/7, with agents that answer, qualify, and sell on their own.",
     mobileSubtitle: "Scale sales with WhatsApp and CRM.\nAgents answer, qualify, and sell 24/7.",
     cta: "Start Free Now",
-    demoHover: "100% Free Demo",
     watchDemo: "Book a demo",
     demoSoon: "Demo coming soon"
   },

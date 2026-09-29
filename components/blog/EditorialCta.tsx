@@ -1,6 +1,5 @@
 "use client";
 
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 import type {
   ClusterId,
   EditorialCta as EditorialCtaContract,
@@ -53,7 +52,7 @@ export function EditorialCta({
   };
 
   return (
-    <DemoHoverPill className="mt-6 inline-flex">
+    <div className="mt-6 inline-flex">
       <button
         type="button"
         onClick={openQualification}
@@ -61,6 +60,6 @@ export function EditorialCta({
       >
         {cta.label}
       </button>
-    </DemoHoverPill>
+    </div>
   );
 }

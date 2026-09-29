@@ -18,7 +18,7 @@ Leia esta seção antes de editar o produto.
 - A identidade visual é clara, editorial e precisa: preto `#0c0d0d`, gradiente roxo `#B597FF` → ciano `#38E3FF`, bordas suaves, pouca sombra e motion sutil.
 - Texto de interface deve sair de `lib/dictionaries/` quando o componente já usa `useLanguage()`. Mantenha PT, EN e ES em paridade.
 - Não use ponto final em títulos e textos auxiliares de marketing. Evite hífens na copy visível.
-- CTAs pretos de conversão usam a borda gradiente e, em desktop, a pílula animada **Demo 100% grátis**. Reutilize `components/DemoHoverPill.tsx` em vez de recriar o efeito.
+- CTAs pretos de conversão usam a borda gradiente e preservam o texto totalmente legível, sem elementos flutuantes sobre a ação.
 - Mobile não é desktop comprimido: o header abre um mega menu abaixo da navegação, o scroll é nativo e os layouts precisam preservar hierarquia e respiro.
 - Não altere arquivos gerados ou locais sem necessidade: `next-env.d.ts`, `tsconfig.tsbuildinfo`, logs e `.planning/` podem estar sujos por processos locais.
 - Antes de concluir uma alteração: rode `npm run check` e `git diff --check`. Use uma branch curta e descritiva (`feat/`, `fix/`, `refactor/` ou `docs/`), criada a partir da `main` atualizada, com commits pequenos. Siga o [fluxo de desenvolvimento](docs/development-workflow.md). Merge ou push em `main` exige autorização explícita do Igor, pois publica na Vercel; checks verdes não autorizam publicação.

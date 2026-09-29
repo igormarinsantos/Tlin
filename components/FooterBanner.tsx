@@ -4,7 +4,6 @@ import { motion, useInView } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { trackConversion, trackFunnelEvent } from "@/lib/utm";
-import { DemoHoverPill } from "@/components/DemoHoverPill";
 import { TlinButton } from "@/components/ui/tlin";
 
 const HOLE_RADIUS = 60; // Base radius in CSS pixels
@@ -357,7 +356,7 @@ export function FooterBanner() {
            )}
 
            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 pointer-events-auto w-full md:w-auto px-2 md:px-0">
-              <DemoHoverPill className="w-full md:w-auto">
+              <div className="w-full md:w-auto">
                 <TlinButton
                   onClick={() => {
                   trackFunnelEvent("click_pricing_cta", {
@@ -371,7 +370,7 @@ export function FooterBanner() {
                 >
                   {t.footerBanner.cta1}
                 </TlinButton>
-              </DemoHoverPill>
+              </div>
               <a 
                 href="https://wa.me/5511916248604" 
                 target="_blank" 
