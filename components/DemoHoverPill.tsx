@@ -15,6 +15,8 @@ type DemoHoverPillProps = {
   onHoverChange?: (hovered: boolean) => void;
 };
 
+const ORBIT_SPRING = { damping: 20, stiffness: 95, mass: 0.9 };
+
 // Mantém a mesma assinatura visual do CTA principal da home em todos os
 // pontos de conversão, sem interferir no clique do botão interno.
 export function DemoHoverPill({
@@ -32,8 +34,10 @@ export function DemoHoverPill({
   const lastPointer = useRef({ clientX: 0, clientY: 0 });
   const targetX = useMotionValue(0);
   const targetY = useMotionValue(0);
-  const springX = useSpring(targetX, { damping: 28, stiffness: 240, mass: 0.55 });
-  const springY = useSpring(targetY, { damping: 28, stiffness: 240, mass: 0.55 });
+  // A mola mais pesada faz a pílula contornar a CTA com inércia de veículo,
+  // sem perseguir cada pixel do mouse nem acelerar ao entrar nas curvas.
+  const springX = useSpring(targetX, ORBIT_SPRING);
+  const springY = useSpring(targetY, ORBIT_SPRING);
 
   const updatePosition = useCallback((clientX: number, clientY: number) => {
     const wrapper = wrapperRef.current;
