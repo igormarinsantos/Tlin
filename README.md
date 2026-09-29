@@ -48,6 +48,7 @@ Leia esta seção antes de editar o produto.
 | `/como-funciona` | Página institucional sobre a operação |
 | `/precos` | Página dedicada de planos e comparação |
 | `/demo` e `/comece` | Fluxo standalone de qualificação e agendamento |
+| `/entrar` | Gateway visual para o login seguro no app da Tlin |
 | `/qualificar` | Redireciona para `/demo` |
 | `/blog` e `/blog/[slug]` | Conteúdo editorial |
 | `/legal` e `/legal/[id]` | Documentos legais |

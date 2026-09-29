@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { CountryFlag } from "@/components/CountryFlag";
@@ -163,13 +164,13 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
                   ))}
                 </div>
 
-                <a
-                  href="https://app.tlin.ia.br"
+                <Link
+                  href="/entrar"
                   onClick={() => trackAndClose("nav_link_click", { destination: "login" })}
                   className="mt-4 flex w-full items-center justify-center rounded-full border border-zinc-200 bg-white/75 py-3.5 text-[13px] font-bold text-[#0c0d0d] transition-colors active:bg-zinc-100"
                 >
                   {t.nav.login}
-                </a>
+                </Link>
               </div>
 
               <button

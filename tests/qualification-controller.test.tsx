@@ -39,7 +39,7 @@ describe("global qualification entry", () => {
     state.pathname = "/legal";
     rerender(<SiteChrome>Page</SiteChrome>);
     expect(screen.queryByRole("dialog")).toBeNull();
-    for (const path of ["/demo", "/comece"]) {
+    for (const path of ["/demo", "/comece", "/entrar"]) {
       state.pathname = path;
       rerender(<SiteChrome>Standalone</SiteChrome>);
       act(open);
