@@ -801,7 +801,6 @@ export function LiaPopup() {
           }}
           label={t.liaPopup.talkToLia}
           closeLabel={t.liaPopup.close}
-          followUpCtaLabel={qualificationStep === 0 ? t.leadQualify.startChat : t.leadQualify.resumeContinue}
           isOpen={isOpen}
           pendingReplyCount={pendingReplyCount}
           externalFollowUp={externalFollowUp}

@@ -235,11 +235,11 @@ describe("floating persona trigger", () => {
     expect(screen.getByRole("status").textContent).toBe("Vamos continuar?");
     expect(document.querySelectorAll(".persona-follow-up__highlight")).toHaveLength(1);
 
-    fireEvent.click(screen.getByRole("button", { name: "Fechar mensagem" }));
+    fireEvent.click(screen.getByRole("button", { name: "Abrir conversa com Igor" }));
     expect(onExternalFollowUpOpen).toHaveBeenCalledTimes(1);
   });
 
-  it("routes the follow-up CTA through the conversational reply action", () => {
+  it("routes the follow-up bubble through the conversational reply action without a CTA", () => {
     vi.useFakeTimers();
     const onExternalFollowUpOpen = vi.fn();
     const onFollowUpCta = vi.fn();
@@ -248,7 +248,6 @@ describe("floating persona trigger", () => {
         config={config}
         label="Fale com o Igor"
         closeLabel="Fechar"
-        followUpCtaLabel="Vamos começar"
         isOpen={false}
         externalFollowUp={{
           id: "page-complete-1",
@@ -262,7 +261,8 @@ describe("floating persona trigger", () => {
     );
 
     act(() => vi.advanceTimersByTime(700));
-    fireEvent.click(screen.getByRole("button", { name: "Vamos começar" }));
+    expect(screen.queryByRole("button", { name: "Vamos começar" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Abrir conversa com Igor" }));
 
     expect(onFollowUpCta).toHaveBeenCalledTimes(1);
     expect(onExternalFollowUpOpen).not.toHaveBeenCalled();

@@ -28,7 +28,6 @@ type FloatingPersonaTriggerProps = {
   config: FloatingPersonaTriggerConfig;
   label: string;
   closeLabel: string;
-  followUpCtaLabel?: string;
   isOpen: boolean;
   pendingReplyCount?: number;
   externalFollowUp?: ExternalPersonaFollowUp | null;
@@ -70,7 +69,6 @@ export function FloatingPersonaTrigger({
   config,
   label,
   closeLabel,
-  followUpCtaLabel = "Vamos começar",
   isOpen,
   pendingReplyCount = 0,
   externalFollowUp,
@@ -246,10 +244,12 @@ export function FloatingPersonaTrigger({
                 type="button"
                 onClick={() => {
                   dismissBubble();
-                  if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                  if (onFollowUpCta) onFollowUpCta();
+                  else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                  else onToggle();
                 }}
                 className="block min-w-[14rem] text-left text-[15px] font-bold leading-snug tracking-[-0.01em] text-zinc-100"
-                aria-label="Fechar mensagem"
+                aria-label={`Abrir conversa com ${config.attendant.name}`}
               >
                 <span role="status" aria-live="polite">
                   <HighlightedFollowUp
@@ -257,18 +257,6 @@ export function FloatingPersonaTrigger({
                     highlights={bubbleContent.highlights}
                   />
                 </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  dismissBubble();
-                  if (onFollowUpCta) onFollowUpCta();
-                  else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
-                  else onToggle();
-                }}
-                className="mt-3 inline-flex min-h-10 items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2 text-[14px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"
-              >
-                {followUpCtaLabel}
               </button>
             </>
           )}
