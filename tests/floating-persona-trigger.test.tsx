@@ -238,4 +238,33 @@ describe("floating persona trigger", () => {
     fireEvent.click(screen.getByRole("button", { name: "Fechar mensagem" }));
     expect(onExternalFollowUpOpen).toHaveBeenCalledTimes(1);
   });
+
+  it("routes the follow-up CTA through the conversational reply action", () => {
+    vi.useFakeTimers();
+    const onExternalFollowUpOpen = vi.fn();
+    const onFollowUpCta = vi.fn();
+    render(
+      <FloatingPersonaTrigger
+        config={config}
+        label="Fale com o Igor"
+        closeLabel="Fechar"
+        followUpCtaLabel="Vamos começar"
+        isOpen={false}
+        externalFollowUp={{
+          id: "page-complete-1",
+          message: "Vamos continuar?",
+          highlights: [],
+        }}
+        onExternalFollowUpOpen={onExternalFollowUpOpen}
+        onFollowUpCta={onFollowUpCta}
+        onToggle={vi.fn()}
+      />,
+    );
+
+    act(() => vi.advanceTimersByTime(700));
+    fireEvent.click(screen.getByRole("button", { name: "Vamos começar" }));
+
+    expect(onFollowUpCta).toHaveBeenCalledTimes(1);
+    expect(onExternalFollowUpOpen).not.toHaveBeenCalled();
+  });
 });

@@ -33,6 +33,7 @@ type FloatingPersonaTriggerProps = {
   pendingReplyCount?: number;
   externalFollowUp?: ExternalPersonaFollowUp | null;
   onExternalFollowUpOpen?: () => void;
+  onFollowUpCta?: () => void;
   onToggle: () => void;
 };
 
@@ -74,6 +75,7 @@ export function FloatingPersonaTrigger({
   pendingReplyCount = 0,
   externalFollowUp,
   onExternalFollowUpOpen,
+  onFollowUpCta,
   onToggle,
 }: FloatingPersonaTriggerProps) {
   const [revealed, setRevealed] = useState(false);
@@ -260,7 +262,8 @@ export function FloatingPersonaTrigger({
                 type="button"
                 onClick={() => {
                   dismissBubble();
-                  if (bubbleContent.externalId) onExternalFollowUpOpen?.();
+                  if (onFollowUpCta) onFollowUpCta();
+                  else if (bubbleContent.externalId) onExternalFollowUpOpen?.();
                   else onToggle();
                 }}
                 className="mt-3 inline-flex min-h-10 items-center rounded-xl bg-gradient-to-r from-[#B597FF] to-[#38E3FF] px-4 py-2 text-[14px] font-extrabold text-[#0c0d0d] transition-transform hover:scale-[1.02] active:scale-95"

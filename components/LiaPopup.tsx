@@ -238,20 +238,25 @@ export function LiaPopup() {
 
   const beginQualification = () => {
     if (qualificationStep > 0) return;
+    const startMessage = t.leadQualify.startChat;
+    setMessages((previous) => {
+      const history = previous.length > 0 ? previous : [
+        { role: "bot" as const, text: t.liaPopup.welcomeGreeting, type: "text" as const },
+        { role: "bot" as const, text: t.liaPopup.welcomePitch, type: "text" as const },
+      ];
+
+      return [
+        ...history,
+        { role: "user", text: startMessage, type: "text" },
+      ];
+    });
     setQualificationStep(1);
     setIsTyping(true);
     window.setTimeout(() => {
-      setMessages((previous) => {
-        const history = previous.length > 0 ? previous : [
-          { role: "bot" as const, text: t.liaPopup.welcomeGreeting, type: "text" as const },
-          { role: "bot" as const, text: t.liaPopup.welcomePitch, type: "text" as const },
-        ];
-
-        return [
-          ...history,
-          { role: "bot", text: t.leadQualify.initialMsg, type: "text" },
-        ];
-      });
+      setMessages((previous) => [
+        ...previous,
+        { role: "bot", text: t.leadQualify.initialMsg, type: "text" },
+      ]);
       setIsTyping(false);
       setStatus(t.liaPopup.online);
     }, QUALIFICATION_START_TYPING_MS);
@@ -800,6 +805,16 @@ export function LiaPopup() {
           isOpen={isOpen}
           pendingReplyCount={pendingReplyCount}
           externalFollowUp={externalFollowUp}
+          onFollowUpCta={() => {
+            const trigger = externalFollowUp?.source ?? "initial_followup";
+            clearExternalFollowUp();
+            setIsOpen(true);
+            beginQualification();
+            trackFunnelEvent("lia_followup_opened", {
+              trigger,
+              pathname,
+            });
+          }}
           onExternalFollowUpOpen={() => {
             clearExternalFollowUp();
             setIsOpen(true);
