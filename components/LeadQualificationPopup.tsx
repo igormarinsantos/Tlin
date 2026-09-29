@@ -1011,7 +1011,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                             </div>
                           ) : (
                             <div className="max-w-[85%] sm:max-w-[75%] mb-1">
-                              {idx === latestBotIdx ? (
+                              {idx === latestBotIdx && isLastMessageBot ? (
                                 <TypewriterQuestion text={msg.text} light={isLight} bubble />
                               ) : (
                                 <span className="text-xl sm:text-2xl font-semibold leading-relaxed text-zinc-900">
@@ -1029,7 +1029,7 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
                           </div>
                         ) : (
                           <div className="max-w-full">
-                            {idx === latestBotIdx ? (
+                            {idx === latestBotIdx && isLastMessageBot ? (
                               <TypewriterQuestion text={msg.text} light={isLight} />
                             ) : (
                               <div className={`text-xl sm:text-4xl font-black tracking-tight leading-[1.2] [text-wrap:pretty] ${isLight ? "text-zinc-950" : "text-white"}`}>

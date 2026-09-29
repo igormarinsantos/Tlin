@@ -15,7 +15,7 @@ vi.mock("@/lib/LanguageContext", async () => {
   return { useLanguage: () => ({ lang: "PT", t: get("PT") }) };
 });
 vi.mock("@/lib/utm", () => ({ getUtmLeadPayload: () => ({}), calculateLeadScore: () => ({ lead_score: 60 }), trackFunnelEvent: mocks.track, trackConversion: mocks.conversion }));
-vi.mock("@/components/lead-qualification/TypewriterQuestion", () => ({ TypewriterQuestion: ({ text }: { text: string }) => <span>{text}</span> }));
+vi.mock("@/components/lead-qualification/TypewriterQuestion", () => ({ TypewriterQuestion: ({ text }: { text: string }) => <span data-testid="typewriter-question">{text}</span> }));
 
 const slot = { startsAt: "2099-01-01T14:00:00Z", endsAt: "2099-01-01T15:00:00Z", when: "11:00" };
 const day = { date: "2099-01-01", label: "Quarta-feira", slots: [slot] };
@@ -44,6 +44,17 @@ async function resume(step = 9) {
 }
 
 describe("rendered qualification flow", () => {
+  it("keeps the welcome message complete when the start CTA becomes a user message", async () => {
+    render(<LeadQualificationPopup isOpen embedded planName="Scale" onClose={vi.fn()} />);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_500); });
+
+    fireEvent.click(screen.getByRole("button", { name: dictionary.leadQualify.startChat }));
+
+    expect(document.body.textContent).toContain(dictionary.leadQualify.welcomeTitle.replaceAll("[", "").replaceAll("]", ""));
+    expect(screen.getByText(dictionary.leadQualify.startChat)).toBeTruthy();
+    expect(screen.queryByTestId("typewriter-question")).toBeNull();
+  });
+
   it("resumes the review, confirms once, and saves a receipt before navigation", async () => {
     const fetchMock = vi.fn(async (url: string) => Response.json(url === "/api/notify"
       ? { success: true, demoBooking: { booked: true } } : { success: true }));
