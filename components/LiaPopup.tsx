@@ -482,10 +482,10 @@ export function LiaPopup() {
       if (!hasTrackedBookedDemoRef.current) {
         hasTrackedBookedDemoRef.current = true;
         trackConversion("demo_booked", {
+          event_id: request.state.id,
           plan_name: "TLIN",
           lead_volume: formData.volume || "not_set",
           team_size: formData.team || "not_set",
-          lead_country_code: formData.countryCode || "+55",
           ...score,
         });
       }

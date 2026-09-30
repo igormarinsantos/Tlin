@@ -42,7 +42,7 @@ export default function ObrigadoPage() {
     if (!parsed) return router.replace("/demo");
     const timer = window.setTimeout(() => {
       setConfirmation(parsed);
-      trackFunnelEvent("demo_thank_you_viewed");
+      trackFunnelEvent("demo_thank_you_viewed", { event_id: parsed.requestId });
     }, 0);
     return () => window.clearTimeout(timer);
   }, [router]);

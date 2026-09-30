@@ -541,7 +541,6 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
       plan_name: planName || 'not_selected',
       lead_volume: data.volume || 'not_set',
       team_size: data.team || 'not_set',
-      lead_country_code: data.countryCode || '+55',
       ...score,
     });
 
@@ -668,8 +667,9 @@ export function LeadQualificationPopup({ isOpen, onClose, planName, embedded = f
               if (!hasTrackedQualifiedLeadRef.current) {
                 hasTrackedQualifiedLeadRef.current = true;
                 trackConversion('demo_booked', {
+                  event_id: request.state.id,
                   plan_name: planName || 'not_selected', lead_volume: updatedData.volume || 'not_set',
-                  team_size: updatedData.team || 'not_set', lead_country_code: updatedData.countryCode || '+55', ...score,
+                  team_size: updatedData.team || 'not_set', ...score,
                 });
               }
               trackFunnelEvent("demo_thank_you_opened", { plan_name: planName || "not_selected" });

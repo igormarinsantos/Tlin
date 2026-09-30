@@ -4,10 +4,10 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import ObrigadoPage from "../app/obrigado/page";
 import { saveDemoConfirmation } from "../lib/qualification-request";
 
-const mocks = vi.hoisted(() => ({ replace: vi.fn() }));
+const mocks = vi.hoisted(() => ({ replace: vi.fn(), track: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => mocks }));
 vi.mock("@/lib/LanguageContext", () => ({ useLanguage: () => ({ lang: "PT" }) }));
-vi.mock("@/lib/utm", () => ({ trackFunnelEvent: vi.fn() }));
+vi.mock("@/lib/utm", () => ({ trackFunnelEvent: mocks.track }));
 
 beforeEach(() => { sessionStorage.clear(); vi.useFakeTimers(); });
 afterEach(() => { cleanup(); vi.useRealTimers(); });
@@ -22,6 +22,7 @@ it("shows a confirmed receipt after mounting the thank-you page again", async ()
   await act(async () => { await vi.advanceTimersByTimeAsync(1); });
   expect(screen.getByText("11:00")).toBeTruthy();
   expect(mocks.replace).not.toHaveBeenCalled();
+  expect(mocks.track).toHaveBeenCalledWith("demo_thank_you_viewed", { event_id: "demo-test" });
 });
 
 it("redirects a direct visit without a receipt, including development", () => {

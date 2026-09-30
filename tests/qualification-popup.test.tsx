@@ -69,6 +69,9 @@ describe("rendered qualification flow", () => {
     expect(JSON.parse(sessionStorage.getItem("tlin_demo_confirmation")!).startsAt).toBe(slot.startsAt);
     expect(localStorage.getItem("tlin_lead_qualify_state")).toBeNull();
     expect(mocks.conversion).toHaveBeenCalledTimes(1);
+    expect(mocks.conversion).toHaveBeenCalledWith("demo_booked", expect.objectContaining({
+      event_id: expect.stringMatching(/^[a-f0-9-]{36}$/i),
+    }));
   });
 
   it("keeps a rejected send on review for retry and emits no successful conversion", async () => {

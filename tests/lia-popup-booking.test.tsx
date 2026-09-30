@@ -107,6 +107,8 @@ describe("Lia popup booking flow", () => {
 
     expect(fetchMock.mock.calls.filter(([url]) => url === "/api/notify")).toHaveLength(1);
     expect(mocks.push).toHaveBeenCalledWith("/obrigado");
-    expect(mocks.conversion).toHaveBeenCalledWith("demo_booked", expect.any(Object));
+    expect(mocks.conversion).toHaveBeenCalledWith("demo_booked", expect.objectContaining({
+      event_id: expect.stringMatching(/^[a-f0-9-]{36}$/i),
+    }));
   });
 });
