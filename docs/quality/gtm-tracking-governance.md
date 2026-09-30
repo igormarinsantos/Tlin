@@ -135,7 +135,7 @@ propriedade, retirar seu status de evento principal.
 | 2. Contrato seguro | Parâmetros úteis do Igor, filtros de cardinalidade e PII | Implementada |
 | 3. Deduplicação | `event_id` na captura, reserva e recibo | Implementada |
 | 4. Container | Google Tag e tags de evento sem triggers paralelos | Publicada na versão 3 |
-| 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Variáveis configuradas; deploy pendente |
+| 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Configurada para produção pela `main` |
 | 6. Validação | Preview, DebugView e relatório de duplicação | Pendente após deploy |
 
 ## Auditoria e ativação externa de 30/09/2026
@@ -155,6 +155,9 @@ propriedade, retirar seu status de evento principal.
   `NEXT_PUBLIC_GTM_ID=GTM-NH6DWSH4` em Production. A variável histórica
   `NEXT_PUBLIC_GA_MEASUREMENT_ID` permanece armazenada, mas está inerte porque
   o código não possui mais carregador direto do GA4.
+- O ambiente Production da Vercel acompanha a branch `main`. A referência
+  antiga `codex/scroll-base-producao` foi removida do Branch Tracking para que
+  cada push autorizado em `main` publique no domínio oficial.
 - No GA4, `close_convert_lead` e `qualify_lead` perderam o status de evento
   principal. `demo_booked` é a única conversão própria do funil marcada como
   principal.
