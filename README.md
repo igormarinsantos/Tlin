@@ -224,4 +224,4 @@ por este repositório.
 
 ## Tracking e resultados comerciais
 
-A fase 3 distingue captura, agendamento e qualificação humana. O painel restrito está em `/internal/funnel`; o contrato de eventos, migrações, variáveis e pendências de ativação estão em [phase-3-tracking-crm.md](docs/quality/phase-3-tracking-crm.md). Use [.env.example](.env.example) como referência. `NEXT_PUBLIC_ANALYTICS_OWNER` seleciona GA4, GTM ou desligado; não há IDs de analytics ativados por padrão.
+A fase 3 distingue captura, agendamento e qualificação humana. O painel restrito está em `/internal/funnel`; o contrato de eventos, migrações, variáveis e pendências de ativação estão em [phase-3-tracking-crm.md](docs/quality/phase-3-tracking-crm.md). Use [.env.example](.env.example) como referência. `NEXT_PUBLIC_ANALYTICS_OWNER` aceita `gtm` ou `off`; não há IDs de analytics ativados por padrão.

@@ -145,6 +145,8 @@ abandono ficam no GA4; não são apresentados como dados observados pelo Supabas
   pendentes. Responsável escolhido para a ativação: GA4 direto, com
   `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
   `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS`. Não carregar GTM em paralelo.
+  Esse container é somente registro histórico; a auditoria de 30/09 confirmou
+  `GTM-NH6DWSH4` como container atual da Tlin.
 - Os eventos principais antigos `qualify_lead` e `close_convert_lead` ainda
   existem na propriedade. Retirar seu status de evento principal na transição
   de produção; não interpretar o segundo como venda. Nenhuma regra de derivação
@@ -168,9 +170,9 @@ deduplicação, configuração externa e rollback estão em
 [gtm-tracking-governance.md](gtm-tracking-governance.md).
 
 Na auditoria de 30/09, o HTML de produção ainda carregava diretamente
-`G-9LQN3ZWCNS` e não continha `GTM-NH79DSND`. Portanto, a migração só pode ser
-declarada ativa depois de atualizar a Vercel, publicar o container, fazer novo
-deploy e validar Preview/DebugView sem leads reais.
+`G-9LQN3ZWCNS` e não continha o container atual `GTM-NH6DWSH4`. Portanto, a
+migração só pode ser declarada ativa depois de atualizar a Vercel, publicar o
+container, fazer novo deploy e validar Preview/DebugView sem leads reais.
 
 ### Conexão e publicação
 

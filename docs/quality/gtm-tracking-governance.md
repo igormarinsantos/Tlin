@@ -50,7 +50,7 @@ Produção:
 
 ```env
 NEXT_PUBLIC_ANALYTICS_OWNER=gtm
-NEXT_PUBLIC_GTM_ID=GTM-NH79DSND
+NEXT_PUBLIC_GTM_ID=GTM-NH6DWSH4
 ```
 
 O carregador direto do GA4 foi removido do código. Valores antigos como `ga4`
@@ -137,6 +137,29 @@ propriedade, retirar seu status de evento principal.
 | 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Pendente de autorização de produção |
 | 6. Validação | Preview, DebugView e relatório de duplicação | Pendente após deploy |
 
+## Auditoria externa de 30/09/2026
+
+- O container ativo da conta Tlin é `GTM-NH6DWSH4`. O identificador
+  `GTM-NH79DSND` pertence à inspeção histórica de 18/09 e não deve ser usado
+  no deploy atual.
+- A variável `ID GA4` do container aponta para `G-9LQN3ZWCNS`.
+- A tag `Tlin - Tag do Google` roda em `Initialization - All Pages` sem
+  `send_page_view=false`; no estado atual ela concorreria com o `page_view`
+  publicado pelo site.
+- A tag `Tlin - Pixel Web` inicializa o Pixel `1909493637072194` e dispara
+  `PageView` em `All Pages`. Antes da ativação, a inicialização e o PageView
+  precisam ser separados para a navegação SPA não gerar duas fontes de página.
+- A Vercel ainda usa `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
+  `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS`; `NEXT_PUBLIC_GTM_ID` ainda não
+  existe no ambiente de produção.
+- No GA4, `close_convert_lead`, `qualify_lead` e `demo_booked` estão marcados
+  como eventos principais. Os dois primeiros precisam perder esse status.
+- A conversão aberta no Google Ads, `Lead form - Submit`, tem origem
+  "Hospedado pelo Google". Ela não representa a confirmação de demo no site.
+- A conta de anúncios Meta aberta não exibe fonte de dados, embora exista uma
+  tag de Pixel no GTM. Confirmar a propriedade do Pixel antes de usá-lo para
+  otimização ou remarketing.
+
 ## Validação sem gerar lead real
 
 No GTM Preview e no GA4 DebugView:
@@ -153,7 +176,7 @@ No GTM Preview e no GA4 DebugView:
 
 ## Checklist de auditoria após publicação
 
-- O HTML contém `GTM-NH79DSND` e não contém carregamento direto de
+- O HTML contém `GTM-NH6DWSH4` e não contém carregamento direto de
   `gtag/js?id=G-9LQN3ZWCNS`.
 - `window.dataLayer` recebe um objeto por interação.
 - Cada interação gera no máximo uma requisição GA4 correspondente.
