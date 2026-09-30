@@ -17,6 +17,18 @@ describe("GTM analytics governance", () => {
     expect(rootLayout).not.toContain("googletagmanager.com/gtag/js");
   });
 
+  it("sets denied consent defaults before the GTM loader", () => {
+    const consentPosition = rootLayout.indexOf('id="tlin-consent-defaults"');
+    const loaderPosition = rootLayout.indexOf("googletagmanager.com/gtm.js");
+
+    expect(consentPosition).toBeGreaterThan(-1);
+    expect(loaderPosition).toBeGreaterThan(consentPosition);
+    expect(rootLayout).toContain("analytics_storage:analytics");
+    expect(rootLayout).toContain("ad_storage:marketing");
+    expect(rootLayout).toContain("?'granted':'denied'");
+    expect(rootLayout).toContain("ads_data_redaction");
+  });
+
   it("keeps conversion classification inside the typed event catalog", () => {
     const catalog = new Set<string>(ANALYTICS_EVENTS);
     expect(new Set(ANALYTICS_EVENTS).size).toBe(ANALYTICS_EVENTS.length);

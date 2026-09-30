@@ -7,6 +7,7 @@ import Image from "next/image";
 import { CountryFlag } from "@/components/CountryFlag";
 import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
+import { OPEN_CONSENT_EVENT } from "@/lib/consent";
 
 function LanguageSelector() {
   const { lang, setLang } = useLanguage();
@@ -103,6 +104,13 @@ export function Footer() {
               <Link href="/legal?tab=termos" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.terms}</Link>
               <Link href="/legal?tab=privacidade" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.privacy}</Link>
               <Link href="/legal?tab=cookies" className="text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]">{t.footer.cookies}</Link>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event(OPEN_CONSENT_EVENT))}
+                className="text-left text-sm font-semibold text-[#0c0d0d] transition-colors hover:text-[#B597FF]"
+              >
+                {t.footer.cookiePreferences}
+              </button>
             </div>
           </div>
         </div>

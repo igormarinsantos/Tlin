@@ -30,9 +30,17 @@ mesmo `event_id` para impedir contagem dupla.
 - GTM `GTM-NH6DWSH4` ativo em produção como carregador único.
 - GA4 recebe os eventos aprovados do `dataLayer`.
 - A tag antiga `Tlin - Pixel Web` está pausada.
-- A propriedade do Pixel/dataset ainda precisa ser confirmada na conta Meta.
-- Não foi encontrado no código um gerenciador de consentimento para tags de
-  publicidade. A regra de disparo precisa ser decidida antes de ativar o Pixel.
+- O dataset confirmado é `Tlin - Pixel Web` (`1909493637072194`), pertencente
+  ao Business `Tlin` (`213354731072099`) e conectado à conta `TLIN ADS`
+  (`1397532772041218`). Página, Instagram e domínio ainda precisam de auditoria.
+- O código já possui preferência separada para métricas e publicidade, com
+  negação por padrão, revogação no rodapé e validade de 180 dias. A publicação
+  e a validação no GTM ainda estão pendentes.
+- A coleta automática de detalhes de páginas e produtos ainda está habilitada
+  no Events Manager e deve ser desligada antes da ativação do Pixel.
+- O workspace isolado `Meta Ads - Fundação` foi criado no GTM sem alterações
+  pendentes. O `Default Workspace` preserva separadamente as mudanças existentes
+  em formulário e variáveis de scroll.
 - O site já publica `event_id` em `generate_lead` e `demo_booked`.
 - Existem landing pages próprias para clínicas, escolas, assessorias e advocacia.
 
@@ -56,9 +64,9 @@ mesmo `event_id` para impedir contagem dupla.
 
 | Fase | Entrega | Dependência | Estado |
 | --- | --- | --- | --- |
-| 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Pendente |
-| 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Pendente |
-| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Pendente |
+| 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Em andamento |
+| 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Implementada localmente |
+| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Workspace preparado |
 | 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Pendente |
 | 4. Públicos | Públicos frios, quentes e exclusões | Pixel validado | Pendente |
 | 5. Campanhas | Prospecção segmentada e remarketing | Fase 4 | Pendente |

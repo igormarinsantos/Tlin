@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { UTMTracker } from "@/components/UTMTracker";
 import { SiteChrome } from "@/components/SiteChrome";
+import { ConsentManager } from "@/components/ConsentManager";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import { CONSENT_MAX_AGE_MS, CONSENT_STORAGE_KEY } from "@/lib/consent";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import { stringifyStructuredData } from "@/lib/structuredData";
 import "./globals.css";
@@ -99,6 +101,31 @@ export const metadata: Metadata = {
 
 const GTM_ID = process.env.NEXT_PUBLIC_ANALYTICS_OWNER === "gtm" && /^GTM-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GTM_ID || "") ? process.env.NEXT_PUBLIC_GTM_ID : "";
 
+const CONSENT_BOOTSTRAP = `
+  (function(w){
+    w.dataLayer=w.dataLayer||[];
+    w.gtag=w.gtag||function(){w.dataLayer.push(arguments);};
+    var saved=null;
+    try {
+      var parsed=JSON.parse(localStorage.getItem('${CONSENT_STORAGE_KEY}')||'null');
+      var updatedAt=parsed&&Date.parse(parsed.updatedAt);
+      if(parsed&&parsed.version===1&&typeof parsed.analytics==='boolean'&&typeof parsed.marketing==='boolean'&&Number.isFinite(updatedAt)&&Date.now()-updatedAt<=${CONSENT_MAX_AGE_MS}&&updatedAt<=Date.now()+300000) saved=parsed;
+    } catch(e) {}
+    var analytics=saved&&saved.analytics===true?'granted':'denied';
+    var marketing=saved&&saved.marketing===true?'granted':'denied';
+    w.gtag('consent','default',{
+      analytics_storage:analytics,
+      ad_storage:marketing,
+      ad_user_data:marketing,
+      ad_personalization:marketing,
+      functionality_storage:'granted',
+      security_storage:'granted',
+      wait_for_update:500
+    });
+    w.gtag('set','ads_data_redaction',true);
+  })(window);
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -111,6 +138,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <script
+          id="tlin-consent-defaults"
+          dangerouslySetInnerHTML={{ __html: CONSENT_BOOTSTRAP }}
+        />
         {GTM_ID && (
           <script
             dangerouslySetInnerHTML={{
@@ -147,6 +178,7 @@ export default function RootLayout({
 
         <LanguageProvider>
           <SiteChrome>{children}</SiteChrome>
+          <ConsentManager />
         </LanguageProvider>
       </body>
     </html>

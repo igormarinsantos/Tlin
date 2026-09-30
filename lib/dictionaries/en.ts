@@ -360,7 +360,23 @@ export const enUS: TranslationDictionary = {
     terms: "Terms",
     privacy: "Privacy",
     cookies: "Cookies",
+    cookiePreferences: "Cookie preferences",
     country: "Brazil"
+  },
+  consentManager: {
+    title: "You control your data",
+    description: "We use necessary cookies to keep the site working. With your choice, we can also measure the experience and personalize campaigns.",
+    learnMore: "View cookie policy",
+    necessaryTitle: "Necessary",
+    necessaryDescription: "Keep security, language and essential features working",
+    analyticsTitle: "Analytics",
+    analyticsDescription: "Show how the site is used and where to improve",
+    marketingTitle: "Advertising",
+    marketingDescription: "Measures campaigns and enables remarketing audiences",
+    acceptAll: "Accept all",
+    necessaryOnly: "Necessary only",
+    customize: "Customize",
+    savePreferences: "Save preferences"
   },
   liaPopup: {
     online: "online",

@@ -63,7 +63,13 @@ export const ENCYCLOPEDIA_DATA: TermEntry[] = [
     id: "cookies-analiticos",
     title: "Cookies Analíticos",
     category: "Política de Cookies",
-    definition: "Mapeamento estatístico anônimo focado no entendimento de tráfego, taxa de rejeição e engajamento nas seções da página, visando a otimização contínua de conversão."
+    definition: "Medição de tráfego, navegação e interação para entender o uso do site e melhorar a experiência. Esses recursos são opcionais e só são ativados quando a preferência de métricas é aceita."
+  },
+  {
+    id: "cookies-publicidade",
+    title: "Cookies de Publicidade",
+    category: "Política de Cookies",
+    definition: "Tecnologias opcionais, incluindo o Meta Pixel quando ativado pela Tlin, usadas para medir campanhas, atribuir conversões e formar públicos de remarketing. Elas só podem disparar após a preferência de publicidade ser aceita e não recebem o conteúdo das conversas ou dos formulários."
   },
   {
     id: "cookies-sessao",
@@ -75,7 +81,7 @@ export const ENCYCLOPEDIA_DATA: TermEntry[] = [
     id: "revogacao",
     title: "Gerenciamento e Revogação",
     category: "Política de Cookies",
-    definition: "Autonomia assegurada ao visitante para limpar o cache local ou ajustar as permissões de rastreamento diretamente através das configurações padrão de seu navegador."
+    definition: "As preferências podem ser revistas a qualquer momento pelo link Preferências de cookies no rodapé. A escolha fica salva por até 180 dias; depois desse período, o site solicita uma nova decisão. A revogação impede novos eventos opcionais, sem bloquear as funções essenciais."
   },
 
   // Glossário Técnico Tlin

@@ -359,7 +359,23 @@ export const ptBR = {
     terms: "Termos",
     privacy: "Privacidade",
     cookies: "Cookies",
+    cookiePreferences: "Preferências de cookies",
     country: "Brasil"
+  },
+  consentManager: {
+    title: "Você controla seus dados",
+    description: "Usamos cookies necessários para o site funcionar. Com sua escolha, também podemos medir a experiência e personalizar campanhas.",
+    learnMore: "Ver política de cookies",
+    necessaryTitle: "Necessários",
+    necessaryDescription: "Mantêm segurança, idioma e funções essenciais",
+    analyticsTitle: "Métricas",
+    analyticsDescription: "Mostram como o site é usado e onde melhorar",
+    marketingTitle: "Publicidade",
+    marketingDescription: "Mede campanhas e permite públicos de remarketing",
+    acceptAll: "Aceitar todos",
+    necessaryOnly: "Somente necessários",
+    customize: "Personalizar",
+    savePreferences: "Salvar preferências"
   },
   liaPopup: {
     online: "online",
