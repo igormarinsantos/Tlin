@@ -69,8 +69,8 @@ mesmo `event_id` para impedir contagem dupla.
 | 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Dataset, Business e conta confirmados; Página, Instagram e domínio pendentes |
 | 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Publicada em produção |
 | 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Publicada na versão 5 do GTM |
-| 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Validação técnica parcial; Test Events pendente de nova sessão Meta |
-| 4. Públicos | Públicos frios, quentes e exclusões | Pixel validado | Pendente |
+| 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Validação técnica parcial; Test Events pendente em navegador sem bloqueio do Pixel |
+| 4. Públicos | Públicos frios, quentes e exclusões | Pixel validado | Sete públicos WCA criados; públicos por evento e exclusões pendentes de atividade real |
 | 5. Campanhas | Prospecção segmentada e remarketing | Fase 4 | Pendente |
 | 6. CAPI | Eventos de servidor com deduplicação | Pixel estável | Pendente |
 | 7. Qualidade CRM | Qualificação e venda retornam para mídia | CAPI e estágios CRM | Pendente |
@@ -175,10 +175,12 @@ de cada disparo auditável. O roteador não lê campos ou histórico do DOM.
   dois Pixels.
 - O navegador confirmou um loader do GTM. Não foi criado lead, enviado e-mail,
   clicado WhatsApp nem reservado horário durante a validação.
-- A sessão do Business Meta expirou após o computador desligar. A confirmação
-  visual de `PageView` e `ViewContent` em Test Events, além dos eventos de funil,
-  permanece pendente após novo login. Isso não deve ser confundido com falha de
-  carregamento do Pixel.
+- O login do Business Meta foi restabelecido. Na tentativa pelo Brave, o Shields
+  bloqueou `connect.facebook.net`, portanto o Test Events não recebeu eventos
+  dessa sessão. O navegador interno confirmou o carregamento dos recursos
+  oficiais do Pixel, mas não compartilha a mesma sessão de teste. A confirmação
+  visual de `PageView`, `ViewContent` e dos eventos de funil permanece pendente
+  em um navegador autorizado sem esse bloqueio.
 
 ### Matriz mínima
 
@@ -206,6 +208,32 @@ validar o Pixel. `Schedule` será validado em uma janela de teste autorizada ou
 pela primeira conversão real monitorada.
 
 ## Fase 4 — públicos
+
+### Execução em 30/09/2026
+
+Foram criados na conta `TLIN ADS` com origem `Tlin - Pixel Web`:
+
+| Público | Regra | Retenção | ID |
+| --- | --- | --- | --- |
+| `TLIN | WCA | Todos visitantes | 30d` | Todos os visitantes do site | 30 dias | `120252110931190312` |
+| `TLIN | WCA | Todos visitantes | 60d` | Todos os visitantes do site | 60 dias | `120252110938490312` |
+| `TLIN | WCA | Todos visitantes | 180d` | Todos os visitantes do site | 180 dias | `120252110943070312` |
+| `TLIN | WCA | Clínicas | 60d` | URL contém `ia-para-clinicas` | 60 dias | `120252110948990312` |
+| `TLIN | WCA | Escolas | 60d` | URL contém `ia-para-escolas` | 60 dias | `120252110968100312` |
+| `TLIN | WCA | Assessorias | 60d` | URL contém `ia-para-assessorias` | 60 dias | `120252110974430312` |
+| `TLIN | WCA | Advocacia | 60d` | URL contém `ia-para-advocacia` | 60 dias | `120252110978120312` |
+
+Os públicos aparecem em preenchimento e podem permanecer abaixo de mil pessoas
+enquanto o tráfego é baixo. Isso não invalida as regras nem exige tráfego de
+teste artificial.
+
+O seletor de eventos do dataset ainda oferece somente visitantes gerais,
+páginas específicas e tempo gasto. `LeadFormOpened`, `LeadFormStarted`, `Lead`,
+`Contact` e `Schedule` ainda não aparecem porque a Meta não recebeu atividade
+real suficiente desses eventos. Por isso, os públicos de abandono e
+`TLIN | EXC | Demo agendada | 180d` continuam pendentes. Eles devem ser criados
+depois do primeiro recebimento real, sem fabricar lead ou reserva para liberar
+o seletor.
 
 ### Convenção de nomes
 
