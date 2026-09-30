@@ -46,9 +46,10 @@ marcos históricos, sem compensação automática de cancelamentos ou reabertura
 Abandono em navegação/fechamento de aba deve ser inferido pela exploração de
 funil no GA4; o navegador não garante entrega de um evento de saída.
 
-`NEXT_PUBLIC_ANALYTICS_OWNER=ga4|gtm|off` escolhe um único carregador. Sem valor,
-analytics fica desligado. IDs precisam ser definidos explicitamente. Inicialização
-GA precede hidratação; eventos antecipados ficam no `dataLayer`. Parâmetros são
+`NEXT_PUBLIC_ANALYTICS_OWNER=gtm|off` escolhe o carregador único ou desliga a
+coleta. O carregador direto do GA4 foi removido em 30/09. Sem valor, analytics
+fica desligado. O ID do GTM precisa ser definido explicitamente. A inicialização
+do container precede a hidratação; eventos antecipados ficam no `dataLayer`. Parâmetros são
 limitados a uma lista explícita, URLs perdem query/hash, e valores que parecem
 e-mail/telefone são removidos. Nenhum nome, telefone, e-mail, mensagem ou click ID
 é enviado pelos eventos personalizados. Isso não substitui a revisão de tags
@@ -157,6 +158,19 @@ abandono ficam no GA4; não são apresentados como dados observados pelo Supabas
   `SUPABASE_SERVICE_ROLE_KEY` não foram sobrescritas. Tudo só terá efeito depois
   de um novo deploy. DebugView com a nova versão e a verificação operacional
   continuam pendentes. Analytics local permanece desligado.
+
+### Decisão de governança de 30/09
+
+Igor definiu o GTM como único proprietário do carregamento de analytics e mídia.
+Essa decisão substitui para novos deploys a escolha histórica de GA4 direto
+registrada acima. O plano operacional, catálogo de eventos, regras de
+deduplicação, configuração externa e rollback estão em
+[gtm-tracking-governance.md](gtm-tracking-governance.md).
+
+Na auditoria de 30/09, o HTML de produção ainda carregava diretamente
+`G-9LQN3ZWCNS` e não continha `GTM-NH79DSND`. Portanto, a migração só pode ser
+declarada ativa depois de atualizar a Vercel, publicar o container, fazer novo
+deploy e validar Preview/DebugView sem leads reais.
 
 ### Conexão e publicação
 
