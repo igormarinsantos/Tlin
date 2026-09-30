@@ -118,8 +118,9 @@ propriedade, retirar seu status de evento principal.
 
 1. Uma Google Tag para `G-9LQN3ZWCNS`, acionada em Initialization / All Pages,
    com `send_page_view=false`.
-2. Uma tag GA4 Event para `page_view`, acionada pelo Custom Event `page_view`.
-3. Tags GA4 Event para os nomes do catálogo, acionadas somente por Custom Event.
+2. Uma tag GA4 Event recebe `{{Event}}` e dispara somente para a lista explícita
+   do catálogo, inclusive `page_view`.
+3. O trigger não aceita eventos internos `gtm.*` nem nomes fora da lista.
 4. Variáveis de Data Layer apenas para os parâmetros documentados e sanitizados
    por `lib/analytics-events.ts`.
 5. Nenhuma tag genérica deve disparar para eventos internos `gtm.*`.
@@ -130,30 +131,33 @@ propriedade, retirar seu status de evento principal.
 
 | Fase | Entrega | Estado |
 | --- | --- | --- |
-| 1. Governança | Guia, proprietário único e catálogo tipado | Implementada localmente |
-| 2. Contrato seguro | Parâmetros úteis do Igor, filtros de cardinalidade e PII | Implementada localmente |
-| 3. Deduplicação | `event_id` na captura, reserva e recibo | Implementada localmente |
-| 4. Container | Google Tag e tags de evento sem triggers paralelos | Configuração externa pendente |
-| 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Pendente de autorização de produção |
+| 1. Governança | Guia, proprietário único e catálogo tipado | Implementada |
+| 2. Contrato seguro | Parâmetros úteis do Igor, filtros de cardinalidade e PII | Implementada |
+| 3. Deduplicação | `event_id` na captura, reserva e recibo | Implementada |
+| 4. Container | Google Tag e tags de evento sem triggers paralelos | Publicada na versão 3 |
+| 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Variáveis configuradas; deploy pendente |
 | 6. Validação | Preview, DebugView e relatório de duplicação | Pendente após deploy |
 
-## Auditoria externa de 30/09/2026
+## Auditoria e ativação externa de 30/09/2026
 
 - O container ativo da conta Tlin é `GTM-NH6DWSH4`. O identificador
   `GTM-NH79DSND` pertence à inspeção histórica de 18/09 e não deve ser usado
   no deploy atual.
-- A variável `ID GA4` do container aponta para `G-9LQN3ZWCNS`.
-- A tag `Tlin - Tag do Google` roda em `Initialization - All Pages` sem
-  `send_page_view=false`; no estado atual ela concorreria com o `page_view`
-  publicado pelo site.
-- A tag `Tlin - Pixel Web` inicializa o Pixel `1909493637072194` e dispara
-  `PageView` em `All Pages`. Antes da ativação, a inicialização e o PageView
-  precisam ser separados para a navegação SPA não gerar duas fontes de página.
-- A Vercel ainda usa `NEXT_PUBLIC_ANALYTICS_OWNER=ga4` e
-  `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-9LQN3ZWCNS`; `NEXT_PUBLIC_GTM_ID` ainda não
-  existe no ambiente de produção.
-- No GA4, `close_convert_lead`, `qualify_lead` e `demo_booked` estão marcados
-  como eventos principais. Os dois primeiros precisam perder esse status.
+- A versão 3 do container, `GTM centralizado - eventos seguros`, está publicada.
+- `Tlin - Tag do Google` aponta para `G-9LQN3ZWCNS` com
+  `send_page_view=false`.
+- `Tlin - GA4 - Eventos do Site` usa o nome `{{Event}}` e um trigger com lista
+  explícita do catálogo. As variáveis aprovadas são `event_id`, `lead_step`,
+  `form_mode`, `cta_id`, `cta_location`, `trigger`, `chat_state` e `pathname`.
+- A tag `Tlin - Pixel Web` está pausada. Ela não deve voltar a disparar até a
+  propriedade do Pixel e o contrato de PageView SPA serem confirmados.
+- A Vercel usa `NEXT_PUBLIC_ANALYTICS_OWNER=gtm` e
+  `NEXT_PUBLIC_GTM_ID=GTM-NH6DWSH4` em Production. A variável histórica
+  `NEXT_PUBLIC_GA_MEASUREMENT_ID` permanece armazenada, mas está inerte porque
+  o código não possui mais carregador direto do GA4.
+- No GA4, `close_convert_lead` e `qualify_lead` perderam o status de evento
+  principal. `demo_booked` é a única conversão própria do funil marcada como
+  principal.
 - A conversão aberta no Google Ads, `Lead form - Submit`, tem origem
   "Hospedado pelo Google". Ela não representa a confirmação de demo no site.
 - A conta de anúncios Meta aberta não exibe fonte de dados, embora exista uma
