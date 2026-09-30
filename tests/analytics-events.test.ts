@@ -44,6 +44,43 @@ describe("analytics and attribution", () => {
       item_id: "agentes-de-ia-no-whatsapp-para-vendas",
     });
   });
+  it("keeps bounded Igor engagement context without conversation content", () => {
+    expect(cleanAnalyticsParams({
+      trigger: "form_idle",
+      chat_state: "closed",
+      pathname: "/ia-para-clinicas",
+      qualification_step: 4,
+      pending_reply_count: 2,
+      dismiss_reason: "user_resumed",
+      message_length: 42,
+      previous_messages: 6,
+      message: "Meu telefone é 11999999999",
+      trigger_invalid: "anything",
+    })).toEqual({
+      trigger: "form_idle",
+      chat_state: "closed",
+      pathname: "/ia-para-clinicas",
+      qualification_step: 4,
+      pending_reply_count: 2,
+      dismiss_reason: "user_resumed",
+      message_length: 42,
+      previous_messages: 6,
+    });
+  });
+  it("rejects malformed IDs and out-of-contract engagement values", () => {
+    expect(cleanAnalyticsParams({
+      event_id: "lead@example.test",
+      trigger: "free-form-trigger",
+      chat_state: "background",
+      pathname: "https://example.test/private",
+      qualification_step: 99,
+      pending_reply_count: 4,
+      message_length: -1,
+      previous_messages: 1.5,
+    })).toEqual({});
+    expect(cleanAnalyticsParams({ event_id: "123e4567-e89b-12d3-a456-426614174000" }))
+      .toEqual({ event_id: "123e4567-e89b-12d3-a456-426614174000" });
+  });
   it("drops malformed or high-cardinality editorial dimensions", () => {
     expect(cleanAnalyticsParams({
       article_slug: "../../ana@example.test",
@@ -61,9 +98,12 @@ describe("analytics and attribution", () => {
     window.dataLayer = [];
     vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "ga4");
     emitAnalytics("demo_booked", { lead_step: 10 });
-    expect(Array.from(window.dataLayer[0] as ArrayLike<unknown>)).toEqual(["event", "demo_booked", { lead_step: 10 }]);
-    window.dataLayer = []; vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "gtm");
-    emitAnalytics("demo_booked"); expect(window.dataLayer).toEqual([{ event: "demo_booked" }]);
-    vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "off"); emitAnalytics("demo_booked"); expect(window.dataLayer).toHaveLength(1);
+    expect(window.dataLayer).toEqual([]);
+    vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "gtm");
+    emitAnalytics("demo_booked", { lead_step: 10 });
+    expect(window.dataLayer).toEqual([{ event: "demo_booked", lead_step: 10 }]);
+    vi.stubEnv("NEXT_PUBLIC_ANALYTICS_OWNER", "off");
+    emitAnalytics("demo_booked");
+    expect(window.dataLayer).toHaveLength(1);
   });
 });

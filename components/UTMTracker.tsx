@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { captureUtms, sendUtmToGA, injectUtmsIntoForms } from "@/lib/utm";
+import { captureUtms, sendAnalyticsEvent, injectUtmsIntoForms } from "@/lib/utm";
 import {
   captureEditorialTouch,
   getEditorialEventPayload,
@@ -33,7 +33,7 @@ function UTMTrackerInner() {
     const editorialTouch = captureEditorialTouch(pathname);
     if (lastPage.current !== pathname) {
       lastPage.current = pathname;
-      sendUtmToGA("page_view", {
+      sendAnalyticsEvent("page_view", {
         page_location: window.location.origin + pathname,
         page_referrer: document.referrer,
         ...getEditorialEventPayload(editorialTouch),
@@ -43,7 +43,7 @@ function UTMTrackerInner() {
     // ── 2. Send to GA and inject into forms during browser idle time
     //    This keeps the Main Thread free on initial load.
     const idleHandle = scheduleIdle(() => {
-      sendUtmToGA("utm_capture");
+      sendAnalyticsEvent("utm_capture");
       injectUtmsIntoForms();
     });
 

@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import type { Lang } from "@/lib/LanguageContext";
 import { CountryFlag } from "@/components/CountryFlag";
 import { trackFunnelEvent } from "@/lib/utm";
+import type { AnalyticsEventName } from "@/lib/analytics-contract";
 import { SOLUTIONS } from "./navData";
 
 const LANGUAGES: { code: Lang; flag: string }[] = [
@@ -32,7 +33,7 @@ export function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose:
   const { t, lang, setLang } = useLanguage();
   const [isSolutionsExpanded, setIsSolutionsExpanded] = useState(false);
 
-  const trackAndClose = (eventName: string, data: Record<string, string>) => {
+  const trackAndClose = (eventName: AnalyticsEventName, data: Record<string, string>) => {
     trackFunnelEvent(eventName, { ...data, cta_source: "mobile_nav_drawer" });
     onClose();
   };

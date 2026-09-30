@@ -152,11 +152,11 @@ aumento de avisos por arquivo/regra. `npm run typecheck`, `npm test` e
 
 ## Configuração local
 
-Copie `.env.local.example` para `.env.local` e preencha somente os serviços que você precisa testar. Nunca versionar valores reais.
+Copie `.env.example` para `.env.local` e preencha somente os serviços que você precisa testar. Nunca versionar valores reais.
 
 | Grupo | Variáveis principais | Uso |
 | --- | --- | --- |
-| Analytics | `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GTM_ID` | GA4 e GTM |
+| Analytics | `NEXT_PUBLIC_ANALYTICS_OWNER`, `NEXT_PUBLIC_GTM_ID` | GTM como carregador único; local fica `off` |
 | URLs públicas | `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_APP_URL` | Canonical, SEO e links para o app |
 | Chat Lia | `LIA_AI_URL`, `LIA_AI_MODEL` | Respostas do chat comercial |
 | Antibot | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Validação de lead |

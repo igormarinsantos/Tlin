@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import Script from "next/script";
 import { UTMTracker } from "@/components/UTMTracker";
 import { SiteChrome } from "@/components/SiteChrome";
 import { LanguageProvider } from "@/lib/LanguageContext";
@@ -98,7 +97,6 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_ID = process.env.NEXT_PUBLIC_ANALYTICS_OWNER === "ga4" && /^G-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "") ? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID : "";
 const GTM_ID = process.env.NEXT_PUBLIC_ANALYTICS_OWNER === "gtm" && /^GTM-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GTM_ID || "") ? process.env.NEXT_PUBLIC_GTM_ID : "";
 
 export default function RootLayout({
@@ -143,28 +141,6 @@ export default function RootLayout({
               style={{ display: "none", visibility: "hidden" }}
             />
           </noscript>
-        )}
-
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="beforeInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_ID}', {
-                  send_page_view: false,
-                  page_location: window.location.origin + window.location.pathname,
-                  page_referrer: document.referrer ? new URL(document.referrer).origin : '',
-                  cookie_flags: 'SameSite=Lax;Secure',
-                });
-              `}
-            </Script>
-          </>
         )}
 
         <UTMTracker />

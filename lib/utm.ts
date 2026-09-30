@@ -1,4 +1,5 @@
 import { emitAnalytics, safePageUrl } from "./analytics-events";
+import type { AnalyticsEventName } from "./analytics-contract";
 import { getEditorialLeadPayload } from "./editorial/analytics";
 /**
  * UTM Tracking System — Tlin.ai
@@ -200,11 +201,10 @@ export function getLastTouch(): UtmParams {
   return loadUtm(KEY_LAST) || getFallbackUtm();
 }
 
-// ─── GA4 Integration ──────────────────────────────────────────────────────────
+// ─── Analytics event transport ────────────────────────────────────────────────
 
 declare global {
   interface Window {
-    gtag: (...args: unknown[]) => void;
     dataLayer: unknown[];
   }
 }
@@ -250,10 +250,10 @@ function getUtmEventPayload(extraData: Record<string, EventParam> = {}) {
 }
 
 /**
- * Sends UTM data as a GA4 custom event.
- * @param eventName - GA4 event name (default: 'utm_capture')
+ * Sends a controlled analytics event to the configured owner.
+ * @param eventName - Contract event name (default: 'utm_capture')
  */
-export function sendUtmToGA(eventName = 'utm_capture', extraData: Record<string, EventParam> = {}): void {
+export function sendAnalyticsEvent(eventName: AnalyticsEventName = 'utm_capture', extraData: Record<string, EventParam> = {}): void {
   emitAnalytics(eventName, getUtmEventPayload(extraData));
 }
 
@@ -269,8 +269,8 @@ export function getUtmLeadPayload() {
   };
 }
 
-export function trackFunnelEvent(eventName: string, extraData: Record<string, EventParam> = {}): void {
-  sendUtmToGA(eventName, {
+export function trackFunnelEvent(eventName: AnalyticsEventName, extraData: Record<string, EventParam> = {}): void {
+  sendAnalyticsEvent(eventName, {
     event_category: 'lead_funnel',
     ...extraData,
   });
@@ -362,7 +362,7 @@ export function injectUtmsIntoForms(): void {
  * Sends a 'form_submit' event to GA4 with full UTM context.
  */
 export function trackConversion(eventName: 'demo_booked' | 'click_whatsapp', extraData: Record<string, EventParam> = {}): void {
-  sendUtmToGA(eventName, extraData);
+  sendAnalyticsEvent(eventName, extraData);
   if (extraData) {
     log('Conversion extra data:', extraData);
   }
