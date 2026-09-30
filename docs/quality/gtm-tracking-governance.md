@@ -192,6 +192,12 @@ No GTM Preview e no GA4 DebugView:
   sem conteúdo da conversa.
 - O painel do CRM continua sendo a fonte da qualificação comercial.
 
+## Próxima implantação: Meta Ads
+
+O plano de Pixel, públicos, campanhas, Conversions API e retorno de qualidade do
+CRM está em [meta-ads-implementation-plan.md](meta-ads-implementation-plan.md).
+Nenhuma tag Meta deve ser reativada fora dessa sequência.
+
 ## Rollback
 
 Se o container publicar duplicações, pausar as tags problemáticas no GTM. Se o

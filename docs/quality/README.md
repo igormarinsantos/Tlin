@@ -114,3 +114,6 @@ Testes de interface usam React Testing Library e jsdom apenas como dependências
 Contrato, configuração externa e pendências em [phase-3-tracking-crm.md](phase-3-tracking-crm.md).
 A governança que torna o GTM o único carregador a partir de 30/09 está em
 [gtm-tracking-governance.md](gtm-tracking-governance.md).
+O rollout de Facebook e Instagram, incluindo Pixel, públicos, campanhas, CAPI e
+qualidade do CRM, está em
+[meta-ads-implementation-plan.md](meta-ads-implementation-plan.md).
