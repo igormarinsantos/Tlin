@@ -36,11 +36,12 @@ mesmo `event_id` para impedir contagem dupla.
 - O código já possui preferência separada para métricas e publicidade, com
   negação por padrão, revogação no rodapé e validade de 180 dias. A publicação
   e a validação no GTM ainda estão pendentes.
-- A coleta automática de detalhes de páginas e produtos ainda está habilitada
-  no Events Manager e deve ser desligada antes da ativação do Pixel.
-- O workspace isolado `Meta Ads - Fundação` foi criado no GTM sem alterações
-  pendentes. O `Default Workspace` preserva separadamente as mudanças existentes
-  em formulário e variáveis de scroll.
+- A coleta automática de detalhes de páginas e produtos foi desativada no
+  Events Manager em 30/09/2026. Os eventos ficam limitados ao contrato explícito.
+- O workspace isolado `Meta Ads - Fundação` foi criado no GTM. Ele contém sete
+  acionadores explícitos e uma tag roteadora ainda não publicada. O
+  `Default Workspace` preserva separadamente as mudanças existentes em
+  formulário e variáveis de scroll.
 - O site já publica `event_id` em `generate_lead` e `demo_booked`.
 - Existem landing pages próprias para clínicas, escolas, assessorias e advocacia.
 
@@ -66,7 +67,7 @@ mesmo `event_id` para impedir contagem dupla.
 | --- | --- | --- | --- |
 | 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Em andamento |
 | 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Implementada localmente |
-| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Workspace preparado |
+| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Rascunho configurado no GTM |
 | 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Pendente |
 | 4. Públicos | Públicos frios, quentes e exclusões | Pixel validado | Pendente |
 | 5. Campanhas | Prospecção segmentada e remarketing | Fase 4 | Pendente |
@@ -114,22 +115,28 @@ mesmo `event_id` para impedir contagem dupla.
 
 ## Fase 2 — Pixel pelo GTM
 
-### Tags propostas
+### Mapeamento da tag
 
-| Tag | Origem | Evento Meta | Finalidade |
+O rascunho usa uma única tag física, `Tlin - Meta - Eventos do Funil`, para
+centralizar carregamento, verificação de consentimento, inicialização e a lista
+permitida de eventos. Sete acionadores de evento personalizado mantêm a origem
+de cada disparo auditável. O roteador não lê campos ou histórico do DOM.
+
+| Ação lógica | Origem | Evento Meta | Finalidade |
 | --- | --- | --- | --- |
-| `Tlin - Meta - Init` | Consentimento de publicidade | Inicialização sem PageView automático | Carregar o Pixel uma vez |
-| `Tlin - Meta - PageView` | `page_view` | `PageView` | Navegação e audiência do site |
-| `Tlin - Meta - ViewContent` | `page_view` em LP segmentada | `ViewContent` | Interesse por solução |
-| `Tlin - Meta - Form Opened` | `lead_form_opened` | evento personalizado | Intenção inicial |
-| `Tlin - Meta - Form Started` | `start_lead_form` | evento personalizado | Formulário iniciado |
-| `Tlin - Meta - Lead` | `generate_lead` | `Lead` | Captura confirmada |
-| `Tlin - Meta - Contact` | `click_whatsapp` | `Contact` | Intenção de conversa |
-| `Tlin - Meta - Schedule` | `demo_booked` | `Schedule` | Demo confirmada |
+| Inicialização | Consentimento de publicidade | Inicialização sem PageView automático | Carregar o Pixel uma vez |
+| Visualização | `page_view` | `PageView` | Navegação e audiência do site |
+| Conteúdo | `page_view` em LP segmentada | `ViewContent` | Interesse por solução |
+| Formulário aberto | `lead_form_opened` | `LeadFormOpened` personalizado | Intenção inicial |
+| Formulário iniciado | `start_lead_form` | `LeadFormStarted` personalizado | Formulário iniciado |
+| Lead | `generate_lead` | `Lead` | Captura confirmada |
+| Contato | `click_whatsapp` | `Contact` | Intenção de conversa |
+| Demo | `demo_booked` | `Schedule` | Demo confirmada |
 
 ### Regras de implementação
 
-- Usar tag sequencing para garantir `Init` antes de qualquer evento.
+- Inicializar o Pixel uma única vez dentro do roteador antes de processar o
+  evento permitido.
 - Disparar `ViewContent` apenas em páginas comerciais aprovadas, derivando o
   segmento de `pathname` ou do parâmetro controlado `solution`.
 - Adicionar ao GTM somente variáveis necessárias, incluindo `solution` se o
@@ -139,6 +146,9 @@ mesmo `event_id` para impedir contagem dupla.
 - Não disparar `Lead` e `Schedule` para a mesma ação: são etapas diferentes.
 - Manter tags de publicidade em pasta própria e usar o prefixo `Tlin - Meta -`.
 - Publicar uma versão do container com nome e descrição da mudança.
+- No aceite inicial, `consent_updated` registra a página atual uma única vez;
+  a navegação posterior usa `page_view`, com deduplicação por `pathname` dentro
+  do ciclo da página.
 
 ### Critério de aceite
 
