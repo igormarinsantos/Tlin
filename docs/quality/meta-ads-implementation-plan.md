@@ -33,15 +33,16 @@ mesmo `event_id` para impedir contagem dupla.
 - O dataset confirmado é `Tlin - Pixel Web` (`1909493637072194`), pertencente
   ao Business `Tlin` (`213354731072099`) e conectado à conta `TLIN ADS`
   (`1397532772041218`). Página, Instagram e domínio ainda precisam de auditoria.
-- O código já possui preferência separada para métricas e publicidade, com
-  negação por padrão, revogação no rodapé e validade de 180 dias. A publicação
-  e a validação no GTM ainda estão pendentes.
+- O código possui preferência separada para métricas e publicidade, com negação
+  por padrão, revogação no rodapé e validade de 180 dias. A base está publicada
+  em produção pelo commit `410fbcf`.
 - A coleta automática de detalhes de páginas e produtos foi desativada no
   Events Manager em 30/09/2026. Os eventos ficam limitados ao contrato explícito.
-- O workspace isolado `Meta Ads - Fundação` foi criado no GTM. Ele contém sete
-  acionadores explícitos e uma tag roteadora ainda não publicada. O
-  `Default Workspace` preserva separadamente as mudanças existentes em
-  formulário e variáveis de scroll.
+- O workspace isolado `Meta Ads - Fundação` foi publicado e o hotfix de
+  deduplicação está ativo na versão 5 do GTM. O container contém sete
+  acionadores explícitos e uma única tag física roteadora. O `Default Workspace`
+  preserva separadamente as mudanças existentes em formulário e variáveis de
+  scroll.
 - O site já publica `event_id` em `generate_lead` e `demo_booked`.
 - Existem landing pages próprias para clínicas, escolas, assessorias e advocacia.
 
@@ -65,10 +66,10 @@ mesmo `event_id` para impedir contagem dupla.
 
 | Fase | Entrega | Dependência | Estado |
 | --- | --- | --- | --- |
-| 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Em andamento |
-| 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Implementada localmente |
-| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Rascunho configurado no GTM |
-| 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Pendente |
+| 0. Propriedade | Business, conta, Página, Instagram, domínio e dataset confirmados | Acesso Meta | Dataset, Business e conta confirmados; Página, Instagram e domínio pendentes |
+| 1. Consentimento | Regra técnica de publicidade e política atualizadas | Decisão de privacidade | Publicada em produção |
+| 2. Pixel no GTM | Inicialização e eventos explícitos | Fases 0 e 1 | Publicada na versão 5 do GTM |
+| 3. Validação | Test Events, SPA, payload e duplicação | Fase 2 | Validação técnica parcial; Test Events pendente de nova sessão Meta |
 | 4. Públicos | Públicos frios, quentes e exclusões | Pixel validado | Pendente |
 | 5. Campanhas | Prospecção segmentada e remarketing | Fase 4 | Pendente |
 | 6. CAPI | Eventos de servidor com deduplicação | Pixel estável | Pendente |
@@ -160,6 +161,24 @@ de cada disparo auditável. O roteador não lê campos ou histórico do DOM.
   de clique bruto.
 
 ## Fase 3 — validação controlada
+
+### Evidência de produção em 30/09/2026
+
+- `main` e Vercel estão no commit `410fbcf`; o HTML contém os defaults de
+  consentimento, o link de preferências e `GTM-NH6DWSH4`.
+- O GTM está na versão 5. A versão 4 foi substituída porque o JS compilado
+  revelou dois blocos concatenados do roteador; a versão 5 contém exatamente
+  uma ocorrência do Pixel, da chave de consentimento e do evento personalizado.
+- Com publicidade concedida, a home e `/ia-para-clinicas` carregam o
+  `fbevents.js` e o arquivo de configuração do Pixel `1909493637072194`.
+  Esses dois recursos fazem parte de uma única inicialização oficial; não são
+  dois Pixels.
+- O navegador confirmou um loader do GTM. Não foi criado lead, enviado e-mail,
+  clicado WhatsApp nem reservado horário durante a validação.
+- A sessão do Business Meta expirou após o computador desligar. A confirmação
+  visual de `PageView` e `ViewContent` em Test Events, além dos eventos de funil,
+  permanece pendente após novo login. Isso não deve ser confundido com falha de
+  carregamento do Pixel.
 
 ### Matriz mínima
 

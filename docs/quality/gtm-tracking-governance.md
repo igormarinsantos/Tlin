@@ -136,21 +136,24 @@ propriedade, retirar seu status de evento principal.
 | 3. Deduplicação | `event_id` na captura, reserva e recibo | Implementada |
 | 4. Container | Google Tag e tags de evento sem triggers paralelos | Publicada na versão 3 |
 | 5. Ativação | Variáveis da Vercel, deploy e publicação do container | Configurada para produção pela `main` |
-| 6. Validação | Preview, DebugView e relatório de duplicação | Pendente após deploy |
+| 6. Validação | Preview, DebugView e relatório de duplicação | Produção e deduplicação validadas; painéis externos pendentes |
 
 ## Auditoria e ativação externa de 30/09/2026
 
 - O container ativo da conta Tlin é `GTM-NH6DWSH4`. O identificador
   `GTM-NH79DSND` pertence à inspeção histórica de 18/09 e não deve ser usado
   no deploy atual.
-- A versão 3 do container, `GTM centralizado - eventos seguros`, está publicada.
+- A versão 3 do container, `GTM centralizado - eventos seguros`, publicou a base
+  de GA4. A versão 5 está ativa após a implantação da Meta e o hotfix que deixou
+  uma única tag física roteadora para o Pixel.
 - `Tlin - Tag do Google` aponta para `G-9LQN3ZWCNS` com
   `send_page_view=false`.
 - `Tlin - GA4 - Eventos do Site` usa o nome `{{Event}}` e um trigger com lista
   explícita do catálogo. As variáveis aprovadas são `event_id`, `lead_step`,
   `form_mode`, `cta_id`, `cta_location`, `trigger`, `chat_state` e `pathname`.
-- A tag `Tlin - Pixel Web` está pausada. Ela não deve voltar a disparar até a
-  propriedade do Pixel e o contrato de PageView SPA serem confirmados.
+- A tag legada `Tlin - Pixel Web` permanece pausada. A coleta aprovada usa
+  `Tlin - Meta - Eventos do Funil`, condicionada à preferência de publicidade e
+  restrita aos eventos explícitos do plano Meta.
 - A Vercel usa `NEXT_PUBLIC_ANALYTICS_OWNER=gtm` e
   `NEXT_PUBLIC_GTM_ID=GTM-NH6DWSH4` em Production. A variável histórica
   `NEXT_PUBLIC_GA_MEASUREMENT_ID` permanece armazenada, mas está inerte porque
@@ -163,9 +166,10 @@ propriedade, retirar seu status de evento principal.
   principal.
 - A conversão aberta no Google Ads, `Lead form - Submit`, tem origem
   "Hospedado pelo Google". Ela não representa a confirmação de demo no site.
-- A conta de anúncios Meta aberta não exibe fonte de dados, embora exista uma
-  tag de Pixel no GTM. Confirmar a propriedade do Pixel antes de usá-lo para
-  otimização ou remarketing.
+- O dataset Meta confirmado é `Tlin - Pixel Web` (`1909493637072194`), no
+  Business `Tlin` (`213354731072099`) e conectado à conta `TLIN ADS`
+  (`1397532772041218`). Página, Instagram e domínio ainda exigem auditoria antes
+  da primeira campanha.
 
 ## Validação sem gerar lead real
 
