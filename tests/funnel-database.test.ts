@@ -168,6 +168,18 @@ describe("durable funnel in PostgreSQL", () => {
       captured_at: "2026-09-23T10:45:00Z",
     }]);
 
+    // O relatório agrupa pela data de criação da captura. Fixe também esse
+    // relógio no fixture para o teste continuar determinístico após setembro.
+    await db.exec(`
+      update lead_form_submissions
+      set created_at = captured_at
+      where lead_capture_id in (
+        'capture-content-won',
+        'capture-content-score-only',
+        'capture-content-unattributed'
+      )
+    `);
+
     const report = await rpc("read_funnel_report", ["2026-09-01", "2026-09-30"]);
     const content = report.content as Array<Record<string, string | number>>;
     expect(content).toEqual(expect.any(Array));
