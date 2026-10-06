@@ -1,114 +1,72 @@
 "use client";
 
-import { m, LazyMotion, domAnimation, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { m, LazyMotion, domAnimation, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState, useRef, useSyncExternalStore, type RefObject } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { withoutClosingPeriod } from "@/lib/marketingCopy";
 import { trackFunnelEvent } from "@/lib/utm";
 import { TlinButton } from "@/components/ui/tlin";
 
-const Character = ({ char, isVisible, isLatest, isHighlighted, positionPercent, totalCharsInGroup, isDone, isStars }: { 
-  char: string; 
-  isVisible: boolean; 
-  isLatest: boolean; 
-  isHighlighted: boolean; 
-  positionPercent: number; 
-  totalCharsInGroup: number;
-  isDone: boolean;
-  isStars?: boolean;
-}) => {
-  if (isStars) {
-    return (
-      <span 
-        style={{ opacity: isVisible ? 1 : 0 }} 
-        className="inline-flex items-center mx-1 align-middle h-[1.2em]"
-      >
-        <Image src="/icons/3STARS.avif" alt="Stars" width={120} height={40} className="h-[1em] w-auto object-contain" />
-      </span>
-    );
-  }
+const HIGHLIGHT_WORDS = new Set(["copiloto", "ia", "copilot", "ai"]);
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
+function subscribeToDesktopViewport(onChange: () => void) {
+  const query = window.matchMedia(DESKTOP_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function getDesktopViewportSnapshot() {
+  return window.matchMedia(DESKTOP_QUERY).matches;
+}
+
+function useDesktopViewport() {
+  return useSyncExternalStore(subscribeToDesktopViewport, getDesktopViewportSnapshot, () => false);
+}
+
+function HeroTitleLine({
+  line,
+  anchorRef,
+}: {
+  line: string;
+  anchorRef?: RefObject<HTMLSpanElement | null>;
+}) {
   return (
-    <span 
-      style={{ 
-        opacity: isVisible ? 1 : 0,
-        color: isHighlighted ? "transparent" : "inherit",
-        WebkitTextFillColor: isHighlighted ? "transparent" : "inherit",
-        background: isHighlighted ? "linear-gradient(90deg, #B597FF, #38E3FF)" : "none",
-        WebkitBackgroundClip: isHighlighted ? "text" : "none",
-        backgroundClip: isHighlighted ? "text" : "none",
-        backgroundSize: isHighlighted ? `${totalCharsInGroup * 100}% 100%` : "auto",
-        backgroundPosition: isHighlighted ? `${positionPercent}% 0` : "0 0",
-      }} 
-      className="transition-opacity duration-75"
-    >
-      {char}
+    <span ref={anchorRef} className="relative block w-full">
+      {line.split(/(\s+)/).map((part, index) => {
+        const normalized = part.replace(/[^a-zA-ZÀ-ú]/g, "").toLowerCase();
+        const highlighted = HIGHLIGHT_WORDS.has(normalized);
+
+        return (
+          <span
+            key={`${part}-${index}`}
+            className={highlighted
+              ? "bg-gradient-to-r from-[#B597FF] to-[#38E3FF] bg-clip-text text-transparent"
+              : undefined}
+          >
+            {part}
+          </span>
+        );
+      })}
     </span>
   );
-};
+}
 
 export type HeroVariant = "iaWhatsapp" | "recuperacaoDeLeads" | "crmComIa" | "infoprodutores" | "agentesDeIa" | "clinicas" | "escolas" | "assessorias" | "advocacia";
 
 export function Hero() {
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { amount: 0.1, once: true });
-
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [phase, setPhase] = useState<"idle" | "thinking" | "typing" | "done">("idle");
-  const [isFinished, setIsFinished] = useState(false);
+  const titleEndRef = useRef<HTMLSpanElement>(null);
+  const [motionReady, setMotionReady] = useState(false);
   const [lastInlinePos, setLastInlinePos] = useState({ x: 0, y: 0 });
-  const [showDemoNotice, setShowDemoNotice] = useState(false);
-  const lastCharRef = useRef<HTMLSpanElement>(null);
-  const demoNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLanguage();
-  const highlightWords = ['Copiloto', 'IA', 'Copilot', 'AI'];
-
-  const [isDesktop, setIsDesktop] = useState(true);
-  useEffect(() => {
-    setIsDesktop(window.innerWidth >= 1024);
-    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const title = withoutClosingPeriod((isDesktop ? t.hero.title : t.hero.mobileTitle).replace(/\s*\{stars\}/g, ""));
-  const subtitle = withoutClosingPeriod(isDesktop ? t.hero.subtitle : t.hero.mobileSubtitle);
-
-  useEffect(() => {
-    return () => {
-      if (demoNoticeTimeout.current) clearTimeout(demoNoticeTimeout.current);
-    };
-  }, []);
-  
-  const allChars = useMemo(() => {
-    const chars: { char: string; isHighlighted: boolean; line: number; isStars?: boolean }[] = [];
-    const lines = title.split("\n");
-    
-    lines.forEach((line, lIdx) => {
-      const parts = line.split(/({stars})/g);
-      parts.forEach(part => {
-        if (part === "{stars}") {
-          chars.push({ char: "", isHighlighted: false, line: lIdx, isStars: true });
-        } else {
-          const words = part.split(" ");
-          const wordHighlightedStatus = words.map(w => 
-            highlightWords.some(h => w.replace(/[^a-zA-ZÀ-ú]/g, "").toLowerCase() === h.toLowerCase())
-          );
-          words.forEach((word, wIdx) => {
-            const isH = wordHighlightedStatus[wIdx];
-            word.split("").forEach(c => chars.push({ char: c, isHighlighted: isH, line: lIdx }));
-            if (wIdx < words.length - 1) {
-              const spaceIsH = isH && wordHighlightedStatus[wIdx + 1];
-              chars.push({ char: " ", isHighlighted: spaceIsH, line: lIdx });
-            }
-          });
-        }
-      });
-    });
-    return chars;
-  }, [title]);
+  const isDesktop = useDesktopViewport();
+  const desktopTitle = withoutClosingPeriod(t.hero.title.replace(/\s*\{stars\}/g, ""));
+  const mobileTitle = withoutClosingPeriod(t.hero.mobileTitle.replace(/\s*\{stars\}/g, ""));
+  const desktopSubtitle = withoutClosingPeriod(t.hero.subtitle);
+  const mobileSubtitle = withoutClosingPeriod(t.hero.mobileSubtitle);
 
   const globalMouseX = useMotionValue(0);
   const globalMouseY = useMotionValue(0);
@@ -119,6 +77,8 @@ export function Hero() {
   useEffect(() => {
     let frameId: number;
     let startTime = 0;
+
+    if (!motionReady) return;
 
     if (typeof window !== 'undefined') {
       baseIdlePos.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -184,69 +144,33 @@ export function Hero() {
       document.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(frameId);
     };
-  }, [globalMouseX, globalMouseY]);
+  }, [globalMouseX, globalMouseY, isDesktop, motionReady]);
 
   useEffect(() => {
-    if (isInView && phase === "idle") {
-      setPhase("thinking");
-      setTimeout(() => setPhase("typing"), 600);
-    }
-  }, [isInView, phase]);
+    let idleId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let frameId: number | null = null;
 
-  // Reset typing animation when title changes (language switch)
-  useEffect(() => {
-    setVisibleCount(0);
-    setPhase("idle");
-    setIsFinished(false);
-  }, [title]);
-
-  useEffect(() => {
-    if (phase !== "typing") return;
-
-    let frameId: number;
-    let frameCount = 0;
-    const revealEveryFrames = isDesktop ? 3 : 2;
-
-    const tick = () => {
-      frameCount++;
-      if (frameCount % revealEveryFrames === 0) {
-        setVisibleCount((v) => {
-          const next = v + 1;
-          if (next >= allChars.length) {
-            requestAnimationFrame(() => {
-              if (lastCharRef.current) {
-                const rect = lastCharRef.current.getBoundingClientRect();
-                const x = rect.left + rect.width;
-                const y = rect.top + rect.height / 2;
-                setLastInlinePos({ x, y });
-              }
-              setPhase("done");
-              setIsFinished(true);
-            });
-            return allChars.length;
-          }
-          return next;
-        });
-      }
-      frameId = requestAnimationFrame(tick);
+    const activateMotion = () => {
+      frameId = window.requestAnimationFrame(() => {
+        const rect = titleEndRef.current?.getBoundingClientRect();
+        if (rect) setLastInlinePos({ x: rect.right, y: rect.top + rect.height / 2 });
+        setMotionReady(true);
+      });
     };
 
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [phase, allChars.length, isDesktop]);
+    if ("requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(activateMotion, { timeout: 1400 });
+    } else {
+      timeoutId = setTimeout(activateMotion, 700);
+    }
 
-  const Cursor = () => (
-    <span className="relative inline-flex w-0 h-[1em] items-center shrink-0" style={{ visibility: phase === "done" ? "hidden" : "visible" }}>
-      <m.span 
-        animate={phase === "thinking" ? { opacity: [1, 0.4, 1], scale: [1, 1.05, 1] } : { opacity: 1, scale: 1 }}
-        transition={phase === "thinking" ? { duration: 0.8, repeat: Infinity } : { duration: 0 }}
-        className="absolute left-1 md:left-2 flex items-center"
-        style={{ width: "0.8em", height: "0.8em" }}
-      >
-        <Image src="/TlinIA.svg" className="w-full h-full object-contain" alt="Tlin IA Cursor" width={32} height={32} priority />
-      </m.span>
-    </span>
-  );
+    return () => {
+      if (idleId !== null) window.cancelIdleCallback(idleId);
+      if (timeoutId !== null) clearTimeout(timeoutId);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
+  }, [desktopTitle]);
 
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [isDemoHovered, setIsDemoHovered] = useState(false);
@@ -258,71 +182,33 @@ export function Hero() {
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-[#B597FF]/5 to-[#38E3FF]/5 blur-[120px] rounded-full -z-10" />
 
         <div className="max-w-6xl w-full flex flex-col items-center relative z-10">
-          <h1 className="text-[30px] xs:text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight md:tracking-tighter text-[#0c0d0d] leading-[1.15] text-center w-full mb-8 md:mb-6 md:min-h-[2.5em]">
-            {Array.from(new Set(allChars.map(c => c.line))).sort((a,b) => a-b).map(lineIdx => {
-              const lineChars = allChars.filter(c => c.line === lineIdx);
-              const globalLineStart = allChars.findIndex(c => c.line === lineIdx);
-
-              const groups: { chars: any[], isHighlighted: boolean }[] = [];
-              lineChars.forEach((c, i) => {
-                const globalIdx = globalLineStart + i;
-                const charWithIdx = { ...c, globalIdx };
-                if (groups.length > 0 && groups[groups.length - 1].isHighlighted === c.isHighlighted) {
-                  groups[groups.length - 1].chars.push(charWithIdx);
-                } else {
-                  groups.push({ chars: [charWithIdx], isHighlighted: c.isHighlighted });
-                }
-              });
-
-              return (
-                <div key={lineIdx} className="block w-full">
-                  {visibleCount === 0 && lineIdx === 0 && <Cursor />}
-                  {groups.map((group, gIdx) => (
-                    <span key={gIdx} className="inline">
-                      {group.chars.map((c, charInGroupIdx) => {
-                        const isVisible = c.globalIdx < visibleCount;
-                        const isLatest = c.globalIdx === visibleCount - 1;
-                        
-                        const totalCharsInGroup = group.chars.length;
-                        const positionPercent = (charInGroupIdx / (totalCharsInGroup > 1 ? totalCharsInGroup - 1 : 1)) * 100;
-                        
-                        return (
-                          <span key={c.globalIdx} className="relative inline" ref={isLatest ? lastCharRef : null}>
-                            <Character 
-                              char={c.char}
-                              isVisible={isVisible}
-                              isLatest={isLatest}
-                              isHighlighted={group.isHighlighted}
-                              positionPercent={positionPercent}
-                              totalCharsInGroup={totalCharsInGroup}
-                              isDone={isFinished}
-                              isStars={c.isStars}
-                            />
-                            {isLatest && <Cursor />}
-                          </span>
-                        );
-                      })}
-                    </span>
-                  ))}
-                </div>
-              );
-            })}
+          <h1 className="relative mb-8 w-full overflow-hidden text-center text-[30px] font-bold leading-[1.15] tracking-tight text-[#0c0d0d] xs:text-[34px] sm:text-5xl md:mb-6 md:min-h-[2.5em] md:text-6xl md:tracking-tighter lg:text-7xl">
+            <span className="block lg:hidden">
+              {mobileTitle.split("\n").map((line, index) => (
+                <HeroTitleLine key={`${line}-${index}`} line={line} />
+              ))}
+            </span>
+            <span className="hidden lg:block">
+              {desktopTitle.split("\n").map((line, index, lines) => (
+                <HeroTitleLine
+                  key={`${line}-${index}`}
+                  line={line}
+                  anchorRef={index === lines.length - 1 ? titleEndRef : undefined}
+                />
+              ))}
+            </span>
+            <span aria-hidden="true" className="hero-title-scan pointer-events-none absolute inset-y-0 left-0 hidden w-24 bg-gradient-to-r from-transparent via-white/70 to-transparent blur-xl motion-reduce:hidden sm:block" />
           </h1>
 
-          <m.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-            transition={{ duration: 0.8 }}
+          <p
             className="mx-auto mb-10 max-w-[310px] whitespace-pre-line text-center text-[13px] font-medium leading-relaxed text-zinc-600 md:max-w-2xl md:whitespace-normal md:text-lg md:text-zinc-500"
           >
-            {subtitle}
-          </m.p>
+            <span className="lg:hidden">{mobileSubtitle}</span>
+            <span className="hidden lg:inline">{desktopSubtitle}</span>
+          </p>
         </div>
 
-        <m.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={isFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+        <div
           className="flex flex-row items-center justify-center gap-3 md:gap-4 relative z-10"
         >
           <div
@@ -356,11 +242,11 @@ export function Hero() {
             onMouseEnter={() => setIsDemoHovered(true)}
             onMouseLeave={() => setIsDemoHovered(false)}
           >{t.hero.watchDemo}</TlinButton>
-        </m.div>
+        </div>
 
         {/* Mascot Follower (PC Only) - Desmontado no Mobile para poupar CPU/GPU */}
         <AnimatePresence>
-          {isDesktop && phase === "done" && lastInlinePos.x !== 0 && (
+          {isDesktop && motionReady && lastInlinePos.x !== 0 && (
             <MascotFollower 
               initialX={lastInlinePos.x} 
               initialY={lastInlinePos.y} 
@@ -372,7 +258,7 @@ export function Hero() {
         </AnimatePresence>
 
         {/* Mascot Patrol (Mobile Only) */}
-        <MobileMascot isFinished={isFinished} />
+        <MobileMascot isFinished={motionReady} />
       </section>
     </LazyMotion>
   );

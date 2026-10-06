@@ -1,22 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useLanguage } from "@/lib/LanguageContext";
 
 const logos = [
-  { name: "Google", src: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+  { name: "Google", src: "/logos/google.svg" },
   { name: "OpenAI", src: "/logos/openai.svg" },
-  { name: "WhatsApp", src: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" },
-  { name: "Microsoft", src: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
-  { name: "AWS", src: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" },
-  { name: "Stripe", src: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" },
-  { name: "HubSpot", src: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
-  { name: "Salesforce", src: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" },
+  { name: "WhatsApp", src: "/logos/whatsapp.svg" },
+  { name: "Microsoft", src: "/logos/microsoft.svg" },
+  { name: "AWS", src: "/logos/aws.svg" },
+  { name: "Stripe", src: "/logos/stripe.svg" },
+  { name: "HubSpot", src: "/logos/hubspot.svg" },
 ];
 
 export function TrustedBy({ transparentBg }: { transparentBg?: boolean } = {}) {
-  const { t } = useLanguage();
   return (
     <section className={`w-full py-16 overflow-hidden ${transparentBg ? "" : "bg-white"}`}>
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8">
@@ -41,16 +37,7 @@ export function TrustedBy({ transparentBg }: { transparentBg?: boolean } = {}) {
               className={`absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l to-transparent z-10 ${transparentBg ? "from-[#EAFBFF]" : "from-white"}`}
             />
             
-            <motion.div 
-              className="flex items-center w-max"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ 
-                duration: 30, 
-                repeat: Infinity, 
-                ease: "linear" 
-              }}
-              style={{ willChange: "transform" }}
-            >
+            <div className="trusted-logo-track flex w-max items-center">
               {/* Double the logos for seamless loop */}
               {[...logos, ...logos].map((logo, idx) => (
                 <div key={idx} aria-hidden={idx >= logos.length ? true : undefined} className="shrink-0 flex items-center pr-16 md:pr-24">
@@ -62,11 +49,10 @@ export function TrustedBy({ transparentBg }: { transparentBg?: boolean } = {}) {
                     className="h-5 md:h-6 w-auto grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all duration-500 cursor-pointer"
                     style={{ width: 'auto', height: '24px' }}
                     loading="lazy"
-                    unoptimized
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

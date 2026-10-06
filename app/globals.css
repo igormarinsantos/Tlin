@@ -438,3 +438,44 @@ body {
     animation: none;
   }
 }
+@keyframes hero-title-scan {
+  0% {
+    opacity: 0;
+    transform: translate3d(-180%, 0, 0);
+  }
+  18% {
+    opacity: 0.32;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(1400%, 0, 0);
+  }
+}
+
+.hero-title-scan {
+  animation: hero-title-scan 1100ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  will-change: transform;
+}
+
+@keyframes trusted-logo-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.trusted-logo-track {
+  animation: trusted-logo-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-scan,
+  .trusted-logo-track {
+    animation: none;
+  }
+}

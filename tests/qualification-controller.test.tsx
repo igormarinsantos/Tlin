@@ -9,7 +9,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => state.pathname }));
 vi.mock("@/lib/utm", () => ({ trackFunnelEvent: state.track }));
 vi.mock("@/components/SmoothScroll", () => ({ SmoothScroll: ({ children }: { children: ReactNode }) => children }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
-vi.mock("@/components/LiaPopup", () => ({ LiaPopup: () => null }));
+vi.mock("@/components/DeferredLiaPopup", () => ({ DeferredLiaPopup: () => null }));
 vi.mock("next/dynamic", () => ({ default: () => function Popup({ planName, onClose }: { planName: string; onClose: () => void }) {
   return <div role="dialog"><span>{planName}</span><button onClick={onClose}>Close</button></div>;
 } }));

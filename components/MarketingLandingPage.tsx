@@ -95,7 +95,7 @@ function DeferredSection({
   }, [idleDelay, shouldRender]);
 
   return (
-    <div id={id} ref={ref} className={`${className} ${shouldRender ? "" : minHeight}`}>
+    <div id={id} ref={ref} className={`defer-render ${className} ${shouldRender ? "" : minHeight}`}>
       {shouldRender ? children : null}
     </div>
   );
@@ -133,10 +133,10 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         )}
 
         {/* Dor com dado de mercado -- so nas paginas de campanha */}
-        {heroVariant && <div className="section-to-blur"><PainSection variant={heroVariant} /></div>}
+        {heroVariant && <div className="defer-render section-to-blur"><PainSection variant={heroVariant} /></div>}
 
         {isSegmentCampaign ? (
-          <div className="section-to-blur">
+          <div className="defer-render section-to-blur">
             <CampaignHowItWorks variant={heroVariant!} />
           </div>
         ) : (
@@ -157,7 +157,7 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
 
         {/* Avaliacoes em 2 fileiras de carrossel infinito -- so nas LPs de campanha */}
         {heroVariant && (
-          <div className="section-to-blur">
+          <div className="defer-render section-to-blur">
             <CampaignReviews variant={heroVariant} />
           </div>
         )}
@@ -166,7 +166,7 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
             segmento, os mesmos conceitos já aparecem com copy própria no
             CampaignHowItWorks, que também preserva as âncoras semânticas. */}
         {!isSegmentCampaign && (
-          <div className="section-to-blur">
+          <div className="defer-render section-to-blur">
             <Features />
           </div>
         )}
@@ -204,20 +204,20 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         )}
 
         {/* PRICING / ACTION */}
-        <div className="no-blur transition-all duration-700 relative z-50">
+        <div className="defer-render no-blur transition-all duration-700 relative z-50">
           <Pricing />
         </div>
 
         {/* As LPs segmentadas já usam CampaignReviews com linguagem própria;
             evita repetir depois o carrossel genérico da home. */}
         {!isSegmentCampaign && (
-          <div className="section-to-blur">
+          <div className="defer-render section-to-blur">
             <Testimonials />
           </div>
         )}
 
         {/* OBJECTIONS */}
-        <div className="section-to-blur">
+        <div className="defer-render section-to-blur">
           <Faq
             priorityKeys={heroVariant === "recuperacaoDeLeads" ? ["q7", "q8"] : undefined}
             variant={isSegmentCampaign ? heroVariant : undefined}
@@ -230,7 +230,7 @@ export function MarketingLandingPage({ heroVariant }: { heroVariant?: HeroVarian
         </DeferredSection>
 
         {/* FOOTER */}
-        <div className="section-to-blur">
+        <div className="defer-render section-to-blur">
           <Footer />
         </div>
 

@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/Header";
-import { LiaPopup } from "@/components/LiaPopup";
+import { DeferredLiaPopup } from "@/components/DeferredLiaPopup";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
 import { QualificationController } from "@/components/QualificationController";
@@ -18,7 +18,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     <SmoothScroll>
       <Header />
       {children}
-      <LiaPopup />
+      <DeferredLiaPopup />
       <QualificationController key={pathname} />
     </SmoothScroll>
   );
