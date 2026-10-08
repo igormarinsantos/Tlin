@@ -29,8 +29,9 @@ function MenuIcon({ isOpen = false }: { isOpen?: boolean }) {
 //   margem negativa); usa a CSS var --tlin-vw (window.innerWidth) em vez de
 //   100vw, que inclui a scrollbar e estouraria a pagina em alguns pixels.
 // - "contained" (header flutuante, que ja e uma pilula centralizada): um
-//   card com largura propria, alinhado embaixo da pilula, em vez de
-//   quebrar o layout compacto dela com um painel largura-total.
+//   card independente, com a mesma largura da pilula e separacao visual da
+//   pagina. A ponte transparente no topo preserva o hover no pequeno espaco
+//   entre o header e o painel.
 function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: { onEnter: () => void; onLeave: () => void; variant?: "full" | "contained"; containedWidth?: number }) {
   const { t } = useLanguage();
   const pathname = usePathname();
@@ -62,7 +63,7 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: 
       onMouseLeave={onLeave}
       className={
         isContained
-          ? `pointer-events-auto relative z-0 -mt-3 w-[min(720px,calc(100vw-2rem))] overflow-hidden pt-3 backdrop-blur-2xl ${pageSurface}`
+          ? `pointer-events-auto relative z-0 mt-2 w-[min(720px,calc(100vw-2rem))] overflow-visible rounded-[28px] border border-zinc-200/80 shadow-[0_24px_70px_-28px_rgba(12,13,13,0.32)] backdrop-blur-2xl before:absolute before:inset-x-0 before:-top-3 before:h-3 before:content-[''] ${pageSurface}`
           : `pointer-events-auto backdrop-blur-xl ${pageSurface}`
       }
       style={
@@ -75,7 +76,7 @@ function SolutionsPanel({ onEnter, onLeave, variant = "full", containedWidth }: 
             }
       }
     >
-      <div className={isContained ? "p-6 grid grid-cols-[1fr_240px] gap-5" : "max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-[1fr_260px] gap-6"}>
+      <div className={isContained ? "grid grid-cols-[1fr_240px] gap-5 overflow-hidden rounded-[27px] p-6" : "max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-[1fr_260px] gap-6"}>
         <div>
           <p className="px-1 pb-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wide">{t.nav.solutionsEyebrow}</p>
           <div className="grid grid-cols-3 gap-1">
